@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <!--<Appenders>-->
+        <!--&lt;!&ndash;添加一个控制台追加器&ndash;&gt;-->
+        <!--&lt;!&ndash;<Console name="Console" target="SYSTEM_OUT" follow="true">&ndash;&gt;-->
+        <!--<File name ="file" fileName="${sys:user.home}/logs/chat.log">-->
+            <!--<PatternLayout>-->
+                <!--<pattern>"%d{HH:mm:ss,SSS} %p %c (%L) - %m%n"</pattern>-->
+            <!--</PatternLayout>-->
+        <!--</File>-->
+        <!--&lt;!&ndash;</Console>&ndash;&gt;-->
+    <!--</Appenders>-->
+    <!--<Loggers>-->
+        <!--<Root level="info">-->
+            <!--<AppenderRef ref="file" />-->
+        <!--</Root>-->
+    <!--</Loggers>-->
+</Configuration>

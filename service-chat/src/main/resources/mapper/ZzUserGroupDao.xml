@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzUserGroupDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.ZzUserGroup" id="ZzUserGroupMap">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="userId" column="USER_ID" jdbcType="VARCHAR"/>
+        <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>
+        <result property="createtime" column="CREATETIME" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="GroupListVo" type="com.workhub.z.servicechat.VO.GroupListVo">
+        <result column="GROUP_ID" property="groupId" jdbcType="VARCHAR"></result>
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR"></result>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="CREATOR" property="creator" jdbcType="VARCHAR"></result>
+        <result column="LEVELS" property="levels" jdbcType="VARCHAR"></result>
+        <result column="GROUP_IMG" property="groupImg" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <!--以前写的分页有问题，下面重写一个-->
+    <!--
+    <select id="groupList" resultMap="GroupListVo">
+        SELECT *
+        FROM (SELECT VO.*, ROWNUM AS RN
+        FROM （
+        SELECT ZG.GROUP_ID    AS GROUP_ID,
+        ZG.GROUP_NAME  AS GROUP_NAME,
+        ZG.CREATE_TIME AS CREATE_TIME,
+        ZG.CREATOR     AS CREATOR,
+        ZG.LEVELS      AS LEVELS,
+        ZG.GROUP_IMG   AS GROUP_IMG
+        FROM ZZ_USER_GROUP ZUG
+        LEFT JOIN ZZ_GROUP ZG
+        ON ZG.GROUP_ID = ZUG.GROUP_ID
+        WHERE ZG.ISCLOSE = '0'
+        AND ZG.ISDELETE = '0'
+        AND ZUG.USER_ID = #{id}
+        ) VO
+        WHERE ROWNUM &lt;= #{end})
+        WHERE RN > #{start}
+    </select>
+    -->
+    <select id="groupList" resultMap="GroupListVo">
+        SELECT ZG.GROUP_ID    AS GROUP_ID,
+        ZG.GROUP_NAME  AS GROUP_NAME,
+        ZG.CREATE_TIME AS CREATE_TIME,
+        ZG.CREATOR     AS CREATOR,
+        ZG.LEVELS      AS LEVELS,
+        ZG.GROUP_IMG   AS GROUP_IMG
+        FROM ZZ_USER_GROUP ZUG
+        LEFT JOIN ZZ_GROUP ZG
+        ON ZG.GROUP_ID = ZUG.GROUP_ID
+        WHERE ZG.ISCLOSE = '0'
+        AND ZG.ISDELETE = '0'
+        AND ZUG.USER_ID = #{id}
+    </select>
+
+    <select id="queryInGroup" resultType="java.lang.Long">
+        select count(*) from zz_user_group T where T.USER_ID = #{userId} AND T.GROUP_ID =  #{groupId}
+    </select>
+
+
+    <select id="groupListTotal" resultType="java.lang.Long">
+         select count(*)
+      from zz_user_group zug
+      left join zz_group zg
+        on zg.group_id = zug.group_id
+     where zg.isclose = '0'
+       and zg.isdelete = '0'
+       and zug.user_id =  #{ID}
+    </select>
+
+    <resultMap id="UserNewMsgVo" type="com.workhub.z.servicechat.VO.UserNewMsgVo">
+        <result column="MSG_ID" property="msgId" jdbcType="VARCHAR"></result>
+        <result column="TABLE_TYPE" property="tableType" jdbcType="VARCHAR"></result>
+        <result column="MSG_SENDER" property="msgSener" jdbcType="VARCHAR"></result>
+        <result column="MSG_RECEIVER" property="msgReceiver" jdbcType="VARCHAR"></result>
+        <result column="SEND_TIME" property="sendTime" jdbcType="TIMESTAMP"></result>
+        <result column="MSG_CONTENT" property="msg" jdbcType="VARCHAR"></result>
+        <result column="MSG_TYPE" property="msgType" jdbcType="VARCHAR"></result>
+        <result column="LEVELS_USER" property="levels" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getUserNewMsgList" resultMap="UserNewMsgVo">
+     SELECT * FROM (
+           SELECT * FROM (
+                     SELECT ROW_NUMBER() OVER(PARTITION BY MSG_SENDER,TABLE_TYPE ORDER BY SEND_TIME DESC) RN ,t.*
+                          FROM (
+                                SELECT PHPM.MSG_ID AS MSG_ID,
+                                  'USER' AS TABLE_TYPE,
+                                  (case
+                                    when PHPM.MSG_SENDER = #{id,jdbcType=VARCHAR} then
+                                     PHPM.MSG_RECEIVER
+                                    else
+                                     PHPM.MSG_SENDER
+                                  end) as MSG_SENDER, --最近联系人
+                                  PHPM.MSG_RECEIVER AS MSG_RECEIVER,
+                                  PHPM.SEND_TIME AS SEND_TIME,
+                                  PHPM.MSG AS MSG_CONTENT,
+                                  PHPM.MSG_TYPE AS MSG_TYPE,
+                                  PHPM.LEVELS AS LEVELS_USER
+                             FROM ZZ_PRIVATE_MSG PHPM
+                            WHERE 1 = 1
+                              and (PHPM.MSG_RECEIVER =#{id,jdbcType=VARCHAR} or
+                                  PHPM.MSG_SENDER = #{id,jdbcType=VARCHAR})
+
+           UNION ALL
+                     SELECT PHGM.MSG_ID AS MSG_ID,
+                                           'GROUP' AS TABLE_TYPE,
+                                           PHGM.MSG_RECEIVER AS MSG_SENDER,
+                                           PHGM.MSG_SENDER AS MSG_RECEIVER,
+                                           PHGM.SEND_TIME AS SEND_TIME,
+                                           PHGM.MSG AS MSG_CONTENT,
+                                           PHGM.MSG_TYPE AS MSG_TYPE,
+                                           PHGM.LEVELS AS LEVELS_USER
+                                FROM ZZ_GROUP_MSG PHGM LEFT JOIN ZZ_USER_GROUP ZU ON PHGM.MSG_RECEIVER = ZU.GROUP_ID
+                                WHERE ZU.USER_ID = #{id,jdbcType=VARCHAR}
+                                and nvl(PHGM.send_time, to_date('1900-01-01', 'yyyy-mm-dd')) >= nvl(ZU.createtime, to_date('2099-01-01', 'yyyy-mm-dd'))
+                                ) t
+                       )
+                ) VO where rn =1
+         ORDER BY VO.SEND_TIME DESC
+    </select>
+
+    <delete id="deleteByGroupIdAndUserId">
+        delete from ZZ_USER_GROUP where GROUP_ID=#{groupId} AND USER_ID = #{userId}
+    </delete>
+
+    <delete id="deleteByGroupIdAndUserIdList" parameterType="String">
+        delete from ZZ_USER_GROUP where GROUP_ID=#{groupId} AND USER_ID in
+        <foreach collection="members" item = "nowid" open="(" separator="," close=")">
+            #{nowid}
+        </foreach>
+    </delete>
+
+    <!--解散群组使用-->
+    <delete id="deleteByGroupId">
+        delete from ZZ_USER_GROUP where GROUP_ID=#{groupId}
+    </delete>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZzUserGroupMap">
+        select
+          ID, USER_ID, GROUP_ID, CREATETIME
+        from ZZ_USER_GROUP
+        where ID = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZzUserGroupMap">
+        select
+          ID, USER_ID, GROUP_ID, CREATETIME
+        from ZZ_USER_GROUP
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZzUserGroupMap">
+        select
+          ID, USER_ID, GROUP_ID, CREATETIME
+        from ZZ_USER_GROUP
+        <where>
+            <if test="id != null and id != ''">
+                and ID = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                and USER_ID = #{userId}
+            </if>
+            <if test="groupId != null and groupId != ''">
+                and GROUP_ID = #{groupId}
+            </if>
+            <if test="createtime != null">
+                and CREATETIME = #{createtime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into ZZ_USER_GROUP(ID,USER_ID, GROUP_ID, CREATETIME)
+        values (#{id},#{userId}, #{groupId}, sysdate)
+    </insert>
+
+    <!--新增所有列-->
+    <insert id="addMemeberList" >
+        insert into ZZ_USER_GROUP(ID,USER_ID, GROUP_ID, CREATETIME)
+        <foreach collection="members" item="nowMember" separator=" union all ">
+            (
+            select
+            #{nowMember.id},
+            #{nowMember.userId},
+            #{nowMember.groupId},
+            sysdate
+            from dual
+            )
+        </foreach>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update ZZ_USER_GROUP
+        <set>
+            <if test="userId != null and userId != ''">
+                USER_ID = #{userId},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                GROUP_ID = #{groupId},
+            </if>
+            <if test="createtime != null">
+                CREATETIME = #{createtime},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from ZZ_USER_GROUP where ID = #{id}
+    </delete>
+
+    <!--通过userid查询所有群组-->
+    <select id="queryGroupByUserId" resultMap="ZzUserGroupMap" parameterType="String">
+        select * from ZZ_USER_GROUP where USER_ID = #{userId}
+    </select>
+    <!--设置用户群置顶-->
+    <update id="setUserGroupTop" parameterType="String">
+        MERGE INTO ZZ_USER_GROUP a
+         USING  (SELECT #{userId} as USER_ID,#{groupId} as GROUP_ID FROM DUAL) b
+            ON (a.USER_ID = b.USER_ID and a.GROUP_ID = b.GROUP_ID and a.ISDELETE = '0')
+            WHEN MATCHED THEN
+                UPDATE
+                 SET a.IS_TOP = #{topFlg}
+    </update>
+    <!--设置用户群免打扰-->
+    <update id="setUserGroupMute" parameterType="String">
+        MERGE INTO ZZ_USER_GROUP a
+         USING  (SELECT #{userId} as USER_ID,#{groupId} as GROUP_ID FROM DUAL) b
+            ON (a.USER_ID = b.USER_ID and a.GROUP_ID = b.GROUP_ID and a.ISDELETE = '0')
+            WHEN MATCHED THEN
+                UPDATE
+                 SET a.IS_MUTE = #{muteFlg}
+    </update>
+
+    <select id="getGroupUserCount" resultType="java.lang.Integer">
+        select count(1) as cnt
+          from sys_user u, zz_user_group gu, zz_group g
+         where u.userid = gu.user_id
+           and gu.group_id = g.group_id
+           and g.group_id = #{groupId}
+    </select>
+    <select id="getGroupUserHeadList" resultType="java.lang.String">
+        select a.head
+        from (select u.head, gu.createtime
+                from sys_user u, zz_user_group gu, zz_group g
+                where u.userid = gu.user_id
+                and gu.group_id = g.group_id
+                and g.group_id = #{groupId}
+                order by gu.createtime desc) a
+        where rownum &lt;= 9
+        order by a.createtime asc
+    </select>
+    <select id="getGroupByUserId" resultType="java.lang.String">
+        select distinct g.group_id
+        from zz_user_group u, zz_group g
+        where u.user_id =  #{userId}
+        and u.group_id = g.group_id
+        and g.isclose = '0'
+        and g.isdelete = '0'
+    </select>
+</mapper>

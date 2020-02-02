@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzGroupStatusDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.ZzGroupStatus" id="zzGroupStatus">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>
+        <result property="operator" column="OPERATOR" jdbcType="VARCHAR"/>
+        <result property="operatorName" column="OPERATOR_NAME" jdbcType="VARCHAR"/>
+        <result property="operateType" column="OPERATE_TYPE" jdbcType="VARCHAR"/>
+        <result property="operateTime" column="OPERATE_TIME" jdbcType="DATE"/>
+        <result property="describe" column="DESCRIBE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.workhub.z.servicechat.model.GroupStatusDto" id="groupStatusDto">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>
+        <result property="groupName" column="GROUP_NAME" jdbcType="VARCHAR"/>
+        <result property="operator" column="OPERATOR" jdbcType="VARCHAR"/>
+        <result property="operatorName" column="OPERATOR_NAME" jdbcType="VARCHAR"/>
+        <result property="operateType" column="OPERATE_TYPE" jdbcType="VARCHAR"/>
+        <result property="operateTime" column="OPERATE_TIME" jdbcType="VARCHAR"/>
+        <result property="describe" column="DESCRIBE"  javaType="object" jdbcType="CLOB"/>
+    </resultMap>
+
+    <!--通过实体作为筛选条件查询-->
+    <!--<select id="query" resultMap="groupStatusDto">
+        select s.id,
+        s.group_id,
+        g.group_name,
+        s.operator,
+        s.operator_name,
+        s.operate_type,
+        s.describe,
+        to_char(s.operate_time,'yyyy-mm-dd hh24:mi:ss') operate_time
+        from zz_group_status s, zz_group g
+        where s.group_id = g.group_id
+        <if test="param.groupId != null and param.groupId != ''">
+            and s.group_id = #{param.groupId}
+        </if>
+        <if test="param.operator != null and param.operator != ''">
+            and s.operator = #{param.operator}
+        </if>
+        <if test="param.groupName != null and param.groupName != ''">
+           and g.group_name like '%'||#{param.groupName}||'%'
+        </if>
+        <if test="param.operatorName != null and param.operatorName != ''">
+            and s.operator_name like '%'||#{param.operatorName}||'%'
+        </if>
+        <if test="param.operateType != null and param.operateType != ''">
+            and operate_type = #{param.operateType}
+        </if>
+        <if test="param.timeBegin != null and param.timeBegin != ''">
+            and to_char(s.operate_time,'yyyy-mm-dd') &gt;= #{param.timeBegin}
+        </if>
+        <if test="param.timeEnd != null and param.timeEnd != ''">
+            and to_char(s.operate_time,'yyyy-mm-dd') &lt;= #{param.timeEnd}
+        </if>
+        <if test="param.userId != null and param.userId != ''">
+           and exists (select 1 from zz_user_group u where u.user_id = #{param.userId} and u.createtime &lt;= s.operate_time)
+        </if>
+        order by s.operator, s.operate_time desc
+    </select>-->
+    <select id="query" resultMap="groupStatusDto">
+        SELECT * FROM (SELECT s.id, s.group_id,  s.operator, s.operator_name, s.operate_type, s.describe, to_char(s.operate_time, 'yyyy-mm-dd hh24:mi:ss') operate_time FROM zz_group_status s WHERE  operate_type IN ('304', '305')
+        <if test="param.type != null and param.type != ''">
+             and type = #{param.type}
+        </if>
+        ) table_count
+    </select>
+    <!--新增所有列-->
+    <insert id="add" >
+        insert into ZZ_GROUP_STATUS(ID,
+        GROUP_ID,
+        OPERATOR,
+        OPERATOR_NAME,
+        OPERATE_TYPE,
+        OPERATE_TIME,
+        type,
+        <!-- describe 是clob字段 放在最后-->
+        DESCRIBE
+        )
+        values (#{param.id},
+        #{param.groupId},
+        #{param.operator,jdbcType=VARCHAR},
+         #{param.operatorName,jdbcType=VARCHAR},
+         #{param.operateType},
+         #{param.operateTime, jdbcType=TIMESTAMP},
+         #{param.type},
+        <!-- describe 是clob字段 放在最后-->
+         #{param.describe}
+         )
+    </insert>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzAtDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.ZzAt" id="ZzAtMap">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="groupid" column="GROUPID" jdbcType="VARCHAR"/>
+        <result property="receiverid" column="RECEIVERID" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZzAtMap">
+        select
+          ID, GROUPID, RECEIVERID
+        from WORKHUB_IWORK.ZZ_AT
+        where ID = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZzAtMap">
+        select
+          ID, GROUPID, RECEIVERID
+        from WORKHUB_IWORK.ZZ_AT
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZzAtMap">
+        select
+          ID, GROUPID, RECEIVERID
+        from WORKHUB_IWORK.ZZ_AT
+        <where>
+            <if test="id != null and id != ''">
+                and ID = #{id}
+            </if>
+            <if test="groupid != null and groupid != ''">
+                and GROUPID = #{groupid}
+            </if>
+            <if test="receiverid != null and receiverid != ''">
+                and RECEIVERID = #{receiverid}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into ZZ_AT(ID,GROUPID, RECEIVERID)
+        values (#{id},#{groupid}, #{receiverid})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update ZZ_AT
+        <set>
+            <if test="groupid != null and groupid != ''">
+                GROUPID = #{groupid},
+            </if>
+            <if test="receiverid != null and receiverid != ''">
+                RECEIVERID = #{receiverid},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from ZZ_AT where ID = #{id}
+    </delete>
+    <select id="getList" resultMap="ZzAtMap">
+        SELECT
+        ID, GROUPID, RECEIVERID
+        from WORKHUB_IWORK.ZZ_AT A
+        WHERE  1 = 1
+        <if test="receiverId != null and receiverId != '' ">
+            AND RECEIVERID = #{receiverId}
+        </if>
+        <if test="groupId != null and groupId != '' ">
+            AND GROUPID = #{groupId}
+        </if>
+        ORDER BY
+        A .GROUPID,RECEIVERID DESC
+    </select>
+</mapper>

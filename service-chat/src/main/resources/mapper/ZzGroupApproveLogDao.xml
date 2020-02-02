@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzGroupApproveLogDao">
+    <resultMap type="com.workhub.z.servicechat.VO.GroupApproveLogVo" id="groupApproveLogVo">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>
+        <result property="groupName" column="GROUP_NAME" jdbcType="VARCHAR"/>
+        <result property="groupDes" column="GROUP_DES" jdbcType="VARCHAR"/>
+        <result property="operator" column="OPERATOR" jdbcType="VARCHAR"/>
+        <result property="operatorNo" column="OPERATOR_NO" jdbcType="VARCHAR"/>
+        <result property="operateType" column="OPERATE_TYPE" jdbcType="VARCHAR"/>
+        <result property="operateTime" column="OPERATE_TIME" jdbcType="VARCHAR"/>
+        <result property="groupLevel" column="GROUP_LEVEL" jdbcType="VARCHAR"/>
+        <result property="groupPro" column="GROUP_PRO" jdbcType="VARCHAR"/>
+        <result property="groupScope" column="GROUP_SCOPE" jdbcType="VARCHAR"/>
+        <result property="groupType" column="GROUP_TYPE" jdbcType="VARCHAR"/>
+        <result property="approve" column="APPROVE" jdbcType="VARCHAR"/>
+        <result property="approveName" column="APPROVE_NAME" jdbcType="VARCHAR"/>
+        <result property="approveRes" column="APPROVE_RES" jdbcType="VARCHAR"/>
+        <result property="ip" column="IP" jdbcType="VARCHAR"/>
+        <result property="status" column="STATUS" jdbcType="VARCHAR"/>
+        <result property="operatorName" column="OPERATOR_NAME" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+    </resultMap>
+    <insert id="add" >
+        insert into ZZ_GROUP_APPROVE_LOG(id,OPERATOR,OPERATOR_NO,OPERATE_TYPE,OPERATE_TIME,GROUP_ID,GROUP_NAME,GROUP_LEVEL,GROUP_PRO,GROUP_SCOPE,GROUP_DES,GROUP_TYPE,APPROVE,APPROVE_NAME,APPROVE_RES,IP,STATUS,OPERATOR_NAME,type)
+        values
+        (#{params.id},#{params.operator,jdbcType=VARCHAR},#{params.operatorNo,jdbcType=VARCHAR},#{params.operateType},#{params.operateTime, jdbcType=TIMESTAMP},#{params.groupId},#{params.groupName},#{params.groupLevel},#{params.groupPro},#{params.groupScope},#{params.groupDes},#{params.groupType},#{params.approve},#{params.approveName,jdbcType=VARCHAR},#{params.approveRes},#{params.ip,jdbcType=VARCHAR},#{params.status},#{params.operatorName,jdbcType=VARCHAR},#{params.type})
+    </insert>
+    <select id="getApproveLogInf" resultMap="groupApproveLogVo">
+         select
+               GROUP_ID,
+               GROUP_NAME,
+               GROUP_DES,
+               OPERATOR,
+               OPERATOR_NO,
+               OPERATE_TYPE,
+               to_char(OPERATE_TIME,'yyyy-mm-dd hh24:mi:ss')  OPERATE_TIME,
+               GROUP_LEVEL,
+               GROUP_PRO,
+               GROUP_SCOPE,
+               GROUP_TYPE,
+               APPROVE,
+               APPROVE_NAME,
+               APPROVE_RES,
+               IP,
+               STATUS,
+               OPERATOR_NAME,
+               type
+      from ZZ_GROUP_APPROVE_LOG
+      where 1=1
+        <if test="params.type != null and params.type != ''">
+            and type = #{params.type}
+        </if>
+        <if test="params.groupName != null and params.groupName != ''">
+            and GROUP_NAME like '%'||#{params.groupName}||'%'
+        </if>
+        <if test="params.operatorName != null and params.operatorName != ''">
+            and OPERATOR_NAME like '%'||#{params.operatorName}||'%'
+        </if>
+
+        <if test="params.operateTimeBegin != null and params.operateTimeBegin != ''">
+            and to_char(OPERATE_TIME,'yyyy-mm-dd') &gt;= #{params.operateTimeBegin}
+        </if>
+        <if test="params.operateTimeEnd != null and params.operateTimeEnd != ''">
+            and to_char(OPERATE_TIME,'yyyy-mm-dd') &lt;= #{params.operateTimeEnd}
+        </if>
+        <if test="params.approveName != null and params.approveName != ''">
+            and APPROVE_NAME like '%'||#{params.approveName}||'%'
+        </if>
+      order by OPERATE_TIME desc
+</select>
+</mapper>

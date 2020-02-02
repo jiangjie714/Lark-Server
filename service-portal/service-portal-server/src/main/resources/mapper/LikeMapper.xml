@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.security.mapper.LikeMapper" >
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.entity.Like" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="ENTITY_ID" property="entityId" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

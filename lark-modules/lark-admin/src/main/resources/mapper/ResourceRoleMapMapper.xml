@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.security.admin.mapper.ResourceRoleMapMapper" >
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.admin.entity.ResourceRoleMap" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="RESOURCE_ID" property="resourceId" jdbcType="VARCHAR" />
+    <result column="RESOURCE_TYPE" property="resourceType" jdbcType="VARCHAR" />
+    <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+    <result column="DEFAULT_CHECK" property="defaultCheck" jdbcType="NUMERIC" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+    <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+  </resultMap>
+  <!--<resultMap id="ElementResultMap" type="com.github.hollykunge.security.admin.vo.ActionEntitySet">-->
+    <!--&lt;!&ndash; element表中要展示的字段 &ndash;&gt;-->
+    <!--<result column="METHOD" property="method" jdbcType="VARCHAR" />-->
+    <!--<result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />-->
+  <!--</resultMap>-->
+   <!-- 是不是换表了，这块删除的表换了 -->
+  <!--<delete id="deleteByAuthorityIdAndResourceType">-->
+    <!--delete from base_resource_authority where authority_id = #{authorityId} and resource_type = #{resourceType}-->
+  <!--</delete>-->
+  <delete id="deleteByAuthorityIdAndResourceType">
+    DELETE ADMIN_RESOURCEROLEMAP WHERE ROLE_ID = #{roleId} AND RESOURCE_TYPE = #{type}
+  </delete>
+</mapper>

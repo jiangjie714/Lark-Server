@@ -1,0 +1,56 @@
+server:
+  port: 8772
+feign:
+  hystrix:
+    enabled: true
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE #因为上传附件需要传递request的header参数，这里定义隔离策略是信号量
+          thread:
+            timeoutInMilliseconds: 600000  #feign整合hystrix 光设置Hystrix 超时没用的要配合ribbon超时
+          semaphore:
+            maxConcurrentRequests: 500 #并发500
+      circuitBreaker:
+        requestVolumeThreshold: 20 #默认20 ，熔断的阈值，如何user服务报错满足3次，熔断器就会打开，就算order之后请求正确的数据也不行。
+        sleepWindowInMilliseconds: 5000 #默认5S ， 等5S之后熔断器会处于半开状态，然后下一次请求的正确和错误讲决定熔断器是否真的关闭和是否继续打开
+ribbon:
+  ReadTimeout: 600000
+  ConnectTimeout: 600000
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: service-tools
+  servlet:
+    multipart:
+      max-request-size: 1000Mb
+      max-file-size: 1000Mb
+  datasource:
+    password: 123456
+    tomcat:
+      max-idle: 10
+      min-idle: 5
+      initial-size: 5
+      max-wait: 10000
+    driverClassName: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@10.11.24.136:1521:arltr
+    username: lark_tool
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+#是否显示控制台输出，1显示0不显示，生产环境配置0即可
+showConsoleInf: 1
+#运行日志
+#logging:
+#  file: ${user.home}/logs/tools.log
+# logback日志配置
+#log:
+#  env:
+#    module: service-tools
+#日志存放目录
+self-log-path: C:/lark_log

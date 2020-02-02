@@ -1,0 +1,14 @@
+package com.github.hollykunge.security.mapper;
+
+import com.github.hollykunge.security.entity.Comment;
+import tk.mybatis.mapper.common.Mapper;
+
+/**
+ * @ClassName CommentMapper
+ * @Description TODO
+ * @Author hollykunge
+ * @Date 2019/6/30 13:34
+ * @Version 1.0
+ **/
+public interface CommentMapper extends Mapper<Comment> {
+}

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzMeetingDao">
+    <resultMap type="com.workhub.z.servicechat.model.MeetingDto" id="meetingDto">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="meet_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="crt_time" jdbcType="VARCHAR"/>
+        <result property="creator" column="crt_user" jdbcType="VARCHAR"/>
+        <result property="creatorName" column="crt_name" jdbcType="VARCHAR"/>
+        <result property="creatorIp" column="crt_host" jdbcType="VARCHAR"/>
+        <result property="pname" column="pname" jdbcType="VARCHAR"/>
+        <result property="scop" column="scop" jdbcType="VARCHAR"/>
+        <result property="secretLevel" column="levels" jdbcType="VARCHAR"/>
+        <result property="meetImg" column="meet_img" jdbcType="VARCHAR"/>
+        <result property="iscross" column="iscross" jdbcType="VARCHAR"/>
+        <result property="status" column="meet_status" jdbcType="VARCHAR"/>
+        <result property="meetDescribe" column="meet_describe" jdbcType="VARCHAR"/>
+        <result property="type" column="meet_type" jdbcType="VARCHAR"/>
+        <result property="meetResource" column="meet_resource" jdbcType="VARCHAR"/>
+        <result property="startTime" column="begin_time" jdbcType="VARCHAR"/>
+        <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
+        <result property="org" column="org" jdbcType="VARCHAR"/>
+        <result property="currentProgress" column="current_progress" jdbcType="VARCHAR"/>
+        <result property="allProgress" column="all_progress" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap type="com.workhub.z.servicechat.VO.GeneralCodeNameVo" id="codeVo">
+        <result property="code" column="code" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryById" resultMap="meetingDto">
+        select id,
+               meet_name,
+               to_char(crt_time, 'yyyy-mm-dd hh24:mi:ss') crt_time,
+               crt_user,
+               crt_name,
+               crt_host,
+               pname,
+               scop,
+               levels,
+               meet_img,
+               iscross,
+               meet_status,
+               meet_describe,
+               meet_type,
+               meet_resource,
+               begin_time,
+               end_time,
+               org,
+               current_progress,
+               all_progress
+        from zz_meeting
+        where 1=1
+        and id = #{meetId}
+    </select>
+    <!--新增会议-->
+    <insert id="add" >
+        insert into ZZ_Meeting
+          (id,
+           meet_name,
+           crt_time,
+           crt_user,
+           crt_name,
+           crt_host,
+           pname,
+           scop,
+           levels,
+           meet_img,
+           iscross,
+           meet_status,
+           meet_describe,
+           meet_type,
+           org,
+           begin_time,
+           end_time,
+           all_progress,
+           current_progress
+           )
+        values
+          (
+           #{params.id},
+           #{params.meetName},
+           sysdate,
+           #{params.crtUser},
+           #{params.crtName},
+           #{params.crtHost},
+           #{params.pname},
+           #{params.scop},
+           #{params.levels},
+           #{params.meetImg},
+           #{params.iscross},
+           #{params.meetStatus},
+           #{params.meetDescribe},
+           #{params.meetType},
+           #{params.org,jdbcType = VARCHAR},
+           #{params.beginTime},
+           #{params.endTime},
+           #{params.allProgress,jdbcType = VARCHAR},
+           #{params.currentProgress,jdbcType = VARCHAR}
+           )
+     </insert>
+    <!--修改会议-->
+    <update id="update" >
+        update ZZ_Meeting
+        <set>
+            <if test="params.meetName != null and params.meetName != ''">
+                meet_name = #{params.meetName},
+            </if>
+            <if test="params.pname != null and params.pname != ''">
+                pname = #{params.pname},
+            </if>
+            <if test="params.scop != null and params.scop != ''">
+                scop = #{params.scop},
+            </if>
+            <if test="params.levels != null and params.levels != ''">
+                levels = #{params.levels},
+            </if>
+            <if test="params.meetImg != null and params.meetImg != ''">
+                meet_img = #{params.meetImg},
+            </if>
+            <if test="params.iscross != null and params.iscross != ''">
+                iscross = #{params.iscross},
+            </if>
+            <if test="params.meetStatus != null and params.meetStatus != ''">
+                meet_status = #{params.meetStatus},
+            </if>
+            <if test="params.meetDescribe != null and params.meetDescribe != ''">
+                meet_describe = #{params.meetDescribe},
+            </if>
+            <if test="params.meetType != null and params.meetType != ''">
+                meet_type = #{params.meetType},
+            </if>
+            <if test="params.org != null and params.org != ''">
+                org = #{params.org},
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                begin_time = #{params.beginTime},
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                end_time = #{params.endTime},
+            </if>
+
+            <if test="params.allProgress != null and params.allProgress != ''">
+                all_progress = #{params.allProgress},
+            </if>
+            <if test="params.currentProgress != null and params.currentProgress != ''">
+                current_progress = #{params.currentProgress},
+            </if>
+            upd_time = sysdate,
+            upd_user = #{params.updUser},
+            upd_host = #{params.updHost},
+            upd_name = #{params.updName}
+        </set>
+
+        where id = #{params.id}
+     </update>
+    <delete id="deleteData">
+        delete  from ZZ_Meeting where id = #{meetId}
+    </delete>
+    <!--获取会议议程代码表-->
+    <select id="getMeetProgressCodeList" resultMap="codeVo">
+        select code,name from ZZ_CODE_MEETING_PROGRESS order by code asc
+    </select>
+
+    <!--获取会议角色代码表-->
+    <select id="getMeetRoleCodeList" resultType="map">
+        select code,name,meet_function meetfunction from ZZ_CODE_MEETING_ROLE where is_use='1' order by code asc
+    </select>
+    <!--获取会议功能代码表-->
+    <select id="getMeetFunctionCodeList" resultMap="codeVo">
+        select code,name from ZZ_CODE_MEETING_FUNCTION where is_use='1' order by code asc
+    </select>
+    <select id="getMeetFunctionsByCodes" resultMap="codeVo">
+        select
+        code,
+        name
+        from zz_code_meeting_function
+        where 1=1
+        and code in (${codes})
+        order by code asc
+    </select>
+    <select id="getMeetingListForContacts" resultMap="meetingDto">
+        select t.*
+      from zz_meeting t, zz_meeting_user mu , (select max(createtime) lastmsgtime,receiver from zz_message_info ms  where type = 'MEET' group by receiver) ms2
+     where mu.meeting_id = t.id
+       and t.id = ms2.receiver(+)
+       and mu.user_id = #{userId}
+       order by nvl(ms2.lastmsgtime,t.crt_time) desc
+    </select>
+    <select id="getMeetInf" resultMap="meetingDto">
+        select id,
+               meet_name,
+               to_char(crt_time, 'yyyy-mm-dd hh24:mi:ss') crt_time,
+               crt_user,
+               crt_name,
+               crt_host,
+               pname,
+               scop,
+               levels,
+               meet_img,
+               iscross,
+               meet_status,
+               meet_describe,
+               meet_type,
+               meet_resource,
+               begin_time,
+               end_time,
+               org,
+               current_progress,
+               all_progress
+        from zz_meeting
+        where 1=1
+        and id = #{meetId}
+    </select>
+
+</mapper>

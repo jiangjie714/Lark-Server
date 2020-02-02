@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.github.hollykunge.security.mapper.UserCommonToolsMapper" >
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.entity.UserCommonTools" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="TOOL_ID" property="toolId" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <insert id="insertCommonTools" parameterType="java.util.List">
+    insert into PORTAL_USERCOMMONTOOLMAP
+    (
+    ID,
+    USER_ID,
+    TOOL_ID
+    )
+    <foreach collection="userCommonTools" item="item" index= "index" separator ="UNION ALL">
+     (
+      select
+      #{item.id},
+      #{item.userId},
+      #{item.toolId}
+      from dual
+      )
+    </foreach>
+  </insert>
+
+  <select id="selectUserCommonTools" parameterType="String" resultType="com.github.hollykunge.security.entity.UserCommonTools">
+    select ID,USER_ID,TOOL_ID from PORTAL_USERCOMMONTOOLMAP
+    where TOOL_ID=#{toolId} and USER_ID in
+    <foreach item="item" index="index" collection="userCommonToolsList"
+             open="(" separator="," close=")">
+            #{item.userId}
+    </foreach>
+  </select>
+
+  <delete id="deleteUserCommonTools" parameterType="String">
+    delete from PORTAL_USERCOMMONTOOLMAP where TOOL_ID=#{toolId} and USER_ID in
+    <foreach collection="userCommonToolsList" item = "item" open="(" separator="," close=")">
+      #{item.userId}
+    </foreach>
+  </delete>
+</mapper>

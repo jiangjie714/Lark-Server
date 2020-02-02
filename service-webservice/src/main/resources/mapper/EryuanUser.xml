@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.servicewebservice.dao.EryuanUserDao">
+    <resultMap id="EryuanUser" type="com.github.hollykunge.servicewebservice.model.EryuanUser">
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="H_ID" property="hId" jdbcType="NUMERIC" />
+        <result column="SYS_ID" property="sysId" jdbcType="VARCHAR" />
+        <result column="CASIC_ORG_CODE" property="casicOrgCode" jdbcType="VARCHAR" />
+        <result column="OPERATOR_NAME" property="operatorName" jdbcType="VARCHAR" />
+        <result column="EMP_CODE" property="empCode" jdbcType="VARCHAR" />
+        <result column="P_ID" property="pId" jdbcType="VARCHAR" />
+        <result column="SECRET_LEVEL" property="secretLevel" jdbcType="VARCHAR" />
+        <result column="BIRTH_DATE" property="birthDate" jdbcType="TIMESTAMP" />
+        <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+        <result column="O_TEL" property="oTel" jdbcType="VARCHAR" />
+        <result column="O_EMAIL" property="oEmail" jdbcType="VARCHAR" />
+        <result column="WORK_POST" property="workPost" jdbcType="VARCHAR" />
+        <result column="TEC_POST" property="tecPost" jdbcType="VARCHAR" />
+        <result column="ORDER_ID" property="orderId" jdbcType="NUMERIC" />
+        <result column="SYNC_TYPE" property="syncType" jdbcType="VARCHAR" />
+        <result column="DISP_TIME" property="dispTime" jdbcType="TIMESTAMP" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+        <result column="REFA" property="refa" jdbcType="VARCHAR" />
+        <result column="REFB" property="refb" jdbcType="VARCHAR" />
+        <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+        <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="XH" property="xh" jdbcType="VARCHAR" />
+        <result column="TECH_POST_NAME" property="techPostName" jdbcType="VARCHAR" />
+        <result column="TECH_POST_CODE" property="techPostCode" jdbcType="VARCHAR" />
+        <result column="TECHNICAL_POST_NAME" property="technicalPostName" jdbcType="VARCHAR" />
+        <result column="TECHNICAL_POST_CODE" property="technicalPostCode" jdbcType="VARCHAR" />
+        <result column="TECH_LEVEL_NAME" property="techLevelName" jdbcType="VARCHAR" />
+        <result column="TECH_LEVEL_CODE" property="techLevelCode" jdbcType="VARCHAR" />
+        <result column="TECHNICAL_MC_NAME" property="technicalMcName" jdbcType="VARCHAR" />
+        <result column="TECHNICAL_MC_TCODE" property="technicalMcTcode" jdbcType="VARCHAR" />
+        <result column="HIGHEST_INDUSTRIAL" property="highestIndustrial" jdbcType="VARCHAR" />
+        <result column="INNER_ID" property="innerId" jdbcType="VARCHAR" />
+        <result column="OFFICE_ADDR" property="officeAddr" jdbcType="VARCHAR" />
+        <result column="XQAH" property="xqah" jdbcType="VARCHAR" />
+        <result column="POLICITAL_NAME" property="policitalName" jdbcType="VARCHAR" />
+        <result column="POLICITAL_CODE" property="policitalCode" jdbcType="VARCHAR" />
+        <result column="PSN_SECRET_LEVEL" property="psnSecretLevel" jdbcType="VARCHAR" />
+        <result column="DEPT_TYYH_ORG_CODE" property="deptTyyhOrgCode" jdbcType="VARCHAR" />
+        <result column="DEPT_CODE" property="deptCode" jdbcType="VARCHAR" />
+        <result column="IN_BU_DATE" property="inBuDate" jdbcType="VARCHAR" />
+        <result column="IN_PARTY_DATE" property="inPartyDate" jdbcType="VARCHAR" />
+        <result column="MARRY_NAME" property="marryName" jdbcType="VARCHAR" />
+        <result column="MARRY_CODE" property="marryCode" jdbcType="VARCHAR" />
+        <result column="IDENTITY_TYPE" property="identityType" jdbcType="VARCHAR" />
+        <result column="HOME_TOWN" property="homeTown" jdbcType="VARCHAR" />
+        <result column="HR_PSN_CODE" property="hrPsnCode" jdbcType="VARCHAR" />
+        <result column="INFO_SECRET_LEVEL_NAME" property="infoSecretLevelName" jdbcType="VARCHAR" />
+        <result column="INFO_SECRET_LEVEL_CODE" property="infoSecretLevelCode" jdbcType="VARCHAR" />
+        <result column="END_FLAG" property="endFlag" jdbcType="VARCHAR" />
+        <result column="CODE" property="code" jdbcType="VARCHAR" />
+        <result column="HIGHEST_EDU" property="highestEdu" jdbcType="VARCHAR" />
+        <result column="DYCN" property="dycn" jdbcType="VARCHAR" />
+        <result column="FC_FLAG" property="fcFlag" jdbcType="VARCHAR" />
+        <result column="NATIONALITY_NAME" property="nationalityName" jdbcType="VARCHAR" />
+        <result column="UNIT_NAME" property="unitName" jdbcType="VARCHAR" />
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+        <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+        <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+        <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+        <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+        <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+        <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+        <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+        <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+        <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+        <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+        <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+        <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+        <result column="ATTR5" property="attr5" jdbcType="VARCHAR" />
+        <result column="ATTR6" property="attr6" jdbcType="VARCHAR" />
+        <result column="ATTR7" property="attr7" jdbcType="VARCHAR" />
+        <result column="ATTR8" property="attr8" jdbcType="VARCHAR" />
+        <result column="IS_SUCCESS" property="isSuccess" jdbcType="CHAR" />
+        <result column="ONEDOC_IS_SUCCESS" property="onedocIsSuccess" jdbcType="CHAR" />
+    </resultMap>
+
+    <!-- 新增二院用户 -->
+    <insert id="saveEryuanUser">
+		INSERT INTO ERYUANUSER (ID,H_ID, SYS_ID, CASIC_ORG_CODE, OPERATOR_NAME, EMP_CODE, P_ID,SECRET_LEVEL,BIRTH_DATE,GENDER,O_TEL,O_EMAIL,WORK_POST,TEC_POST,ORDER_ID,SYNC_TYPE,DISP_TIME,STATUS,REMARK,REFA,REFB,ORG_NAME,IS_SUCCESS,ONEDOC_IS_SUCCESS) VALUES
+			(#{id,jdbcType=VARCHAR},#{hId,jdbcType=VARCHAR},#{sysId,jdbcType=VARCHAR}, #{casicOrgCode,jdbcType=VARCHAR}, #{operatorName,jdbcType=VARCHAR},#{empCode,jdbcType=VARCHAR},#{pId,jdbcType=VARCHAR},#{secretLevel,jdbcType=VARCHAR},#{birthDate,jdbcType=TIMESTAMP},#{gender,jdbcType=VARCHAR},#{oTel,jdbcType=VARCHAR},#{oEmail,jdbcType=VARCHAR},#{workPost,jdbcType=VARCHAR},#{tecPost,jdbcType=VARCHAR},#{orderId,jdbcType=VARCHAR},#{syncType,jdbcType=VARCHAR},#{dispTime,jdbcType=TIMESTAMP},#{status,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{refa,jdbcType=VARCHAR},#{refb,jdbcType=VARCHAR},#{orgName,jdbcType=VARCHAR},#{isSuccess,jdbcType=VARCHAR},#{onedocIsSuccess,jdbcType=VARCHAR})
+	</insert>
+
+    <!--查询二院用户 -->
+    <select id="queryEryuanUserByNoCount" parameterType="String" resultType="int">
+        SELECT count(*)
+        FROM ERYUANUSER eu
+        WHERE eu.P_ID = #{pId}
+        </select>
+
+    <!-- 更新二院用户信息 -->
+    <update id="updateEryuanUserInfo" parameterType="com.github.hollykunge.servicewebservice.model.EryuanUser">
+		UPDATE ERYUANUSER SET H_ID = #{hId}, SYS_ID = #{sysId}, CASIC_ORG_CODE = #{casicOrgCode}, OPERATOR_NAME = #{operatorName},EMP_CODE = #{empCode},P_ID = #{pId},SECRET_LEVEL = #{secretLevel},BIRTH_DATE = #{birthDate,jdbcType=TIMESTAMP},GENDER = #{gender},O_TEL = #{oTel},O_EMAIL=#{oEmail},WORK_POST=#{workPost},TEC_POST=#{tecPost},ORDER_ID=#{orderId},SYNC_TYPE=#{syncType},DISP_TIME=#{dispTime,jdbcType=TIMESTAMP},STATUS = #{status,jdbcType=VARCHAR},REMARK=#{remark},REFA=#{refa},REFB=#{refb},ORG_NAME=#{orgName},IS_SUCCESS=#{isSuccess},ONEDOC_IS_SUCCESS=#{onedocIsSuccess}
+		WHERE P_ID = #{pId}
+	</update>
+</mapper>

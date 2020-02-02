@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzUserGroupMsgTagDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.ZzUserGroupMsgTag" id="ZzUserGroupMsgTagMap">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="userId" column="USER_ID" jdbcType="VARCHAR"/>
+        <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>
+        <result property="mesId" column="MES_ID" jdbcType="VARCHAR"/>
+        <result property="tagType" column="TAG_TYPE" jdbcType="VARCHAR"/>
+        <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="Map">
+        insert into ZZ_USER_GROUP_MSG_TAG(ID,USER_ID, GROUP_ID, MES_ID ,TAG_TYPE,CREATE_TIME)
+        values (#{id},#{userId}, #{groupId}, #{mesId}, #{tagType}, sysdate)
+    </insert>
+
+
+    <delete id="deleteByConditions" parameterType="Map">
+        delete from ZZ_USER_GROUP_MSG_TAG where 1=1
+        <if test="userId != null and userId != '' ">
+            and USER_ID = #{userId}
+        </if>
+        <if test="groupId != null and groupId != '' ">
+            and GROUP_ID = #{groupId}
+        </if>
+        <if test="mesId != null and mesId != '' ">
+            and MES_ID = #{mesId}
+        </if>
+        <if test="tagType != null and tagType != '' ">
+            and TAG_TYPE = #{tagType}
+        </if>
+    </delete>
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from ZZ_USER_GROUP_MSG_TAG where ID = #{id}
+    </delete>
+    <select id="getInfList" resultType="java.lang.String">
+        select b.content
+        from ZZ_USER_GROUP_MSG_TAG A,zz_message_info b
+        where 1 = 1
+        AND a.mes_id = b.msg_id
+        and b.type = 'GROUP'
+        <if test="userId != null and userId != '' ">
+            AND a.USER_ID = #{userId}
+        </if>
+        <if test="groupId != null and groupId != '' ">
+            AND a.GROUP_ID = #{groupId}
+        </if>
+        <if test="tagType != null and tagType != '' ">
+            AND a.TAG_TYPE = #{tagType}
+        </if>
+        <if test="userId!=null and userId!='' and groupId!=null and groupId!=''">
+            and exists (select 1
+            from zz_user_group c
+            where 1 = 1
+            and c.user_id = #{userId}
+            and c.group_id = #{groupId})
+        </if>
+        ORDER BY
+        A .CREATE_TIME DESC
+    </select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzLogDao">
+    <insert id="log">
+        insert into ZZ_CHAT_LOG(
+          id,
+          user_id,
+          user_name,
+          user_ip,
+          url,
+          method,
+          parameters,
+          return_result,
+          success_flg,
+          error_inf,
+          time )
+        values (
+        #{id,jdbcType=VARCHAR},
+        #{userId,jdbcType=VARCHAR},
+        #{userName,jdbcType=VARCHAR},
+        #{userIp,jdbcType=VARCHAR},
+        #{url,jdbcType=VARCHAR},
+        #{method,jdbcType=VARCHAR},
+        #{parameters,jdbcType=VARCHAR},
+        #{returnResult,jdbcType=VARCHAR},
+        #{successFlg,jdbcType=VARCHAR},
+        #{errorInf,jdbcType=VARCHAR},
+        sysdate
+        )
+    </insert>
+</mapper>

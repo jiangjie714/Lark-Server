@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzMsgTabRelationDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.ZzMsgTabRelation" id="ZzMsgTabRelationMap">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="tabId" column="TAB_ID" jdbcType="VARCHAR"/>
+        <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZzMsgTabRelationMap">
+        select
+          ID, TAB_ID, FILE_ID
+        from WORKHUB_IWORK.ZZ_MSG_TAB_RELATION
+        where ID = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZzMsgTabRelationMap">
+        select
+          ID, TAB_ID, FILE_ID
+        from WORKHUB_IWORK.ZZ_MSG_TAB_RELATION
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZzMsgTabRelationMap">
+        select
+          ID, TAB_ID, FILE_ID
+        from WORKHUB_IWORK.ZZ_MSG_TAB_RELATION
+        <where>
+            <if test="id != null and id != ''">
+                and ID = #{id}
+            </if>
+            <if test="tabId != null and tabId != ''">
+                and TAB_ID = #{tabId}
+            </if>
+            <if test="fileId != null and fileId != ''">
+                and FILE_ID = #{fileId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into ZZ_MSG_TAB_RELATION(ID,TAB_ID, FILE_ID)
+        values (#{id},#{tabId}, #{fileId})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update ZZ_MSG_TAB_RELATION
+        <set>
+            <if test="tabId != null and tabId != ''">
+                TAB_ID = #{tabId},
+            </if>
+            <if test="fileId != null and fileId != ''">
+                FILE_ID = #{fileId},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from ZZ_MSG_TAB_RELATION where ID = #{id}
+    </delete>
+
+    <delete id="deleteByTabId">
+        delete from ZZ_MSG_TAB_RELATION where TAB_ID = #{tabId}
+    </delete>
+</mapper>

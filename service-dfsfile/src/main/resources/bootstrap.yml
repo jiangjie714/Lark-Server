@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 10.11.24.129:8848
+        file-extension: yaml
+      discovery:
+        server-addr: 10.11.24.129:8848
+  application:
+    name: service-dfsfile

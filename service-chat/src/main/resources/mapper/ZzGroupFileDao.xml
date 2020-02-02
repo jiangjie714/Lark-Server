@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzGroupFileDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.ZzGroupFile" id="ZzGroupFileMap">
+        <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"/>
+        <result property="fileName" column="FILE_NAME" jdbcType="VARCHAR"/>
+        <result property="fileExt" column="FILE_EXT" jdbcType="VARCHAR"/>
+        <result property="fileType" column="FILE_TYPE" jdbcType="VARCHAR"/>
+        <result property="sizes" column="SIZES" jdbcType="NUMERIC"/>
+        <result property="path" column="PATH" jdbcType="VARCHAR"/>
+        <result property="readPath" column="READ_PATH" jdbcType="VARCHAR"/>
+        <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="creator" column="CREATOR" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="updator" column="UPDATOR" jdbcType="VARCHAR"/>
+        <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>
+        <result property="levels" column="LEVELS" jdbcType="VARCHAR"/>
+        <result property="creatorName" column="CREATOR_NAME" jdbcType="VARCHAR"/>
+        <result property="approveFlg" column="APPROVE_FLG" jdbcType="VARCHAR"/>
+        <result property="isGroup" column="IS_GROUP" jdbcType="VARCHAR"/>
+        <result property="meetFileType" column="MEET_FILE_TYPE" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <resultMap id="GroupFileVo" type="com.workhub.z.servicechat.VO.GroupFileVo">
+        <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"></result>
+        <result property="fileName" column="FILE_NAME" jdbcType="VARCHAR"></result>
+        <result property="time" column="TIME" jdbcType="VARCHAR"></result>
+        <result property="reviser" column="REVISER" jdbcType="VARCHAR"></result>
+        <result property="levels" column="LEVELS" jdbcType="VARCHAR"></result>
+        <result property="meetFileType" column="MEET_FILE_TYPE" jdbcType="VARCHAR"></result>
+        <result property="fileSize" column="SIZES" jdbcType="VARCHAR"></result>
+        <result property="extension" column="FILE_EXT" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <resultMap id="FileMonitoringVO" type="com.workhub.z.servicechat.VO.FileMonitoringVO">
+        <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"></result>
+        <result property="fileName" column="FILE_NAME" jdbcType="VARCHAR"></result>
+        <result property="filePath" column="FILE_PATH" jdbcType="VARCHAR"></result>
+        <result property="fileSize" column="FILE_SIZE" jdbcType="VARCHAR"></result>
+        <result property="uploadTime" column="UPLOAD_TIME" jdbcType="VARCHAR"></result>
+        <result property="levels" column="LEVELS" jdbcType="VARCHAR"></result>
+        <result property="uploadUserName" column="CREATOR_NAME" jdbcType="VARCHAR"></result>
+        <result property="isGroup" column="IS_GROUP" jdbcType="VARCHAR"></result>
+        <result property="receiverName" column="RECEIVER_NAME" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <!--查询群组文件
+    <select id="groupFileList" resultMap="GroupFileVo">
+        SELECT *
+        FROM (
+        SELECT A.*, ROWNUM RN
+        FROM (SELECT ZGF.FILE_ID AS FILE_ID,
+        ZGF.FILE_NAME AS FILE_NAME,
+        ZGF.LEVELS AS LEVELS,
+        SU.FULLNAME AS REVISER,
+        TO_CHAR(ZGF.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS TIME
+        FROM ZZ_GROUP ZG
+        LEFT JOIN ZZ_GROUP_FILE ZGF
+        ON ZG.GROUP_ID = ZGF.GROUP_ID
+        LEFT JOIN SYS_USER SU
+        ON ZGF.CREATOR = SU.USERID
+        WHERE ZG.GROUP_ID = #{id} ORDER BY ZGF.CREATE_TIME DESC
+        ) A
+        WHERE ROWNUM &lt;= #{end}
+        )
+        WHERE RN &gt; #{start}
+    </select>
+     -->
+    <select id="groupFileList" resultMap="GroupFileVo">
+          SELECT ZG.GROUP_ID,
+            ZGF.FILE_ID AS FILE_ID,
+            ZGF.FILE_NAME||decode(nvl(ZGF.FILE_EXT,'null'),'null','','.'||ZGF.FILE_EXT) as FILE_NAME,
+            ZGF.LEVELS AS LEVELS,
+            ZGF.CREATOR AS REVISER,
+            TO_CHAR(ZGF.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS TIME
+       FROM ZZ_GROUP ZG, ZZ_GROUP_FILE ZGF,zz_user_group zu
+      WHERE ZG.GROUP_ID = ZGF.GROUP_ID
+      AND ZGF.SEND_FLG='1'
+      <if test="query!=null and query != ''">
+          AND ZGF.FILE_NAME||decode(nvl(ZGF.FILE_EXT,'null'),'null','','.'||ZGF.FILE_EXT) like '%'||#{query}||'%'
+      </if>
+      AND ZG.GROUP_ID = #{id}
+      and zg.group_id = zu.group_id
+      and zu.user_id = #{userId}
+      and zu.createtime &lt;= zgf.create_time
+      ORDER BY ZGF.CREATE_TIME DESC
+    </select>
+
+    <select id="groupFileListByMe" resultMap="GroupFileVo">
+          SELECT ZG.GROUP_ID,
+            ZGF.FILE_ID AS FILE_ID,
+            ZGF.FILE_NAME||decode(nvl(ZGF.FILE_EXT,'null'),'null','','.'||ZGF.FILE_EXT) as FILE_NAME,
+            ZGF.LEVELS AS LEVELS,
+            ZGF.CREATOR_NAME AS REVISER,
+            TO_CHAR(ZGF.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS TIME
+       FROM ZZ_GROUP ZG, ZZ_GROUP_FILE ZGF
+      WHERE ZG.GROUP_ID = ZGF.GROUP_ID
+      AND ZGF.SEND_FLG='1'
+      AND ZG.GROUP_ID = #{groupId}
+      AND ZGF.CREATOR = #{userId}
+      ORDER BY ZGF.CREATE_TIME DESC
+    </select>
+
+    <select id="groupFileListByOwner" resultMap="GroupFileVo">
+          SELECT ZG.GROUP_ID,
+            ZGF.FILE_ID AS FILE_ID,
+            ZGF.FILE_NAME||decode(nvl(ZGF.FILE_EXT,'null'),'null','','.'||ZGF.FILE_EXT) as FILE_NAME,
+            ZGF.LEVELS AS LEVELS,
+            ZGF.CREATOR_NAME AS REVISER,
+            TO_CHAR(ZGF.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS TIME
+       FROM ZZ_GROUP ZG, ZZ_GROUP_FILE ZGF
+      WHERE ZG.GROUP_ID = ZGF.GROUP_ID
+      AND ZGF.SEND_FLG='1'
+      AND ZG.GROUP_ID = #{groupId}
+      AND ZG.CREATOR = #{userId}
+      AND ZGF.APPROVE_FLG = '0'
+      ORDER BY ZGF.CREATE_TIME DESC
+    </select>
+
+    <select id="groupFileListByPass" resultMap="GroupFileVo">
+          SELECT ZG.GROUP_ID,
+            ZGF.FILE_ID AS FILE_ID,
+            ZGF.FILE_NAME||decode(nvl(ZGF.FILE_EXT,'null'),'null','','.'||ZGF.FILE_EXT) as FILE_NAME,
+            ZGF.LEVELS AS LEVELS,
+            ZGF.CREATOR_NAME AS REVISER,
+            TO_CHAR(ZGF.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS TIME
+       FROM ZZ_GROUP ZG, ZZ_GROUP_FILE ZGF
+      WHERE ZG.GROUP_ID = ZGF.GROUP_ID
+      AND ZGF.SEND_FLG='1'
+      AND ZG.GROUP_ID = #{groupId}
+      AND ZGF.APPROVE_FLG = '1'
+      ORDER BY ZGF.CREATE_TIME DESC
+    </select>
+    <!-- 文件上传转换到fastdfs系统后，启用该方法
+    <select id="groupFileList" resultMap="GroupFileVo">
+        select zgf.receiver as group_id,
+                zgf.file_id as file_id,
+                f.file_name || decode(nvl(f.file_ext, 'null'), 'null', '', '.' || f.file_ext) as file_name,
+                zgf.levels as levels,
+                zgf.user_id as reviser,
+                to_char(zgf.upload_time, 'YYYY-MM-DD HH24:MI:SS') as time
+        from ZZ_UPLOAD_FILE ZGF, ZZ_GROUP ZG, FILE_MANAGE_INF F
+        where zgf.file_id = f.file_id
+        and zgf.receiver = zg.group_id
+        and zgf.is_group = '1'
+        and zg.group_id=#{id}
+        <if test="query!=null and query != ''">
+            and f.file_name || decode(nvl(f.file_ext, 'null'), 'null', '', '.' || f.file_ext) like '%'||#{query}||'%'
+        </if>
+        order by zgf.upload_time desc
+    </select>
+    -->
+    <!--查询群组文件总记录数-->
+    <select id="groupFileListTotal" resultType="java.lang.Long">
+     SELECT COUNT(*)
+       FROM ZZ_GROUP ZG
+       LEFT JOIN ZZ_GROUP_FILE ZGF
+         ON ZG.GROUP_ID = ZGF.GROUP_ID
+       LEFT JOIN SYS_USER SU
+         ON ZGF.CREATOR = SU.USERID
+      WHERE ZG.GROUP_ID = #{id}
+      ORDER BY ZGF.CREATE_TIME DESC
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZzGroupFileMap">
+        select
+          FILE_ID, FILE_NAME, FILE_EXT, FILE_TYPE, SIZES, PATH, READ_PATH, CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR, GROUP_ID, LEVELS,APPROVE_FLG,CREATOR_NAME,IS_GROUP,MEET_FILE_TYPE
+        from ZZ_GROUP_FILE
+        where FILE_ID = #{fileId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZzGroupFileMap">
+        select
+          FILE_ID, FILE_NAME, FILE_EXT, FILE_TYPE, SIZES, PATH, READ_PATH, CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR, GROUP_ID, LEVELS
+        from ZZ_GROUP_FILE
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZzGroupFileMap">
+        select
+          FILE_ID, FILE_NAME, FILE_EXT, FILE_TYPE, SIZES, PATH, READ_PATH, CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR, GROUP_ID, LEVELS
+        from ZZ_GROUP_FILE
+        <where>
+            <if test="fileId != null and fileId != ''">
+                and FILE_ID = #{fileId}
+            </if>
+            <if test="fileName != null and fileName != ''">
+                and FILE_NAME = #{fileName}
+            </if>
+            <if test="fileExt != null and fileExt != ''">
+                and FILE_EXT = #{fileExt}
+            </if>
+            <if test="fileType != null and fileType != ''">
+                and FILE_TYPE = #{fileType}
+            </if>
+            <if test="sizes != null">
+                and SIZES = #{sizes}
+            </if>
+            <if test="path != null and path != ''">
+                and PATH = #{path}
+            </if>
+            <if test="readPath != null and readPath != ''">
+                and READ_PATH = #{readPath}
+            </if>
+            <if test="createTime != null">
+                and CREATE_TIME = #{createTime}
+            </if>
+            <if test="creator != null and creator != ''">
+                and CREATOR = #{creator}
+            </if>
+            <if test="updateTime != null">
+                and UPDATE_TIME = #{updateTime}
+            </if>
+            <if test="updator != null and updator != ''">
+                and UPDATOR = #{updator}
+            </if>
+            <if test="groupId != null and groupId != ''">
+                and GROUP_ID = #{groupId}
+            </if>
+            <if test="levels != null and levels != ''">
+                and LEVELS = #{levels}
+            </if>
+        </where>
+    </select>
+    <!--新增所有列-->
+    <insert id="insert">
+               insert into ZZ_GROUP_FILE(FILE_ID, FILE_NAME, FILE_EXT, FILE_TYPE, SIZES, PATH, READ_PATH, CREATE_TIME, CREATOR, GROUP_ID, LEVELS,CREATOR_NAME)
+        values (#{fileId},#{fileName}, #{fileExt}, #{fileType}, #{sizes}, #{path}, #{readPath}, sysdate, #{creator}, #{groupId}, #{levels}, #{creatorName})
+    </insert>
+    <!--通过主键修改数据-->
+    <update id="update">
+        update ZZ_GROUP_FILE
+        <set>
+            <if test="fileName != null and fileName != ''">
+                FILE_NAME = #{fileName},
+            </if>
+            <if test="fileExt != null and fileExt != ''">
+                FILE_EXT = #{fileExt},
+            </if>
+            <if test="fileType != null and fileType != ''">
+                FILE_TYPE = #{fileType},
+            </if>
+            <if test="sizes != null">
+                SIZES = #{sizes},
+            </if>
+            <if test="path != null and path != ''">
+                PATH = #{path},
+            </if>
+            <if test="readPath != null and readPath != ''">
+                READ_PATH = #{readPath},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="creator != null and creator != ''">
+                CREATOR = #{creator},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="updator != null and updator != ''">
+                UPDATOR = #{updator},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                GROUP_ID = #{groupId},
+            </if>
+            <if test="levels != null and levels != ''">
+                LEVELS = #{levels},
+            </if>
+            <if test="meetFileType != null and meetFileType != ''">
+                MEET_FILE_TYPE = #{meetFileType},
+            </if>
+        </set>
+        where FILE_ID = #{fileId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from ZZ_GROUP_FILE where FILE_ID = #{fileId}
+    </delete>
+    <!--查询附件大小-->
+    <select id="queryFileSize" resultType="java.lang.Double">
+        select sum(nvl(sizes,0))/${unit} as sizes
+          from zz_group_file
+         where 1 = 1
+           and to_char(create_time, #{dateFmat}) = #{date}
+    </select>
+    <!--查询附件大小区间-->
+    <select id="queryFileSizeRange" resultType="Map">
+
+        select sum(a.sizes)/${unit}  sizes,
+        a.create_time dates
+        from (select nvl(sizes,0) sizes,to_char(create_time, #{dateFmat}) create_time from zz_group_file) a
+        where 1 = 1
+        and a.create_time &lt;= #{dateEnd}
+        and a.create_time &gt;= #{dateBegin}
+        group by a.create_time
+
+    </select>
+    <update id="fileUpdate">
+        update ZZ_GROUP_FILE
+        set SEND_FLG='1',
+        LEVELS=#{param.levels},
+        GROUP_ID=#{param.receiver},
+        APPROVE_FLG=#{param.approveFlg}
+        where FILE_ID=#{param.fileId}
+    </update>
+    <insert id="fileRecord">
+        insert into ZZ_GROUP_FILE
+        (
+          ID,
+          FILE_ID,
+          FILE_NAME,
+          FILE_EXT,
+          FILE_TYPE,
+          SIZES,
+          CREATE_TIME,
+          CREATOR,
+          GROUP_ID,
+          LEVELS,
+          SEND_FLG,
+          CREATOR_NAME,
+          APPROVE_FLG,
+          RECEIVER_NAME,
+          IS_GROUP,
+          MEET_FILE_TYPE
+        )
+        values (
+        #{param.id},
+        #{param.fileId},
+        #{param.fileName},
+        #{param.fileExt},
+        #{param.fileType},
+        #{param.sizes},
+        sysdate,
+        #{param.creator},
+        #{param.groupId},
+        #{param.levels},
+        '1',
+        #{param.creatorName},
+        #{param.approveFlg},
+        #{param.receiverName},
+        #{param.isGroup},
+        #{param.meetFileType,jdbcType=VARCHAR}
+        )
+    </insert>
+    <select id="getGroupFileList" resultMap="GroupFileVo">
+          SELECT ZGF.GROUP_ID,
+            ZGF.FILE_ID AS FILE_ID,
+            ZGF.FILE_NAME||decode(nvl(ZGF.FILE_EXT,'null'),'null','','.'||ZGF.FILE_EXT) as FILE_NAME,
+            ZGF.LEVELS AS LEVELS,
+            ZGF.CREATOR_NAME AS REVISER,
+            TO_CHAR(ZGF.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS TIME,
+            ZGF.MEET_FILE_TYPE,
+            ZGF.FILE_EXT,
+            to_char(trunc(ZGF.SIZES,2),'FM999999999999990') sizes
+
+       FROM ZZ_GROUP_FILE ZGF
+      WHERE ZGF.APPROVE_FLG = '1'
+      <if test="params.groupId != null and params.groupId !=''">
+          AND ZGF.GROUP_ID = #{params.groupId}
+      </if>
+        <if test="params.userId != null and params.userId !=''">
+            AND ZGF.CREATOR = #{params.userId}
+        </if>
+        <if test="params.isGroup != null and params.isGroup !=''">
+            AND ZGF.IS_GROUP = #{params.isGroup}
+        </if>
+      ORDER BY ZGF.CREATE_TIME DESC
+    </select>
+    <!--文件监控查询-->
+    <select id="fileMonitoring" resultMap="FileMonitoringVO">
+        select f.file_id,
+                f.file_name || decode(nvl(f.file_ext, 'null'), 'null', '', '.' || f.file_ext) as file_name,
+                TO_CHAR(nvl(f.sizes, 0) / 1024 / 1024,'FM999999999990.00') as file_size,
+                f.path as file_path,
+                to_char(f.create_time,'yyyy-mm-dd hh24:mi:ss') as upload_time,
+                f.levels,
+                f.creator_name,
+                is_group,
+                nvl(receiver_name,'') receiver_name
+                from zz_group_file f
+                where f.send_flg = '1'
+                <if test="params.fileName != null and params.fileName != ''">
+                    and f.file_name || decode(nvl(f.file_ext, 'null'), 'null', '', '.' || f.file_ext) like '%'||#{params.fileName}||'%'
+                </if>
+                <if test="params.userName != null and params.userName != ''">
+                    and f.creator_name like '%'||#{params.userName}||'%'
+                </if>
+                <if test="params.receiverName != null and params.receiverName != ''">
+                    and f.receiver_name like '%'||#{params.receiverName}||'%'
+                </if>
+                <if test="params.level != null and params.level != ''">
+                    and f.levels = #{params.level}
+                </if>
+                <if test="params.dateBegin != null and params.dateBegin != ''">
+                    and to_char(create_time, 'yyyy-mm-dd') &gt;= #{params.dateBegin}
+                </if>
+                <if test="params.dateEnd != null and params.dateEnd != ''">
+                    and to_char(create_time, 'yyyy-mm-dd') &lt;= #{params.dateEnd}
+                </if>
+                <if test="params.isGroup != null and params.isGroup != '' ">
+                    and f.is_group = #{params.isGroup}
+                </if>
+                order by create_time desc
+    </select>
+    <!-- 更新文件审计标志-->
+    <update id="setFileApproveFLg" parameterType="Map">
+        <foreach collection="params" item="param" separator=";" open="begin" close=";end;">
+            update ZZ_GROUP_FILE
+            set update_time=sysdate,
+            updator=#{param.updator},
+            approve_flg=#{param.approveFlg}
+            where FILE_ID=#{param.fileId}
+        </foreach>
+    </update>
+
+</mapper>

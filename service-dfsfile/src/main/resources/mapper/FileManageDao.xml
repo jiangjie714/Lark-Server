@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.hollykunge.security.security.dao.FileManageDao">
+
+    <resultMap type="com.github.hollykunge.security.entity.FileManageInf" id="FileManageInf">
+        <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"/>
+        <result property="fileName" column="FILE_NAME" jdbcType="VARCHAR"/>
+        <result property="fileExt" column="FILE_EXT" jdbcType="VARCHAR"/>
+        <result property="fileType" column="FILE_TYPE" jdbcType="VARCHAR"/>
+        <result property="sizes" column="SIZES" jdbcType="NUMERIC"/>
+        <result property="path" column="PATH" jdbcType="VARCHAR"/>
+        <result property="readPath" column="READ_PATH" jdbcType="VARCHAR"/>
+        <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="creator" column="CREATOR" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="updator" column="UPDATOR" jdbcType="VARCHAR"/>
+        <result property="levels" column="LEVELS" jdbcType="VARCHAR"/>
+        <result property="creatorName" column="CREATOR_NAME" jdbcType="VARCHAR"/>
+        <result property="sendFlg" column="SEND_FLG" jdbcType="VARCHAR"/>
+        <result property="fileEncrypeFlg" column="FILE_ENCRYPE_FLG" jdbcType="VARCHAR"/>
+        <result property="workType" column="WORK_TYPE" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="FileMonitoringVO" type="com.github.hollykunge.security.vo.FileMonitoringVO">
+        <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"></result>
+        <result property="fileName" column="FILE_NAME" jdbcType="VARCHAR"></result>
+        <result property="filePath" column="FILE_PATH" jdbcType="VARCHAR"></result>
+        <result property="fileSize" column="FILE_SIZE" jdbcType="VARCHAR"></result>
+        <result property="uploadTime" column="UPLOAD_TIME" jdbcType="VARCHAR"></result>
+        <result property="levels" column="LEVELS" jdbcType="VARCHAR"></result>
+        <result property="uploadUserName" column="CREATOR_NAME" jdbcType="VARCHAR"></result>
+        <result property="isGroup" column="IS_GROUP" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <!--查询单个-->
+    <select id="queryById" resultMap="FileManageInf">
+        select
+          FILE_ID, FILE_NAME, FILE_EXT, FILE_TYPE, SIZES, PATH, READ_PATH, CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR, LEVELS ,SEND_FLG,FILE_ENCRYPE_FLG,WORK_TYPE
+        from FILE_MANAGE_INF
+        where FILE_ID = #{fileId}
+    </select>
+    <!--新增所有列-->
+    <insert id="insert">
+               insert into FILE_MANAGE_INF(FILE_ID, FILE_NAME, FILE_EXT, FILE_TYPE, SIZES, PATH, READ_PATH, CREATE_TIME, CREATOR, LEVELS,CREATOR_NAME,SEND_FLG,FILE_ENCRYPE_FLG)
+        values (#{fileId,jdbcType=VARCHAR},#{fileName,jdbcType=VARCHAR}, #{fileExt,jdbcType=VARCHAR}, #{fileType,jdbcType=VARCHAR}, #{sizes}, #{path,jdbcType=VARCHAR}, #{readPath,jdbcType=VARCHAR},sysdate, #{creator,jdbcType=VARCHAR}, #{levels,jdbcType=VARCHAR}, #{creatorName,jdbcType=VARCHAR}, #{sendFlg,jdbcType=VARCHAR}, #{fileEncrypeFlg,jdbcType=VARCHAR})
+    </insert>
+    <!--通过主键修改数据-->
+    <update id="update">
+        update FILE_MANAGE_INF
+        <set>
+            <if test="fileName != null and fileName != ''">
+                FILE_NAME = #{fileName},
+            </if>
+            <if test="fileExt != null and fileExt != ''">
+                FILE_EXT = #{fileExt},
+            </if>
+            <if test="fileType != null and fileType != ''">
+                FILE_TYPE = #{fileType},
+            </if>
+            <if test="sizes != null">
+                SIZES = #{sizes},
+            </if>
+            <if test="path != null and path != ''">
+                PATH = #{path},
+            </if>
+            <if test="readPath != null and readPath != ''">
+                READ_PATH = #{readPath},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="creator != null and creator != ''">
+                CREATOR = #{creator},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="updator != null and updator != ''">
+                UPDATOR = #{updator},
+            </if>
+            <if test="levels != null and levels != ''">
+                LEVELS = #{levels},
+            </if>
+        </set>
+        where FILE_ID = #{fileId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from FILE_MANAGE_INF where FILE_ID = #{fileId}
+    </delete>
+    <!--设置发送标志-->
+    <update id="fileUpdate">
+        update FILE_MANAGE_INF
+        set SEND_FLG='1',
+        LEVELS=#{level},
+        WORK_TYPE=#{type}
+        where FILE_ID=#{fileId}
+    </update>
+    <!--查询附件大小-->
+    <select id="queryFileSize" resultType="java.lang.Double">
+        select nvl(sum(nvl(sizes,0)),0)/${unit} as sizes
+          from file_manage_inf
+         where 1 = 1
+           and to_char(create_time, #{dateFmat}) = #{date}
+    </select>
+    <!--查询附件大小区间-->
+    <select id="queryFileSizeRange" resultType="Map">
+        select sum(a.sizes)/${unit}  sizes,
+        a.create_time dates
+        from (select nvl(sizes,0) sizes,to_char(create_time, #{dateFmat}) create_time from file_manage_inf) a
+        where 1 = 1
+        and a.create_time &lt;= #{dateEnd}
+        and a.create_time &gt;= #{dateBegin}
+        group by a.create_time
+    </select>
+    <!--文件监控查询-->
+    <select id="fileMonitoring" resultMap="FileMonitoringVO">
+        select f.file_id,
+        f.file_name || decode(nvl(f.file_ext, 'null'), 'null', '', '.' || f.file_ext) as file_name,
+        TO_CHAR(nvl(f.sizes, 0) / 1024 / 1024,'FM999999999990.00') as file_size,
+        f.path as file_path,
+        to_char(f.create_time,'yyyy-mm-dd hh24:mi:ss') as upload_time,
+        f.levels,
+        f.creator_name,
+        (case when f.file_id in ( select u.file_id from zz_upload_file u where u.is_group='1')  then '1' else '0' END) is_group
+        from zz_group_file f
+        where f.send_flg = '1'
+        <if test="params.fileName != null and params.fileName != ''">
+            and f.file_name || decode(nvl(f.file_ext, 'null'), 'null', '', '.' || f.file_ext) like '%'||#{params.fileName}||'%'
+        </if>
+        <if test="params.userName != null and params.userName != ''">
+            and f.creator_name like '%'||#{params.userName}||'%'
+        </if>
+        <if test="params.level != null and params.level != ''">
+            and f.levels = #{params.level}
+        </if>
+        <if test="params.dateBegin != null and params.dateBegin != ''">
+            and to_char(f.create_time, 'yyyy-mm-dd') &gt;= #{params.dateBegin}
+        </if>
+        <if test="params.dateEnd != null and params.dateEnd != ''">
+            and to_char(f.create_time, 'yyyy-mm-dd') &lt;= #{params.dateEnd}
+        </if>
+        <if test="params.isGroup != null and params.isGroup != '' and params.isGroup=='1'.toString()">
+            and exists (select 1 from zz_upload_file g where g.file_id=f.file_id and g.is_group='1')
+        </if>
+        <if test="params.isGroup != null and params.isGroup != '' and params.isGroup=='0'.toString()">
+            and not exists (select 1 from zz_upload_file g where g.file_id=f.file_id and g.is_group='1')
+        </if>
+    </select>
+</mapper>

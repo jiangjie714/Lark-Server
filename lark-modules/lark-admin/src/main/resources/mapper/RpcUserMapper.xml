@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.hollykunge.security.admin.mapper.RpcUserMapper">
+    <resultMap id="BaseResultMap" type="com.github.hollykunge.security.admin.api.dto.AdminUser">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="pId" jdbcType="VARCHAR" property="pId"/>
+        <result column="orgCode" jdbcType="VARCHAR" property="orgCode"/>
+        <result column="orgName" jdbcType="VARCHAR" property="orgName"/>
+        <!-- 父级组织 -->
+        <result column="parentOrgName" jdbcType="VARCHAR" property="parentOrgName"/>
+        <result column="secretLevel" jdbcType="VARCHAR" property="secretLevel"/>
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+        <result column="orderId" jdbcType="NUMERIC" property="orderId"/>
+        <result column="empCode" jdbcType="VARCHAR" property="empCode"/>
+        <result column="birthDate" jdbcType="TIMESTAMP" property="birthDate"/>
+        <result column="oTel" jdbcType="VARCHAR" property="oTel"/>
+        <result column="oEmail" jdbcType="VARCHAR" property="oEmail"/>
+        <result column="workPost" jdbcType="VARCHAR" property="workPost"/>
+        <result column="tecPost" jdbcType="VARCHAR" property="tecPost"/>
+        <result column="deleted" jdbcType="VARCHAR" property="deleted"/>
+        <result column="refa" jdbcType="VARCHAR" property="refa"/>
+        <result column="refb" jdbcType="VARCHAR" property="refb"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <!-- 以下为岗位 -->
+        <result column="posName" jdbcType="VARCHAR" property="posName"/>
+        <result column="posDec" jdbcType="VARCHAR" property="posDec"/>
+        <result column="posType" jdbcType="VARCHAR" property="posType"/>
+        <result column="posPermission" jdbcType="INTEGER" property="posPermission"/>
+        <!-- 以下为角色 -->
+        <result column="roleCode" jdbcType="VARCHAR" property="roleCode"/>
+        <result column="roleName" jdbcType="VARCHAR" property="roleName"/>
+        <result column="rolePath" jdbcType="VARCHAR" property="rolePath"/>
+        <result column="roleType" jdbcType="VARCHAR" property="roleType"/>
+    </resultMap>
+    <select id="getUserInfo" resultMap="BaseResultMap">
+        SELECT DISTINCT
+        US. ID ID,
+        US. NAME NAME,
+        US.P_ID PID,
+        US.ORG_CODE ORGCODE,
+        US.ORG_NAME ORGNAME,
+        PARENTORG.ORG_NAME parentOrgName,
+        US.SECRET_LEVEL SECRETLEVEL,
+        US.GENDER GENDER,
+        US.ORDER_ID ORDERID,
+        US.EMP_CODE EMPCODE,
+        US.BIRTH_DATE BIRTHDATE,
+        US.O_TEL OTEL,
+        US.O_EMAIL OEMAIL,
+        US.WORK_POST WORKPOST,
+        US.TEC_POST TECPOST,
+        US.DELETED DELETED,
+        US.REFA REFA,
+        US.REFB REFB,
+        US.AVATAR AVATAR,
+        POS. NAME POSNAME,
+        POS.DESCRIPTION POSDEC,
+        POS. TYPE POSTYPE,
+        POS. PERMISSION POSPERMISSION,
+        RO.CODE ROLECODE,
+        RO. NAME ROLENAME,
+        RO. PATH ROLEPATH,
+        RO. TYPE ROLETYPE
+        FROM
+        ADMIN_USER US
+        LEFT JOIN ADMIN_POSITIONUSERMAP PMAP ON US. ID = PMAP.USER_ID
+        LEFT JOIN ADMIN_POSITION POS ON PMAP.POSITION_ID = POS. ID
+        LEFT JOIN ADMIN_ROLEUSERMAP ROLEMAP ON US. ID = ROLEMAP.USER_ID
+        LEFT JOIN ADMIN_ROLE RO ON ROLEMAP.ROLE_ID = RO. ID
+        LEFT JOIN ADMIN_ORG ORG ON US.ORG_CODE = ORG.ID
+        LEFT JOIN ADMIN_ORG PARENTORG ON ORG.PARENT_ID = PARENTORG.ID
+        WHERE 1 = 1
+        <if test="pid != null and pid != ''">
+            AND US.P_ID = #{pid}
+        </if>
+        <if test="userid != null and userid != ''">
+            AND US.ID = #{userid}
+        </if>
+    </select>
+</mapper>

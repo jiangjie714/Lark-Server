@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.security.mapper.HeatMapMapper" >
+    <resultMap id="BaseResultMap" type="com.github.hollykunge.security.entity.HeatMap" >
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+        <result column="MAP_DATE" property="mapDate" jdbcType="TIMESTAMP" />
+        <result column="COMMITS" property="commits" jdbcType="NUMERIC" />
+    </resultMap>
+</mapper>

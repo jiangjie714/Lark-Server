@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:>
+<head>
+    <title>文件分页列表</title>
+</head>
+<body>
+<div>
+    <div>
+        <form action="/file/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*">&nbsp&nbsp&nbsp&nbsp&nbsp
+            <input type="submit" value="普通文件上传" class="btn btn-success">
+        </form>
+    </div>
+    <div style="height: 1px;background-color: black;width: 100%;margin-top: 5px"></div>
+    <div>
+        <form action="/file/defaultAvator" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*">&nbsp&nbsp&nbsp&nbsp&nbsp
+            <input type="submit" value="默认头像上传" class="btn btn-success">
+        </form>
+    </div>
+</div>
+<div style="height: 1px;background-color: black;width: 100%;margin-top: 5px"></div>
+<div style="margin-top: 10px">
+    <table class="table table-bordered table-hover">
+        <thead>
+        <th class="text-center">文件名字</th>
+        <th class="text-center">文件后缀</th>
+        <th class="text-center">文件服务器路径</th>
+        <th class="text-center">文件状态</th>
+        <th class="text-center">操作</th>
+        </thead>
+        <tbody class="text-center">
+        <tr th:each="obj : ${page.getResult().getData()}">
+            <td style="text-align: center" th:text="${obj.getFileName()}"></td>
+            <td style="text-align: center" th:text="${obj.getFileExt()}"></td>
+            <td style="text-align: center" th:text="${obj.getPath()}"></td>
+            <td style="text-align: center" th:text="${obj.getStatus()}"></td>
+            <td style="text-align: center">
+                <span th:switch="${obj.getSensitiveType()}">
+                    <p th:case="'0'">
+                        <a th:href="@{'/file/download?fileId=' + ${obj.getId()}}">普通文件下载</a>
+                    </p>
+                    <p th:case="*">
+                        <a th:href="@{'/file/sensitiveDownload?fileId=' + ${obj.getId()}}">加密文件下载</a>
+                    </p>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div style="height: 1px;background-color: black;width: 100%"></div>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.security.admin.mapper.PositionMapper" >
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.admin.entity.Position" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+    <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+      <result column="PERMISSION" property="permission" jdbcType="NUMERIC" />
+  </resultMap>
+    <resultMap id="selectPositionUserResultMap" type="com.github.hollykunge.security.admin.entity.PositionDTo" >
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="SORT" property="sort" jdbcType="DECIMAL" />
+        <result column="DESCRIBE" property="description" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+        <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+        <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+        <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+        <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+        <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+        <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+        <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+        <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+        <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+        <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+        <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+        <collection property="users" ofType="com.github.hollykunge.security.admin.entity.User">
+            <id column="USERID" jdbcType="VARCHAR" property="id" />
+            <result column="UNAME" jdbcType="VARCHAR" property="name" />
+            <result column="UPID" jdbcType="VARCHAR" property="pId" />
+            <result column="UORGCODE" jdbcType="VARCHAR" property="orgCode" />
+            <result column="uorgName" jdbcType="VARCHAR" property="orgName" />
+            <result column="usecretLevel" jdbcType="VARCHAR" property="secretLevel" />
+            <result column="UGENDER" jdbcType="VARCHAR" property="gender" />
+            <result column="uorderId" jdbcType="NUMERIC" property="orderId" />
+            <result column="uempCode" jdbcType="VARCHAR" property="empCode" />
+            <result column="ubirthDate" jdbcType="TIMESTAMP" property="birthDate" />
+            <result column="uoTel" jdbcType="VARCHAR" property="oTel" />
+            <result column="uoEmail" jdbcType="VARCHAR" property="oEmail" />
+            <result column="uworkPost" jdbcType="VARCHAR" property="workPost" />
+            <result column="utecPost" jdbcType="VARCHAR" property="tecPost" />
+            <result column="udeleted" jdbcType="VARCHAR" property="deleted" />
+            <result column="urefa" jdbcType="VARCHAR" property="refa" />
+            <result column="urefb" jdbcType="VARCHAR" property="refb" />
+            <result column="uavatar" jdbcType="VARCHAR" property="avatar" />
+            <result column="udescription" jdbcType="VARCHAR" property="description" />
+            <result column="ucrtTime" jdbcType="TIMESTAMP" property="crtTime" />
+            <result column="ucrtUser" jdbcType="VARCHAR" property="crtUser" />
+            <result column="ucrtName" jdbcType="VARCHAR" property="crtName" />
+            <result column="ucrtHost" jdbcType="VARCHAR" property="crtHost" />
+            <result column="uupdTime" jdbcType="TIMESTAMP" property="updTime" />
+            <result column="uupdUser" jdbcType="VARCHAR" property="updUser" />
+            <result column="uupdName" jdbcType="VARCHAR" property="updName" />
+            <result column="uupdHost" jdbcType="VARCHAR" property="updHost" />
+            <result column="uattr1" jdbcType="VARCHAR" property="attr1" />
+            <result column="uattr2" jdbcType="VARCHAR" property="attr2" />
+            <result column="uattr3" jdbcType="VARCHAR" property="attr3" />
+            <result column="uattr4" jdbcType="VARCHAR" property="attr4" />
+            <result column="upassword" jdbcType="VARCHAR" property="password" />
+        </collection>
+    </resultMap>
+  <!-- fansq 19-8-26 岗位操作  start -->
+
+  <sql id="dynamicAndCondition">
+     <where>
+        <if test="id != null and id != ''">
+          id = #{id ,jdbcType=VARCHAR}
+        </if>
+        <if test="name !=null and name != ''">
+          and  name = #{name,jdbcType=VARCHAR}
+        </if>
+       <if test="sort != null">
+          and  sort = #{sort,jdbcType=DECIMAL}
+        </if>
+       <if test="description != null and description != ''">
+          and  description = #{description,jdbcType=VARCHAR}
+       </if>
+       <if test="type != null and type != ''">
+          and  type = #{type,jdbcType=VARCHAR}
+       </if>
+       <if test="crtTime != null">
+          and  CRT_TIME = #{crtTime,jdbcType=TIMESTAMP}
+       </if>
+       <if test="crtUser != null and crtUser != ''">
+          and  CRT_USER = #{crtUser,jdbcType=VARCHAR}
+       </if>
+       <if test="crtName != null and crtName != ''">
+          and  CRT_NAME = #{crtName,jdbcType=VARCHAR}
+       </if>
+       <if test="crtHost != null and crtHost != ''">
+          and  CRT_HOST = #{crtHost,jdbcType=VARCHAR}
+       </if>
+       <if test="updTime != null">
+          and  UPD_TIME = #{updTime,jdbcType=TIMESTAMP}
+       </if>
+       <if test="updUser != null and updUser != ''">
+          and UPD_USER=#{updUser,jdbcType=VARCHAR}
+       </if>
+       <if test="updName != null and updName != ''">
+          and UPD_NAME=#{updName,jdbcType=VARCHAR}
+       </if>
+       <if test="updHost != null and updHost != ''">
+          and UPD_HOST=#{updHost,jdbcType=VARCHAR}
+       </if>
+       <if test="attr1 != null and attr1 != ''">
+          and ATTR1=#{attr1,jdbcType=VARCHAR}
+       </if>
+       <if test="attr2 != null and attr2 != ''">
+          and ATTR2=#{attr2,jdbcType=VARCHAR}
+       </if>
+       <if test="attr3 != null and attr3 != ''">
+          and ATTR3=#{attr3,jdbcType=VARCHAR}
+       </if>
+       <if test="attr4 != null and attr4 != ''">
+          and ATTR4=#{attr4,jdbcType=VARCHAR}
+       </if>
+     </where>
+  </sql>
+
+    <sql id="CommonColumns">
+        ID,
+        NAME,
+        SORT,
+        description,
+        TYPE,
+        CRT_TIME,
+        CRT_USER,
+        CRT_NAME,
+        CRT_HOST,
+        UPD_TIME,
+        UPD_USER,
+        UPD_NAME,
+        UPD_HOST,
+        ATTR1,
+        ATTR2,
+        ATTR3,
+        ATTR4
+    </sql>
+   <!-- 查询所有岗位 -->
+    <select id="selectPosition" parameterType="com.github.hollykunge.security.admin.entity.PositionDTo" resultMap="BaseResultMap">
+        select
+        <include refid="CommonColumns"/>
+        from  admin_position
+        <include refid="dynamicAndCondition"/>
+                ORDER BY sort
+    </select>
+   <!-- 查询所有岗位或指定岗位下的人员 -->
+    <select id="selectPositionUserMap" parameterType="com.github.hollykunge.security.admin.entity.Position" resultMap="selectPositionUserResultMap">
+        select
+ap.ID,ap.NAME,ap.SORT,ap.DESCRIPTION,ap.TYPE,ap.CRT_TIME,ap.CRT_USER,ap.CRT_NAME,ap.CRT_HOST,ap.UPD_TIME,ap.UPD_USER,ap.UPD_NAME,
+ap.UPD_HOST,ap.ATTR1,ap.ATTR2,ap.ATTR3,ap.ATTR4 ,apu.user_id as USERID,
+au.name as uname,au.p_id as upId,au.org_code as uorgCode,au.org_name as uorgName,au.secret_level as usecretLevel,
+au.gender as ugender,au.order_id as uorderId,au.emp_code  as uempCode,au.birth_date  as ubirthDate,au.o_tel  as uoTel,
+au.o_email as uoEmail,au.work_post as uworkPost ,au.TEC_POST as utecPost,au.deleted as udeleted,au.refa as urefa,au.refb as urefb,
+au.avatar as uavatar,au.description as udescription ,au.crt_time as ucrtTime ,au.crt_user as ucrtUser,au.crt_name as ucrtName,
+au.crt_host as ucrtHost,au.upd_host as uupdHost,au.upd_name as uupdName ,au.upd_time as uupdTime ,au.upd_user as uupdUser,
+au.attr1 as uattr1,au.attr2 as uattr2,au.attr3 as uattr3,au.attr4 as uattr4 ,au.password as upassword
+from admin_position ap left join admin_positionusermap apu on ap.id = apu.position_id left join admin_user au on apu.user_id = au.id ORDER BY sort
+    </select>
+   <!-- 删除 -->
+    <delete id="deletePosition" parameterType="com.github.hollykunge.security.admin.entity.Position">
+      delete from admin_position
+      <if test="_parameter != null">
+        <include refid="dynamicAndCondition"/>
+      </if>
+    </delete>
+    <!-- 新增 -->
+    <insert id="insertPosition" parameterType="com.github.hollykunge.security.admin.entity.Position">
+        insert into  admin_position (
+        <include refid="CommonColumns"/>
+        ) values (
+            #{id,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},
+            #{sort,jdbcType=DECIMAL},
+            #{description,jdbcType=VARCHAR},
+            #{type,jdbcType=VARCHAR},
+            #{crtTime,jdbcType=TIMESTAMP},
+            #{crtUser,jdbcType=VARCHAR},
+            #{crtName,jdbcType=VARCHAR},
+            #{crtHost,jdbcType=VARCHAR},
+            #{updTime,jdbcType=TIMESTAMP},
+            #{updUser,jdbcType=VARCHAR},
+            #{updName,jdbcType=VARCHAR},
+            #{updHost,jdbcType=VARCHAR},
+            #{attr1,jdbcType=VARCHAR},
+            #{attr2,jdbcType=VARCHAR},
+            #{attr3,jdbcType=VARCHAR},
+            #{attr4,jdbcType=VARCHAR}
+        )
+
+    </insert>
+
+    <update id="updatePosition" parameterType="com.github.hollykunge.security.admin.entity.Position">
+        update  admin_position
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name !=null and name != ''">
+                name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="sort != null">
+                sort = #{sort,jdbcType=DECIMAL}
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type != ''">
+                type = #{type,jdbcType=VARCHAR}
+            </if>
+            <if test="crtTime != null">
+                CRT_TIME = #{crtTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="crtUser != null and crtUser != ''">
+                CRT_USER = #{crtUser,jdbcType=VARCHAR}
+            </if>
+            <if test="crtName != null and crtName != ''">
+                CRT_NAME = #{crtName,jdbcType=VARCHAR}
+            </if>
+            <if test="crtHost != null and crtHost != ''">
+                CRT_HOST = #{crtHost,jdbcType=VARCHAR}
+            </if>
+            <if test="updTime != null">
+                UPD_TIME = #{updTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updUser != null and updUser != ''">
+                UPD_USER=#{updUser,jdbcType=VARCHAR}
+            </if>
+            <if test="updName != null and updName != ''">
+                UPD_NAME=#{updName,jdbcType=VARCHAR}
+            </if>
+            <if test="updHost != null and updHost != ''">
+                UPD_HOST=#{updHost,jdbcType=VARCHAR}
+            </if>
+            <if test="attr1 != null and attr1 != ''">
+                ATTR1=#{attr1,jdbcType=VARCHAR}
+            </if>
+            <if test="attr2 != null and attr2 != ''">
+                ATTR2=#{attr2,jdbcType=VARCHAR}
+            </if>
+            <if test="attr3 != null and attr3 != ''">
+                ATTR3=#{attr3,jdbcType=VARCHAR}
+            </if>
+            <if test="attr4 != null and attr4 != ''">
+                ATTR4=#{attr4,jdbcType=VARCHAR}
+            </if>
+        </trim>
+        where
+          id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="sortPosition">
+        <foreach collection="positions" item="item" index="index" open="begin" close=";end;" separator=";">
+            update  admin_position
+            <trim prefix="set" suffixOverrides=",">
+                <if test="item.sort != null">
+                    sort = #{item.sort,jdbcType=DECIMAL}
+                </if>
+            </trim>
+            where
+            id = #{item.id,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+</mapper>

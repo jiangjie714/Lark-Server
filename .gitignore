@@ -1,0 +1,15 @@
+*/target
+*.iml
+/.idea
+*.class
+target/
+.project
+.settings/
+.classpath
+ace-modules/ace-tool/src/main/resources/application-dev.yml
+.DS_Store
+service-chat/logs/
+ace-modules/ace-admin/logs/warn.log
+ace-modules/ace-admin/logs/info.log
+ace-modules/ace-admin/logs/error.log
+ace-modules/ace-admin/logs/debug.log

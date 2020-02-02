@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzGroupApproveDao">
+
+    <insert id="add" >
+        insert into zz_group_approve(id,create_time,group_id,creator,creator_name,group_name,type,approve_list,msg)
+        values
+        (#{params.id,jdbcType=VARCHAR},
+        sysdate,
+        #{params.groupId,jdbcType=VARCHAR},
+        #{params.creator,jdbcType=VARCHAR},
+        #{params.creatorName,jdbcType=VARCHAR},
+        #{params.groupName,jdbcType=VARCHAR},
+        #{params.type,jdbcType=VARCHAR},
+        <!-- lob字段放在最后 -->
+        #{params.approveList,jdbcType=CLOB},
+        #{params.msg,jdbcType=CLOB}
+        )
+    </insert>
+
+    <update id="approve">
+        update zz_group_approve set approve_flg = #{params.approveFlg,jdbcType=VARCHAR},
+        APPROVE = #{params.userId,jdbcType=VARCHAR},
+        APPROVE_NAME = #{params.userName,jdbcType=VARCHAR},
+        APPROVE_NO = #{params.userNo,jdbcType=VARCHAR},
+        APPROVE_TIME = sysdate
+        where id =  #{params.id,jdbcType=VARCHAR}
+    </update>
+    <select id="ifApprove" resultType="String">
+      select to_char(count(1)) as cnt from zz_group_approve where approve_flg  != '0' and id = #{params.id,jdbcType=VARCHAR}
+    </select>
+    <select id="getSingleInf" resultType="Map">
+      select  create_time createtime,msg from zz_group_approve where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="getSingleInfByGroupId" resultType="Map">
+      select  msg from zz_group_approve where group_id = #{groupId,jdbcType=VARCHAR}
+    </select>
+    <select id="getApproveList" resultType="Map">
+      select id,msg,to_char(create_time,'yyyy-mm-dd hh24:mi:ss') as createdate,approve_flg as approveflg,type
+      from zz_group_approve
+      where 1=1
+        <!-- 类型0群1会议 -->
+        <if test = "params.type!=null and params.type!=''">
+            and type = #{params.type,jdbcType=VARCHAR}
+        </if>
+        <!-- 名字 -->
+        <if test = "params.groupName!=null and params.groupName!=''">
+            and group_name like '%'||#{params.groupName,jdbcType=VARCHAR}||'%'
+        </if>
+        <!-- 审批通过或者不通过 -->
+        <if test = "params.approveFlg=='1' or params.approveFlg==1 or  params.approveFlg=='2'  or  params.approveFlg==2 ">
+              and approve_flg = #{params.approveFlg,jdbcType=VARCHAR}
+              and approve = #{params.userId,jdbcType=VARCHAR}
+        </if>
+        <!-- 未审批 -->
+        <if test = "params.approveFlg=='0'or params.approveFlg== 0">
+            and approve_flg = #{params.approveFlg,jdbcType=VARCHAR}
+            and approve_list like '%'||#{params.userId,jdbcType=VARCHAR}||'%'
+        </if>
+        <!-- 已经审批 -->
+        <if test = "params.approveFlg=='3' or params.approveFlg==3">
+            and approve_flg != '0'
+            and approve = #{params.userId,jdbcType=VARCHAR}
+        </if>
+        <!-- 全部 -->
+        <if test = "params.approveFlg=='4' or params.approveFlg==4">
+            and ((approve_flg = '0' and approve_list like '%'||#{params.userId,jdbcType=VARCHAR}||'%'  )
+            or (approve = #{params.userId,jdbcType=VARCHAR}))
+        </if>
+      order by create_time desc
+    </select>
+    <select id="getApproveGroupDetail" resultType="Map">
+      select msg from zz_group_approve where id = #{dataid,jdbcType=VARCHAR}
+    </select>
+    <!-- 群(资源)申请列表 -->
+    <select id="getApplyGroupList" resultType="Map">
+        select id,
+                msg,
+                approve_flg approveflg,
+                group_id groupid,
+                approve_name approvename,
+                approve,
+                approve_no approveno,
+                to_char(approve_time, 'yyyy-mm-dd hh24:mi:ss') approvetime,
+                to_char(create_time, 'yyyy-mm-dd hh24:mi:ss') createtime,
+                type
+        from zz_group_approve
+        where 1=1
+        and creator = #{params.userId,jdbcType=VARCHAR}
+        <!-- 审批状态 -->
+        <if test = "params.approveFlg=='0' or params.approveFlg==0 or params.approveFlg=='1' or params.approveFlg==1 or  params.approveFlg=='2'  or  params.approveFlg==2 ">
+            and approve_flg = #{params.approveFlg,jdbcType=VARCHAR}
+        </if>
+        <!-- 已经审批 -->
+        <if test = "params.approveFlg=='3' or params.approveFlg==3">
+            and approve_flg != '0'
+        </if>
+        <if test = "params.type!=null and params.type!=''">
+            and type = #{params.type,jdbcType=VARCHAR}
+        </if>
+        order by create_time desc
+    </select>
+</mapper>

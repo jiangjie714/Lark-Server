@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzMeetingUserDao">
+    <resultMap type="com.workhub.z.servicechat.VO.UserCurrentDayMeetJobVo" id="userCurrentDayMeetJobVo">
+        <result property="meetId" column="id" jdbcType="VARCHAR"/>
+        <result property="meetName" column="meet_name" jdbcType="VARCHAR"/>
+        <result property="startTime" column="starttime" jdbcType="VARCHAR"/>
+        <result property="endTime" column="endtime" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 查询会议下所有人员 -->
+    <select id="getMeetAllUsers" resultType="MAP">
+        select u.user_id userid,
+               u.user_name username,
+               u.user_no userno,
+               u.user_level userlevel,
+               u.role_code rolecode,
+               to_char(u.crt_time, 'YYYY-MM-DD HH24:MI:SS') crttime,
+               r.name rolename,
+               u.can_msg canmsg
+          from zz_meeting_user u, zz_meeting m, ZZ_CODE_MEETING_ROLE r
+         where u.meeting_id = m.id
+           and u.role_code = r.code
+           and r.is_use = '1'
+           and m.id = #{meetId}
+        order by  u.role_code,u.crt_time desc
+    </select>
+    <!--新增会议人员-->
+    <insert id="addUser" >
+        insert into zz_meeting_user
+          (ID,
+           MEETING_ID,
+           USER_ID,
+           USER_NAME,
+           USER_NO,
+           USER_LEVEL,
+           ROLE_CODE,
+           CRT_TIME,
+           CRT_USER,
+           CRT_NAME,
+           CRT_HOST,
+           CRT_NO,
+           CAN_MSG
+           )
+        values
+          (
+           #{params.id},
+           #{params.meetingId},
+           #{params.userId},
+           #{params.userName},
+           #{params.userNo},
+           #{params.userLevel},
+           #{params.roleCode},
+           sysdate,
+           #{params.crtUser},
+           #{params.crtName},
+           #{params.crtHost},
+           #{params.crtNo},
+           #{params.canMsg}
+           )
+     </insert>
+    <!--删除会议人员-->
+    <delete id="delUser" >
+        delete  from zz_meeting_user
+        where meeting_id = #{meetId}
+        and user_id= #{userId}
+     </delete>
+    <update id="updateUser">
+        update zz_meeting_user
+        <set>
+            <if test="params.roleCode != null and params.roleCode != ''">
+                ROLE_CODE = #{params.roleCode},
+            </if>
+            <if test="params.userLevel != null and params.userLevel != ''">
+                user_level = #{params.userLevel},
+            </if>
+            <if test="params.canMsg != null and params.canMsg != ''">
+                can_msg = #{params.canMsg},
+            </if>
+            upd_time = sysdate,
+            upd_user = #{params.updUser},
+            upd_host = #{params.updHost},
+            upd_name = #{params.updName},
+            upd_no = #{params.updNo}
+
+        </set>
+         where meeting_id = #{params.meetingId} and user_id = #{params.userId}
+    </update>
+
+    <insert id="addListUsers" parameterType="java.util.List">
+
+        <foreach collection="users" item="item" index="index" separator=";" open="begin" close=";end;">
+            insert into zz_meeting_user
+            (ID,
+            MEETING_ID,
+            USER_ID,
+            USER_NAME,
+            USER_NO,
+            USER_LEVEL,
+            ROLE_CODE,
+            CRT_TIME,
+            CRT_USER,
+            CRT_NAME,
+            CRT_HOST,
+            CRT_NO,
+            CAN_MSG
+            )
+            values
+            (
+            #{item.id},
+            #{item.meetingId},
+            #{item.userId},
+            #{item.userName},
+            #{item.userNo},
+            #{item.userLevel},
+            #{item.roleCode},
+            sysdate,
+            #{item.crtUser},
+            #{item.crtName},
+            #{item.crtHost},
+            #{item.crtNo},
+            #{item.canMsg}
+            )
+        </foreach>
+    </insert>
+    <delete id="delMeetAllUser">
+        delete  from zz_meeting_user where  meeting_id = #{meetId}
+    </delete>
+    <select id="getMeetingByUserId" resultType="string">
+        select t.Meeting_Id from ZZ_MEETING_USER t WHERE T.USER_ID = #{userId}
+    </select>
+    <update id="updateUserList">
+        <foreach collection="users" item="item" open="begin" separator=";" close=";end;">
+            update zz_meeting_user
+            <set>
+                <if test="item.roleCode != null and item.roleCode != ''">
+                    ROLE_CODE = #{item.roleCode},
+                </if>
+                <if test="item.userLevel != null and item.userLevel != ''">
+                    user_level = #{item.userLevel},
+                </if>
+                <if test="item.canMsg != null and item.canMsg != ''">
+                    can_msg = #{item.canMsg},
+                </if>
+                upd_time = sysdate,
+                upd_user = #{item.updUser},
+                upd_host = #{item.updHost},
+                upd_name = #{item.updName},
+                upd_no = #{item.updNo}
+            </set>
+            where meeting_id = #{item.meetingId} and user_id = #{item.userId}
+        </foreach>
+    </update>
+    <delete id="delListUsers">
+        <foreach collection="users" item="user" separator=";" open="begin" close=";end;">
+            delete from zz_meeting_user where meeting_id = #{user.meetingId} and user_id = #{user.userId}
+        </foreach>
+    </delete>
+    <select id="getUserCurrentDayMeetJob" resultMap="userCurrentDayMeetJobVo">
+        select m.id,
+                m.meet_name,
+               to_char(m.BEGIN_TIME, 'YYYY-MM-DD HH24:MI:SS') starttime,
+               to_char(m.END_TIME, 'YYYY-MM-DD HH24:MI:SS') endtime
+          from zz_meeting_user u, zz_meeting m
+         where u.meeting_id = m.id
+           and u.user_id = #{userId}
+           and to_char(BEGIN_TIME,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd')
+        order by  m.BEGIN_TIME desc
+    </select>
+</mapper>

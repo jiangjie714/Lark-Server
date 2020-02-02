@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzMsgReadRelationDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.ZzMsgReadRelation" id="ZzMsgReadRelationMap">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="sender" column="SENDER" jdbcType="VARCHAR"/>
+        <result property="receiver" column="CONSUMER" jdbcType="VARCHAR"/>
+        <result property="sendType" column="SEND_TYPE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="NoReadVo" type="com.workhub.z.servicechat.VO.NoReadVo">
+        <result property="sender" column="SENDER" jdbcType="VARCHAR"></result>
+        <result property="sendType" column="SEND_TYPE" jdbcType="VARCHAR"></result>
+        <result property="receiver" column="CONSUMER" jdbcType="VARCHAR"></result>
+        <result property="msgCount" column="MSG_COUNT" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <select id="queryNoReadCount" resultType="java.lang.Long">
+      SELECT COUNT(*) FROM ZZ_MSG_READ_RELATION WHERE CONSUMER=#{consumer} GROUP BY CONSUMER
+    </select>
+    <select id="queryNoReadCountList" resultMap="NoReadVo">
+      SELECT SENDER,SEND_TYPE,CONSUMER,COUNT(*) AS MSG_COUNT FROM ZZ_MSG_READ_RELATION WHERE CONSUMER=#{consumer} GROUP BY CONSUMER,SEND_TYPE,SENDER
+    </select>
+
+    <delete id="deleteByConsumerAndSender">
+        delete from WORKHUB_IWORK.ZZ_MSG_READ_RELATION where SENDER = #{sender} AND CONSUMER = #{consumer}
+    </delete>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZzMsgReadRelationMap">
+        select
+          ID, SENDER, CONSUMER, SEND_TYPE
+        from WORKHUB_IWORK.ZZ_MSG_READ_RELATION
+        where ID = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <!--<select id="queryAllByLimit" resultMap="ZzMsgReadRelationMap">
+        select
+          ID, SENDER, CONSUMER, SEND_TYPE
+        from WORKHUB_IWORK.ZZ_MSG_READ_RELATION
+        limit #{offset}, #{limit}
+    </select>-->
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZzMsgReadRelationMap">
+        select
+          ID, SENDER, CONSUMER, SEND_TYPE
+        from WORKHUB_IWORK.ZZ_MSG_READ_RELATION
+        <where>
+            <if test="id != null and id != ''">
+                and ID = #{id}
+            </if>
+            <if test="sender != null and sender != ''">
+                and SENDER = #{sender}
+            </if>
+            <if test="consumer != null and consumer != ''">
+                and CONSUMER = #{consumer}
+            </if>
+            <if test="sendType != null and sendType != ''">
+                and SEND_TYPE = #{sendType}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into WORKHUB_IWORK.ZZ_MSG_READ_RELATION(ID,SENDER, CONSUMER, SEND_TYPE)
+        values (#{id},#{sender}, #{receiver}, #{sendType})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update WORKHUB_IWORK.ZZ_MSG_READ_RELATION
+        <set>
+            <if test="sender != null and sender != ''">
+                SENDER = #{sender},
+            </if>
+            <if test="consumer != null and consumer != ''">
+                CONSUMER = #{consumer},
+            </if>
+            <if test="sendType != null and sendType != ''">
+                SEND_TYPE = #{sendType},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from WORKHUB_IWORK.ZZ_MSG_READ_RELATION where ID = #{id}
+    </delete>
+
+    <!--查询未读消息条数-->
+    <select id="queryNoReadMsgBySenderAndReceiver" resultType="java.lang.Long">
+        select COUNT(*) from ZZ_MSG_READ_RELATION t where t.CONSUMER = #{receiver} and t.SENDER =#{sender}
+    </select>
+</mapper>

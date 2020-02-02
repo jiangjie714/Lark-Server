@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+    <!-- 读取springboot工程的properties配置文件showConsoleInf属性 判断是否输出console日志 -->
+    <springProperty scope="context" name="showConsoleInf" source="showConsoleInf" defaultValue="1"/>
+    <!-- 日志存放根目录 -->
+    <springProperty scope="context" name="self-log-path" source="self-log-path" defaultValue="C:/lark_log"/>
+    <!-- 开发时候console输出 -->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <!--
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>
+                %d - %msg%n
+            </pattern>
+        </layout>
+        -->
+        <!-- 彩色控制台日志 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{50}) - %highlight(%msg) %n</pattern>
+        </encoder>
+    </appender>
+    <!-- 专门用来存放sql语句打印的日志-->
+    <appender name="sqlLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <!--
+            <onMatch> ACCEPT</onMatch>
+            <onMismatch> DENY</onMismatch>
+            -->
+        </filter>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <!--滚动策略 每天一份-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--路径-->
+            <fileNamePattern>${self-log-path}/service-tools/logs/sql/sql.%d.log</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+    <!-- 记录info日志-->
+    <appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <!--
+            <onMatch> ACCEPT</onMatch>
+            <onMismatch> DENY</onMismatch>
+            -->
+        </filter>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <!--滚动策略  每天一份-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--路径-->
+            <fileNamePattern>${self-log-path}/service-tools/logs/info/info.%d.log</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+    <!-- 记录error日志 -->
+    <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+            <!--
+            <onMatch> ACCEPT</onMatch>
+            <onMismatch> DENY</onMismatch>
+            -->
+        </filter>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <!--滚动策略  每天一份-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--路径-->
+            <fileNamePattern>${self-log-path}/service-tools/logs/error/error.%d.log</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+    <!-- 打印mybaits的sql，并存放到专门的日志里 级别必须是debug additivity=false不在向上传递，以免造成日志重复打印-->
+    <logger name="com.workhub.larktools.dao" level="debug" additivity="false">
+        <appender-ref ref="sqlLog" />
+    </logger>
+    <!-- 为了方便开发调试，输出mybaits的sql到控制台 级别必须是debug additivity=false不在向上传递-->
+    <logger name="com.workhub.larktools.dao" level="debug" additivity="false">
+        <if condition='property("showConsoleInf").equals("1")'>
+            <then>
+                <appender-ref ref="consoleLog" />
+            </then>
+        </if>
+        <!--<appender-ref ref="consoleLog" />-->
+        <appender-ref ref="infoLog" />
+    </logger>
+    <!-- root 的日志级别如果改成debug会有很多程序内部日志信息，所以这里写为INFO-->
+    <root level="info">
+        <if condition='property("showConsoleInf").equals("1")'>
+            <then>
+                <appender-ref ref="consoleLog" />
+            </then>
+        </if>
+        <!--<appender-ref ref="consoleLog" />-->
+        <appender-ref ref="infoLog" />
+        <appender-ref ref="errorLog" />
+    </root>
+
+</configuration>
+        <!--<?xml version="1.0" encoding="UTF-8"?>
+        <configuration>
+            <include resource="org/springframework/boot/logging/logback/base.xml"/>
+            <property resource="application.properties"/>
+
+            <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>service-chat/logs/info/${log.env.module}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>logs/info/${log.env.module}-%d{yyyy-MM-dd}.%i.log
+                    </fileNamePattern>
+                    <maxFileSize>5MB</maxFileSize>
+                    <maxHistory>30</maxHistory>
+                    <totalSizeCap>20GB</totalSizeCap>
+                </rollingPolicy>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</Pattern>
+                </layout>
+            </appender>
+
+            <appender name="bug_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>service-chat/logs/debug/${log.env.module}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>logs/debug/${log.env.module}-%d{yyyy-MM-dd}.%i.log
+                    </fileNamePattern>
+                    <maxFileSize>5MB</maxFileSize>
+                    <maxHistory>30</maxHistory>
+                    <totalSizeCap>20GB</totalSizeCap>
+                </rollingPolicy>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</Pattern>
+                </layout>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>DEBUG</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+            </appender>
+
+            <logger name="com.workhub.z.servicechat.dao" level="debug"/>
+            <root level="info">
+                <appender-ref ref="ROLLING"/>
+                <appender-ref ref="bug_log"/>
+            </root>
+        </configuration>-->

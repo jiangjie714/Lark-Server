@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.hollykunge.security.admin.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.admin.entity.User">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="P_ID" jdbcType="VARCHAR" property="pId" />
+    <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="SECRET_LEVEL" jdbcType="VARCHAR" property="secretLevel" />
+    <result column="GENDER" jdbcType="VARCHAR" property="gender" />
+    <result column="ORDER_ID" jdbcType="NUMERIC" property="orderId" />
+    <result column="EMP_CODE" jdbcType="VARCHAR" property="empCode" />
+    <result column="BIRTH_DATE" jdbcType="TIMESTAMP" property="birthDate" />
+    <result column="O_TEL" jdbcType="VARCHAR" property="oTel" />
+    <result column="O_EMAIL" jdbcType="VARCHAR" property="oEmail" />
+    <result column="WORK_POST" jdbcType="VARCHAR" property="workPost" />
+    <result column="TEC_POST" jdbcType="VARCHAR" property="tecPost" />
+    <result column="DELETED" jdbcType="VARCHAR" property="deleted" />
+    <result column="REFA" jdbcType="VARCHAR" property="refa" />
+    <result column="REFB" jdbcType="VARCHAR" property="refb" />
+    <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="CRT_TIME" jdbcType="TIMESTAMP" property="crtTime" />
+    <result column="CRT_USER" jdbcType="VARCHAR" property="crtUser" />
+    <result column="CRT_NAME" jdbcType="VARCHAR" property="crtName" />
+    <result column="CRT_HOST" jdbcType="VARCHAR" property="crtHost" />
+    <result column="UPD_TIME" jdbcType="TIMESTAMP" property="updTime" />
+    <result column="UPD_USER" jdbcType="VARCHAR" property="updUser" />
+    <result column="UPD_NAME" jdbcType="VARCHAR" property="updName" />
+    <result column="UPD_HOST" jdbcType="VARCHAR" property="updHost" />
+    <result column="ATTR1" jdbcType="VARCHAR" property="attr1" />
+    <result column="ATTR2" jdbcType="VARCHAR" property="attr2" />
+    <result column="ATTR3" jdbcType="VARCHAR" property="attr3" />
+    <result column="ATTR4" jdbcType="VARCHAR" property="attr4" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+  </resultMap>
+  <sql id="userAndOrg" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    u.ID id,
+    u.NAME name,
+    u.P_ID pId,
+    u.ORG_CODE orgCode,
+    u.SECRET_LEVEL secretLevel,
+    u.ORDER_ID orderId,
+    u.DELETED deleted,
+    u.AVATAR avatar,
+    u.DESCRIPTION description,
+    org.PATH_CODE pathCode,
+    org.PATH_NAME pathName,
+    org.ORG_NAME orgName
+  </sql>
+  <sql id="userAndOrgAndRole">
+    <include refid="userAndOrg" />,
+    r.id roleId,
+    r.name roleName
+  </sql>
+  <sql id="userAndOrgAndRoleAndPosition">
+    <include refid="userAndOrgAndRole" />,
+    p.id positionId,
+    p.name positionName
+  </sql>
+  <select id="selectUsersByRoleId" resultMap="BaseResultMap">
+    select AU.* from ADMIN_USER AU
+    left join ADMIN_ROLEUSERMAP ARU on AU.ID = ARU.USER_ID
+    where ARU.ROLE_ID = #{roleId}
+  </select>
+
+  <select id="selectUserByNameLike" resultMap="BaseResultMap">
+    select * from ADMIN_USER t where (t.REFA || t.REFB || t.NAME) like '%'||LOWER(#{nameLike})||'%'
+  </select>
+
+  <select id="selectUsersByPositionIdAndOrgCode" resultType="com.github.hollykunge.security.admin.api.dto.AdminUser">
+    select <include refid="userAndOrg" />
+    from ADMIN_USER u
+    inner join ADMIN_POSITIONUSERMAP APU on u.ID = APU.USER_ID
+    LEFT JOIN ADMIN_ORG org
+    on u.ORG_CODE = org.ORG_CODE
+    where 1 = 1
+    and APU.POSITION_ID = #{positionId}
+    <if test="orgCode != null and orgCode != ''">
+      and u.ORG_CODE like #{orgCode}||'%'
+    </if>
+    and u.DELETED != '2' and u.DELETED is not null
+    order by u.ORDER_ID asc
+  </select>
+
+  <select id="findBySecretsAndNotPidLikeOrgCode" resultType="com.github.hollykunge.security.admin.api.dto.AdminUser">
+    select
+    <include refid="userAndOrg" />
+    from ADMIN_USER u
+    LEFT JOIN ADMIN_ORG org
+    on u.ORG_CODE = org.ORG_CODE
+    where 1 = 1
+    <if test="pid != null and pid != ''">
+      and u.P_ID != #{pid}
+    </if>
+    and u.DELETED != '2'
+    and u.DELETED is not null
+    and u.ORG_CODE like #{orgCode}||'%'
+    <if test="secretLevels != null">
+      and u.SECRET_LEVEL in
+      <foreach item="item" index="index" collection="secretLevels"
+               open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by org.ORDER_ID asc,u.ORDER_ID asc
+  </select>
+  <select id="findByUserIdOrPid" resultType="com.github.hollykunge.security.admin.api.dto.AdminUser">
+    select distinct <include refid="userAndOrgAndRole" />
+    from ADMIN_USER u
+    LEFT JOIN ADMIN_ORG org
+    on u.ORG_CODE = org.ORG_CODE
+    inner join ADMIN_ROLEUSERMAP rolemap
+    on u.id = rolemap.USER_ID
+    inner join admin_role r
+    on rolemap.ROLE_ID = r.id
+    where 1 = 1
+    <if test="userId != null and userId != ''">
+      and u.id = #{userId}
+    </if>
+    <if test="pid != null and pid != ''">
+      and u.p_id = #{pid}
+    </if>
+    order by u.ORDER_ID asc
+  </select>
+
+  <!--
+    fansq 19-12-23  根据部门id 模糊匹配用户姓名  用户密级 以及 sql 过滤
+    安全管理员 系统管理员 安全审计员 三个权限人员
+   -->
+  <select id="findUserByOrgCode"
+          resultType="com.github.hollykunge.security.admin.entity.User">
+    select
+    u.ID
+    from admin_user u
+    where
+    u.deleted='0'
+    and
+    u.org_code in
+    <foreach item="item" index="index" collection="os"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+</mapper>

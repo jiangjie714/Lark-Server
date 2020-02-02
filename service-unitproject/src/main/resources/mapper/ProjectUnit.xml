@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.serviceunitproject.dao.ProjectUnitDao">
+    <resultMap id="ProjectUnit" type="com.github.hollykunge.serviceunitproject.model.ProjectUnit">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="cseq" property="cseq" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="VARCHAR"/>
+        <result column="createtime" property="createtime" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="updatetime" property="updatetime" jdbcType="VARCHAR"/>
+        <result column="updator" property="updator" jdbcType="VARCHAR"/>
+        <result column="org_id" property="orgId" jdbcType="TIMESTAMP"/>
+        <result column="d_pid" property="dPid" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="army_id" property="armyId" jdbcType="VARCHAR"/>
+        <result column="model" property="model" jdbcType="VARCHAR"/>
+        <result column="model_simple_name" property="modelSimpleName" jdbcType="VARCHAR"/>
+        <result column="manage_org" property="manageOrg" jdbcType="VARCHAR"/>
+        <result column="org_leader" property="orgLeader" jdbcType="VARCHAR"/>
+        <result column="tech_manager" property="techManager" jdbcType="VARCHAR"/>
+        <result column="project_manager" property="projectManager" jdbcType="VARCHAR"/>
+        <result column="hall_leader" property="hallLeader" jdbcType="VARCHAR"/>
+        <result column="partask_org_id" property="partaskOrgId" jdbcType="VARCHAR"/>
+        <result column="unit_level_id" property="unitLevelId" jdbcType="VARCHAR"/>
+        <result column="unit_classify_id" property="unitClassifyId" jdbcType="VARCHAR"/>
+        <result column="product_classify_id" property="productClassifyId" jdbcType="VARCHAR"/>
+        <result column="prev_name_id" property="prevNameId" jdbcType="VARCHAR"/>
+        <result column="alias_name" property="aliasName" jdbcType="VARCHAR"/>
+        <result column="model_short" property="modelShort" jdbcType="VARCHAR"/>
+        <result column="part_org_id" property="partOrgId" jdbcType="VARCHAR"/>
+        <result column="org_user_id" property="orgUserId" jdbcType="VARCHAR"/>
+        <result column="partask_org_user_id" property="partaskOrgUserId" jdbcType="VARCHAR"/>
+        <result column="temp_id" property="tempId" jdbcType="VARCHAR"/>
+        <result column="domain_id" property="domainId" jdbcType="VARCHAR"/>
+        <result column="product_classify" property="productClassify" jdbcType="VARCHAR"/>
+        <result column="major_classify" property="majorClassify" jdbcType="VARCHAR"/>
+        <result column="general_unit" property="generalUnit" jdbcType="VARCHAR"/>
+        <result column="ref_id" property="refId" jdbcType="VARCHAR"/>
+        <result column="dd_org_id" property="ddOrgId" jdbcType="VARCHAR"/>
+        <result column="dd_org_user_id" property="ddOrgUserId" jdbcType="VARCHAR"/>
+        <result column="dd_partask_user_id" property="ddPartaskUserId" jdbcType="VARCHAR"/>
+        <result column="belong_model" property="belongModel" jdbcType="VARCHAR"/>
+        <result column="secret_level" property="secretLevel" jdbcType="VARCHAR"/>
+        <result column="master_ref_id" property="masterRefId" jdbcType="VARCHAR"/>
+        <result column="SUPERIOR" property="superior" jdbcType="VARCHAR"/>
+        <result column="SUBORDINATE" property="subordinate" jdbcType="VARCHAR"/>
+        <result column="RELATED_USER_ID" property="relatedUserId" jdbcType="VARCHAR"/>
+        <result column="TEAM_TYPE" property="teamType" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <!-- 新增单元项目 -->
+    <insert id="saveProjectUnit">
+		INSERT INTO projectunitinfo (ID,name, code, description, parent_id, cseq,enabled,createtime,creator,updatetime,updator,org_id,d_pid,type,army_id,model,model_simple_name,manage_org,org_leader,tech_manager,project_manager,hall_leader,partask_org_id,unit_level_id,unit_classify_id,product_classify_id,prev_name_id,alias_name,model_short,part_org_id,org_user_id,partask_org_user_id,temp_id,domain_id,product_classify,major_classify,general_unit,ref_id,dd_org_id,dd_org_user_id,dd_partask_user_id,belong_model,secret_level,master_ref_id,superior,subordinate,related_user_id,team_type) VALUES
+			(#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},#{parentId,jdbcType=VARCHAR},#{cseq,jdbcType=VARCHAR},#{enabled,jdbcType=VARCHAR},#{createtime,jdbcType=VARCHAR},#{creator,jdbcType=VARCHAR},#{updatetime,jdbcType=VARCHAR},#{updator,jdbcType=VARCHAR},#{orgId,jdbcType=VARCHAR},#{dPid,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},#{armyId,jdbcType=VARCHAR},#{model,jdbcType=VARCHAR},#{modelSimpleName,jdbcType=VARCHAR},#{manageOrg,jdbcType=VARCHAR},#{orgLeader,jdbcType=VARCHAR},#{techManager,jdbcType=VARCHAR},#{projectManager,jdbcType=VARCHAR},#{hallLeader,jdbcType=VARCHAR},#{partaskOrgId,jdbcType=VARCHAR},#{unitLevelId,jdbcType=VARCHAR},#{unitClassifyId,jdbcType=VARCHAR},#{productClassifyId,jdbcType=VARCHAR},#{prevNameId,jdbcType=VARCHAR},#{aliasName,jdbcType=VARCHAR},#{modelShort,jdbcType=VARCHAR},#{partOrgId,jdbcType=VARCHAR},#{orgUserId,jdbcType=VARCHAR},#{partaskOrgUserId,jdbcType=VARCHAR},#{tempId,jdbcType=VARCHAR},#{domainId,jdbcType=VARCHAR},#{productClassify,jdbcType=VARCHAR},#{majorClassify,jdbcType=VARCHAR},#{generalUnit,jdbcType=VARCHAR},#{refId,jdbcType=VARCHAR},#{ddOrgId,jdbcType=VARCHAR},#{ddOrgUserId,jdbcType=VARCHAR},#{ddPartaskUserId,jdbcType=VARCHAR},#{belongModel,jdbcType=VARCHAR},#{secretLevel,jdbcType=VARCHAR},#{masterRefId,jdbcType=VARCHAR},#{superior,jdbcType=VARCHAR},#{subordinate,jdbcType=VARCHAR},#{relatedUserId,jdbcType=VARCHAR},#{teamType,jdbcType=VARCHAR})
+	</insert>
+
+    <!--查询单元项目-->
+    <select id="queryProjectUnitByProjidCount" parameterType="String" resultType="int">
+        SELECT count(*)
+        FROM projectunitinfo pu
+        WHERE pu.ID = #{id}
+        </select>
+
+    <!--更新单元项目-->
+    <update id="updateProjectUnitInfo" parameterType="String">
+        UPDATE projectunitinfo eg  set name=#{name,jdbcType=VARCHAR}, code=#{code,jdbcType=VARCHAR}, description=#{description,jdbcType=VARCHAR}, parent_id=#{parentId,jdbcType=VARCHAR}, cseq=#{cseq,jdbcType=VARCHAR},enabled=#{enabled,jdbcType=VARCHAR},createtime=#{createtime,jdbcType=VARCHAR},creator=#{creator,jdbcType=VARCHAR},updatetime=#{updatetime,jdbcType=VARCHAR},updator=#{updator,jdbcType=VARCHAR},org_id=#{orgId,jdbcType=VARCHAR},d_pid=#{dPid,jdbcType=VARCHAR},type=#{type},army_id=#{armyId,jdbcType=VARCHAR},model=#{model,jdbcType=VARCHAR},model_simple_name=#{modelSimpleName,jdbcType=VARCHAR},manage_org=#{manageOrg,jdbcType=VARCHAR},org_leader=#{orgLeader,jdbcType=VARCHAR},tech_manager=#{techManager,jdbcType=VARCHAR},project_manager=#{projectManager,jdbcType=VARCHAR},hall_leader=#{hallLeader,jdbcType=VARCHAR},partask_org_id=#{partaskOrgId,jdbcType=VARCHAR},unit_level_id=#{unitLevelId,jdbcType=VARCHAR},unit_classify_id=#{unitClassifyId,jdbcType=VARCHAR},product_classify_id=#{productClassifyId,jdbcType=VARCHAR},prev_name_id=#{prevNameId,jdbcType=VARCHAR},alias_name=#{aliasName,jdbcType=VARCHAR},model_short=#{modelShort,jdbcType=VARCHAR},part_org_id=#{partOrgId,jdbcType=VARCHAR},org_user_id=#{orgUserId,jdbcType=VARCHAR},partask_org_user_id=#{partaskOrgUserId,jdbcType=VARCHAR},temp_id=#{tempId,jdbcType=VARCHAR},domain_id=#{domainId,jdbcType=VARCHAR},product_classify=#{productClassify,jdbcType=VARCHAR},major_classify=#{majorClassify,jdbcType=VARCHAR},general_unit=#{generalUnit,jdbcType=VARCHAR},ref_id=#{refId,jdbcType=VARCHAR},dd_org_id=#{ddOrgId,jdbcType=VARCHAR},dd_org_user_id=#{ddOrgUserId,jdbcType=VARCHAR},dd_partask_user_id=#{ddPartaskUserId,jdbcType=VARCHAR},belong_model=#{belongModel,jdbcType=VARCHAR},secret_level=#{secretLevel,jdbcType=VARCHAR},master_ref_id=#{masterRefId,jdbcType=VARCHAR},superior=#{superior,jdbcType=VARCHAR},subordinate=#{subordinate,jdbcType=VARCHAR},related_user_id=#{relatedUserId,jdbcType=VARCHAR},team_type=#{teamType,jdbcType=VARCHAR}
+        WHERE eg.ID = #{id}
+        </update>
+
+    <!-- 根据单元ID查询
+    <select id="selectUsersByUnitId" resultMap="BaseResultMap">
+select * from projectunitinfo PU
+    where pu.id = #{id}
+</select> -->
+    <!-- 更新二院部门
+    <update id="updateEryuanOrgInfo" parameterType="com.github.hollykunge.servicewebservice.model.EryuanOrg">
+		UPDATE EryuanOrg SET H_ID = #{hId}, SYS_ID = #{sysId}, ORG_LEVEL = #{orgLevel},ORG_NAME = #{orgName},CASIC_ORG_SECRET = #{casicOrgSecret},CASIC_ORG_CODE = #{casicOrgCode},CASIC_PORG_CODE = #{casicPorgCode},EXTERNAL_NAME = #{externalName},REMARK = #{remark},ORDER_ID = #{orderId},DISP_TIME = #{dispTime,jdbcType=TIMESTAMP},SYNC_TYPE = #{syncType},STATUS = #{status},REFA = #{refa},REFB = #{refb},ORG_CODE = #{orgCode},ORG_CODES = #{orgCodes},ORG_NAMES = #{orgNames},MILI_CODE = #{miliCode},ORGNATION_CODE = #{orgnationCode},CREDIT_CODE = #{creditCode},COUNTRY = #{country},PROVINCE = #{province},CITY = #{city},AREA_COUNTY = #{areaCounty,jdbcType=VARCHAR},CURRENCY = #{currency},INFOR_LEVEL = #{inforLevel},ORG_NATURE = #{orgNature},IMMEUP_ORG = #{immeupOrg},ORG_MAN_LEVEL = #{orgManLevel},IS_LI_COMPANY = #{isLiCompany},FILL_TWO_ORG = #{fillTwoOrg},FILL_THR_ORG = #{fillThrOrg},ERP_COM_CODE = #{erpComCode},ORDER_NUMBER = #{orderNumber},INDUCLASS = #{induclass},IS_SUCCESS = #{isSuccess}
+		WHERE CASIC_ORG_CODE = #{casicOrgCode}
+	</update>
+
+    <update id="updateOrgIsSuccess">
+        UPDATE EryuanOrg SET IS_SUCCESS = #{isSuccess}
+        WHERE  CASIC_ORG_CODE = #{casicOrgCode}
+    </update>-->
+</mapper>
