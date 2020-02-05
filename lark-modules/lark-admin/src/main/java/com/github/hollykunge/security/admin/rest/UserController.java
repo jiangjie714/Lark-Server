@@ -225,4 +225,16 @@ public class UserController extends BaseController<UserBiz,User> {
         }
         return baseBiz.selectByQuery(new Query(params));
     }
+
+    /**
+     * fansq
+     * 20-2-4
+     * 用户数据导出excel
+     * @return
+     */
+    @RequestMapping(value = "/exportExcel",method = RequestMethod.GET)
+    public ObjectRestResponse exportUserExcel(){
+
+        return new ObjectRestResponse().msg("导出成功!");
+    }
 }
