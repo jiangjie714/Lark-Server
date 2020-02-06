@@ -21,16 +21,14 @@ public class QueueConfig {
 
     @Bean
     @Order(value = 4)
-    public Queue noticDeadQueue() {
-        Queue queue = new Queue(CommonConstants.NOTICE_DEAD_QUEUENAME, true);
-        return queue;
+    public Queue noticeDeadQueue() {
+        return new Queue(CommonConstants.NOTICE_DEAD_QUEUENAME, true);
     }
 
     @Bean
     @Order(value = 5)
-    public Queue noticToChatQueue() {
-        Queue queue = new Queue(CommonConstants.NOTICE_TOWECHAT_QUEUE_NAMA, true);
-        return queue;
+    public Queue noticeToChatQueue() {
+        return new Queue(CommonConstants.NOTICE_TOWECHAT_QUEUE_NAMA, true);
     }
 
     @Bean
@@ -53,14 +51,12 @@ public class QueueConfig {
     @Bean
     @Order(value = 7)
     public Queue adminToUser() {
-        Queue queue = new Queue(CommonConstants.ADMIN_UNACK_USER, true);
-        return queue;
+        return new Queue(CommonConstants.ADMIN_UNACK_USER, true);
     }
 
     @Bean
     @Order(value = 8)
     public Queue adminToOrg() {
-        Queue queue = new Queue(CommonConstants.ADMIN_UNACK_ORG, true);
-        return queue;
+        return new Queue(CommonConstants.ADMIN_UNACK_ORG, true);
     }
 }

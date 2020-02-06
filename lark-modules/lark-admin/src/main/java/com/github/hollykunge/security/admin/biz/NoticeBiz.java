@@ -40,12 +40,7 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
 
     @Resource
     private UserMapper userMapper;
-//
-//    public List<Notice> listNoticeTopSix(String userId){
-//        List<Notice> noticeByUserIdTopSix = mapper.getNoticeByUserIdTopSix(userId);
-//        return noticeByUserIdTopSix;
-//    }
-//
+
     public String getOrgIdByUserId(String userId) {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("id", userId);
@@ -71,7 +66,7 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
      */
     public void sentNotice(Notice entity){
         if(StringUtils.isEmpty(entity.getId())){
-            throw new BaseException("notice id is null...it's not required..");
+            throw new BaseException("ERROR LARK MQ:notice id is null...it's not required..");
         }
         entity.setIsSend("1");
         mapper.updateByPrimaryKeySelective(entity);
