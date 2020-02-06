@@ -174,8 +174,7 @@ public class AdminAccessFilter extends ZuulFilter {
         //请求头中增加人员密级
         ctx.addZuulRequestHeader("userSecretLevel", user.getSecretLevel());
         //标识已经成功
-//        LogInfo logInfo = new LogInfo(pm.getTitle(), ctx.getRequest().getMethod(), pm.getUri(), new Date(), user.getId(), user.getName(), host,"0");
-//        DBLog.getInstance().setLogService(logService).offerQueue(logInfo);
+
         BaseContextHandler.set("pm", pm);
         BaseContextHandler.set("user", user);
     }
@@ -205,13 +204,12 @@ public class AdminAccessFilter extends ZuulFilter {
      * @return
      */
     private boolean isStartWith(String requestUri) {
-        boolean flag = false;
         for (String s : startWith.split(",")) {
             if (requestUri.startsWith(s)) {
                 return true;
             }
         }
-        return flag;
+        return false;
     }
 
     /**

@@ -30,7 +30,6 @@ public class RabbitMqConfig {
     @Resource
     private NoticeMapper noticeMapper;
 
-
     @Autowired
     private QueueConfig queueConfig;
     @Autowired
@@ -47,15 +46,18 @@ public class RabbitMqConfig {
      */
     @Bean
     @Order(value = 9)
-    public Binding binding_portal() {
-        Binding binding = BindingBuilder.bind(queueConfig.noticeQueue()).to(exchangeConfig.directExchange()).with(CommonConstants.NOTICE_TOPORTAL_ROTEING_KEY);
-        return binding;
+    public Binding bindingPortal() {
+        return BindingBuilder.bind(queueConfig.noticeQueue()).to(exchangeConfig.directExchange()).with(CommonConstants.NOTICE_TOPORTAL_ROTEING_KEY);
     }
-    //// 死信队列与死信交换机进行绑定
+
+    /**
+     * 死信队列与死信交换机进行绑定
+     * @return
+     */
     @Bean
     @Order(value = 10)
     public Binding bindingDeadExchange() {
-        return BindingBuilder.bind(queueConfig.noticDeadQueue()).to(exchangeConfig.noticDeadExchange()).with(AdminCommonConstant.DEAD_LETTER_ROUTING_KEY);
+        return BindingBuilder.bind(queueConfig.noticeDeadQueue()).to(exchangeConfig.noticeDeadExchange()).with(AdminCommonConstant.DEAD_LETTER_ROUTING_KEY);
     }
 
     /**
@@ -64,23 +66,20 @@ public class RabbitMqConfig {
      */
     @Bean
     @Order(value = 11)
-    public Binding binding_chat() {
-        Binding binding = BindingBuilder.bind(queueConfig.noticToChatQueue()).to(exchangeConfig.directExchange()).with(CommonConstants.NOTICE_TOCHAT_ROTEING_KEY);
-        return binding;
+    public Binding bindingChat() {
+        return BindingBuilder.bind(queueConfig.noticeToChatQueue()).to(exchangeConfig.directExchange()).with(CommonConstants.NOTICE_TOCHAT_ROTEING_KEY);
     }
 
     @Bean
     @Order(value = 12)
-    public Binding binding_admin_user() {
-        Binding binding = BindingBuilder.bind(queueConfig.adminToUser()).to(exchangeConfig.adminDirectExchange()).with(CommonConstants.ADMIN_UNACK_USER_KEY);
-        return binding;
+    public Binding bindingAdminUser() {
+        return  BindingBuilder.bind(queueConfig.adminToUser()).to(exchangeConfig.adminDirectExchange()).with(CommonConstants.ADMIN_UNACK_USER_KEY);
     }
 
     @Bean
     @Order(value = 13)
-    public Binding binding_admin_org() {
-        Binding binding = BindingBuilder.bind(queueConfig.adminToOrg()).to(exchangeConfig.adminDirectExchange()).with(CommonConstants.ADMIN_UNACK_ORG_KEY);
-        return binding;
+    public Binding bindingAdminOrg() {
+        return  BindingBuilder.bind(queueConfig.adminToOrg()).to(exchangeConfig.adminDirectExchange()).with(CommonConstants.ADMIN_UNACK_ORG_KEY);
     }
 
     /**
@@ -99,17 +98,15 @@ public class RabbitMqConfig {
                     notice.setIsSend("0");
                     notice.setId(correlationData.getId());
                     noticeMapper.updateByPrimaryKeySelective(notice);
-                    System.out.printf("message>>> "+correlationData.getId()+">>>未被发布到mq服务,已经补偿到了notice信息集...");
                 }
             }
         });
         return template;
     }
+
     @Bean
     @Qualifier("adminRabbitTemplate")
     public RabbitTemplate adminRabbitTemplate(){
-        RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        return template;
+        return  new RabbitTemplate(connectionFactory);
     }
-
 }
