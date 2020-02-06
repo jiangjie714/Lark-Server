@@ -11,18 +11,47 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 /**
- * Created by 协同设计小组 on 2017/9/15.
+ *
+ * @author 协同设计小组
+ * @date 2017/9/15
  */
 @FeignClient(value = "${auth.serviceId}",configuration = {})
 public interface ServiceAuthFeign {
+    /**
+     * @param serviceId
+     * @param secret
+     * @return
+     */
     @RequestMapping(value = "/client/myClient",method = RequestMethod.POST)
-    public ObjectRestResponse<List<String>> getAllowedClient(@RequestParam("serviceId") String serviceId, @RequestParam("secret") String secret);
+    ObjectRestResponse<List<String>> getAllowedClient(@RequestParam("serviceId") String serviceId, @RequestParam("secret") String secret);
+
+    /**
+     * @param clientId
+     * @param secret
+     * @return
+     */
     @RequestMapping(value = "/client/token",method = RequestMethod.POST)
-    public ObjectRestResponse getAccessToken(@RequestParam("clientId") String clientId, @RequestParam("secret") String secret);
+    ObjectRestResponse getAccessToken(@RequestParam("clientId") String clientId, @RequestParam("secret") String secret);
+
+    /**
+     * @param clientId
+     * @param secret
+     * @return
+     */
     @RequestMapping(value = "/client/servicePubKey",method = RequestMethod.POST)
-    public ObjectRestResponse<byte[]> getServicePublicKey(@RequestParam("clientId") String clientId, @RequestParam("secret") String secret);
+    ObjectRestResponse<byte[]> getServicePublicKey(@RequestParam("clientId") String clientId, @RequestParam("secret") String secret);
+
+    /**
+     * @param clientId
+     * @param secret
+     * @return
+     */
     @RequestMapping(value = "/client/userPubKey",method = RequestMethod.POST)
-    public ObjectRestResponse<byte[]> getUserPublicKey(@RequestParam("clientId") String clientId, @RequestParam("secret") String secret);
+    ObjectRestResponse<byte[]> getUserPublicKey(@RequestParam("clientId") String clientId, @RequestParam("secret") String secret);
+
+    /**
+     * @return
+     */
     @RequestMapping(value = "/client/sysUser",method = RequestMethod.GET)
-    public ObjectRestResponse<SysAuthDto> getSysUser();
+    ObjectRestResponse<SysAuthDto> getSysUser();
 }

@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 public class ProduceSenderConfig{
 
     @Resource(name = "noticeRabbitTemplate")
-    private RabbitTemplate noticRabbitTemplate;
+    private RabbitTemplate noticeRabbitTemplate;
 
     @Resource(name = "adminRabbitTemplate")
     private RabbitTemplate adminRabbitTemplate;
@@ -33,9 +33,9 @@ public class ProduceSenderConfig{
         //消息id
         CorrelationData correlationId = new CorrelationData(id);
         //发送到门户服务
-        noticRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
+        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
         //发送到研讨服务
-        noticRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOCHAT_ROTEING_KEY,message, correlationId);
+        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOCHAT_ROTEING_KEY,message, correlationId);
     }
 
     /**

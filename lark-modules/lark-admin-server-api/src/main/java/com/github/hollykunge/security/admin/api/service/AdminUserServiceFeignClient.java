@@ -53,7 +53,7 @@ public interface AdminUserServiceFeignClient {
    * @return AdminUser
    */
   @RequestMapping(value = "api/user/validate", method = RequestMethod.POST)
-  AdminUser validate(String pid, String password);
+  AdminUser validate(@RequestParam("pid") String pid, @RequestParam("password") String password);
 
 
   /**
