@@ -21,4 +21,23 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+  <!-- fansq 20-2-7 添加 导入excel -->
+  <insert id="insertExcelUserRole">
+    insert into ADMIN_POSITIONUSERMAP
+    (
+    ID,
+    USER_ID
+    POSITION_ID
+    )
+    <foreach collection="userPositions" item="item" index= "index" separator ="UNION ALL">
+      (
+      select
+      #{item.id},
+      #{item.userId}
+      #{item.positionId},
+      from dual
+      )
+    </foreach>
+  </insert>
 </mapper>

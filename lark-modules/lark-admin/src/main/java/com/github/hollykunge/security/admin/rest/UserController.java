@@ -8,20 +8,26 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.Position;
 import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
+import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
+import com.github.hollykunge.security.admin.util.EasyExcelUtil;
 import com.github.hollykunge.security.admin.vo.FrontUser;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.entity.Example;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +56,14 @@ public class UserController extends BaseController<UserBiz,User> {
     @Autowired
     private PositionBiz positionBiz;
 
+    @Autowired
+    private UserBiz userBiz;
+
+    @Autowired
+    private RoleUserMapMapper roleUserMapMapper;
+
+    @Autowired
+    private PositionUserMapMapper positionUserMapMapper;
     /**
      * todo:使用
      * 登录获取用户人信息
@@ -230,11 +244,64 @@ public class UserController extends BaseController<UserBiz,User> {
      * fansq
      * 20-2-4
      * 用户数据导出excel
+     * 指定导出路径
      * @return
      */
     @RequestMapping(value = "/exportExcel",method = RequestMethod.GET)
-    public ObjectRestResponse exportUserExcel(){
-
+    public ObjectRestResponse exportUserExcel(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse){
+        Example example = new Example(User.class);
+        Query query = new Query(params);
+        if(query.entrySet().size()>0) {
+            Example.Criteria criteria = example.createCriteria();
+            for (Map.Entry<String, Object> entry : query.entrySet()) {
+                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
+            }
+        }
+        List<User> userEasyExcelList = baseBiz.selectByExample(example);
+        String fileName ="用户信息";
+        String sheetName = "用户数据";
+        //暂时测试导出到D盘
+        String path = "D:/";
+        EasyExcelUtil.exportFile(path,fileName,sheetName,User.class,userEasyExcelList);
         return new ObjectRestResponse().msg("导出成功!");
     }
+
+    /**
+     * fansq 导出给前端
+     * @param params
+     * @param httpServletResponse
+     * @return
+     * @throws Exception
+     */
+//    @RequestMapping(value = "/exportExcelWeb",method = RequestMethod.GET)
+//    public ObjectRestResponse exportUserExcelWeb(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) throws Exception {
+//        Example example = new Example(User.class);
+//        Query query = new Query(params);
+//        if(query.entrySet().size()>0) {
+//            Example.Criteria criteria = example.createCriteria();
+//            for (Map.Entry<String, Object> entry : query.entrySet()) {
+//                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
+//            }
+//        }
+//        List<User> userEasyExcelList = baseBiz.selectByExample(example);
+//        String fileName ="用户信息";
+//        String sheetName = "用户数据";
+//        EasyExcelUtil.exportWeb(httpServletResponse,fileName,sheetName,User.class,userEasyExcelList);
+//        return new ObjectRestResponse().msg("导出成功!");
+//    }
+
+    /**
+     * fansq
+     * excel文件导入
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/upload")
+    @ResponseBody
+    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
+        EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper);
+        return new ObjectRestResponse().msg("导入成功!");
+    }
+
 }

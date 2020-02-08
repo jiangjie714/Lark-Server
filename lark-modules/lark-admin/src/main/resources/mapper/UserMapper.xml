@@ -149,4 +149,32 @@
       #{item}
     </foreach>
   </select>
+
+  <insert id="insertUserExcel">
+    insert into  admin_user
+    (
+    ID,
+    NAME,
+    P_ID,
+    ORG_CODE,
+    ORG_NAME,
+    SECRET_LEVEL,
+    GENDER,
+    ORDER_ID
+    )
+    <foreach collection="users" item="item" index= "index" separator ="UNION ALL">
+      (
+      select
+      #{item.id},
+      #{item.name},
+      #{item.pId},
+      #{item.orgCode},
+      #{item.orgName},
+      #{item.secretLevel},
+      #{item.gender},
+      #{item.orderId}
+      from dual
+      )
+    </foreach>
+  </insert>
 </mapper>
