@@ -3,10 +3,7 @@ package com.github.hollykunge.security.admin.biz;
 import com.ace.cache.annotation.CacheClear;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
-import com.github.hollykunge.security.admin.entity.Org;
-import com.github.hollykunge.security.admin.entity.PositionUserMap;
-import com.github.hollykunge.security.admin.entity.RoleUserMap;
-import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
@@ -58,6 +55,9 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
 
     @Autowired
     private OrgBiz orgBiz;
+
+    @Autowired
+    private UserMapper userMapper;
 
     public User addUser(User entity) {
         if (SpecialStrUtils.check(entity.getName())) {
@@ -265,5 +265,9 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         Org org = orgBiz.selectById(user.getOrgCode());
         user.setOrgName(org.getPathName());
         return user;
+    }
+
+    public void insertUserExcel(List<User> users){
+        userMapper.insertUserExcel(users);
     }
 }

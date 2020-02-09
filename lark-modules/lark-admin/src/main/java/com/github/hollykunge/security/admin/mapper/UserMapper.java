@@ -3,6 +3,7 @@ package com.github.hollykunge.security.admin.mapper;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.entity.User;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
@@ -44,4 +45,6 @@ public interface UserMapper extends Mapper<User> {
     List<AdminUser> findByUserIdOrPid(@Param("userId") String userId,@Param("pid") String pid);
 
     List<User> findUserByOrgCode(@Param("os") List<String> os);
+
+    void insertUserExcel(@Param("users") List<User> users);
 }
