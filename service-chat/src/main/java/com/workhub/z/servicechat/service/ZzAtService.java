@@ -61,4 +61,13 @@ public interface ZzAtService {
      * @since 2019-06-14
      */
     public TableResultResponse<ZzAt> getList(String receiverId, String groupId, int pageNum, int pageSize) throws Exception;
+
+    /**
+     * at已读消息删除
+     * @param msgId 消息id
+     * @param userId 人员id
+     * @return
+     */
+    int deleteByMsgIdAndUserId(String msgId,String userId);
+
 }
