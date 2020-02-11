@@ -1,11 +1,15 @@
 package com.workhub.z.servicechat.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroup;
-import com.workhub.z.servicechat.entity.ZzGroupFile;
-import com.workhub.z.servicechat.entity.ZzGroupStatus;
+import com.workhub.z.servicechat.VO.NewContactVo;
+import com.workhub.z.servicechat.VO.NewContentVo;
+import com.workhub.z.servicechat.VO.NewMessageVo;
+import com.workhub.z.servicechat.config.EncryptionAndDeciphering;
+import com.workhub.z.servicechat.config.MessageType;
+import com.workhub.z.servicechat.config.RandomId;
+import com.workhub.z.servicechat.config.common;
+import com.workhub.z.servicechat.entity.*;
 import com.workhub.z.servicechat.feign.IFileUploadService;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.MeetingDto;
@@ -14,7 +18,6 @@ import com.workhub.z.servicechat.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,10 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.ref.WeakReference;
 import java.net.URLDecoder;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * 附件上传下载等相关功能控制层
@@ -170,6 +172,39 @@ public class ZzFileManageController {
             objectRestResponse.data("上传失败："+ common.getExceptionMessage(e));
         }
         return objectRestResponse;
+    }
+    @GetMapping("/downloadFileOwn")
+    //下载
+    public void downloadFileOwn(HttpServletRequest request, HttpServletResponse response) {
+        String fileId = request.getParameter("fileId");
+        request.setAttribute("resCode","1");
+        request.setAttribute("msg","下载成功");
+
+        if (fileId == null || "".equals(fileId)) {
+            request.setAttribute("resCode","0");
+            request.setAttribute("msg","附件id是空");
+            return ;
+        }
+        ZzGroupFile zzGroupFile = zzGroupFileService.queryById(fileId);
+        if (zzGroupFile == null) {
+            request.setAttribute("resCode","0");
+            request.setAttribute("msg","附件不存在");
+            return ;
+        }
+        String fileName = zzGroupFile.getFileName();//下载名称
+        String fileExt = zzGroupFile.getFileExt();//后缀
+        if(!"".equals(fileExt)){
+            fileName=fileName+"."+fileExt;
+        }
+        String filePath = zzGroupFile.getPath();//文件路径
+        try {
+            response = zzFileManageService.downloadFile(response, filePath, fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("resCode","-1");
+            request.setAttribute("msg","下载出错");
+            return ;
+        }
     }
 /*    @GetMapping("/downloadFile")
     //下载 1成功 -1 失败 0 文件不存在,-2未审计通过，无权限下载
@@ -363,9 +398,9 @@ public class ZzFileManageController {
         objectRestResponse.data(zzGroupFile);
         return  objectRestResponse;
     }
-    /*@PostMapping ("/fileDelete")
+    @PostMapping ("/fileDeleteOwn")
     //删除文件 1成功 -1 失败 0 文件不存在
-    public ObjectRestResponse fileDelete(@RequestParam("fileId") String fileId) {
+    public ObjectRestResponse fileDeleteOwn(@RequestParam("fileId") String fileId) {
         ObjectRestResponse obj = new ObjectRestResponse();
         obj.rel(true);
         obj.msg("200");
@@ -387,7 +422,7 @@ public class ZzFileManageController {
             obj.data("操作出错");
         }
         return obj;
-    }*/
+    }
     //最新删除上传文件方法
     @PostMapping ("/fileDelete")
     //删除文件 1成功 -1 失败 0 文件不存在
@@ -594,21 +629,42 @@ public class ZzFileManageController {
         obj.data(zzGroupFile.getApproveFlg());
         return obj;
     }
-private static class Myrunnable implements Runnable{
-    @Override
-    public void run() {
-        while(true){
-            System.out.println(Thread.currentThread().getName()+"---");
 
-        }
-    }
-}
     public static void main(String[] args) {
-        ExecutorService pool = Executors.newFixedThreadPool(3);
-        pool.submit(new Myrunnable());
-        pool.submit(new Myrunnable());
-        //pool.shutdown();
-        System.out.println("hahahahahahahahahahaahah");
-        pool.submit(new Myrunnable());
+        /*NewMessageVo msg = new NewMessageVo();
+        NewContactVo sender = new NewContactVo();
+        NewContactVo receiver = new NewContactVo();
+        NewContentVo contentVo = new NewContentVo();
+        sender.setId("yanzhenqing");
+        sender.setName("严振卿");
+        sender.setLevels("70");
+        sender.setPid("123");
+        sender.setAvartar("group1/M00/00/08/CgsYil3giZ2ActI1AAHb7pMHL4Q268.png");
+        msg.setSender(sender);
+
+        receiver.setId("dddsaadfg");
+        receiver.setName("张三");
+        receiver.setAvartar("123/456.png");
+        receiver.setLevels("40");
+        receiver.setPid("");
+        receiver.setGroupOwner("yanzhengqing");
+        receiver.setMemberNum("2");
+        msg.setContactor(receiver);
+
+        msg.setId("457dda45d56");
+        //msg.setCross("2");
+        //msg.setTeamType("GROUP");
+        msg.setSendTime("2019-10-10 19:42:32");
+
+        contentVo.setExtension("txt");
+        contentVo.setId("file124587");
+        contentVo.setFileSize("80000");
+        contentVo.setSecretLevel("40");
+        contentVo.setTitle("新建文本");
+        contentVo.setType("3");
+
+        msg.setMsgContent(contentVo);
+        String str = JSONObject.toJSONString(msg);
+        System.out.println(str);*/
     }
 }

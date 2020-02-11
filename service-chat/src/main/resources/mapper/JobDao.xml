@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.workhub.z.servicechat.dao.JobDao">
-    <!--定时任务处理历史消息-->
-    <select id="backupHisMsg" statementType="CALLABLE" parameterType="Map">
-    {CALL put_message_to_his_table(#{out,mode=OUT,jdbcType=VARCHAR})}
-    </select>
     <!--定时任务处理24小时未发送附件-->
     <select id="getUnUsedFileList" resultType="String">
         select t.path

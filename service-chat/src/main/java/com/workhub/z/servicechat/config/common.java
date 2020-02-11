@@ -7,7 +7,6 @@ import com.workhub.z.servicechat.VO.MessageSecretValidVo;
 import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzDictionaryWords;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
-import com.workhub.z.servicechat.server.IworkWebsocketStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tio.core.ChannelContext;
@@ -216,7 +215,7 @@ public class common {
     *@Author: 忠
     *@date: 2019/5/30
     */
-    public static void checkUserOnline(ChannelContext channelContext,String userId){
+    /*public static void checkUserOnline(ChannelContext channelContext,String userId){
         ChannelContext previousChannelContext = Tio.getChannelContextByBsId(channelContext.groupContext, userId);
         if (!channelContext.equals(previousChannelContext) && previousChannelContext != null) {
             previousChannelContext.setAttribute("kickOut", true); // 踢掉的标志
@@ -225,7 +224,7 @@ public class common {
             System.out.println("踢掉 {} 已经登录的连接 {}"+ userId + previousChannelContext.getClientNode());
         }
 
-    }
+    }*/
     /**
      *@Description: 判断msg数据体是否正确
      *@Param: string 接收的消息
@@ -604,6 +603,19 @@ public class common {
         }
         return  null;
     }
+    //objec转字符串 null-> "0"
+    public static String nulToZeroString(Object object){
+        try{
+            if(object==null){
+                return "0";
+            }
+            return  object.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error(getExceptionMessage(e));
+        }
+        return  null;
+    }
     //判断群组织是否跨越场所，参数是所有的成员列表,true跨越场所 false不跨越
     public static boolean  isGroupCross(List<UserInfo> userInfoList){
         boolean iscross = false;
@@ -694,16 +706,6 @@ public class common {
             ip = request.getRemoteAddr();
         }
         return ip;
-    }
-    /**判断用户是否在线 1在线 0不在线*/
-    public static String isUserOnSocket(String userId){
-        ChannelContext channelContext = Tio.getChannelContextByBsId(IworkWebsocketStarter.getWsServerStarter().getServerGroupContext(),userId);
-        if (channelContext != null) {
-            return "1";
-        }
-        else {
-            return "0";
-        }
     }
 
     /**

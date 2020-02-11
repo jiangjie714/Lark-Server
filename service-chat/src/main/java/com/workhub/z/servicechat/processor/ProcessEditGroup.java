@@ -4,8 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.workhub.z.servicechat.VO.GroupEditVO;
-import com.workhub.z.servicechat.config.CacheConst;
+import com.workhub.z.servicechat.VO.MsgSendStatusVo;
+import com.workhub.z.servicechat.VO.SocketMsgVo;
+import com.workhub.z.servicechat.VO.SocketTeamBindVo;
 import com.workhub.z.servicechat.config.ImageUtil;
+import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzGroup;
@@ -14,8 +17,6 @@ import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.GroupTaskDto;
 import com.workhub.z.servicechat.model.UserListDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
-import com.workhub.z.servicechat.redis.RedisListUtil;
-import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.ZzGroupService;
 import com.workhub.z.servicechat.service.ZzGroupStatusService;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
@@ -25,8 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tio.core.ChannelContext;
-import org.tio.core.Tio;
 
 import java.io.IOException;
 import java.util.*;
@@ -51,8 +50,8 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
     @Autowired
     RedisTemplate redisTemplate;
     // TODO: 2019/6/4 分类处理群组编辑
-    public boolean processManage(ChannelContext channelContext, String message) throws IOException {
-
+    public MsgSendStatusVo processManage(String userId, String message) throws IOException {
+        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
 //        GroupTaskDto groupTaskDto = toGroupTaskDto(message);
         GroupTaskDto groupTaskDto = JSONObject.parseObject(message,GroupTaskDto.class);
         switch (groupTaskDto.getType()){
@@ -60,7 +59,7 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
                 // TODO: 2019/6/4 处理加入群组消息，1绑定用户到群组
 //                Tio.bindGroup(channelContext,groupTaskDto.getGroupId());
                 try {
-                    return joinGroup(channelContext,groupTaskDto);
+                     joinGroup(userId,groupTaskDto);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -71,12 +70,11 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
                 // TODO: 2019/6/4  1.存入数据库 2.生成群组头像 3.向用户分发加入群组消息
 //                createGroup(channelContext,message);
                 try {
-                    joinGroup(channelContext,groupTaskDto);
+                    joinGroup(userId,groupTaskDto);
 //                    createGroupHeadsImg(groupTaskDto.getGroupId());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                Tio.bindGroup(channelContext,groupTaskDto.getGroupId());
                 break;
             case GROUP_EXIT_MSG:
                 // TODO: 2019/6/4 退出群组
@@ -84,10 +82,10 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
             case GROUP_CLOSE_MSG:
                 break;
         }
-        return true;
+        return msgSendStatusVo;
     }
 
-    public boolean joinGroup(ChannelContext channelContext,GroupTaskDto<ZzGroup> groupTaskDto) throws Exception{
+    public boolean joinGroup(String userId,GroupTaskDto<ZzGroup> groupTaskDto) throws Exception{
         //如果是加入：人员列表只有一个用户，他们自己；如果是邀请，人员列表可能多个
 //        for ( UserListDto userInfo:groupTaskDto.getUserList()){
             ZzUserGroup userGroup = new ZzUserGroup();
@@ -99,8 +97,19 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
             //创建群头像
 //            createGroupHeadsImg(groupTaskDto.getGroupId());
 //        }
-
-        Tio.bindGroup(channelContext,groupTaskDto.getGroupId());
+        //todo 发消息后期改成前端连接信息中心
+        //todo 改成socket代码规范
+        SocketMsgVo msgVo = new SocketMsgVo();
+        msgVo.setCode(MessageType.SOCKET_TEAM_BIND);
+        msgVo.setSender("");
+        msgVo.setReceiver("");
+        SocketTeamBindVo socketTeamBindVo  = new SocketTeamBindVo();
+        socketTeamBindVo.setTeamId(groupTaskDto.getGroupId());
+        List userList = new ArrayList();
+        userList.add(userId);
+        socketTeamBindVo.setUserList(userList);
+        msgVo.setMsg(socketTeamBindVo);
+        rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
         //System.out.println(channelContext.userid + "joinGroup" +  groupTaskDto.getGroupId() + groupTaskDto.getZzGroup().getGroupName());
 //        Tio.sendToGroup(channelContext.getGroupContext(),groupTaskDto.getGroupId(),super.getWsResponse("爷们来了"));
 
@@ -143,7 +152,8 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
 
     //群创建
     @Transactional
-    public boolean createGroup(ChannelContext channelContext,String msg) throws IOException {
+    public MsgSendStatusVo createGroup(String userId,String msg) throws IOException {
+        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
         ZzGroup zzGroupInfo = new ZzGroup();
         JSONObject jsonObject = JSONObject.parseObject(msg);
         String message = jsonObject.getString("data");
@@ -196,7 +206,13 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
             groupEditVO.setCode(GROUP_EDIT);
             groupEditVO.setData(groupTaskDto);
             String res = JSONObject.toJSONString(groupEditVO, SerializerFeature.DisableCircularReferenceDetect);
-            Tio.sendToUser(channelContext.getGroupContext(),userJson.getString("userId"),this.getWsResponse(res));
+            //todo 发消息后期改成前端连接信息中心
+            SocketMsgVo msgVo = new SocketMsgVo();
+            msgVo.setCode(jsonObject.getString("code"));
+            msgVo.setSender(userId);
+            msgVo.setReceiver(userJson.getString("userId"));
+            msgVo.setMsg(res);
+            rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
 
             //遍历用户end
             //返回创建结果
@@ -210,7 +226,13 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
             groupEditVO.setCode(CREATE_GROUP_ANS);
             groupEditVO.setData(groupTaskDto1);
             String res1 = JSONObject.toJSONString(groupEditVO, SerializerFeature.DisableCircularReferenceDetect);
-            Tio.sendToUser(channelContext.getGroupContext(),userJson.getString("userId"),this.getWsResponse(res1));
+            //todo 发消息后期改成前端连接信息中心
+            SocketMsgVo msgVo1 = new SocketMsgVo();
+            msgVo1.setCode(jsonObject.getString("code"));
+            msgVo1.setSender(userId);
+            msgVo1.setReceiver(userJson.getString("userId"));
+            msgVo1.setMsg(res1);
+            rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo1);
         }
 
 //        groupTaskDto.setUserList(userList);
@@ -235,6 +257,6 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
         ImageUtil.generate(picUrls, newPath);
         zzGroup.setGroupImg(newPath);*/
         // TODO: 2019/6/3 群头像生成
-        return true;
+        return msgSendStatusVo;
     }
 }

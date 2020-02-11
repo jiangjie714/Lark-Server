@@ -2,10 +2,7 @@ package com.workhub.z.servicechat.service.impl;
 
 
 import com.github.hollykunge.security.common.msg.ListRestResponse;
-import com.workhub.z.servicechat.VO.GroupEditVO;
-import com.workhub.z.servicechat.VO.MeetUserVo;
-import com.workhub.z.servicechat.VO.MeetingVo;
-import com.workhub.z.servicechat.VO.UserCurrentDayMeetJobVo;
+import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
@@ -15,9 +12,7 @@ import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzGroupStatus;
 import com.workhub.z.servicechat.entity.ZzMeetingUser;
 import com.workhub.z.servicechat.feign.IUserService;
-import com.workhub.z.servicechat.model.GroupTaskDto;
 import com.workhub.z.servicechat.model.MeetingDto;
-import com.workhub.z.servicechat.model.UserListDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;
 import com.workhub.z.servicechat.redis.RedisUtil;
@@ -33,8 +28,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.workhub.z.servicechat.config.MessageType.*;
 
 /**
  * @author:zhuqz
@@ -99,7 +92,8 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
             meetUserVo.setJoinTime(common.nulToEmptyString(map.get("CRTTIME")));
             meetUserVo.setUserLevel(common.nulToEmptyString(map.get("USERLEVEL")));
             meetUserVo.setCanMsg(common.nulToEmptyString(map.get("CANMSG")));
-            meetUserVo.setOnline(common.isUserOnSocket(meetUserVo.getUserId()));
+            String online = common.nulToEmptyString(RedisUtil.getValue(CacheConst.userOnlineCahce+common.nulToEmptyString(map.get("USERID"))));
+            meetUserVo.setOnline((MessageType.ONLINE+"").equals(online)?"1":")");
             meetUserVo.setUserLevel(common.nulToEmptyString(userInfo.getSecretLevel()));
             meetUserVo.setUserImg(common.nulToEmptyString(userInfo.getAvatar()));
             meetUserVo.setUserOrgCode(common.nulToEmptyString(userInfo.getOrgCode()));
@@ -217,25 +211,9 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 return -1;
             }
             //新增了人员设置参数
-            GroupEditVO addVo = new GroupEditVO();
-            addVo.setCode(GROUP_EDIT);//消息类型群编辑
-            GroupTaskDto addDto = new GroupTaskDto();
-            addDto.setType(GROUP_JOIN_MSG);//群编辑类型：加入群
-            addDto.setGroupId(meetId);
-            addDto.setTimestamp(new Date());
-            addDto.setReviser(userId);//
             String addUserIds = "";
-            List<UserListDto> addUserList = new ArrayList<>();
             //删除了人员设置参数
-            GroupEditVO removeVo = new GroupEditVO();
-            removeVo.setCode(GROUP_EDIT);//消息类型群编辑
-            GroupTaskDto removeDto = new GroupTaskDto();
-            removeDto.setType(GROUP_EXIT_MSG);//群编辑类型：退出群
-            removeDto.setGroupId(meetId);
-            removeDto.setTimestamp(new Date());
-            removeDto.setReviser(userId);//
             String removeUserIds = "";
-            List<UserListDto> removeUserList = new ArrayList<>();
 
             //新增判断
             for(MeetUserVo now:nowUserList){
@@ -313,16 +291,13 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
             //处理群成员end
             MeetingDto zzMeeting = zzMeetingService.getMeetInf(meetId);
             //如果有新增人员 发送消息
+            List msgUserList = new ArrayList();
             if(!addUserIds.equals("")){
                 addUserInfoList = iUserService.userList(addUserIds);
                 String userNames = "";
                 String userIds = "";
                 for (UserInfo userInfo:addUserInfoList){
-                    UserListDto userListDto = new UserListDto();
-                    userListDto.setUserId(userInfo.getId());
-                    userListDto.setImg(userInfo.getAvatar());
-                    userListDto.setUserLevels(userInfo.getSecretLevel());
-                    addUserList.add(userListDto);
+                    msgUserList.add(userInfo.getId());
                     userNames += ","+userInfo.getName();
                     userIds += ","+userInfo.getId();
                     //redis 缓存处理 把用户的会议列表缓存更新
@@ -335,10 +310,15 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                     }
 
                 }
-                addDto.setUserList(addUserList);
-                addDto.setZzGroup(zzMeeting);
-                addVo.setData(addDto);
-                rabbitMqMsgProducer.sendMsgEditGroup(addVo);
+                SocketMsgVo msgVo = new SocketMsgVo();
+                msgVo.setCode(MessageType.SOCKET_TEAM_BIND);
+                msgVo.setSender("");
+                msgVo.setReceiver("");
+                SocketTeamBindVo socketTeamBindVo  = new SocketTeamBindVo();
+                socketTeamBindVo.setTeamId(meetId);
+                socketTeamBindVo.setUserList(msgUserList);
+                msgVo.setMsg(socketTeamBindVo);
+                rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
 
                 //记录群状态变动begin
                 if(!userNames.equals("")){
@@ -363,16 +343,13 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
 
 
             //如果有删除人员发送消息
+            List msgUserList2 = new ArrayList();
             if(!removeUserIds.equals("")){
                 removeUserInfoList = iUserService.userList(removeUserIds);
                 String userNames = "";
                 String userIds = "";
                 for (UserInfo userInfo:removeUserInfoList){
-                    UserListDto userListDto = new UserListDto();
-                    userListDto.setUserId(userInfo.getId());
-                    userListDto.setImg(userInfo.getAvatar());
-                    userListDto.setUserLevels(userInfo.getSecretLevel());
-                    removeUserList.add(userListDto);
+                    msgUserList2.add(userInfo.getId());
                     userNames += ","+userInfo.getName();
                     userIds += ","+userInfo.getId();
                     //redis 缓存处理 把用户的群列表缓存更新
@@ -385,10 +362,15 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                     }
 
                 }
-                removeDto.setUserList(removeUserList);
-                removeDto.setZzGroup(zzMeeting);
-                removeVo.setData(removeDto);
-                rabbitMqMsgProducer.sendMsgEditGroup(removeVo);
+                SocketMsgVo msgVo2 = new SocketMsgVo();
+                msgVo2.setCode(MessageType.SOCKET_TEAM_UNBIND);
+                msgVo2.setSender("");
+                msgVo2.setReceiver("");
+                SocketTeamBindVo socketTeamBindVo2  = new SocketTeamBindVo();
+                socketTeamBindVo2.setTeamId(meetId);
+                socketTeamBindVo2.setUserList(msgUserList2);
+                msgVo2.setMsg(socketTeamBindVo2);
+                rabbitMqMsgProducer.sendSocketTeamUnBindMsg(msgVo2);
                 //记录群状态变动begin
                 if(!userNames.equals("")){
                     userNames = userNames.substring(1);

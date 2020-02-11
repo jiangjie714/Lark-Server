@@ -23,10 +23,10 @@ import java.util.Map;
 public class ZzFileManageServiceImpl implements ZzFileManageService {
 
     // 上传文件大小和路径配置
-   // @Value("${file_size_max}")
+    @Value("${file_size_max}")
     private String file_size_max;
 
-    //@Value("${file_save_path_group}")
+    @Value("${file_save_path_group}")
     private String file_root_path;
     //上传附件
     @Override

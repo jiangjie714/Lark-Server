@@ -8,6 +8,7 @@ import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.entity.ZzUserGroup;
+import com.workhub.z.servicechat.model.RawMessageDto;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
 import org.springframework.web.bind.annotation.*;
 
@@ -107,9 +108,14 @@ public class ZzUserGroupController{
                 groupUserListVoPageInfo.getList());
     }
 
+    @PostMapping("/usernewmsglist2")
+    public ListRestResponse getUserNewMsgList2(@RequestParam("id") String id){
+        List<UserNewMsgVo> userNewMsgList = this.zzUserGroupService.getUserNewMsgList2(id);
+        return new ListRestResponse("200",userNewMsgList==null?0:userNewMsgList.size(),userNewMsgList);
+    }
     @PostMapping("/usernewmsglist")
     public ListRestResponse getUserNewMsgList(@RequestParam("id") String id){
-        List<UserNewMsgVo> userNewMsgList = this.zzUserGroupService.getUserNewMsgList(id);
+        List<RawMessageDto> userNewMsgList = this.zzUserGroupService.getUserNewMsgList(id);
         return new ListRestResponse("200",userNewMsgList==null?0:userNewMsgList.size(),userNewMsgList);
     }
     /**

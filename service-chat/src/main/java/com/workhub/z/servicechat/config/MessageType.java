@@ -49,6 +49,8 @@ public class MessageType {
     public static final int FAIL_ANSWER = 201;
     //提示
     public static final int TIPS_ANSWER = 202;
+    //不在线
+    public static final int OFFLINE_ANSWER = 201;
 
     //在线状态 7
     public static final int LINESTATUS = 7000;
@@ -134,4 +136,13 @@ public class MessageType {
     public static final String  NORMAL_SECRECT_LEVEL = "40";
    /**机密*/
     public static final String HIGH_SECRECT_LEVEL = "60";
+
+    /**群体socket绑定**/
+    public static final String SOCKET_TEAM_BIND = "10000000000000000";
+    /**群体socket绑定解除**/
+    public static final String SOCKET_TEAM_UNBIND = "10000000000000001";
+    /**会议变更**/
+    public static final String SOCKET_MEET_CHANGE = "400000000000000";
+    /**系统通知**/
+    public static final String SOCKET_SYSTEM = "500000000000000";
 }

@@ -134,4 +134,14 @@ public class ZzAtServiceImpl implements ZzAtService  {
         );
         return res;
     }
+    /**
+     * at已读消息删除
+     * @param msgId 消息id
+     * @param userId 人员id
+     * @return
+     */
+    @Override
+    public int deleteByMsgIdAndUserId(String msgId,String userId){
+        return this.zzAtDao.deleteByMsgIdAndUserId(msgId,userId);
+    }
 }
