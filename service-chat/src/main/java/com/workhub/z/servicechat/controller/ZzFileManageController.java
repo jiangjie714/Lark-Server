@@ -1,23 +1,20 @@
 package com.workhub.z.servicechat.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.workhub.z.servicechat.VO.NewContactVo;
-import com.workhub.z.servicechat.VO.NewContentVo;
-import com.workhub.z.servicechat.VO.NewMessageVo;
 import com.workhub.z.servicechat.config.EncryptionAndDeciphering;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.*;
 import com.workhub.z.servicechat.feign.IFileUploadService;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.IUserService;
 import com.workhub.z.servicechat.model.MeetingDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.ref.WeakReference;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -52,6 +48,7 @@ public class ZzFileManageController {
     private ZzGroupService zzGroupService;
     @Autowired
     private IUserService iUserService;
+    @Qualifier("IFileUploadService")
     @Autowired
     private IFileUploadService iFileUploadService;
     @Autowired

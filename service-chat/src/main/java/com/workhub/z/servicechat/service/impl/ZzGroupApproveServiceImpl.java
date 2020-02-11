@@ -15,7 +15,7 @@ import com.workhub.z.servicechat.dao.ZzGroupApproveDao;
 import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzGroupApprove;
 import com.workhub.z.servicechat.entity.ZzGroupApproveLog;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.IUserService;
 import com.workhub.z.servicechat.processor.ProcessEditGroup;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;

@@ -11,7 +11,7 @@ import com.workhub.z.servicechat.dao.ZzMeetingUserDao;
 import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzGroupStatus;
 import com.workhub.z.servicechat.entity.ZzMeetingUser;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.IUserService;
 import com.workhub.z.servicechat.model.MeetingDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;
@@ -21,6 +21,7 @@ import com.workhub.z.servicechat.service.ZzMeetingUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -41,6 +42,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
     private ZzMeetingUserDao zzMeetingUserDao;
     @Resource
     private ZzMeetingService zzMeetingService;
+    @Qualifier("IUserService")
     @Autowired
     private IUserService iUserService;
     @Resource
@@ -198,7 +200,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
      * @return 1成功 -1失败 0成员过多
      */
     public int editMeetUser(MeetingVo meetingVo, String userId, String userName,String userNo,String userIp){
-        List<com.workhub.z.servicechat.entity.UserInfo> addUserInfoList = null;
+        List<UserInfo> addUserInfoList = null;
         List<UserInfo> removeUserInfoList = null;
         try {
             String meetId = meetingVo.getId();

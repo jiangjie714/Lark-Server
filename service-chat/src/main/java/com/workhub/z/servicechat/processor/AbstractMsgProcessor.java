@@ -5,16 +5,16 @@ import com.workhub.z.servicechat.VO.MessageSecretValidVo;
 import com.workhub.z.servicechat.VO.MsgAnswerVO;
 import com.workhub.z.servicechat.config.FileTypeEnum;
 import com.workhub.z.servicechat.config.MessageType;
-import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.*;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.IUserService;
 import com.workhub.z.servicechat.model.MeetingDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
@@ -219,24 +219,24 @@ public class AbstractMsgProcessor {
         String message = jsonObject.getString("data");
         //文件上传信息更新begin
         try {
-            String msgType = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.type"));
+            String msgType = common.nulToEmptyString(getJsonStringKeyValue(message,"content.type"));
             //如果是文件或者图片上传
             if("2".equals(msgType)||"3".equals(msgType)){
                 ZzGroupFile zzGroupFile = new ZzGroupFile();
-                zzGroupFile.setId(RandomId.getUUID());
-                zzGroupFile.setFileId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.id")));
-                zzGroupFile.setCreator(common.nulToEmptyString(common.getJsonStringKeyValue(message,"fromId")));
-                zzGroupFile.setCreatorName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username")));
+                zzGroupFile.setId(getUUID());
+                zzGroupFile.setFileId(common.nulToEmptyString(getJsonStringKeyValue(message,"content.id")));
+                zzGroupFile.setCreator(common.nulToEmptyString(getJsonStringKeyValue(message,"fromId")));
+                zzGroupFile.setCreatorName(common.nulToEmptyString(getJsonStringKeyValue(message,"username")));
                 zzGroupFile.setCreateTime(new Date());
-                zzGroupFile.setSizes(Double.parseDouble(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.fileSize"))));
-                zzGroupFile.setFileName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title")));
-                zzGroupFile.setFileExt(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension")));
+                zzGroupFile.setSizes(Double.parseDouble(common.nulToEmptyString(getJsonStringKeyValue(message,"content.fileSize"))));
+                zzGroupFile.setFileName(common.nulToEmptyString(getJsonStringKeyValue(message,"content.title")));
+                zzGroupFile.setFileExt(common.nulToEmptyString(getJsonStringKeyValue(message,"content.extension")));
                 zzGroupFile.setFileType(FileTypeEnum.getEnumByValue(common.nulToEmptyString(zzGroupFile.getFileExt())).getType());
-                zzGroupFile.setLevels(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.secretLevel")));
-                zzGroupFile.setGroupId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"toId")));
-                zzGroupFile.setReceiverName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"toName")));
+                zzGroupFile.setLevels(common.nulToEmptyString(getJsonStringKeyValue(message,"content.secretLevel")));
+                zzGroupFile.setGroupId(common.nulToEmptyString(getJsonStringKeyValue(message,"toId")));
+                zzGroupFile.setReceiverName(common.nulToEmptyString(getJsonStringKeyValue(message,"toName")));
                 zzGroupFile.setApproveFlg("0");//默认都是审批不通过
-                boolean isGroup = (Boolean) common.getJsonStringKeyValue(message,"isGroup");
+                boolean isGroup = (Boolean) getJsonStringKeyValue(message,"isGroup");
                 zzGroupFile.setIsGroup(isGroup?String.valueOf(MessageType.GROUP_FILE):String.valueOf(MessageType.PRIVATE_FILE));
                 if(zzGroupFile.getIsGroup().equals(String.valueOf(MessageType.GROUP_FILE))){
                     if(zzGroupFile.getLevels().equals(MessageType.NO_SECRECT_LEVEL)){//如果是非密文件
@@ -246,16 +246,16 @@ public class AbstractMsgProcessor {
                 zzGroupFileService.fileRecord(zzGroupFile);
                 //记录群状态变动
                 ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
-                zzGroupStatus.setId(RandomId.getUUID());
-                zzGroupStatus.setOperatorName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username")));
-                zzGroupStatus.setOperator(common.nulToEmptyString(common.getJsonStringKeyValue(message,"fromId")));
+                zzGroupStatus.setId(getUUID());
+                zzGroupStatus.setOperatorName(common.nulToEmptyString(getJsonStringKeyValue(message,"username")));
+                zzGroupStatus.setOperator(common.nulToEmptyString(getJsonStringKeyValue(message,"fromId")));
                 zzGroupStatus.setOperateType(MessageType.FLOW_UPLOADFILE);//上传附件
-                zzGroupStatus.setGroupId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"toId")));
+                zzGroupStatus.setGroupId(common.nulToEmptyString(getJsonStringKeyValue(message,"toId")));
                 zzGroupStatus.setOperateTime(new Date());
-                zzGroupStatus.setDescribe(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username"))+
+                zzGroupStatus.setDescribe(common.nulToEmptyString(getJsonStringKeyValue(message,"username"))+
                         "上传了附件："+
-                        common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title"))+
-                        (((common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))).equals(""))?"":("."+common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))))
+                        common.nulToEmptyString(getJsonStringKeyValue(message,"content.title"))+
+                        (((common.nulToEmptyString(getJsonStringKeyValue(message,"content.extension"))).equals(""))?"":("."+common.nulToEmptyString(getJsonStringKeyValue(message,"content.extension"))))
                 );
                 try{
                     rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
@@ -268,18 +268,18 @@ public class AbstractMsgProcessor {
 
         //文件上传信息更新end
         //保存消息begin
-        String receiver  = common.nulToEmptyString(common.getJsonStringKeyValue(message,"toId"));
-        String sender = common.nulToEmptyString(common.getJsonStringKeyValue(message,"fromId"));
+        String receiver  = common.nulToEmptyString(getJsonStringKeyValue(message,"toId"));
+        String sender = common.nulToEmptyString(getJsonStringKeyValue(message,"fromId"));
         messageInfo.setMsgId(msgId);
         messageInfo.setCreatetime(new Date());
-        messageInfo.setLevels(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.secretLevel")));
+        messageInfo.setLevels(common.nulToEmptyString(getJsonStringKeyValue(message,"content.secretLevel")));
         messageInfo.setReceiver(receiver);
         messageInfo.setSender(sender);
         messageInfo.setType(type);
         messageInfo.setIp(ip);
-        messageInfo.setFrontId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"id")));
+        messageInfo.setFrontId(common.nulToEmptyString(getJsonStringKeyValue(message,"id")));
         messageInfo.setContent(message);
-        messageInfo.setFileType(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.type")));
+        messageInfo.setFileType(common.nulToEmptyString(getJsonStringKeyValue(message,"content.type")));
 
         /*JSONArray atUsers = ((JSONArray) common.getJsonStringKeyValue(message,"atId"));
         if(atUsers.size()!=0){
@@ -292,8 +292,8 @@ public class AbstractMsgProcessor {
                 atNames = atNames.substring(1);
             }
         }*/
-        messageInfo.setMsg(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title")));
-        messageInfo.setFileId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.id")));
+        messageInfo.setMsg(common.nulToEmptyString(getJsonStringKeyValue(message,"content.title")));
+        messageInfo.setFileId(common.nulToEmptyString(getJsonStringKeyValue(message,"content.id")));
         //0科室内1跨科室2跨场所
         String iscross = MessageType.CROSSTYPE_SAME_OFFICE;
         if("GROUP".equals(type)){//如是群消息
@@ -353,8 +353,8 @@ public class AbstractMsgProcessor {
         if("0".equals(senderCnt)){
             zzContactInfSender.setId(sender);
             zzContactInfSender.setType("USER");
-            zzContactInfSender.setAvartar(common.nulToEmptyString(common.getJsonStringKeyValue(message,"avatar")));
-            zzContactInfSender.setName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username")));
+            zzContactInfSender.setAvartar(common.nulToEmptyString(getJsonStringKeyValue(message,"avatar")));
+            zzContactInfSender.setName(common.nulToEmptyString(getJsonStringKeyValue(message,"username")));
             zzContactInfSender.setMemberNum("2");
             zzContactInfSender.setGroupOwner("");
             Map<String,String> param = new HashMap<>();
@@ -374,13 +374,13 @@ public class AbstractMsgProcessor {
         if("0".equals(receiverCnt)){
             zzContactInfReceiver.setId(receiver);
             zzContactInfReceiver.setType(type);
-            zzContactInfReceiver.setName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"toName")));
+            zzContactInfReceiver.setName(common.nulToEmptyString(getJsonStringKeyValue(message,"toName")));
             if("GROUP".equals(type) || "MEET".equals(type)){
-                zzContactInfReceiver.setAvartar(common.nulToEmptyString(common.getJsonStringKeyValue(message,"contactInfo.avatar")));
-                zzContactInfReceiver.setLevels(common.nulToEmptyString(common.getJsonStringKeyValue(message,"contactInfo.secretLevel")));
+                zzContactInfReceiver.setAvartar(common.nulToEmptyString(getJsonStringKeyValue(message,"contactInfo.avatar")));
+                zzContactInfReceiver.setLevels(common.nulToEmptyString(getJsonStringKeyValue(message,"contactInfo.secretLevel")));
                 zzContactInfReceiver.setPid("");
-                zzContactInfReceiver.setMemberNum(common.nulToEmptyString(common.getJsonStringKeyValue(message,"contactInfo.memberNum")));
-                zzContactInfReceiver.setGroupOwner(common.nulToEmptyString(common.getJsonStringKeyValue(message,"contactInfo.groupOwnerId")));
+                zzContactInfReceiver.setMemberNum(common.nulToEmptyString(getJsonStringKeyValue(message,"contactInfo.memberNum")));
+                zzContactInfReceiver.setGroupOwner(common.nulToEmptyString(getJsonStringKeyValue(message,"contactInfo.groupOwnerId")));
             }else if("USER".equals(type)){
                 Map<String,String> param = new HashMap<>();
                 param.put("userid",receiver);

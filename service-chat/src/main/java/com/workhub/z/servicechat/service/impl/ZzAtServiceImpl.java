@@ -54,10 +54,10 @@ public class ZzAtServiceImpl implements ZzAtService  {
      * @param limit 查询条数
      * @return 对象列表
      */
-    @Override
-    public List<ZzAt> queryAllByLimit(int offset, int limit) {
-        return this.zzAtDao.queryAllByLimit(offset, limit);
-    }
+//    @Override
+//    public List<ZzAt> queryAllByLimit(int offset, int limit) {
+//        return this.zzAtDao.queryAllByLimit(offset, limit);
+//    }
 
     /**
      * 新增数据

@@ -16,7 +16,7 @@ import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzGroup;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.IUserService;
 import com.workhub.z.servicechat.model.GroupEditDto;
 import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.ZzGroupService;

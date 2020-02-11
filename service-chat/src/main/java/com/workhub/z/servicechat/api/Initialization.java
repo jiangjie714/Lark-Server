@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.api;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.IUserService;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

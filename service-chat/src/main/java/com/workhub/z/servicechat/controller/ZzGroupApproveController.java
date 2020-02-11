@@ -11,14 +11,13 @@ import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzGroupApprove;
 import com.workhub.z.servicechat.entity.ZzGroupApproveLog;
 import com.workhub.z.servicechat.entity.ZzGroupStatus;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.IUserService;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.service.ZzGroupApproveService;
 import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

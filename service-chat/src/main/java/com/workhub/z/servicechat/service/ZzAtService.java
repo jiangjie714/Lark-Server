@@ -28,7 +28,7 @@ public interface ZzAtService {
      * @param limit 查询条数
      * @return 对象列表
      */
-    List<ZzAt> queryAllByLimit(int offset, int limit);
+//    List<ZzAt> queryAllByLimit(int offset, int limit);
 
     /**
      * 新增数据
