@@ -3,6 +3,20 @@ server:
 logging:
   level:
     com.github.hollykunge.security.admin: DEBUG
+
+#eruka注册中心
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+      ###向注册中心上注册自己
+      register-with-eureka: true
+      ###是否需要从eureka上获取注册信息
+      fetch-registry: true
+#      register-with-eureka: false
+#      #是否需要从eureka上获取注册信息
+#      fetch-registry: false
+
 spring:
   application:
     name: lark-admin
@@ -38,10 +52,10 @@ spring:
   rabbitmq:
     #需要修改地址
     #host: ${RABBIT_MQ_HOST:10.11.24.135}
-    host: ${RABBIT_MQ_HOST:47.99.247.83}
+    host: ${RABBIT_MQ_HOST:127.0.0.1}
     port:  ${RABBIT_MQ_PORT:5672}
-    username: guest
-    password: guest
+    username: hollykunge
+    password: 123456
     virtual-host: /
     ###使用rabbitmq消息发送确认机制
     publisher-confirms: true
@@ -127,7 +141,7 @@ redis:
     maxWait: 10000
     #需要修改地址
   #host: ${REDIS_HOST:10.11.24.135}
-  host: ${REDIS_HOST:47.99.247.83}
+  host: ${REDIS_HOST:127.0.0.1}
   port:  ${REDIS_PORT:6379}
   password: 123456
   timeout: 20000

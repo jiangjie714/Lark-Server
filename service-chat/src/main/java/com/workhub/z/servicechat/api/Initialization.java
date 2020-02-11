@@ -57,9 +57,6 @@ public class Initialization {
     */
     @RequestMapping("/getInfo")
     public void queryUserInfoBySn(String sn){
-//        iUserService.queryUserinfoBySn(sn);
-        iUserService.validate("11","11");
-//        return null;
     }
 
     /**
