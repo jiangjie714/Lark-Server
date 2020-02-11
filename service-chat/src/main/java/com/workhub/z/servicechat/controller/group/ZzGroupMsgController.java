@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.group;
 
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
