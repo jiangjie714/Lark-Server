@@ -16,7 +16,7 @@ public class SocketMsgVo implements Serializable {
     String id;
     /**发送人*/
     String sender = "system";
-    /**接收人*/
+    /**接收人,多个逗号分割，且多个人情况下confirmFlg应是fasle*/
     String receiver;
     /**编码**/
     String code;

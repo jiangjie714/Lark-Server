@@ -15,7 +15,7 @@ import static com.workhub.z.servicechat.config.VoToEntity.GroupMsgVOToModel;
 import static com.workhub.z.servicechat.config.common.getJsonStringKeyValue;
 
 @Service
-public class ProcessMeetMsg extends AbstractMsgProcessor{
+public class ProcessMeetMsg extends AbstractMsgProcessor {
 
     public MsgSendStatusVo sendMsg(String msg, String ip) throws Exception {
         MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
@@ -44,24 +44,27 @@ public class ProcessMeetMsg extends AbstractMsgProcessor{
             String msgId = super.saveMessageInfo("MEET",ip,msg);
             msgSendStatusVo.setId(msgId);
             //如果可以发送消息
-            //todo 发消息后期改成前端连接信息中心
+
             SocketMsgVo msgVo = new SocketMsgVo();
             msgVo.setCode(jsonObject.getString("code"));
             msgVo.setSender(zzGroupMsg.getMsgSender());
             msgVo.setReceiver(zzGroupMsg.getMsgReceiver());
             msgVo.setMsg(msg);
-            rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
+            //todo SocketMsgVo加密
+            msgSendStatusVo.setMsg(msgVo);
+            //todo 发消息后期改成前端连接信息中心
+            //rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
         }else{
             msgSendStatusVo.setStatus(false);
             msgSendStatusVo.setContent("消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
-            //todo 发消息后期改成前端连接信息中心
             SocketMsgVo socketMsgVo = new SocketMsgVo();
             socketMsgVo.setCode(MSG_ANSWER+"");
             socketMsgVo.setSender((String)getJsonStringKeyValue(msg,"data.fromId"));
             socketMsgVo.setReceiver((String)getJsonStringKeyValue(msg,"data.fromId"));
             MsgAnswerVO answerVO = super.msgAnswer(msg,zzGroupMsg.getMsgId(), MessageType.FAIL_ANSWER,"消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
             socketMsgVo.setMsg(answerVO);
-            rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
+            //todo 发消息后期改成前端连接信息中心
+            //rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
         }
         return msgSendStatusVo;
     }
@@ -71,9 +74,8 @@ public class ProcessMeetMsg extends AbstractMsgProcessor{
 
         JSONObject jsonObject = JSONObject.parseObject(msg);
         String message = jsonObject.getString("data");
-        String meetId =common.getJsonStringKeyValue(message,"id").toString();
+        String meetId = common.getJsonStringKeyValue(message,"id").toString();
 
-        //todo 发消息后期改成前端连接信息中心
         SocketMsgVo msgVo = new SocketMsgVo();
         //todo 改成socket代码规范
         msgVo.setCode(MessageType.SOCKET_TEAM_BIND);
@@ -85,6 +87,7 @@ public class ProcessMeetMsg extends AbstractMsgProcessor{
         userList.add(userId);
         socketTeamBindVo.setUserList(userList);
         msgVo.setMsg(socketTeamBindVo);
+        //todo SocketMsgVo加密
         rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
         return msgSendStatusVo;
     }

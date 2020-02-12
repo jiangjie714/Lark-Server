@@ -29,6 +29,7 @@ import static com.workhub.z.servicechat.config.MessageType.SUCCESS_ANSWER;
 import static com.workhub.z.servicechat.config.RandomId.getUUID;
 import static com.workhub.z.servicechat.config.common.getJsonStringKeyValue;
 import static com.workhub.z.servicechat.config.common.stringSearch;
+
 @Service
 public class AbstractMsgProcessor {
     private Logger logger = LoggerFactory.getLogger(AbstractMsgProcessor.class);
@@ -61,7 +62,7 @@ public class AbstractMsgProcessor {
     }
     //消息密级校验结果
     //msgtxt 消息内容；msglevels 消息密级
-    public MessageSecretValidVo messageSecretValid(String msgtxt,String msglevels){
+    public MessageSecretValidVo messageSecretValid(String msgtxt, String msglevels){
         List<ZzDictionaryWords> zzDictionaryWordsList = null;
         if("30".equals(msglevels)){
             zzDictionaryWordsList = this.dictionaryWordsService.getSecretWordList40();
@@ -255,7 +256,7 @@ public class AbstractMsgProcessor {
                 zzGroupStatus.setDescribe(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username"))+
                         "上传了附件："+
                         common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title"))+
-                        (((common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))).equals(""))?"":("."+common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))))
+                        (((common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))).equals(""))?"":("."+ common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))))
                 );
                 try{
                     rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
@@ -413,11 +414,11 @@ public class AbstractMsgProcessor {
     *@date: 2019/7/30
     */
     // TODO: 2019/9/16 应答信息
-    public MsgAnswerVO msgAnswer(String msg,String nId) throws Exception {
+    public MsgAnswerVO msgAnswer(String msg, String nId) throws Exception {
         return msgAnswer(msg,nId,SUCCESS_ANSWER,"发送成功");
     }
     //应答消息重载加入 状态 和 应答内容
-    public MsgAnswerVO msgAnswer(String msg,String nId,int status,String content) throws Exception {
+    public MsgAnswerVO msgAnswer(String msg, String nId, int status, String content) throws Exception {
         MsgAnswerVO msgAnswerVO = new MsgAnswerVO();
         msgAnswerVO.setCode(MSG_ANSWER);
         msgAnswerVO.setContactId((String)getJsonStringKeyValue(msg,"data.toId"));

@@ -5,11 +5,9 @@ import com.workhub.z.servicechat.VO.MessageSecretValidVo;
 import com.workhub.z.servicechat.VO.MsgAnswerVO;
 import com.workhub.z.servicechat.VO.MsgSendStatusVo;
 import com.workhub.z.servicechat.VO.SocketMsgVo;
-import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.ZzPrivateMsg;
-import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.ZzPrivateMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,7 @@ import static com.workhub.z.servicechat.config.VoToEntity.MsgVOToModel;
 import static com.workhub.z.servicechat.config.common.getJsonStringKeyValue;
 
 @Service
-public class ProcessPrivateMsg extends AbstractMsgProcessor{
+public class ProcessPrivateMsg extends AbstractMsgProcessor {
 
     @Autowired
     protected ZzPrivateMsgService privateMsgService;
@@ -50,7 +48,7 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor{
             //存储消息信息（新）
             String msgId = super.saveMessageInfo("USER",ip,msg);
             msgSendStatusVo.setId(msgId);
-            //todo 发消息后期改成前端连接信息中心
+
             SocketMsgVo msgVo = new SocketMsgVo();
             /**消息确认id*/
             msgVo.setId(msgId);
@@ -60,7 +58,10 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor{
             msgVo.setMsg(msg);
             /**需要接收确认*/
             msgVo.setConfirmFlg(true);
-            rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
+            //todo SocketMsgVo加密
+            msgSendStatusVo.setMsg(msgVo);
+            //todo 发消息后期改成前端连接信息中心
+            //rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
            /* //如果不在线则不发
             String online = common.nulToEmptyString(RedisUtil.getValue(CacheConst.userOnlineCahce+privateMsg.getMsgReceiver()));
 
@@ -88,14 +89,15 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor{
         }else{//涉密词汇校验不通过
             msgSendStatusVo.setStatus(false);
             msgSendStatusVo.setContent("消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
-            //todo 发消息后期改成前端连接信息中心
+
             SocketMsgVo socketMsgVo = new SocketMsgVo();
             socketMsgVo.setCode(MSG_ANSWER+"");
             socketMsgVo.setSender((String)getJsonStringKeyValue(msg,"data.fromId"));
             socketMsgVo.setReceiver((String)getJsonStringKeyValue(msg,"data.fromId"));
             MsgAnswerVO answerVO = super.msgAnswer(msg,privateMsg.getMsgId(), MessageType.FAIL_ANSWER,"消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
             socketMsgVo.setMsg(answerVO);
-            rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
+            //todo 发消息后期改成前端连接信息中心
+            //rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
         }
         return msgSendStatusVo;
     }

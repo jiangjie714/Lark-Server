@@ -23,6 +23,19 @@ spring:
     driverClassName: oracle.jdbc.OracleDriver
     url: jdbc:oracle:thin:@192.168.43.202:1521:arltr
     username: workhub_iwork
+    druid:
+      max-active: 18
+      initial-size: 3
+      min-idle: 3
+      max-wait: 250000
+      time-between-eviction-runs-millis: 250000
+      min-evictable-idle-time-millis: 120000
+      validation-query: select 'x' from dual
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      max-open-prepared-statements: 20
+      filter: stat,wall,log4j
   rabbitmq:
     host: 192.168.43.202
     port: 5672

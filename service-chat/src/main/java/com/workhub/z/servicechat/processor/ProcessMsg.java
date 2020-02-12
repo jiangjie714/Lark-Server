@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import static com.workhub.z.servicechat.config.MessageType.*;
 
 @Service
-public class ProcessMsg extends AbstractMsgProcessor{
+public class ProcessMsg extends AbstractMsgProcessor {
 
     @Autowired
     private ProcessPrivateMsg processPrivateMsg;

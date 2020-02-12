@@ -2,6 +2,7 @@ package com.workhub.z.servicechat.controller;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.workhub.z.servicechat.VO.MsgSendStatusVo;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.processor.ProcessMsg;
 import com.workhub.z.servicechat.service.ZzMessageInfoService;
@@ -90,11 +91,12 @@ public class ZzMessageInfoController {
             ObjectRestResponse res = new ObjectRestResponse();
             res.rel(true);
             res.msg("200");
-            res.data("发送成功") ;
+
             String userIp = common.nulToEmptyString(request.getHeader("userHost"));
             String userId = common.nulToEmptyString(request.getHeader("userId"));
             try {
-                processMsg.process(userId,messageInf,userIp);
+                MsgSendStatusVo msgSendStatusVo = processMsg.process(userId,messageInf,userIp);
+                res.data(msgSendStatusVo) ;
             }catch (Exception e){
                 log.error("发送消息出错！！！");
                 log.error(common.getExceptionMessage(e));

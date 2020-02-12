@@ -50,7 +50,7 @@ public class MessageType {
     //提示
     public static final int TIPS_ANSWER = 202;
     //不在线
-    public static final int OFFLINE_ANSWER = 201;
+    public static final int OFFLINE_ANSWER = 204;
 
     //在线状态 7
     public static final int LINESTATUS = 7000;
