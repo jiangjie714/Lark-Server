@@ -48,14 +48,6 @@ public class AuthController {
         if (pid==""||pid==null){
             token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         }else {
-//            String clientIp = request.getHeader(CommonConstants.CLIENT_IP_ARG);
-//            if("3".equals(pid)&&!"10.12.116.43".equals(clientIp)){
-//                throw new BaseException("安全保密员的登录地址不正确...");
-//            }else if("4".equals(pid)&&!"10.12.116.7".equals(clientIp)){
-//                throw new BaseException("安全审计员的登录地址不正确...");
-//            }else if("2".equals(pid)&&!"10.12.116.42".equals(clientIp)){
-//                throw new BaseException("系统管理员的登录地址不正确...");
-//            }
             token = authService.login(pid, defaultPassword);
         }
 
@@ -63,7 +55,6 @@ public class AuthController {
     }
 
     /**
-     * todo:使用
      * 在用户注销时清除token
      * @param request
      * @return

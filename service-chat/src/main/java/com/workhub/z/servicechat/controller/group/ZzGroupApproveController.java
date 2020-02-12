@@ -1,7 +1,8 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.group;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.MessageType;
@@ -18,7 +19,6 @@ import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -218,7 +218,7 @@ public class ZzGroupApproveController {
        rabbitMqMsgProducer.sendMsgGroupApproveLog(approveLog);
        Map p2 = new HashMap<>(16);
        p2.put("userid",userId);
-       UserInfo userInfo = iUserService.getUserInfo(p2);
+       AdminUser userInfo = iUserService.getUserInfo(userId);
        int require_approve_authority = zzRequireApproveAuthorityService.needApprove(userInfo.getOrgCode());
        //无需审批(1特殊权限2非密的研讨群不用审批)，直接审批通过，生成会议或者群组。注:该功能与本类approve的逻辑保持一致。
        if(((MessageType.NO_REQUIRE_APPROVE_AUTHORITY == require_approve_authority) || !needApproveFlg )&& objectRestResponse.isRel()){

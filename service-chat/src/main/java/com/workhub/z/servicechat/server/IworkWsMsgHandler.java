@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.server;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.workhub.z.servicechat.VO.UserOnOffLineVo;
 import com.workhub.z.servicechat.config.*;
 import com.workhub.z.servicechat.entity.UserInfo;
@@ -96,7 +97,7 @@ public class IworkWsMsgHandler implements IWsMsgHandler {
 //      获取用户群组信息,组织机构
         Map p2 = new HashMap<>(16);
         p2.put("userid",userid);
-        UserInfo userInfo = serverHandler.userService.getUserInfo(p2);
+        AdminUser userInfo = serverHandler.userService.getUserInfo(userid);
 //      加入组织
         Tio.bindGroup(channelContext, userInfo.getOrgCode());
 //      用户token验证

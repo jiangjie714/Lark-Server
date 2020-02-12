@@ -64,10 +64,4 @@ public class AdminUserServiceFallback implements AdminUserServiceFeignClient {
         log.error("ERROR LARK INVOKE: {}, {}, {}", "getPermissionByUsername", secretLevel, orgCode);
         return null;
     }
-
-    @Override
-    public List<OrgUser> getContactsByOrg(String orgCode) throws Exception {
-        log.error("ERROR LARK INVOKE: {}, {}", "getPermissionByUsername", orgCode);
-        return null;
-    }
 }
