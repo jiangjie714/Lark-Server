@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.controller.group;
 
 import com.alibaba.fastjson.JSONArray;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -299,9 +300,9 @@ public class ZzGroupController  {
     public ListRestResponse getGroupUserList(@RequestParam("groupId")String groupId) throws Exception {
 
         String userIds= this.zzGroupService.getGroupUserList(groupId);
-        List<UserInfo> list  = iUserService.userList(userIds);
+        List<AdminUser> list  = iUserService.userList(userIds);
         List<UserInfoVO> dataList = new ArrayList<>();
-        for(UserInfo userTemp:list){
+        for(AdminUser userTemp:list){
             UserInfoVO vo = new UserInfoVO();
             vo.setId(userTemp.getId());
             vo.setName(userTemp.getName());

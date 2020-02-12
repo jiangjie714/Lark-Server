@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.service.impl;
 
 
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.workhub.z.servicechat.VO.GroupEditVO;
 import com.workhub.z.servicechat.VO.MeetUserVo;
@@ -87,9 +88,9 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
             MeetUserVo meetUserVo = new MeetUserVo();
             Map p2 = new HashMap<>(16);
             p2.put("userid",common.nulToEmptyString(map.get("USERID")));
-            UserInfo userInfo = iUserService.getUserInfo(p2);
+            AdminUser userInfo = iUserService.getUserInfo(common.nulToEmptyString(map.get("USERID")));
             if(userInfo == null ){
-                userInfo = new UserInfo();
+                userInfo = new AdminUser();
             }
             meetUserVo.setUserId(common.nulToEmptyString(map.get("USERID")));
             meetUserVo.setUserName(common.nulToEmptyString(map.get("USERNAME")));
@@ -204,8 +205,8 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
      * @return 1成功 -1失败 0成员过多
      */
     public int editMeetUser(MeetingVo meetingVo, String userId, String userName,String userNo,String userIp){
-        List<com.workhub.z.servicechat.entity.UserInfo> addUserInfoList = null;
-        List<UserInfo> removeUserInfoList = null;
+        List<AdminUser> addUserInfoList = null;
+        List<AdminUser> removeUserInfoList = null;
         try {
             String meetId = meetingVo.getId();
             List<Map> userList = this.zzMeetingUserDao.getMeetAllUsers(meetId);
@@ -279,7 +280,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                     }
                     Map p2 = new HashMap<>(16);
                     p2.put("userid",userGroupStrs[i]);
-                    UserInfo userInfo = this.iUserService.getUserInfo(p2);
+                    AdminUser userInfo = this.iUserService.getUserInfo(userGroupStrs[i]);
                     ZzMeetingUser zzMeetingUser = new ZzMeetingUser();
                     zzMeetingUser.setId(RandomId.getUUID());
                     zzMeetingUser.setMeetingId(meetId);
@@ -317,7 +318,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 addUserInfoList = iUserService.userList(addUserIds);
                 String userNames = "";
                 String userIds = "";
-                for (UserInfo userInfo:addUserInfoList){
+                for (AdminUser userInfo:addUserInfoList){
                     UserListDto userListDto = new UserListDto();
                     userListDto.setUserId(userInfo.getId());
                     userListDto.setImg(userInfo.getAvatar());
@@ -367,7 +368,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 removeUserInfoList = iUserService.userList(removeUserIds);
                 String userNames = "";
                 String userIds = "";
-                for (UserInfo userInfo:removeUserInfoList){
+                for (AdminUser userInfo:removeUserInfoList){
                     UserListDto userListDto = new UserListDto();
                     userListDto.setUserId(userInfo.getId());
                     userListDto.setImg(userInfo.getAvatar());
@@ -415,7 +416,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             if(addUserInfoList!=null){
-                for (UserInfo userInfo:addUserInfoList){
+                for (AdminUser userInfo:addUserInfoList){
                     //redis 缓存处理 把脏数据删除
                     String key = CacheConst.userMeetIds+":"+userInfo.getId();
                     boolean keyExist = RedisUtil.isKeyExist(key);
@@ -427,7 +428,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 }
             }
             if(removeUserInfoList!=null){
-                for (UserInfo userInfo:removeUserInfoList){
+                for (AdminUser userInfo:removeUserInfoList){
                     //redis 缓存处理 把用户脏数据删除
                     String key = CacheConst.userMeetIds+":"+userInfo.getId();
                     boolean keyExist = RedisUtil.isKeyExist(key);

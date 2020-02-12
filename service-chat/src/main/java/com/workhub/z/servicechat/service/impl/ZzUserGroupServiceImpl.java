@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.hollykunge.security.common.vo.rpcvo.MessageContent;
 import com.github.pagehelper.PageHelper;
@@ -222,7 +223,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 contactVO.setId(n.getMsgSener());
                 Map p2 = new HashMap<>(16);
                 p2.put("userid",n.getMsgReceiver());
-                UserInfo userInfo = iUserService.getUserInfo(p2);
+                AdminUser userInfo = iUserService.getUserInfo(n.getMsgReceiver());
 //                JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class);
 //                MessageContent testProcessInfo = (MessageContent)JSONObject.toBean(n.getMsg(), MessageContent.class);
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
@@ -252,7 +253,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
             } else if ("USER".equals(n.getTableType())) {
                 Map p2 = new HashMap<>(16);
                 p2.put("userid",n.getMsgSener());
-                UserInfo userInfo = iUserService.getUserInfo(p2);
+                AdminUser userInfo = iUserService.getUserInfo(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
                 contactVO.setFullTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(n.getSendTime()==null?(new Date()):n.getSendTime()));

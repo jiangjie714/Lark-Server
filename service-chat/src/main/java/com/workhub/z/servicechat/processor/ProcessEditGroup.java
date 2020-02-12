@@ -3,6 +3,7 @@ package com.workhub.z.servicechat.processor;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.workhub.z.servicechat.VO.GroupEditVO;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.ImageUtil;
@@ -155,7 +156,7 @@ public class ProcessEditGroup extends AbstractMsgProcessor{
         zzGroupInfo.setGroupOwnerId(groupJson.getString("creator"));
         Map p2 = new HashMap<>(16);
         p2.put("userid",groupJson.getString("creator"));
-        UserInfo userInfo = iUserService.getUserInfo(p2);
+        AdminUser userInfo = iUserService.getUserInfo(groupJson.getString("creator"));
         if(userInfo!=null){
             zzGroupInfo.setCreatorName(common.nulToEmptyString(userInfo.getName()));
             zzGroupInfo.setGroupOwnerName(common.nulToEmptyString(userInfo.getName()));

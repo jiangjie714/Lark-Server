@@ -2,6 +2,7 @@ package com.workhub.z.servicechat.processor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.workhub.z.servicechat.VO.MessageSecretValidVo;
 import com.workhub.z.servicechat.VO.MsgAnswerVO;
 import com.workhub.z.servicechat.config.MessageType;
@@ -154,9 +155,9 @@ public class AbstractMsgProcessor {
             MeetingDto group = zzMeetingService.getMeetInf(receiver);
             iscross = group.getIscross();
         }else{//如果是私聊消息
-            List<UserInfo> userInfoList = iUserServiceUserService.userList(sender+","+receiver);
-            UserInfo senderInf = userInfoList.get(0)==null?new UserInfo():userInfoList.get(0);
-            UserInfo receiveInf = userInfoList.get(1)==null?new UserInfo():userInfoList.get(1);
+            List<AdminUser> userInfoList = iUserServiceUserService.userList(sender+","+receiver);
+            AdminUser senderInf = userInfoList.get(0)==null?new AdminUser():userInfoList.get(0);
+            AdminUser receiveInf = userInfoList.get(1)==null?new AdminUser():userInfoList.get(1);
             String senderOrg = common.nulToEmptyString(senderInf.getOrgCode());
             String receiverOrg = common.nulToEmptyString(receiveInf.getOrgCode());
             //以下逻辑照搬admin服务OrgBiz的getOrgUsers方法

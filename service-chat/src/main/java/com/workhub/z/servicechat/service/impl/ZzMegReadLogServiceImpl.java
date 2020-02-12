@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.service.impl;
 
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -123,7 +124,7 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
             megReadLogVO.setSender(data.getSender());
             Map p = new HashMap<>(16);
             p.put("userid",data.getSender());
-            UserInfo userInfo = userService.getUserInfo(p);
+            AdminUser userInfo = userService.getUserInfo(data.getSender());
             if (userInfo.getId() != null){
                 megReadLogVO.setSenderName(userInfo.getName());
                 megReadLogVO.setSenderSN(userInfo.getPId());
@@ -134,7 +135,7 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
             }
             Map p2 = new HashMap<>(16);
             p2.put("userid",data.getReviser());
-            UserInfo userinfo1 = userService.getUserInfo(p2);
+            AdminUser userinfo1 = userService.getUserInfo(data.getReviser());
             megReadLogVO.setReviser(data.getReviser());
             megReadLogVO.setReviserName(userinfo1.getName());
             megReadLogVO.setReviserSN(userinfo1.getPId());
