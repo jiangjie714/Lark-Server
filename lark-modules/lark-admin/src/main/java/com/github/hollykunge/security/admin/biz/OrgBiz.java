@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.api.dto.OrgUser;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.OrgUserMap;
@@ -137,8 +138,8 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
     }
 
     @FilterByDeletedAndOrderHandler
-    public List<com.github.hollykunge.security.admin.api.dto.OrgUser> getChildOrgUser(String parentCode) throws Exception{
-        List<com.github.hollykunge.security.admin.api.dto.OrgUser> result = new ArrayList<>();
+    public List<OrgUser> getChildOrgUser(String parentCode) throws Exception{
+        List<OrgUser> result = new ArrayList<>();
         Example example = new Example(Org.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("parentId",parentCode);

@@ -2,6 +2,7 @@ package com.workhub.z.servicechat.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
@@ -78,7 +79,7 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
         ZzGroupApproveLog approveLog = new ZzGroupApproveLog();
         Map p2 = new HashMap<>(16);
         p2.put("userid",params.get("userId").toString());
-        UserInfo userInfo0 = iUserService.getUserInfo(p2);
+        AdminUser userInfo0 = iUserService.getUserInfo(params.get("userId").toString());
         params.put("userNo",common.nulToEmptyString(userInfo0.getPId()));
         //是否已经审批了
         String ifApproveFlg = this.zzGroupApproveDao.ifApprove(params);

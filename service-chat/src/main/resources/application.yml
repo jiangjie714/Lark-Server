@@ -21,7 +21,7 @@ spring:
       initial-size: 5
       max-wait: 10000
     driverClassName: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@47.99.247.83:orcl
+    url: jdbc:oracle:thin:@47.99.247.83:1521:orcl
     username: workhub_iwork
   rabbitmq:
     host: 127.0.0.1
