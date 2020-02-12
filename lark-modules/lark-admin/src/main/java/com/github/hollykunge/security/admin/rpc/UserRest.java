@@ -98,7 +98,7 @@ public class UserRest implements AdminUserServiceFeignClient {
 
     @Override
     @FilterByDeletedAndOrderHandler
-    @RequestMapping(value = "/api/user/{ids}/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{ids}/list", method = RequestMethod.GET)
     @ResponseBody
     public List<AdminUser> getUserListByIds(@PathVariable("ids") String userIds) {
         List<AdminUser> userInfos = new ArrayList<AdminUser>();
@@ -114,20 +114,20 @@ public class UserRest implements AdminUserServiceFeignClient {
     }
 
     @Override
-    @RequestMapping(value = "/api/user/{positionId}/{secretLevel}/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{positionId}/{secretLevel}/list", method = RequestMethod.GET)
     @ResponseBody
     public List<AdminUser> getUserListByPosAndSec(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel) {
         return positionBiz.getPositionUsersBySecret(positionId, secretLevel);
     }
 
     @Override
-    @RequestMapping(value = "/api/user/{positionId}/{secretLevel}/{orgCode}/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{positionId}/{secretLevel}/{orgCode}/list", method = RequestMethod.GET)
     @ResponseBody
     public List<AdminUser> getUserListByPosAndSecAndOrg(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel, @PathVariable("orgCode") String orgCode) {
         return positionBiz.getPositionUsers(positionId, secretLevel, orgCode);
     }
 
-    @RequestMapping(value = "contacts/{orgCode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/contacts/{orgCode}", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<OrgUser>> getContactsByOrg(@PathVariable("orgCode") String orgCode) throws Exception {
         if (StringUtils.isEmpty(orgCode)) {
