@@ -44,6 +44,8 @@ public class ExcelListener extends AnalysisEventListener<User> {
 		data.setId(userId);
 		//导入用户默认密码
 		data.setPassword("123456");
+		data.setDeleted("0");
+		data.setEmpCode(UUIDUtils.generateShortUuid());
 		list.add(data);
 
 		RoleUserMap roleUserMap = new RoleUserMap();

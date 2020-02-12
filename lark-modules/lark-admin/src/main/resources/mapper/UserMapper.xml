@@ -7,7 +7,7 @@
     -->
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="P_ID" jdbcType="VARCHAR" property="pId" />
+    <result column="P_ID" jdbcType="VARCHAR" property="PId" />
     <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
     <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
     <result column="SECRET_LEVEL" jdbcType="VARCHAR" property="secretLevel" />
@@ -167,7 +167,7 @@
       select
       #{item.id},
       #{item.name},
-      #{item.pId},
+      #{item.PId},
       #{item.orgCode},
       #{item.orgName},
       #{item.secretLevel},
