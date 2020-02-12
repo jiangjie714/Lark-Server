@@ -273,22 +273,21 @@ public class UserController extends BaseController<UserBiz,User> {
      * @return
      * @throws Exception
      */
-//    @RequestMapping(value = "/exportExcelWeb",method = RequestMethod.GET)
-//    public ObjectRestResponse exportUserExcelWeb(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) throws Exception {
-//        Example example = new Example(User.class);
-//        Query query = new Query(params);
-//        if(query.entrySet().size()>0) {
-//            Example.Criteria criteria = example.createCriteria();
-//            for (Map.Entry<String, Object> entry : query.entrySet()) {
-//                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
-//            }
-//        }
-//        List<User> userEasyExcelList = baseBiz.selectByExample(example);
-//        String fileName ="用户信息";
-//        String sheetName = "用户数据";
-//        EasyExcelUtil.exportWeb(httpServletResponse,fileName,sheetName,User.class,userEasyExcelList);
-//        return new ObjectRestResponse().msg("导出成功!");
-//    }
+    @RequestMapping(value = "/exportExcelWeb",method = RequestMethod.GET)
+    public  void exportUserExcelWeb(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) throws Exception {
+        Example example = new Example(User.class);
+        Query query = new Query(params);
+        if(query.entrySet().size()>0) {
+            Example.Criteria criteria = example.createCriteria();
+            for (Map.Entry<String, Object> entry : query.entrySet()) {
+                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
+            }
+        }
+        List<User> userEasyExcelList = baseBiz.selectByExample(example);
+        String fileName ="用户信息";
+        String sheetName = "用户数据";
+        EasyExcelUtil.exportWeb(httpServletResponse,fileName,sheetName,User.class,userEasyExcelList);
+    }
 
     /**
      * fansq
