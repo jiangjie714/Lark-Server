@@ -6,15 +6,9 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
-import org.apache.commons.io.IOUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.ServletOutputStream;
+import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -34,8 +28,13 @@ public class EasyExcelUtil {
      * @param clazz     Excel要转换的类型
      * @param data      要导出的数据
      */
-    public static void exportFile(String path, String excelName, String sheetName, Class clazz, List data) {
-        String fileName = path.concat(excelName).concat(ExcelTypeEnum.XLSX.getValue());
+    public static void exportFile(String excelType,String path, String excelName, String sheetName, Class clazz, List data) {
+        String fileName = null;
+        if(StringUtils.isEmpty(excelType)|| "xlsx".equals(excelType)){
+            fileName = path.concat(excelName).concat(ExcelTypeEnum.XLSX.getValue());
+        }else{
+            fileName = path.concat(excelName).concat(ExcelTypeEnum.XLS.getValue());
+        }
         EasyExcel.write(fileName, clazz).sheet(sheetName).doWrite(data);
     }
 
@@ -49,12 +48,18 @@ public class EasyExcelUtil {
      * @param data      要导出的数据
      * @throws Exception
      */
-    public static void exportWeb(HttpServletResponse response, String excelName, String sheetName, Class clazz, List data) throws Exception {
+    public static void exportWeb(String excelType,HttpServletResponse response, String excelName, String sheetName, Class clazz, List data) throws Exception {
+        String fileName = null;
+        if(StringUtils.isEmpty(excelType)|| "xlsx".equals(excelType)){
+            fileName = ExcelTypeEnum.XLSX.getValue();
+        }else{
+            fileName = ExcelTypeEnum.XLS.getValue();
+        }
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码
         excelName = URLEncoder.encode(excelName, "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + excelName + ExcelTypeEnum.XLSX.getValue());
+        response.setHeader("Content-disposition", "attachment;filename=" + excelName + fileName);
         EasyExcel.write(response.getOutputStream(), clazz).sheet(sheetName).doWrite(data);
     }
 
