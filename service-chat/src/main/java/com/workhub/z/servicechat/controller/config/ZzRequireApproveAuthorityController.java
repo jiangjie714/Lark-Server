@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.config;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;

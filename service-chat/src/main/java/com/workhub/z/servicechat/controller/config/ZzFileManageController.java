@@ -1,9 +1,8 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.config;
 
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.entity.ZzGroup;
 import com.workhub.z.servicechat.entity.ZzGroupFile;
 import com.workhub.z.servicechat.entity.ZzGroupStatus;
@@ -15,7 +14,7 @@ import com.workhub.z.servicechat.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +27,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * 附件上传下载等相关功能控制层
