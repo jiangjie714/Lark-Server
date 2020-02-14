@@ -210,7 +210,7 @@ public class AbstractMsgProcessor {
      * @param ip 客户端ip
      * @param msgJosnInf 消息json体
      */
-    public String saveMessageInfo(String type,String ip,String msgJosnInf) {
+    public String saveMessageInfo(String type,String ip,String msgJosnInf) throws Exception{
         String msgId = getUUID();//信息ID
         ZzMessageInfo messageInfo = new ZzMessageInfo();
         ZzContactInf zzContactInfSender = new ZzContactInf();
@@ -358,9 +358,7 @@ public class AbstractMsgProcessor {
             zzContactInfSender.setName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username")));
             zzContactInfSender.setMemberNum("2");
             zzContactInfSender.setGroupOwner("");
-            Map<String,String> param = new HashMap<>();
-            param.put("userid",sender);
-            UserInfo userSenderInf = this.iUserServiceUserService.getUserInfo(param);
+            UserInfo userSenderInf = this.iUserServiceUserService.getUserInfoByUserId(sender);
             if(userSenderInf == null){
                 userSenderInf = new UserInfo();
                 common.putVoNullStringToEmptyString(userSenderInf);
@@ -383,9 +381,7 @@ public class AbstractMsgProcessor {
                 zzContactInfReceiver.setMemberNum(common.nulToEmptyString(common.getJsonStringKeyValue(message,"contactInfo.memberNum")));
                 zzContactInfReceiver.setGroupOwner(common.nulToEmptyString(common.getJsonStringKeyValue(message,"contactInfo.groupOwnerId")));
             }else if("USER".equals(type)){
-                Map<String,String> param = new HashMap<>();
-                param.put("userid",receiver);
-                UserInfo userReceiverInf = this.iUserServiceUserService.getUserInfo(param);
+                UserInfo userReceiverInf = this.iUserServiceUserService.getUserInfoByUserId(receiver);
                 if(userReceiverInf == null){
                     userReceiverInf = new UserInfo();
                     common.putVoNullStringToEmptyString(userReceiverInf);
@@ -403,6 +399,7 @@ public class AbstractMsgProcessor {
         } catch (Exception e) {
             //异常记录到日志
             logger.error(common.getExceptionMessage(e));
+            throw e;
         }
         return msgId;
     }

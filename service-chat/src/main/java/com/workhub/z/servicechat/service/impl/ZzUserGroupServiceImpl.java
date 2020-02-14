@@ -233,9 +233,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 ZzGroup group = new ZzGroup();
                 group = zzGroupService.queryById(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
-                Map p2 = new HashMap<>(16);
-                p2.put("userid",n.getMsgReceiver());
-                UserInfo userInfo = iUserService.getUserInfo(p2);
+                UserInfo userInfo = iUserService.getUserInfoByUserId(n.getMsgReceiver());
 //                JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class);
 //                MessageContent testProcessInfo = (MessageContent)JSONObject.toBean(n.getMsg(), MessageContent.class);
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
@@ -263,9 +261,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 contactVO.setIsGroup(n.getTableType().equals("GROUP"));
                 contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(group.getGroupId(),id));
             } else if ("USER".equals(n.getTableType())) {
-                Map p2 = new HashMap<>(16);
-                p2.put("userid",n.getMsgSener());
-                UserInfo userInfo = iUserService.getUserInfo(p2);
+                UserInfo userInfo = iUserService.getUserInfoByUserId(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
                 contactVO.setFullTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(n.getSendTime()==null?(new Date()):n.getSendTime()));

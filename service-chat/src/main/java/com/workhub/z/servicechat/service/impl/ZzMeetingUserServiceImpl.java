@@ -78,9 +78,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
         List<MeetUserVo> meetUserList = new ArrayList<>();
         for(Map map : oriList){
             MeetUserVo meetUserVo = new MeetUserVo();
-            Map p2 = new HashMap<>(16);
-            p2.put("userid",common.nulToEmptyString(map.get("USERID")));
-            UserInfo userInfo = iUserService.getUserInfo(p2);
+            UserInfo userInfo = iUserService.getUserInfoByUserId(common.nulToEmptyString(map.get("USERID")));
             if(userInfo == null ){
                 userInfo = new UserInfo();
             }
@@ -255,9 +253,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                             userVo = nowUserList.get(j);
                         }
                     }
-                    Map p2 = new HashMap<>(16);
-                    p2.put("userid",userGroupStrs[i]);
-                    UserInfo userInfo = this.iUserService.getUserInfo(p2);
+                    UserInfo userInfo = this.iUserService.getUserInfoByUserId(userGroupStrs[i]);
                     ZzMeetingUser zzMeetingUser = new ZzMeetingUser();
                     zzMeetingUser.setId(RandomId.getUUID());
                     zzMeetingUser.setMeetingId(meetId);

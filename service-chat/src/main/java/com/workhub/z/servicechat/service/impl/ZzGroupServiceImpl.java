@@ -261,9 +261,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         common.putVoNullStringToEmptyString(dataList);
         UserInfo userInfo=null;
         for(GroupVO groupVO:dataList){
-            Map p2 = new HashMap<>(16);
-            p2.put("userid",common.nulToEmptyString(groupVO.getCreator()));
-            userInfo=iUserService.getUserInfo(p2);
+            userInfo=iUserService.getUserInfoByUserId(common.nulToEmptyString(groupVO.getCreator()));
             groupVO.setCreatorName(userInfo==null?"":userInfo.getName());
         }
         PageInfo<GroupVO> pageInfo = new PageInfo<>(dataList);
@@ -589,9 +587,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             zzGroupInfo.setGroupName(jsonObject.getString("groupName"));
             zzGroupInfo.setCreator(jsonObject.getString("creator"));
             zzGroupInfo.setGroupOwnerId(jsonObject.getString("creator"));
-            Map p2 = new HashMap<>(16);
-            p2.put("userid",jsonObject.getString("creator"));
-            UserInfo userInfo = iUserService.getUserInfo(p2);
+            UserInfo userInfo = iUserService.getUserInfoByUserId(jsonObject.getString("creator"));
             if(userInfo!=null){
                 zzGroupInfo.setCreatorName(common.nulToEmptyString(userInfo.getName()));
                 zzGroupInfo.setGroupOwnerName(common.nulToEmptyString(userInfo.getName()));

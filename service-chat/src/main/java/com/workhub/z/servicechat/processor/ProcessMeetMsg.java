@@ -20,51 +20,55 @@ public class ProcessMeetMsg extends AbstractMsgProcessor {
     public MsgSendStatusVo sendMsg(String msg, String ip) throws Exception {
         MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
 
-        JSONObject jsonObject = JSONObject.parseObject(msg);
-        String message = jsonObject.getString("data");
-        ZzGroupMsg zzGroupMsg = (ZzGroupMsg)GroupMsgVOToModel(message);
-        //判断涉密词汇begin
-        MessageSecretValidVo messageSecretValidVo = new MessageSecretValidVo();
-        //可以发送
-        messageSecretValidVo.setSendStatus("1");
-        String level = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.secretLevel"));
-        String type = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.type"));
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(msg);
+            String message = jsonObject.getString("data");
+            ZzGroupMsg zzGroupMsg = (ZzGroupMsg)GroupMsgVOToModel(message);
+            //判断涉密词汇begin
+            MessageSecretValidVo messageSecretValidVo = new MessageSecretValidVo();
+            //可以发送
+            messageSecretValidVo.setSendStatus("1");
+            String level = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.secretLevel"));
+            String type = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.type"));
 
-        String oId = common.nulToEmptyString(common.getJsonStringKeyValue(message,"id"));
-        msgSendStatusVo.setOId(oId);
-        if(type.equals("1")){
-            //如果是文字信息
-            //文字内容
-            String title = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title"));
-            messageSecretValidVo = super.messageSecretValid(title,level);
-        }
-        //判断涉密词汇end
-        if(messageSecretValidVo.getSendStatus().equals("1")){
-            //存储消息信息（新）
-            String msgId = super.saveMessageInfo("MEET",ip,msg);
-            msgSendStatusVo.setId(msgId);
-            //如果可以发送消息
+            String oId = common.nulToEmptyString(common.getJsonStringKeyValue(message,"id"));
+            msgSendStatusVo.setOId(oId);
+            if(type.equals("1")){
+                //如果是文字信息
+                //文字内容
+                String title = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title"));
+                messageSecretValidVo = super.messageSecretValid(title,level);
+            }
+            //判断涉密词汇end
+            if(messageSecretValidVo.getSendStatus().equals("1")){
+                //存储消息信息（新）
+                String msgId = super.saveMessageInfo("MEET",ip,msg);
+                msgSendStatusVo.setId(msgId);
+                //如果可以发送消息
 
-            SocketMsgVo msgVo = new SocketMsgVo();
-            msgVo.setCode(jsonObject.getString("code"));
-            msgVo.setSender(zzGroupMsg.getMsgSender());
-            msgVo.setReceiver(zzGroupMsg.getMsgReceiver());
-            msgVo.setMsg(msg);
-            //todo SocketMsgVo加密
-            msgSendStatusVo.setMsg(msgVo);
-            //todo 发消息后期改成前端连接信息中心
-            //rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
-        }else{
-            msgSendStatusVo.setStatus(false);
-            msgSendStatusVo.setContent("消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
-            SocketMsgVo socketMsgVo = new SocketMsgVo();
-            socketMsgVo.setCode(MSG_ANSWER+"");
-            socketMsgVo.setSender((String)getJsonStringKeyValue(msg,"data.fromId"));
-            socketMsgVo.setReceiver((String)getJsonStringKeyValue(msg,"data.fromId"));
-            MsgAnswerVO answerVO = super.msgAnswer(msg,zzGroupMsg.getMsgId(), MessageType.FAIL_ANSWER,"消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
-            socketMsgVo.setMsg(answerVO);
-            //todo 发消息后期改成前端连接信息中心
-            //rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
+                SocketMsgVo msgVo = new SocketMsgVo();
+                msgVo.setCode(jsonObject.getString("code"));
+                msgVo.setSender(zzGroupMsg.getMsgSender());
+                msgVo.setReceiver(zzGroupMsg.getMsgReceiver());
+                msgVo.setMsg(msg);
+                //todo SocketMsgVo加密
+                msgSendStatusVo.setMsg(msgVo);
+                //todo 发消息后期改成前端连接信息中心
+                //rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
+            }else{
+                msgSendStatusVo.setStatus(false);
+                msgSendStatusVo.setContent("消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
+                SocketMsgVo socketMsgVo = new SocketMsgVo();
+                socketMsgVo.setCode(MSG_ANSWER+"");
+                socketMsgVo.setSender((String)getJsonStringKeyValue(msg,"data.fromId"));
+                socketMsgVo.setReceiver((String)getJsonStringKeyValue(msg,"data.fromId"));
+                MsgAnswerVO answerVO = super.msgAnswer(msg,zzGroupMsg.getMsgId(), MessageType.FAIL_ANSWER,"消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
+                socketMsgVo.setMsg(answerVO);
+                //todo 发消息后期改成前端连接信息中心
+                //rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
+            }
+        } catch (Exception e) {
+            throw  e;
         }
         return msgSendStatusVo;
     }

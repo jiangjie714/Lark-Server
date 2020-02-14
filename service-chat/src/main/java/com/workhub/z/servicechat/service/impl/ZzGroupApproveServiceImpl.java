@@ -73,9 +73,7 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
     @Override
     public Map<String,String> approve(Map params){
         ZzGroupApproveLog approveLog = new ZzGroupApproveLog();
-        Map p2 = new HashMap<>(16);
-        p2.put("userid",params.get("userId").toString());
-        UserInfo userInfo0 = iUserService.getUserInfo(p2);
+        UserInfo userInfo0 = iUserService.getUserInfoByUserId(params.get("userId").toString());
         params.put("userNo",common.nulToEmptyString(userInfo0.getPId()));
         //是否已经审批了
         String ifApproveFlg = this.zzGroupApproveDao.ifApprove(params);

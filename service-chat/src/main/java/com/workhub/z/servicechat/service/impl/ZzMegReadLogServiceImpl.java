@@ -121,9 +121,7 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
             megReadLogVO.setId(data.getId());
             megReadLogVO.setReadtime(data.getReadtime());
             megReadLogVO.setSender(data.getSender());
-            Map p = new HashMap<>(16);
-            p.put("userid",data.getSender());
-            UserInfo userInfo = userService.getUserInfo(p);
+            UserInfo userInfo = userService.getUserInfoByUserId(data.getSender());
             if (userInfo.getId() != null){
                 megReadLogVO.setSenderName(userInfo.getName());
                 megReadLogVO.setSenderSN(userInfo.getPId());
@@ -132,9 +130,7 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
                 megReadLogVO.setSenderName(groupinfo.getGroupName());
                 megReadLogVO.setSenderSN(groupinfo.getGroupId());
             }
-            Map p2 = new HashMap<>(16);
-            p2.put("userid",data.getReviser());
-            UserInfo userinfo1 = userService.getUserInfo(p2);
+            UserInfo userinfo1 = userService.getUserInfoByUserId(data.getReviser());
             megReadLogVO.setReviser(data.getReviser());
             megReadLogVO.setReviserName(userinfo1.getName());
             megReadLogVO.setReviserSN(userinfo1.getPId());

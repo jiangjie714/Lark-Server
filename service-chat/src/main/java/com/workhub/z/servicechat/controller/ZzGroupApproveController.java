@@ -18,7 +18,6 @@ import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -216,9 +215,7 @@ public class ZzGroupApproveController {
 
        rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
        rabbitMqMsgProducer.sendMsgGroupApproveLog(approveLog);
-       Map p2 = new HashMap<>(16);
-       p2.put("userid",userId);
-       UserInfo userInfo = iUserService.getUserInfo(p2);
+       UserInfo userInfo = iUserService.getUserInfoByUserId(userId);
        int require_approve_authority = zzRequireApproveAuthorityService.needApprove(userInfo.getOrgCode());
        //无需审批(1特殊权限2非密的研讨群不用审批)，直接审批通过，生成会议或者群组。注:该功能与本类approve的逻辑保持一致。
        if(((MessageType.NO_REQUIRE_APPROVE_AUTHORITY == require_approve_authority) || !needApproveFlg )&& objectRestResponse.isRel()){

@@ -1,15 +1,14 @@
 package com.workhub.z.servicechat.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.workhub.z.servicechat.VO.NewContactVo;
-import com.workhub.z.servicechat.VO.NewContentVo;
-import com.workhub.z.servicechat.VO.NewMessageVo;
 import com.workhub.z.servicechat.config.EncryptionAndDeciphering;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.*;
+import com.workhub.z.servicechat.entity.UserInfo;
+import com.workhub.z.servicechat.entity.ZzGroup;
+import com.workhub.z.servicechat.entity.ZzGroupFile;
+import com.workhub.z.servicechat.entity.ZzGroupStatus;
 import com.workhub.z.servicechat.feign.IFileUploadService;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.MeetingDto;
@@ -28,9 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.ref.WeakReference;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 附件上传下载等相关功能控制层
@@ -349,9 +350,7 @@ public class ZzFileManageController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Map p2 = new HashMap<>(16);
-            p2.put("userid",userId);
-            UserInfo userInfo = iUserService.getUserInfo(p2);
+            UserInfo userInfo = iUserService.getUserInfoByUserId(userId);
             int require_approve_authority = zzRequireApproveAuthorityService.needApprove(userInfo.getOrgCode());
             //如果无需审批
             if(MessageType.NO_REQUIRE_APPROVE_AUTHORITY == require_approve_authority){
