@@ -6,6 +6,7 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
+import com.github.hollykunge.security.admin.mapper.UserMapper;
 import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
@@ -79,8 +80,9 @@ public class EasyExcelUtil {
             InputStream inputStream,
             UserBiz userBiz,
             RoleUserMapMapper roleUserMapMapper,
-            PositionUserMapMapper positionUserMapMapper
-            ) throws  Exception{
-        EasyExcel.read(inputStream, User.class, new ExcelListener(userBiz,roleUserMapMapper,positionUserMapMapper)).sheet().doRead();
+            PositionUserMapMapper positionUserMapMapper,
+            UserMapper userMapper
+            ) {
+        EasyExcel.read(inputStream, User.class, new ExcelListener(userBiz,roleUserMapMapper,positionUserMapMapper,userMapper)).sheet().doRead();
     }
 }

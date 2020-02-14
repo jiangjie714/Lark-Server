@@ -10,9 +10,11 @@ import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
+import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.util.EasyExcelUtil;
 import com.github.hollykunge.security.admin.vo.FrontUser;
+import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -28,6 +30,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +67,9 @@ public class UserController extends BaseController<UserBiz,User> {
 
     @Autowired
     private PositionUserMapMapper positionUserMapMapper;
+
+    @Autowired
+    private UserMapper userMapper;
     /**
      * todo:使用
      * 登录获取用户人信息
@@ -294,8 +300,8 @@ public class UserController extends BaseController<UserBiz,User> {
      */
     @PostMapping("/upload")
     @ResponseBody
-    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
-        EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper);
+    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws BaseException,IOException {
+        EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper);
         return new ObjectRestResponse().msg("导入成功!");
     }
 
