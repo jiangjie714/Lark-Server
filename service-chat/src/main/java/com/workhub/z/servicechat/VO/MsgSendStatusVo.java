@@ -17,6 +17,6 @@ public class MsgSendStatusVo {
     private Boolean status = true;
     /**提示说明*/
     private String content = "成功";
-    /**消息加密*/
-    private SocketMsgVo msg;
+    /**消息加密(SocketMsgVo转Json字符串加密)*/
+    private Object msg;
 }
