@@ -63,12 +63,13 @@ public class ProcessGroupMsg extends AbstractMsgProcessor {
                         //存储消息信息（新）
                         String msgId = super.saveMessageInfo("GROUP",ip,msg);
                         msgSendStatusVo.setId(msgId);
-
+                        //把前端的消息id替换成后端的id
+                        String newMsg = common.setJsonStringKeyValue(msg,"data.id",msgId);
                         SocketMsgVo msgVo = new SocketMsgVo();
                         msgVo.setCode(jsonObject.getString("code"));
                         msgVo.setSender(zzGroupMsg.getMsgSender());
                         msgVo.setReceiver(zzGroupMsg.getMsgReceiver());
-                        msgVo.setMsg(msg);
+                        msgVo.setMsg(newMsg);
                        //todo SocketMsgVo加密
                         msgSendStatusVo.setMsg(msgVo);
                        //todo 发消息后期改成前端连接信息中心

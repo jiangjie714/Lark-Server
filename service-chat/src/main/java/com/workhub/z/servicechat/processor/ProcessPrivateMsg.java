@@ -49,14 +49,15 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor {
                 //存储消息信息（新）
                 String msgId = super.saveMessageInfo("USER", ip, msg);
                 msgSendStatusVo.setId(msgId);
-
+                //把前端的消息id替换成后端的id
+                String newMsg = common.setJsonStringKeyValue(msg,"data.id",msgId);
                 SocketMsgVo msgVo = new SocketMsgVo();
                 /**消息确认id*/
                 msgVo.setId(msgId);
                 msgVo.setCode(jsonObject.getString("code"));
                 msgVo.setSender(privateMsg.getMsgSender());
                 msgVo.setReceiver(privateMsg.getMsgReceiver());
-                msgVo.setMsg(msg);
+                msgVo.setMsg(newMsg);
                 /**需要接收确认*/
                 msgVo.setConfirmFlg(true);
                 //todo SocketMsgVo加密
