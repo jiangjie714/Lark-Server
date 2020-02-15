@@ -5,12 +5,15 @@ import java.util.List;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
+import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.PositionUserMap;
 import com.github.hollykunge.security.admin.entity.RoleUserMap;
 import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
@@ -21,6 +24,8 @@ import com.github.hollykunge.security.common.util.SpecialStrUtils;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,12 +42,16 @@ public class ExcelListener extends AnalysisEventListener<User> {
 
 	private UserMapper userMapper;
 
+	private OrgMapper orgMapper;
+
+	public String errMsg = null;
 	public ExcelListener(UserBiz userBiz,RoleUserMapMapper roleUserMapMapper
-	,PositionUserMapMapper positionUserMapMapper,UserMapper userMapper) {
+	,PositionUserMapMapper positionUserMapMapper,UserMapper userMapper,OrgMapper orgMapper) {
 		this.userBiz=userBiz;
 		this.roleUserMapMapper=roleUserMapMapper;
 		this.positionUserMapMapper=positionUserMapMapper;
 		this.userMapper = userMapper;
+		this.orgMapper = orgMapper;
 	}
 
 	private static final int BATCH_COUNT = 500;
@@ -54,13 +63,26 @@ public class ExcelListener extends AnalysisEventListener<User> {
 	public void invoke(User data, AnalysisContext context) {
 		String userId = UUIDUtils.generateShortUuid();
 		if (SpecialStrUtils.check(data.getName())) {
-			throw new BaseException("姓名中不能包含特殊字符...");
+			errMsg= "姓名中不能包含特殊字符!";
+			return;
+		}
+		Org org = new Org();
+		org.setId(data.getOrgCode());
+	    Org orgName = orgMapper.selectOne(org);
+		if(!StringUtils.equals(orgName.getOrgName(),data.getOrgName())){
+			errMsg="组织机构编码和组织机构名称不匹配!";
+			return;
 		}
 		//校验身份证是否在数据库中存在
 		User user = new User();
 		user.setPId(data.getPId());
 		if (userMapper.selectCount(user) > 0) {
-			throw new BaseException("身份证已存在...");
+			errMsg= "身份证已存在!";
+			return;
+		}
+		if(NumberUtils.isNumber(data.getSecretLevel())){
+			errMsg="密级应为数字!";
+			return;
 		}
 		String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(AdminCommonConstant.USER_PASSWORD_DEFAULT);
 		data.setPassword(password);
@@ -85,14 +107,14 @@ public class ExcelListener extends AnalysisEventListener<User> {
 		positionUserMaps.add(positionUserMap);
 		log.info("解析到一条数据:{}", JSON.toJSONString(data));
 		if (list.size() >= BATCH_COUNT) {
-			saveData();
+			//saveData();
 			list.clear();
 		}
 	}
 
 	@Override
 	public void doAfterAllAnalysed(AnalysisContext context) {
-		saveData();
+		//saveData();
 		log.info("所有数据解析完成！");
 	}
 
@@ -107,5 +129,11 @@ public class ExcelListener extends AnalysisEventListener<User> {
 			positionUserMapMapper.insertExcelUserRole(positionUserMaps);
 		}
 		log.info("存储数据库成功！");
+	}
+
+	@Override
+	public void onException(Exception exception, AnalysisContext context) throws Exception {
+		log.error("此处可以记录解析异常日志");
+		super.onException(exception, context);
 	}
 }

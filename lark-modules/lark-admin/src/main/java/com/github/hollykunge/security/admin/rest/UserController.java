@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
@@ -8,11 +9,13 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.Position;
 import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.util.EasyExcelUtil;
+import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.FrontUser;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
@@ -70,6 +73,9 @@ public class UserController extends BaseController<UserBiz,User> {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private OrgMapper orgMapper;
     /**
      * todo:使用
      * 登录获取用户人信息
@@ -300,9 +306,18 @@ public class UserController extends BaseController<UserBiz,User> {
      */
     @PostMapping("/upload")
     @ResponseBody
-    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws BaseException,IOException {
-        EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper);
-        return new ObjectRestResponse().msg("导入成功!");
+    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
+        ExcelListener excelListener = EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
+        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
+        if(StringUtils.isEmpty(excelListener.errMsg)){
+            objectRestResponse.setStatus(200);
+            objectRestResponse.setMessage("导入成功！");
+            return objectRestResponse;
+        }else{
+            objectRestResponse.setStatus(500);
+            objectRestResponse.setMessage(excelListener.errMsg);
+            return objectRestResponse;
+        }
     }
 
     /**
