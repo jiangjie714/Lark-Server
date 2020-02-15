@@ -20,6 +20,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
+import org.tio.http.common.HeaderName;
+import org.tio.http.common.HeaderValue;
 import org.tio.http.common.HttpRequest;
 import org.tio.http.common.HttpResponse;
 import org.tio.websocket.common.WsRequest;
@@ -97,6 +99,10 @@ public class IworkWsMsgHandler implements IWsMsgHandler {
 //      获取用户群组信息,组织机构
         Map p2 = new HashMap<>(16);
         p2.put("userid",userid);
+        if (userid == null) {
+            httpResponse.addHeader(HeaderName.from("msg"), HeaderValue.from("建联信息获取失败"));
+            return httpResponse;
+        }
         AdminUser userInfo = serverHandler.userService.getUserInfo(userid);
 //      加入组织
         Tio.bindGroup(channelContext, userInfo.getOrgCode());

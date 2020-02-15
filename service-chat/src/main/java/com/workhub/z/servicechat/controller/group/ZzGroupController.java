@@ -7,10 +7,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.pagehelper.PageInfo;
-import com.workhub.z.servicechat.VO.GroupInfoVO;
-import com.workhub.z.servicechat.VO.GroupUserListVo;
-import com.workhub.z.servicechat.VO.GroupVO;
-import com.workhub.z.servicechat.VO.UserInfoVO;
+import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.UserInfo;
@@ -394,6 +391,28 @@ public class ZzGroupController  {
             objectRestResponse.rel(false);
             objectRestResponse.msg("人员超过上限");
         }
+
+        return objectRestResponse;
+    }
+
+
+    /**
+     * todo:使用
+     * 获取全部群组信息，包括人员
+     */
+    @GetMapping("getAllGroupInfo")
+    public ObjectRestResponse getAllGroupInfo(@RequestBody String groupId) throws Exception{
+        String userIds= this.zzGroupService.getGroupUserList(groupId);
+        List<AdminUser> list  = iUserService.userList(userIds);
+        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
+        ZzGroup groupInfo = new ZzGroup();
+        groupInfo = this.zzGroupService.queryById(groupId);
+        common.putVoNullStringToEmptyString(groupInfo);
+        GroupAllInfoVo groupAllInfo = new GroupAllInfoVo();
+        groupAllInfo.setAdminUserList(list);
+        groupAllInfo.setGroupInfo(groupInfo);
+        objectRestResponse.msg("200");
+        objectRestResponse.data(groupAllInfo);
 
         return objectRestResponse;
     }
