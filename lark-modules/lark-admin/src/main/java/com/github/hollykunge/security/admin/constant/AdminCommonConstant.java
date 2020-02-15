@@ -89,7 +89,7 @@ public class AdminCommonConstant {
     public static final String USER_AVATAR = "group1/M00/00/01/CgsYil1pbGyAcT01AAAWQzJ2f5880.jpeg";
     public static final String USER_LEVEL = "40";
     //EXCEL 导入用户默认角色
-    public static final String USER_ROLE_DEFAULT = "izuhPB1";
+    public static final String USER_ROLE_DEFAULT = "izuhPB1h";
     //EXCEL 导入用户默认权限
     public static final String USER_POSITION_DEFAULT = "0";
     //EXCEL 导入用户默认是否删除

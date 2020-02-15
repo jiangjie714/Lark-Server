@@ -4,11 +4,14 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
+import com.github.hollykunge.security.common.exception.BaseException;
 import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.List;
@@ -67,22 +70,17 @@ public class EasyExcelUtil {
     /**
      * fansq
      * 用户数据导入
-     * @Autowired
-     *        private ;
-     *
-     *    @Autowired
-     *    private ;
-     *
-     *    @Autowired
-     *    private ;
      */
-    public static void importExcel(
+    public static ExcelListener  importExcel(
             InputStream inputStream,
             UserBiz userBiz,
             RoleUserMapMapper roleUserMapMapper,
             PositionUserMapMapper positionUserMapMapper,
-            UserMapper userMapper
-            ) {
-        EasyExcel.read(inputStream, User.class, new ExcelListener(userBiz,roleUserMapMapper,positionUserMapMapper,userMapper)).sheet().doRead();
+            UserMapper userMapper,
+            OrgMapper orgMapper
+            ){
+        ExcelListener excelListener = new ExcelListener(userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
+        EasyExcel.read(inputStream, User.class, excelListener).sheet().doRead();
+        return excelListener;
     }
 }
