@@ -16,7 +16,7 @@ import java.util.Map;
 @Repository
 public interface IUserService {
     @RequestMapping(value="/api/user/{ids}/list", method = RequestMethod.GET)
-    List<AdminUser> userList(@PathVariable("ids") String ids);
+    List<AdminUser> userList(@PathVariable("ids") String userIds);
 
     @RequestMapping(value = "/api/user/pid/{pid}/info", method = RequestMethod.GET)
     AdminUser getUserInfoByPid(@PathVariable("pid") String pid);
