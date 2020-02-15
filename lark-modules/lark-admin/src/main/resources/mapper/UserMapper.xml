@@ -160,7 +160,11 @@
     ORG_NAME,
     SECRET_LEVEL,
     GENDER,
-    ORDER_ID
+    ORDER_ID,
+    EMP_CODE,
+    DELETED,
+    AVATAR,
+    PASSWORD
     )
     <foreach collection="users" item="item" index= "index" separator ="UNION ALL">
       (
@@ -172,7 +176,11 @@
       #{item.orgName},
       #{item.secretLevel},
       #{item.gender},
-      #{item.orderId}
+      #{item.orderId},
+      #{item.empCode},
+      #{item.deleted},
+      #{item.avatar},
+      #{item.password}
       from dual
       )
     </foreach>

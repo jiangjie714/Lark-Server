@@ -88,6 +88,14 @@ public class AdminCommonConstant {
     public static final String ORG_PATH_NAME="/";
     public static final String USER_AVATAR = "group1/M00/00/01/CgsYil1pbGyAcT01AAAWQzJ2f5880.jpeg";
     public static final String USER_LEVEL = "40";
+    //EXCEL 导入用户默认角色
+    public static final String USER_ROLE_DEFAULT = "izuhPB1";
+    //EXCEL 导入用户默认权限
+    public static final String USER_POSITION_DEFAULT = "0";
+    //EXCEL 导入用户默认是否删除
+    public static final String USER_DELETED_DEFAULT = "0";
+    //EXCEL 导入用户默认密码
+    public static final String USER_PASSWORD_DEFAULT = "123456";
 
     //建研究室内群岗位编号
     public static final String USER_POSITION_ROOM_INNER = "0";

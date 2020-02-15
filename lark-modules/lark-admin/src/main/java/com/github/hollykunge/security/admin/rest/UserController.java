@@ -10,9 +10,11 @@ import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
+import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.util.EasyExcelUtil;
 import com.github.hollykunge.security.admin.vo.FrontUser;
+import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -28,6 +30,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +67,9 @@ public class UserController extends BaseController<UserBiz,User> {
 
     @Autowired
     private PositionUserMapMapper positionUserMapMapper;
+
+    @Autowired
+    private UserMapper userMapper;
     /**
      * todo:使用
      * 登录获取用户人信息
@@ -249,20 +255,17 @@ public class UserController extends BaseController<UserBiz,User> {
      */
     @RequestMapping(value = "/exportExcel",method = RequestMethod.GET)
     public ObjectRestResponse exportUserExcel(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse){
-        Example example = new Example(User.class);
-        Query query = new Query(params);
-        if(query.entrySet().size()>0) {
-            Example.Criteria criteria = example.createCriteria();
-            for (Map.Entry<String, Object> entry : query.entrySet()) {
-                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
-            }
+        Object excelType = params.get("type");
+        String type = excelType == null ? "" : excelType.toString();
+        if(type!=null){
+            params.remove("type");
         }
-        List<User> userEasyExcelList = baseBiz.selectByExample(example);
+        List<User> userExcelList = getUser(params);
         String fileName ="用户信息";
         String sheetName = "用户数据";
         //暂时测试导出到D盘
         String path = "D:/";
-        EasyExcelUtil.exportFile(path,fileName,sheetName,User.class,userEasyExcelList);
+        EasyExcelUtil.exportFile(type,path,fileName,sheetName,User.class,userExcelList);
         return new ObjectRestResponse().msg("导出成功!");
     }
 
@@ -274,19 +277,18 @@ public class UserController extends BaseController<UserBiz,User> {
      * @throws Exception
      */
     @RequestMapping(value = "/exportExcelWeb",method = RequestMethod.GET)
-    public  void exportUserExcelWeb(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) throws Exception {
-        Example example = new Example(User.class);
-        Query query = new Query(params);
-        if(query.entrySet().size()>0) {
-            Example.Criteria criteria = example.createCriteria();
-            for (Map.Entry<String, Object> entry : query.entrySet()) {
-                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
-            }
+    public  void exportUserExcelWeb(
+            @RequestParam Map<String, Object> params,
+            HttpServletResponse httpServletResponse) throws Exception {
+        Object excelType = params.get("type");
+        String type = excelType == null ? "" : excelType.toString();
+        if(type!=null){
+            params.remove("type");
         }
-        List<User> userEasyExcelList = baseBiz.selectByExample(example);
+        List<User> userExcelList = getUser(params);
         String fileName ="用户信息";
         String sheetName = "用户数据";
-        EasyExcelUtil.exportWeb(httpServletResponse,fileName,sheetName,User.class,userEasyExcelList);
+        EasyExcelUtil.exportWeb(type,httpServletResponse,fileName,sheetName,User.class,userExcelList);
     }
 
     /**
@@ -298,9 +300,26 @@ public class UserController extends BaseController<UserBiz,User> {
      */
     @PostMapping("/upload")
     @ResponseBody
-    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
-        EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper);
+    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws BaseException,IOException {
+        EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper);
         return new ObjectRestResponse().msg("导入成功!");
     }
 
+    /**
+     * fansq
+     * 根据导出规则获取用户数据
+     * @param params
+     */
+    public  List<User> getUser(Map<String, Object> params){
+        Example example = new Example(User.class);
+        Query query = new Query(params);
+        if(query.entrySet().size()>0) {
+            Example.Criteria criteria = example.createCriteria();
+            for (Map.Entry<String, Object> entry : query.entrySet()) {
+                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
+            }
+        }
+        List<User> userEasyExcelList = baseBiz.selectByExample(example);
+        return userEasyExcelList;
+    }
 }
