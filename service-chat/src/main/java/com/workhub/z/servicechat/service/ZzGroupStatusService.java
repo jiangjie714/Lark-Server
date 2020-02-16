@@ -2,7 +2,7 @@ package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.GroupStatusVo;
-import com.workhub.z.servicechat.entity.ZzGroupStatus;
+import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 
 import java.util.Map;
 

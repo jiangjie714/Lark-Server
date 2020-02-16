@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.workhub.z.servicechat.VO.UserOnOffLineVo;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.entity.UserInfo;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.feign.IValidateService;
 import com.workhub.z.servicechat.processor.ProcessLogin;

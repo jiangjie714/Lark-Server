@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.controller.group;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.entity.ZzUserGroupMsgTag;
+import com.workhub.z.servicechat.entity.group.ZzUserGroupMsgTag;
 import com.workhub.z.servicechat.service.ZzUserGroupMsgTagService;
 import org.springframework.web.bind.annotation.*;
 

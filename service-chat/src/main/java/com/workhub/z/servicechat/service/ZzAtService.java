@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzAt;
+import com.workhub.z.servicechat.entity.message.ZzAt;
 
 import java.util.List;
 

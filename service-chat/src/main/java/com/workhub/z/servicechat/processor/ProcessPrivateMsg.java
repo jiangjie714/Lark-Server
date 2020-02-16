@@ -1,18 +1,12 @@
 package com.workhub.z.servicechat.processor;
 
 import com.alibaba.fastjson.JSONObject;
-import com.workhub.z.servicechat.VO.GroupEditVO;
 import com.workhub.z.servicechat.VO.MessageSecretValidVo;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzPrivateMsg;
-import com.workhub.z.servicechat.server.IworkServerConfig;
+import com.workhub.z.servicechat.entity.message.ZzPrivateMsg;
 import com.workhub.z.servicechat.service.ZzPrivateMsgService;
-import org.apache.commons.io.TaggedIOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;

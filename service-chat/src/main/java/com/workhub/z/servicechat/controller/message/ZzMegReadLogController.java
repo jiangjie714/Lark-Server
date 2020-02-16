@@ -1,9 +1,8 @@
 package com.workhub.z.servicechat.controller.message;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzMegReadLog;
+import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
 import com.workhub.z.servicechat.service.ZzMegReadLogService;
-import org.nutz.mvc.annotation.GET;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

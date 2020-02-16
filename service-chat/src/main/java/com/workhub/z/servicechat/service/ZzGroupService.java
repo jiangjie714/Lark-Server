@@ -5,9 +5,8 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupUserListVo;
 import com.workhub.z.servicechat.VO.GroupVO;
-import com.workhub.z.servicechat.entity.ZzGroup;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.model.GroupEditDto;
-import com.workhub.z.servicechat.model.GroupTaskDto;
 
 import java.util.List;
 import java.util.Map;

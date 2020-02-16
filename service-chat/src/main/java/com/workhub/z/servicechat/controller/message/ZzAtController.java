@@ -4,7 +4,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzAt;
+import com.workhub.z.servicechat.entity.message.ZzAt;
 import com.workhub.z.servicechat.service.ZzAtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

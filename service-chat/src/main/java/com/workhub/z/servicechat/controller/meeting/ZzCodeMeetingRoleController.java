@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.controller.meeting;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzCodeMeetingRole;
+import com.workhub.z.servicechat.entity.meeting.ZzCodeMeetingRole;
 import com.workhub.z.servicechat.service.ZzCodeMeetingRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
