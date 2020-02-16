@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.controller.group;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzGroupApproveLog;
+import com.workhub.z.servicechat.entity.group.ZzGroupApproveLog;
 import com.workhub.z.servicechat.service.ZzGroupApproveLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

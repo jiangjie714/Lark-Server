@@ -5,7 +5,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzGroupMsg;
+import com.workhub.z.servicechat.entity.group.ZzGroupMsg;
 import com.workhub.z.servicechat.service.ZzGroupMsgService;
 import org.springframework.web.bind.annotation.*;
 

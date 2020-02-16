@@ -4,7 +4,7 @@ import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.workhub.z.servicechat.VO.MeetUserVo;
 import com.workhub.z.servicechat.VO.MeetingVo;
 import com.workhub.z.servicechat.VO.UserCurrentDayMeetJobVo;
-import com.workhub.z.servicechat.entity.ZzMeetingUser;
+import com.workhub.z.servicechat.entity.meeting.ZzMeetingUser;
 
 import java.util.List;
 

@@ -1,12 +1,10 @@
 package com.workhub.z.servicechat.service;
 
-import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.GroupApplyVo;
 import com.workhub.z.servicechat.VO.GroupApproveVo;
-import com.workhub.z.servicechat.entity.ZzGroupApprove;
+import com.workhub.z.servicechat.entity.group.ZzGroupApprove;
 
-import java.util.List;
 import java.util.Map;
 
 /**

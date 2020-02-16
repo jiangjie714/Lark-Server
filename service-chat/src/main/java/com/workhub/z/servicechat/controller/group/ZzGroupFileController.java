@@ -6,7 +6,7 @@ import com.workhub.z.servicechat.VO.FileMonitoringVO;
 import com.workhub.z.servicechat.VO.GroupFileVo;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzGroupFile;
+import com.workhub.z.servicechat.entity.group.ZzGroupFile;
 import com.workhub.z.servicechat.service.ZzGroupFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

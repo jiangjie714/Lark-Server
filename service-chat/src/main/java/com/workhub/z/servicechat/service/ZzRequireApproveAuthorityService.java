@@ -1,6 +1,6 @@
 package com.workhub.z.servicechat.service;
 
-import com.workhub.z.servicechat.entity.ZzRequireApproveAuthority;
+import com.workhub.z.servicechat.entity.config.ZzRequireApproveAuthority;
 
 /**
  * @author:zhuqz

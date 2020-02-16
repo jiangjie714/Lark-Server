@@ -2,7 +2,7 @@ package com.workhub.z.servicechat.aop;
 
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzChatLog;
+import com.workhub.z.servicechat.entity.config.ZzChatLog;
 import com.workhub.z.servicechat.service.ZzLogService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

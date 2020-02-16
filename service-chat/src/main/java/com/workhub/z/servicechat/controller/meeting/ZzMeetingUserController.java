@@ -5,7 +5,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.MeetingVo;
 import com.workhub.z.servicechat.VO.UserCurrentDayMeetJobVo;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzMeetingUser;
+import com.workhub.z.servicechat.entity.meeting.ZzMeetingUser;
 import com.workhub.z.servicechat.service.ZzMeetingUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

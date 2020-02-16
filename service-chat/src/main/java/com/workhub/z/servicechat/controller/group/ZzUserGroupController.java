@@ -7,7 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.entity.ZzUserGroup;
+import com.workhub.z.servicechat.entity.group.ZzUserGroup;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
 import org.springframework.web.bind.annotation.*;
 
