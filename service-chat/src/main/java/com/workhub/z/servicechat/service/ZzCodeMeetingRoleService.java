@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzCodeMeetingRole;
+import com.workhub.z.servicechat.entity.meeting.ZzCodeMeetingRole;
 
 import java.util.Map;
 

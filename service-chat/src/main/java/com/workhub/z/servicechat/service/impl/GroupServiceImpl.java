@@ -1,26 +1,7 @@
 package com.workhub.z.servicechat.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.dao.ZzUserGroupDao;
-import com.workhub.z.servicechat.entity.ZzGroup;
-import com.workhub.z.servicechat.entity.ZzUserGroup;
-import com.workhub.z.servicechat.feign.IUserService;
-import com.workhub.z.servicechat.model.GroupTaskDto;
-import com.workhub.z.servicechat.model.UserListDto;
 import com.workhub.z.servicechat.service.GroupService;
-import com.workhub.z.servicechat.service.ZzGroupService;
-import com.workhub.z.servicechat.service.ZzUserGroupService;
-import jodd.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
 
 @Service("groupService")
 public class GroupServiceImpl implements GroupService {

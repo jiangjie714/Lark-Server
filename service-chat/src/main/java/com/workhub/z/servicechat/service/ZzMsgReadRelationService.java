@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.workhub.z.servicechat.VO.NoReadVo;
-import com.workhub.z.servicechat.entity.ZzMsgReadRelation;
+import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;
 import java.util.List;
 
 /**

@@ -5,7 +5,7 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.GroupStatusVo;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzGroupStatus;
+import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.service.ZzGroupStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.workhub.z.servicechat.VO.MessageSecretValidVo;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzGroupMsg;
+import com.workhub.z.servicechat.entity.group.ZzGroupMsg;
 import org.springframework.stereotype.Service;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;

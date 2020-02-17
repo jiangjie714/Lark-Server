@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.controller.message;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.workhub.z.servicechat.entity.ZzMsgTabRelation;
+import com.workhub.z.servicechat.entity.message.ZzMsgTabRelation;
 import com.workhub.z.servicechat.service.ZzMsgTabRelationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

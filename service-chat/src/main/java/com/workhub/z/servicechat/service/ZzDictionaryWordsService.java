@@ -1,8 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzDictionaryWords;
-import org.springframework.cache.annotation.Cacheable;
+import com.workhub.z.servicechat.entity.config.ZzDictionaryWords;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

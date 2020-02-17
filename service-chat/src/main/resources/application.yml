@@ -14,17 +14,17 @@ spring:
   application:
     name: service-chat
   datasource:
-    password: workhub_iwork
     tomcat:
       max-idle: 10
       min-idle: 5
       initial-size: 5
       max-wait: 10000
     driverClassName: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@47.99.247.83:1521:orcl
+    url: jdbc:oracle:thin:@10.11.24.136:1521:arltr
     username: workhub_iwork
+    password: workhub_iwork
   rabbitmq:
-    host: 127.0.0.1
+    host: 10.11.24.135
     port: 5672
     username: hollykunge
     password: 123456
@@ -41,7 +41,7 @@ spring:
         max-active: 300
         max-idle: 100
         max-wait: 5000ms
-    host: 127.0.0.1
+    host: 10.11.24.135
     port: 6379
     password: 123456
     database: 3

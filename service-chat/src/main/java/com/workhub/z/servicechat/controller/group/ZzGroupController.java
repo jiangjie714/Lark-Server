@@ -10,8 +10,7 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroup;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.GroupEditDto;
 import com.workhub.z.servicechat.service.ZzGroupMsgService;
@@ -401,7 +400,7 @@ public class ZzGroupController  {
      * 获取全部群组信息，包括人员
      */
     @GetMapping("getAllGroupInfo")
-    public ObjectRestResponse getAllGroupInfo(@RequestBody String groupId) throws Exception{
+    public ObjectRestResponse getAllGroupInfo(@RequestParam String groupId) throws Exception{
         String userIds= this.zzGroupService.getGroupUserList(groupId);
         List<AdminUser> list  = iUserService.userList(userIds);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();

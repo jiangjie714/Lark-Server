@@ -2,8 +2,7 @@ package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.HistoryMessageVO;
-import com.workhub.z.servicechat.entity.ZzGroupMsg;
-import com.workhub.z.servicechat.model.HistoryMessageDto;
+import com.workhub.z.servicechat.entity.group.ZzGroupMsg;
 
 import java.util.List;
 import java.util.Map;

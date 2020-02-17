@@ -5,7 +5,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.NoReadVo;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzMsgReadRelation;
+import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;
 import com.workhub.z.servicechat.service.ZzMsgReadRelationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

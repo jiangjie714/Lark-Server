@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.ZzRequireApproveAuthorityDao">
-    <resultMap type="com.workhub.z.servicechat.entity.ZzRequireApproveAuthority" id="authority">
+<mapper namespace="com.workhub.z.servicechat.dao.config.ZzRequireApproveAuthorityDao">
+    <resultMap type="com.workhub.z.servicechat.entity.config.ZzRequireApproveAuthority" id="authority">
         <result property="socketTeam" column="socket_team" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="queryData" resultMap="authority">

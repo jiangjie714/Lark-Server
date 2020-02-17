@@ -1,11 +1,9 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzMegReadLog;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * (ZzMegReadLog)表服务接口

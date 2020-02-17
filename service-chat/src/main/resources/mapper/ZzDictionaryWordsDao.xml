@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.ZzDictionaryWordsDao">
+<mapper namespace="com.workhub.z.servicechat.dao.config.ZzDictionaryWordsDao">
 
-    <resultMap type="com.workhub.z.servicechat.entity.ZzDictionaryWords" id="ZzDictionaryWordsMap">
+    <resultMap type="com.workhub.z.servicechat.entity.config.ZzDictionaryWords" id="ZzDictionaryWordsMap">
         <result property="id" column="ID" jdbcType="VARCHAR"/>
         <result property="wordType" column="WORD_TYPE" jdbcType="VARCHAR"/>
         <result property="wordCode" column="WORD_CODE" jdbcType="VARCHAR"/>
