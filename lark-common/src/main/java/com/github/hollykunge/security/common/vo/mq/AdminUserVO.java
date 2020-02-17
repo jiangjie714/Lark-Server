@@ -26,7 +26,7 @@ public class AdminUserVO implements Serializable {
     /**
      * 身份证号
      */
-    private String pId;
+    private String PId;
     /**
      * 组织机构编码-->CASIC_ORG_CODE
      */

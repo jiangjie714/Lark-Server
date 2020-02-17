@@ -120,13 +120,26 @@ public class UserRest implements AdminUserServiceFeignClient {
         return positionBiz.getPositionUsersBySecret(positionId, secretLevel);
     }
 
-    @Override
+    /**
+     * 前端接口
+     * @param positionId
+     * @param secretLevel
+     * @param orgCode
+     * @return
+     */
     @RequestMapping(value = "/user/{positionId}/{secretLevel}/{orgCode}/list", method = RequestMethod.GET)
     @ResponseBody
-    public List<AdminUser> getUserListByPosAndSecAndOrg(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel, @PathVariable("orgCode") String orgCode) {
-        return positionBiz.getPositionUsers(positionId, secretLevel, orgCode);
+    public ListRestResponse<List<AdminUser>> getUserListByPosAndSecAndOrg(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel, @PathVariable("orgCode") String orgCode) {
+        List<AdminUser> users = positionBiz.getPositionUsers(positionId, secretLevel, orgCode);
+        return new ListRestResponse("", users.size(), users);
     }
 
+    /**
+     * 前端接口
+     * @param orgCode
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/contacts/{orgCode}", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<OrgUser>> getContactsByOrg(@PathVariable("orgCode") String orgCode) throws Exception {

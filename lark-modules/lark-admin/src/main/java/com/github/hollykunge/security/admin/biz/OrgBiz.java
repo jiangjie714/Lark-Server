@@ -51,7 +51,7 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
     private final String USER_ONLINE = "700";
     private final String USER_OFFLINE = "701";
     @FilterByDeletedAndOrderHandler
-    public List<AdminUser> getOrgUsers(String orgCode, String secretLevels, String pid, String grouptype, String localUserOrg) {
+    public List<AdminUser> getOrgUsers(String orgCode, String secretLevels, String PId, String grouptype, String localUserOrg) {
         //如果orgCode为航天二院，则直接返回空数据
         if (AdminCommonConstant.NO_DATA_ORG_CODE.equals(orgCode)) {
             return new ArrayList<AdminUser>();
@@ -68,8 +68,8 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
                 criteria.andIn("secretLevel", secretList);
             }
         }
-        if (!StringUtils.isEmpty(pid)) {
-            criteria.andNotEqualTo("pId", pid);
+        if (!StringUtils.isEmpty(PId)) {
+            criteria.andNotEqualTo("PId", PId);
         }
         List<User> users = userMapper.selectByExample(userExample);
         List<AdminUser> userList;

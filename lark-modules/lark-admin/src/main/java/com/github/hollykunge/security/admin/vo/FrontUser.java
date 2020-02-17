@@ -16,7 +16,7 @@ public class FrontUser {
     /**
      * 身份证号
      */
-    private String pId;
+    private String PId;
     /**
      * 用户姓名
      */
