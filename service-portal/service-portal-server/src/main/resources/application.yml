@@ -9,8 +9,8 @@ spring:
 
   datasource:
 #    name: test
-    #url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr 47.99.247.83
-    url: jdbc:oracle:thin:@${ORACLE_HOST:47.99.247.83}:${ORACLE_PORT:1521}:orcl
+    #url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
+    url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
     username: lark_portal
     password: 123456
     # 使用druid数据源
@@ -45,8 +45,8 @@ spring:
 #    maxOpenPreparedStatements: 20
   rabbitmq:
     #需要修改地址
-    #host: 10.11.24.135 47.99.247.83
-    host: 127.0.0.1
+    host: 10.11.24.135
+#    host: 127.0.0.1
     port: 5672
     username: hollykunge
     password: 123456

@@ -30,7 +30,7 @@ spring:
     #        username: root
     #        password: 123456
     #url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
-    url: jdbc:oracle:thin:@${ORACLE_HOST:47.99.247.83}:${ORACLE_PORT:1521}:orcl
+    url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
     username: lark_admin
     password: 123456
     # 使用druid数据源
@@ -51,8 +51,8 @@ spring:
       filter: stat,wall,log4j
   rabbitmq:
     #需要修改地址
-    #host: ${RABBIT_MQ_HOST:10.11.24.135}
-    host: ${RABBIT_MQ_HOST:127.0.0.1}
+    host: ${RABBIT_MQ_HOST:10.11.24.135}
+#    host: ${RABBIT_MQ_HOST:127.0.0.1}
     port:  ${RABBIT_MQ_PORT:5672}
     username: hollykunge
     password: 123456
@@ -140,8 +140,8 @@ redis:
     maxIdle: 100
     maxWait: 10000
     #需要修改地址
-  #host: ${REDIS_HOST:10.11.24.135}
-  host: ${REDIS_HOST:127.0.0.1}
+  host: ${REDIS_HOST:10.11.24.135}
+#  host: ${REDIS_HOST:127.0.0.1}
   port:  ${REDIS_PORT:6379}
   password: 123456
   timeout: 20000
