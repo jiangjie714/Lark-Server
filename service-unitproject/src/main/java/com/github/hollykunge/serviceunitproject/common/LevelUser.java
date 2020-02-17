@@ -15,7 +15,7 @@ public class LevelUser {
     /**
      * 人员身份证号
      */
-    private String pId;
+    private String PId;
 
     /**
      * 人员身份证号

@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.github.hollykunge.security.admin.api.dto.AdminUser">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="pId" jdbcType="VARCHAR" property="pId"/>
+        <result column="pId" jdbcType="VARCHAR" property="PId"/>
         <result column="orgCode" jdbcType="VARCHAR" property="orgCode"/>
         <result column="orgName" jdbcType="VARCHAR" property="orgName"/>
         <!-- 父级组织 -->

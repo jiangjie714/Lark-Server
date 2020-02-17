@@ -104,17 +104,17 @@ public class AdminAccessFilter extends ZuulFilter {
             throw new BaseException("身份信息编码转化错误...");
         }
         String[] userObjects = dnname.trim().split(",", 0);
-        String pId = null;
+        String PId = null;
         for (String val :
                 userObjects) {
             val = val.trim();
             if (val.indexOf("t=") > -1 || val.indexOf("T=") > -1) {
-                pId = val.substring(2, val.length());
+                PId = val.substring(2, val.length());
             }
         }
 
         //将dnname设置为身份证信息
-        ctx.addZuulRequestHeader(CommonConstants.PERSON_ID_ARG, pId.toLowerCase());
+        ctx.addZuulRequestHeader(CommonConstants.PERSON_ID_ARG, PId.toLowerCase());
         //秘钥登录
         return authorization(requestUri,ctx,request);
     }

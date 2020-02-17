@@ -59,7 +59,7 @@ public class ProjectUnitUserBiz extends BaseBiz<ProjectUnitMapper, ProjectUnit> 
             LevelUser lu = userlistpid.get(i);
             String pid = lu.getPId();
             criteria.getAllCriteria().clear();
-            criteria.andEqualTo("pId", pid);
+            criteria.andEqualTo("PId", PId);
             if (!StringUtils.isEmpty(secretLevels)) {
                 String[] secretLevelArray = secretLevels.split(",");
                 List<String> secretList = Arrays.asList(secretLevelArray);

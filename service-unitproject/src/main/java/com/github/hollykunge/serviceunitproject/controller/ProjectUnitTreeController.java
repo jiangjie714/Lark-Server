@@ -37,12 +37,12 @@ public class ProjectUnitTreeController extends BaseController<ProjectUnitUserBiz
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<AdminUser>> getUsers(@RequestParam("unitID") String unitID, @RequestParam String secretLevels,
-                                                      @RequestParam String pId) {
+                                                      @RequestParam String PId) {
 
         if (StringUtils.isEmpty(unitID)) {
             unitID = "projectunitroot";
         }
-        List projectUnitUsers = baseBiz.getProjectUnit(unitID, secretLevels, pId);
+        List projectUnitUsers = baseBiz.getProjectUnit(unitID, secretLevels, PId);
         return new ListRestResponse("", projectUnitUsers.size(), projectUnitUsers);
     }
 
@@ -57,12 +57,12 @@ public class ProjectUnitTreeController extends BaseController<ProjectUnitUserBiz
      */
     @RequestMapping(value = "/tree", method = RequestMethod.GET)
     @ResponseBody
-    public ListRestResponse<List<ProjectUnitTree>> tree(@RequestParam("parentTreeId") String parentTreeId, @RequestParam String pId) {
+    public ListRestResponse<List<ProjectUnitTree>> tree(@RequestParam("parentTreeId") String parentTreeId, @RequestParam String PId) {
         parentTreeId = "";
         if (StringUtils.isEmpty(parentTreeId)) {
             parentTreeId = "root";
         }
-        List<ProjectUnitTree> tree = projectUnitUserBiz.getLastTree(baseBiz.selectListAll(), parentTreeId, pId);
+        List<ProjectUnitTree> tree = projectUnitUserBiz.getLastTree(baseBiz.selectListAll(), parentTreeId, PId);
 
         return new ListRestResponse("", tree.size(), tree);
     }
