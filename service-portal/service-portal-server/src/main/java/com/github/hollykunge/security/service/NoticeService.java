@@ -33,6 +33,63 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
     }
 
 
+    public List<Notice> selectNoticList(String orgCode){
+        Notice notice = new Notice();
+        notice.setOrgCode(orgCode);
+        if (StringUtils.isEmpty(orgCode)) {
+            throw new BaseException("当前登录人没有组织编码...");
+        }
+        Example example = new Example(Notice.class);
+        example.setOrderByClause("SEND_TIME DESC");
+        List<Notice> notices = mapper.selectByExample(example);
+        notices = notices.stream().filter(new Predicate<Notice>() {
+            @Override
+            public boolean test(Notice notice) {
+                //组织编码为空的不显示
+                if (StringUtils.isEmpty(notice.getOrgCode())) {
+                    return false;
+                }
+                if(org.apache.commons.lang3.StringUtils.equals(notice.getType(),"system")){
+                    return true;
+                }
+                return false;
+            }
+        }).collect(Collectors.toList());
+        Collections.sort(notices);
+        return notices;
+    }
+    public List<Notice> selectNotic(String orgCode,String userSecretLevel){
+        Notice entity = new Notice();
+        entity.setOrgCode(orgCode);
+        if (StringUtils.isEmpty(orgCode)) {
+            throw new BaseException("当前登录人没有组织编码...");
+        }
+        Example example = new Example(Notice.class);
+        example.setOrderByClause("SEND_TIME DESC");
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andNotEqualTo("type","system");
+        List<Notice> notices = mapper.selectByExample(example);
+        notices = notices.stream().filter(new Predicate<Notice>() {
+            @Override
+            public boolean test(Notice notice) {
+                //组织编码为空的不显示
+                if (StringUtils.isEmpty(notice.getOrgCode())) {
+                    return false;
+                }
+                if (entity.getOrgCode().contains(notice.getOrgCode())) {
+                    //密级小于当前人的密级显示
+                    if (isShow(userSecretLevel,notice.getSecretLevel())) {
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+        }).collect(Collectors.toList());
+        Collections.sort(notices);
+        return notices;
+    }
+
     public List<Notice> selectList(Notice entity, String userSecretLevel) {
         if (StringUtils.isEmpty(entity.getOrgCode())) {
             throw new BaseException("当前登录人没有组织编码...");
