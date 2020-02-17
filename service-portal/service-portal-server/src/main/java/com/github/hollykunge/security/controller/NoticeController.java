@@ -10,9 +10,13 @@ import com.github.hollykunge.security.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @description: 工作台-公告
@@ -34,9 +38,13 @@ public class NoticeController extends BaseController<NoticeService, Notice>{
      */
     @RequestMapping(value = "/orgNotice",method = RequestMethod.GET)
     public ListRestResponse<List<Notice>> findUserNotic(@RequestParam("orgCode") String orgCode){
-        Notice notice = new Notice();
-        notice.setOrgCode(orgCode);
-        List<Notice> notices = baseBiz.selectListAll();
+        String userSecretLevel = request.getHeader("userSecretLevel");
+        if(StringUtils.isEmpty(userSecretLevel)){
+            throw new BaseException("该用户无密级...");
+        }
+        List<Notice> notices = baseBiz.selectNoticList(orgCode);
+        List<Notice> noticeList= baseBiz.selectNotic(orgCode,userSecretLevel);
+        notices.addAll(noticeList);
         return new ListRestResponse<>("查询成功！",notices.size(),notices);
     }
     /**
