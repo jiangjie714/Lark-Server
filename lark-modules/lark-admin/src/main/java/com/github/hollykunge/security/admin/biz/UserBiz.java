@@ -217,19 +217,22 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
                     throw new BaseException("查询条件不能包含特殊字符...");
                 }
                 if (entry.getKey().equals("name")) {
-                    criteria.andCondition("(REFA || REFB || NAME) like " + "'%'||'" + entry.getValue().toString().toLowerCase() + "'||'%'").andNotEqualTo("pId", "2")
-                            .andNotEqualTo("pId", "3")
-                            .andNotEqualTo("pId", "4");
+                    criteria.andCondition("(REFA || REFB || NAME) like " + "'%'||'" + entry.getValue().toString() + "'||'%'")
+                            .orCondition("(upper(REFA) || upper(REFB) || NAME) like " + "'%'||'" + entry.getValue().toString() + "'||'%'")
+                            .orCondition("(REFA || REFB || upper(NAME)) like " + "'%'||'" + entry.getValue().toString().toUpperCase() + "'||'%'")
+                            .orCondition("(REFA || REFB || lower(NAME)) like " + "'%'||'" + entry.getValue().toString().toLowerCase() + "'||'%'")
+                            .andNotEqualTo("PId", "3")
+                            .andNotEqualTo("PId", "4");
                 }else {
-                    criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%").andNotEqualTo("pId", "2")
-                            .andNotEqualTo("pId", "3")
-                            .andNotEqualTo("pId", "4");
+                    criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%").andNotEqualTo("PId", "2")
+                            .andNotEqualTo("PId", "3")
+                            .andNotEqualTo("PId", "4");
                 }
             }
         }else {
-            criteria.andNotEqualTo("pId", "2")
-                    .andNotEqualTo("pId", "3")
-                    .andNotEqualTo("pId", "4");
+            criteria.andNotEqualTo("PId", "2")
+                    .andNotEqualTo("PId", "3")
+                    .andNotEqualTo("PId", "4");
         }
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<User> pageUsers = ((UserBiz) AopContext.currentProxy()).getPageUsers(example);

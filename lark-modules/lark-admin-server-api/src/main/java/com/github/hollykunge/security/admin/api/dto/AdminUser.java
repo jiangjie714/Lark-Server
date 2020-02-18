@@ -17,7 +17,7 @@ public class AdminUser {
     /**
      * 身份证号 username->pId
      */
-    private String pId;
+    private String PId;
     /**
      * 用户姓名
      */

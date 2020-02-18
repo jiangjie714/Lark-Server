@@ -9,7 +9,7 @@
         <result column="CASIC_ORG_CODE" property="casicOrgCode" jdbcType="VARCHAR" />
         <result column="OPERATOR_NAME" property="operatorName" jdbcType="VARCHAR" />
         <result column="EMP_CODE" property="empCode" jdbcType="VARCHAR" />
-        <result column="P_ID" property="pId" jdbcType="VARCHAR" />
+        <result column="P_ID" property="PId" jdbcType="VARCHAR" />
         <result column="SECRET_LEVEL" property="secretLevel" jdbcType="VARCHAR" />
         <result column="BIRTH_DATE" property="birthDate" jdbcType="TIMESTAMP" />
         <result column="GENDER" property="gender" jdbcType="VARCHAR" />
@@ -89,19 +89,19 @@
     <!-- 新增二院用户 -->
     <insert id="saveEryuanUser">
 		INSERT INTO ERYUANUSER (ID,H_ID, SYS_ID, CASIC_ORG_CODE, OPERATOR_NAME, EMP_CODE, P_ID,SECRET_LEVEL,BIRTH_DATE,GENDER,O_TEL,O_EMAIL,WORK_POST,TEC_POST,ORDER_ID,SYNC_TYPE,DISP_TIME,STATUS,REMARK,REFA,REFB,ORG_NAME,IS_SUCCESS,ONEDOC_IS_SUCCESS) VALUES
-			(#{id,jdbcType=VARCHAR},#{hId,jdbcType=VARCHAR},#{sysId,jdbcType=VARCHAR}, #{casicOrgCode,jdbcType=VARCHAR}, #{operatorName,jdbcType=VARCHAR},#{empCode,jdbcType=VARCHAR},#{pId,jdbcType=VARCHAR},#{secretLevel,jdbcType=VARCHAR},#{birthDate,jdbcType=TIMESTAMP},#{gender,jdbcType=VARCHAR},#{oTel,jdbcType=VARCHAR},#{oEmail,jdbcType=VARCHAR},#{workPost,jdbcType=VARCHAR},#{tecPost,jdbcType=VARCHAR},#{orderId,jdbcType=VARCHAR},#{syncType,jdbcType=VARCHAR},#{dispTime,jdbcType=TIMESTAMP},#{status,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{refa,jdbcType=VARCHAR},#{refb,jdbcType=VARCHAR},#{orgName,jdbcType=VARCHAR},#{isSuccess,jdbcType=VARCHAR},#{onedocIsSuccess,jdbcType=VARCHAR})
+			(#{id,jdbcType=VARCHAR},#{hId,jdbcType=VARCHAR},#{sysId,jdbcType=VARCHAR}, #{casicOrgCode,jdbcType=VARCHAR}, #{operatorName,jdbcType=VARCHAR},#{empCode,jdbcType=VARCHAR},#{PId,jdbcType=VARCHAR},#{secretLevel,jdbcType=VARCHAR},#{birthDate,jdbcType=TIMESTAMP},#{gender,jdbcType=VARCHAR},#{oTel,jdbcType=VARCHAR},#{oEmail,jdbcType=VARCHAR},#{workPost,jdbcType=VARCHAR},#{tecPost,jdbcType=VARCHAR},#{orderId,jdbcType=VARCHAR},#{syncType,jdbcType=VARCHAR},#{dispTime,jdbcType=TIMESTAMP},#{status,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{refa,jdbcType=VARCHAR},#{refb,jdbcType=VARCHAR},#{orgName,jdbcType=VARCHAR},#{isSuccess,jdbcType=VARCHAR},#{onedocIsSuccess,jdbcType=VARCHAR})
 	</insert>
 
     <!--查询二院用户 -->
     <select id="queryEryuanUserByNoCount" parameterType="String" resultType="int">
         SELECT count(*)
         FROM ERYUANUSER eu
-        WHERE eu.P_ID = #{pId}
+        WHERE eu.P_ID = #{PId}
         </select>
 
     <!-- 更新二院用户信息 -->
     <update id="updateEryuanUserInfo" parameterType="com.github.hollykunge.servicewebservice.model.EryuanUser">
-		UPDATE ERYUANUSER SET H_ID = #{hId}, SYS_ID = #{sysId}, CASIC_ORG_CODE = #{casicOrgCode}, OPERATOR_NAME = #{operatorName},EMP_CODE = #{empCode},P_ID = #{pId},SECRET_LEVEL = #{secretLevel},BIRTH_DATE = #{birthDate,jdbcType=TIMESTAMP},GENDER = #{gender},O_TEL = #{oTel},O_EMAIL=#{oEmail},WORK_POST=#{workPost},TEC_POST=#{tecPost},ORDER_ID=#{orderId},SYNC_TYPE=#{syncType},DISP_TIME=#{dispTime,jdbcType=TIMESTAMP},STATUS = #{status,jdbcType=VARCHAR},REMARK=#{remark},REFA=#{refa},REFB=#{refb},ORG_NAME=#{orgName},IS_SUCCESS=#{isSuccess},ONEDOC_IS_SUCCESS=#{onedocIsSuccess}
-		WHERE P_ID = #{pId}
+		UPDATE ERYUANUSER SET H_ID = #{hId}, SYS_ID = #{sysId}, CASIC_ORG_CODE = #{casicOrgCode}, OPERATOR_NAME = #{operatorName},EMP_CODE = #{empCode},P_ID = #{PId},SECRET_LEVEL = #{secretLevel},BIRTH_DATE = #{birthDate,jdbcType=TIMESTAMP},GENDER = #{gender},O_TEL = #{oTel},O_EMAIL=#{oEmail},WORK_POST=#{workPost},TEC_POST=#{tecPost},ORDER_ID=#{orderId},SYNC_TYPE=#{syncType},DISP_TIME=#{dispTime,jdbcType=TIMESTAMP},STATUS = #{status,jdbcType=VARCHAR},REMARK=#{remark},REFA=#{refa},REFB=#{refb},ORG_NAME=#{orgName},IS_SUCCESS=#{isSuccess},ONEDOC_IS_SUCCESS=#{onedocIsSuccess}
+		WHERE P_ID = #{PId}
 	</update>
 </mapper>

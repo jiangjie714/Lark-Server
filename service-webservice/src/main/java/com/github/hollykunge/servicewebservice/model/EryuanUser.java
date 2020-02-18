@@ -24,7 +24,7 @@ public class EryuanUser {
 
     private String operatorName;
     private String empCode;
-    private String pId;
+    private String PId;
     private String secretLevel;
     private Date birthDate;
     private String gender;
@@ -94,11 +94,11 @@ public class EryuanUser {
     }
 
     public String getP_ID() {
-        return pId;
+        return PId;
     }
 
     public void setP_ID(String p_ID) {
-        pId = p_ID;
+        PId = p_ID;
     }
 
     public String getSECRET_LEVEL() {
