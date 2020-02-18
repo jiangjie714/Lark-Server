@@ -42,6 +42,19 @@ public class NoticeController extends BaseController<NoticeBiz,Notice> {
     }
 
     /**
+     * fansq
+     * 取消消息发布接口
+     * @param notice
+     * @return
+     */
+    @RequestMapping(value = "/sendCancelNotice" ,method = RequestMethod.POST)
+    @ResponseBody
+    public ObjectRestResponse<Notice> sendCancelNotice(@RequestBody Notice notice) {
+        baseBiz.sentCancelNotice(notice);
+        return new ObjectRestResponse().msg("取消发布成功").rel(true);
+    }
+
+    /**
      * todo:使用
      * @param params
      * @return

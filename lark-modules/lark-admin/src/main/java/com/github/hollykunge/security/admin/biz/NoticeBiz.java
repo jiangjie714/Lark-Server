@@ -75,7 +75,27 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
         BeanUtils.copyProperties(entity,mqNoticeEntity);
         //发布时间取当前时间
         mqNoticeEntity.setSendTime(new Date());
+        mqNoticeEntity.setFromId(entity.getId());
         produceSenderConfig.send(mqNoticeEntity.getId(),mqNoticeEntity);
+    }
+
+    /**
+     * fansq
+     * 20-2-18
+     * 取消发布公告
+     * @param entity
+     */
+    public void sentCancelNotice(Notice entity){
+        if(StringUtils.isEmpty(entity.getId())){
+            throw new BaseException("ERROR LARK MQ:notice id is null...it's not required..");
+        }
+        entity.setIsSend("0");
+        mapper.updateByPrimaryKeySelective(entity);
+        //保存完成后向mq发送一条消息
+        NoticeVO mqNoticeEntity = new NoticeVO();
+        BeanUtils.copyProperties(entity,mqNoticeEntity);
+        mqNoticeEntity.setFromId(entity.getId());
+        produceSenderConfig.sendCancelPortal(mqNoticeEntity.getId(),mqNoticeEntity);
     }
 
     public TableResultResponse<Notice> pageList(Query query,String userId) {
