@@ -90,6 +90,7 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
         if(StringUtils.isEmpty(id)){
             throw new BaseException("ERROR LARK MQ:notice id is null...it's not required..");
         }
+        entity.setId(id);
         entity.setIsSend("0");
         mapper.updateByPrimaryKeySelective(entity);
         //保存完成后向mq发送一条消息
