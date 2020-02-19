@@ -461,12 +461,12 @@ public class EryuanUserServiceImpl implements EryuanUserService {
             //发送到消息队列标志位
             eryuanOrg.setIsSuccess("1");
             eryuanOrg.setOnedocIsSuccess("1");
-            if (eryuanOrg.getCASIC_PORG_CODE() == null) {
+            if (eryuanOrg.getCASIC_PORG_CODE().isEmpty()) {
                 eryuanOrg.setPathCode(eryuanOrg.getCASIC_ORG_CODE() + ".");
                 eryuanOrg.setPathName(eryuanOrg.getORG_NAME() + "/");
             }else {
                 //组织层级关系code
-                eryuanOrg.setPathCode(eryuanOrgDao.queryPathByCode(CASICPORGCODE) + ".");
+                eryuanOrg.setPathCode(eryuanOrgDao.queryPathByCode(CASICPORGCODE) + CASICORGCODE + ".");
                 //组织层级关系name
                 eryuanOrg.setPathName(eryuanOrgDao.queryPathNameByCode(CASICPORGCODE) + ORGNAME + "/");
             }
