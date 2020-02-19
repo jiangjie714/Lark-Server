@@ -9,6 +9,7 @@ import com.github.hollykunge.security.entity.HeatMap;
 import com.github.hollykunge.security.entity.Notice;
 import com.github.hollykunge.security.mapper.HeatMapMapper;
 import com.github.hollykunge.security.mapper.NoticeMapper;
+import com.github.hollykunge.security.service.NoticeService;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -30,8 +31,9 @@ import java.util.Map;
 @Component
 @RabbitListener(queues = CommonConstants.CANCEL_NOTICE_QUEUE_NAME,containerFactory = "rabbitListenerContainerFactory")
 public class CancelPortalConsumer {
+
     @Autowired
-    private NoticeMapper noticeMapper;
+    private NoticeService noticeService;
 
     /**
      * 公告消息消费
@@ -43,12 +45,7 @@ public class CancelPortalConsumer {
     @RabbitHandler
     public void handleMessage(NoticeVO message, @Headers Map<String,Object> headers, Channel channel) throws Exception {
         // 处理消息
-        Notice notice = new Notice();
-        BeanUtils.copyProperties(message,notice);
-        Example example = new Example(Notice.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("fromId",notice.getFromId());
-        int count = noticeMapper.deleteByExample(example);
+        int count = noticeService.deleteNoticByFromId(message);
         if(count>0){
             //手动ack
             long deliveryTag = (long) headers.get(AmqpHeaders.DELIVERY_TAG);

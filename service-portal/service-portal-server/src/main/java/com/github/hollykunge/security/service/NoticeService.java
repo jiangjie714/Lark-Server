@@ -4,10 +4,13 @@ import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
+import com.github.hollykunge.security.common.vo.mq.NoticeVO;
 import com.github.hollykunge.security.entity.Notice;
 import com.github.hollykunge.security.mapper.NoticeMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -32,7 +35,16 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
         return null;
     }
 
+    @Autowired
+    private NoticeMapper noticeMapper;
 
+    /**
+     * fansq
+     * 20-2-17
+     * 查询所有系统公告
+     * @param orgCode
+     * @return
+     */
     public List<Notice> selectNoticList(String orgCode){
         Notice notice = new Notice();
         notice.setOrgCode(orgCode);
@@ -58,6 +70,15 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
         Collections.sort(notices);
         return notices;
     }
+
+    /**
+     * fansq
+     * 20-2-17
+     * 查询除去系统公告  属于本部门的密级小于当前登录人的公告
+     * @param orgCode
+     * @param userSecretLevel
+     * @return
+     */
     public List<Notice> selectNotic(String orgCode,String userSecretLevel){
         Notice entity = new Notice();
         entity.setOrgCode(orgCode);
@@ -160,4 +181,21 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
         }).collect(Collectors.toList());
         return new TableResultResponse<Notice>(result.getPageSize(), result.getPageNum() ,result.getPages(), result.getTotal(), list);
     }
+
+    /**
+     * fansq
+     * 20-2-19
+     * 删除指定公告
+     * @param noticeVO 参数公告实体
+     * @return count
+     */
+    public int deleteNoticByFromId(NoticeVO noticeVO){
+        Notice notice = new Notice();
+        BeanUtils.copyProperties(noticeVO,notice);
+        Example example = new Example(Notice.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("fromId",notice.getFromId());
+        return noticeMapper.deleteByExample(example);
+    }
+
 }
