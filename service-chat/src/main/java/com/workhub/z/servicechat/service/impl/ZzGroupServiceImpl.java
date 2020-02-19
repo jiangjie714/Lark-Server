@@ -390,6 +390,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             List<UserListDto> removeUserList = new ArrayList<>();
 
             List<String> userList = zzGroupDao.queryGroupUserIdListByGroupId(groupId);
+
             //新增判断
             for(GroupEditUserList userListDto:userListDtos){
                 boolean addFlg = true;//该人员是新增的
