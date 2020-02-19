@@ -57,7 +57,7 @@ aceNoticeRabbitMqQueueName: noticeToChatService
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 #是否显示控制台输出，1显示0不显示，生产环境配置0即可
-showConsoleInf: 1
+showConsoleInf: 0
 #处理历史消息的定时任务时间
 #每月凌晨一点
 deal_his_msg_job_cron: 0 0 1 1 * ?
