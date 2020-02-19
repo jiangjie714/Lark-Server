@@ -18,7 +18,8 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!--此日志appender是为开发使用，只配置最底级别，控制台输出的日志级别是大于或等于此级别的日志信息-->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
+            <!-- fansq 20-2-19 日志只输出error级别 -->
+            <level>error</level>
         </filter>
         <encoder>
             <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
@@ -28,25 +29,28 @@
     </appender>
     <!--输出到文件-->
     <!-- 时间滚动输出 level为 DEBUG 日志 -->
-    <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 正在记录的日志文件的路径及文件名 -->
+
+    <!-- fansq 20-2-19 注释 日志只输出error级别 -->
+
+    <!--<appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        &lt;!&ndash; 正在记录的日志文件的路径及文件名 &ndash;&gt;
         <file>${log.path}/debug.log</file>
-        <!--日志文件输出格式-->
+        &lt;!&ndash;日志文件输出格式&ndash;&gt;
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-            <charset>UTF-8</charset> <!-- 设置字符集 -->
+            <charset>UTF-8</charset> &lt;!&ndash; 设置字符集 &ndash;&gt;
         </encoder>
-        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        &lt;!&ndash; 日志记录器的滚动策略，按日期，按大小记录 &ndash;&gt;
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 日志归档 -->
+            &lt;!&ndash; 日志归档 &ndash;&gt;
             <fileNamePattern>${log.path}/debug/log-debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
-            <!--日志文件保留天数-->
+            &lt;!&ndash;日志文件保留天数&ndash;&gt;
             <maxHistory>30</maxHistory>
         </rollingPolicy>
-        <!-- 此日志文件只记录debug级别的 -->
+        &lt;!&ndash; 此日志文件只记录debug级别的 &ndash;&gt;
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>debug</level>
             <onMatch>ACCEPT</onMatch>
@@ -54,26 +58,26 @@
         </filter>
     </appender>
 
-    <!-- 时间滚动输出 level为 INFO 日志 -->
+    &lt;!&ndash; 时间滚动输出 level为 INFO 日志 &ndash;&gt;
     <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 正在记录的日志文件的路径及文件名 -->
+        &lt;!&ndash; 正在记录的日志文件的路径及文件名 &ndash;&gt;
         <file>${log.path}/info.log</file>
-        <!--日志文件输出格式-->
+        &lt;!&ndash;日志文件输出格式&ndash;&gt;
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        &lt;!&ndash; 日志记录器的滚动策略，按日期，按大小记录 &ndash;&gt;
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 每天日志归档路径以及格式 -->
+            &lt;!&ndash; 每天日志归档路径以及格式 &ndash;&gt;
             <fileNamePattern>${log.path}/info/log-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
-            <!--日志文件保留天数-->
+            &lt;!&ndash;日志文件保留天数&ndash;&gt;
             <maxHistory>30</maxHistory>
         </rollingPolicy>
-        <!-- 此日志文件只记录info级别的 -->
+        &lt;!&ndash; 此日志文件只记录info级别的 &ndash;&gt;
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>info</level>
             <onMatch>ACCEPT</onMatch>
@@ -81,31 +85,31 @@
         </filter>
     </appender>
 
-    <!-- 时间滚动输出 level为 WARN 日志 -->
+    &lt;!&ndash; 时间滚动输出 level为 WARN 日志 &ndash;&gt;
     <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 正在记录的日志文件的路径及文件名 -->
+        &lt;!&ndash; 正在记录的日志文件的路径及文件名 &ndash;&gt;
         <file>${log.path}/warn.log</file>
-        <!--日志文件输出格式-->
+        &lt;!&ndash;日志文件输出格式&ndash;&gt;
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+            <charset>UTF-8</charset> &lt;!&ndash; 此处设置字符集 &ndash;&gt;
         </encoder>
-        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        &lt;!&ndash; 日志记录器的滚动策略，按日期，按大小记录 &ndash;&gt;
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log.path}/warn/log-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
-            <!--日志文件保留天数-->
+            &lt;!&ndash;日志文件保留天数&ndash;&gt;
             <maxHistory>30</maxHistory>
         </rollingPolicy>
-        <!-- 此日志文件只记录warn级别的 -->
+        &lt;!&ndash; 此日志文件只记录warn级别的 &ndash;&gt;
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>warn</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-    </appender>
+    </appender>-->
 
 
     <!-- 时间滚动输出 level为 ERROR 日志 -->
@@ -139,9 +143,10 @@
     </springProfile>
     <root level="info">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="DEBUG_FILE" />
-        <appender-ref ref="INFO_FILE" />
-        <appender-ref ref="WARN_FILE" />
+        <!-- fansq 20-2-19 注释 日志只输出error级别 -->
+<!--        <appender-ref ref="DEBUG_FILE" />-->
+<!--        <appender-ref ref="INFO_FILE" />-->
+<!--        <appender-ref ref="WARN_FILE" />-->
         <appender-ref ref="ERROR_FILE" />
     </root>
 

@@ -83,10 +83,11 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
      * fansq
      * 20-2-18
      * 取消发布公告
-     * @param entity
+     * @param id 主键id
      */
-    public void sentCancelNotice(Notice entity){
-        if(StringUtils.isEmpty(entity.getId())){
+    public void sentCancelNotice(String id){
+        Notice entity = new Notice();
+        if(StringUtils.isEmpty(id)){
             throw new BaseException("ERROR LARK MQ:notice id is null...it's not required..");
         }
         entity.setIsSend("0");
