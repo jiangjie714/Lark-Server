@@ -27,7 +27,7 @@
     <!-- 专门用来存放sql语句打印的日志-->
     <appender name="sqlLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
+            <level>error</level>
             <!--
             <onMatch> ACCEPT</onMatch>
             <onMismatch> DENY</onMismatch>
@@ -99,7 +99,7 @@
             </then>
         </if>
         <!--<appender-ref ref="consoleLog" />-->
-        <appender-ref ref="infoLog" />
+        <!--<appender-ref ref="infoLog" />-->
     </logger>
     <!-- root 的日志级别如果改成debug会有很多程序内部日志信息，所以这里写为INFO-->
     <root level="info">
