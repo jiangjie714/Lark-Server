@@ -59,4 +59,16 @@ public class QueueConfig {
     public Queue adminToOrg() {
         return new Queue(CommonConstants.ADMIN_UNACK_ORG, true);
     }
+
+    /**
+     * fansq
+     * 20-2-18
+     * 添加取消公告队列
+     * @return
+     */
+    @Bean
+    @Order(value = 9)
+    public Queue cancelNoticeQueue() {
+        return new Queue(CommonConstants.CANCEL_NOTICE_QUEUE_NAME, true);
+    }
 }

@@ -31,4 +31,7 @@ public class NoticeVO implements Serializable {
     private Date sendTime;
 
     private String secretLevel;
+
+    /** fansq 20-2-18  标注消息发送id */
+    private String fromId;
 }
