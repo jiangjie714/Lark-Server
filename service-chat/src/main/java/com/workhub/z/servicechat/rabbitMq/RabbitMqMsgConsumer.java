@@ -79,6 +79,7 @@ public class RabbitMqMsgConsumer {
         String groupId = groupEditVO.getData().getGroupId();
         switch (groupEditVO.getData().getType()){
             case GROUP_JOIN_MSG:
+                Tio.sendToGroup(IworkWebsocketStarter.getGroupContext(),groupId,WsResponse.fromText(msg, IworkServerConfig.CHARSET));
                 for(UserListDto user:userLists){
                     ChannelContext channelContext = Tio.getChannelContextByBsId(IworkWebsocketStarter.getWsServerStarter().getServerGroupContext(),user.getUserId());
                     if (channelContext != null) {
