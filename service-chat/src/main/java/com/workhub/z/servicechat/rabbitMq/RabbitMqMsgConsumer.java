@@ -87,6 +87,7 @@ public class RabbitMqMsgConsumer {
                 }
                 break;
             case GROUP_EXIT_MSG:
+                Tio.sendToGroup(IworkWebsocketStarter.getGroupContext(),groupId,WsResponse.fromText(msg, IworkServerConfig.CHARSET));
                 for(UserListDto user:userLists){
                     ChannelContext channelContext = Tio.getChannelContextByBsId(IworkWebsocketStarter.getWsServerStarter().getServerGroupContext(),user.getUserId());
                     if (channelContext != null) {

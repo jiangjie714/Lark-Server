@@ -54,6 +54,8 @@ public class ServiceChatApplication {
                 RedisUtil.removeKeys(CacheConst.userGroupIds+":");
                 //5清理用户会议缓存
                 RedisUtil.removeKeys(CacheConst.userMeetIds+":");
+                //6清理涉密词汇表
+                RedisUtil.removeKeys(CacheConst.SECRET_WORDSCACHE);
             } catch (Exception e) {
                 logger.error("初始化清除缓存操作异常");
                 logger.error(common.getExceptionMessage(e));
