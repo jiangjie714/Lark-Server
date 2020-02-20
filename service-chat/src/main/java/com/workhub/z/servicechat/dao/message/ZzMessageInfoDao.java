@@ -2,6 +2,7 @@ package com.workhub.z.servicechat.dao.message;
 
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
+import com.workhub.z.servicechat.model.RawMessageDto;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -14,33 +15,6 @@ import java.util.Map;
  * @since 2019-06-23 13:50:41
  */
 public interface ZzMessageInfoDao {
-
-    /**
-     * 通过ID查询单条数据
-     *
-     * @param msgId 主键
-     * @return 实例对象
-     */
-    ZzMessageInfo queryById(String msgId);
-
-    /**
-     * 查询指定行数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<ZzMessageInfo> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
-
-
-    /**
-     * 通过实体作为筛选条件查询
-     *
-     * @param zzMessageInfo 实例对象
-     * @return 对象列表
-     */
-    List<ZzMessageInfo> queryAll(ZzMessageInfo zzMessageInfo);
-
     /**
      * 新增数据
      *
@@ -65,7 +39,8 @@ public interface ZzMessageInfoDao {
      */
     int deleteById(String msgId);
 
-   List<ContactsMessageDto> queryContactsMessage(@Param("userId")String userId);
+    List<ContactsMessageDto> queryContactsMessage2(@Param("userId")String userId);
+    List<RawMessageDto> queryContactsMessage(@Param("userId")String userId);
    /**
    *
     * 查询会议或者群消息列表
@@ -75,10 +50,19 @@ public interface ZzMessageInfoDao {
     * @Author: zhuqz
     * @Date: 2019/10/18
    **/
-   List<ContactsMessageDto> queryMessageList(@Param("type")String type,@Param("receiver")String receiver,@Param("userId")String userId);
-   List<String> queryHistoryMessageForSinglePrivate(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
-   List<String> queryHistoryMessageForSingleGroup(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
-    List<String> queryHistoryMessageForSingleMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
-   List<Map<String,String>> queryAllMessagePrivate(@Param("params")Map params);
-   List<Map<String,String>> queryAllMessageGroup(@Param("params")Map params);
+   List<ContactsMessageDto> queryMessageList2(@Param("type")String type,@Param("receiver")String receiver,@Param("userId")String userId);
+   List<RawMessageDto> queryMessageList(@Param("type")String type,@Param("receiver")String receiver,@Param("userId")String userId);
+
+   List<String> queryHistoryMessageForSinglePrivate2(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
+   List<String> queryHistoryMessageForSingleGroup2(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
+    List<String> queryHistoryMessageForSingleMeet2(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
+
+    //todo 给前端结构变更
+    List<RawMessageDto> queryHistoryMessageForSinglePrivate(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
+    List<RawMessageDto> queryHistoryMessageForSingleGroup(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
+    List<RawMessageDto> queryHistoryMessageForSingleMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
+
+   List<Map<String,String>> queryAllMessagePrivate2(@Param("params")Map params);
+   List<Map<String,String>> queryAllMessageGroup2(@Param("params")Map params);
+   List<RawMessageDto> queryAllMessageMonitor(@Param("params")Map params);
 }

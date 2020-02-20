@@ -1,7 +1,6 @@
 package com.workhub.z.servicechat.dao.config;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 定时任务
@@ -10,12 +9,6 @@ import java.util.Map;
  * @since 2019-06-12
  */
 public interface JobDao {
-
-    /**
-     * 定时任务-历史消息处理
-     *
-     */
-    String backupHisMsg(Map param);
     /**
      * 定时任务-处理无用附件
      *

@@ -73,4 +73,12 @@ public interface ZzAtDao extends Mapper<ZzAt> {
      */
     List<ZzAt> getList(@Param("receiverId")String receiverId, @Param("groupId")String groupId) throws Exception;
 
+    /**
+     * 删除AT已读信息
+     * @param msgId 消息id
+     * @param userId 用户id
+     * @return
+     */
+    int deleteByMsgIdAndUserId(@Param("msgId") String msgId,@Param("userId") String userId);
+
 }

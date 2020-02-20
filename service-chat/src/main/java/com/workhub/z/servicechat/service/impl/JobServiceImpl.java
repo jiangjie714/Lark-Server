@@ -25,20 +25,6 @@ public class JobServiceImpl implements JobService {
     private static Logger log = LoggerFactory.getLogger(JobServiceImpl.class);
     @Resource
     private JobDao jobDao;
-    @Override
-    public String backupHisMsg() throws Exception{
-        String res = null;
-        try {
-            Map<String,String> param = new HashMap<>();
-            param.put("out","");
-            this.jobDao.backupHisMsg(param);
-            res = param.get("out");
-        }catch (Exception e){
-            e.printStackTrace();
-            res="-1";
-        }
-        return  res;
-    }
     /**
      * 定时任务-处理无用附件
      *

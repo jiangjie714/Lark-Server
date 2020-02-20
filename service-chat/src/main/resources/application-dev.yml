@@ -5,9 +5,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-        ###向注册中心上注册自己
+      ###向注册中心上注册自己
       register-with-eureka: true
-        ###是否需要从eureka上获取注册信息
+      ###是否需要从eureka上获取注册信息
       fetch-registry: true
 
 spring:
@@ -23,19 +23,6 @@ spring:
     driverClassName: oracle.jdbc.OracleDriver
     url: jdbc:oracle:thin:@192.168.43.202:1521:arltr
     username: workhub_iwork
-    druid:
-      max-active: 18
-      initial-size: 3
-      min-idle: 3
-      max-wait: 250000
-      time-between-eviction-runs-millis: 250000
-      min-evictable-idle-time-millis: 120000
-      validation-query: select 'x' from dual
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      max-open-prepared-statements: 20
-      filter: stat,wall,log4j
   rabbitmq:
     host: 192.168.43.202
     port: 5672
@@ -105,7 +92,6 @@ auth:
 #    module: service-chat
 #用户上传文件大小限制（单位M）
 file_size_max: 500
-file_save_path_group: C:/file-management-center/upload/
 #日志存放目录
 self-log-path: C:/lark_log
 #创建群、会议、附件下载是否需要审批 标志位定时读取的表达式

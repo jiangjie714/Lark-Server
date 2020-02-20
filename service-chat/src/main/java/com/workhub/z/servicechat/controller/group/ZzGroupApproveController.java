@@ -1,16 +1,16 @@
-package com.workhub.z.servicechat.controller.group;
+package com.workhub.z.servicechat.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.group.ZzGroupApprove;
-import com.workhub.z.servicechat.entity.group.ZzGroupApproveLog;
-import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
+import com.workhub.z.servicechat.entity.UserInfo;
+import com.workhub.z.servicechat.entity.ZzGroupApprove;
+import com.workhub.z.servicechat.entity.ZzGroupApproveLog;
+import com.workhub.z.servicechat.entity.ZzGroupStatus;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.service.ZzGroupApproveService;
@@ -215,9 +215,7 @@ public class ZzGroupApproveController {
 
        rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
        rabbitMqMsgProducer.sendMsgGroupApproveLog(approveLog);
-       Map p2 = new HashMap<>(16);
-       p2.put("userid",userId);
-       AdminUser userInfo = iUserService.getUserInfo(userId);
+       UserInfo userInfo = iUserService.getUserInfoByUserId(userId);
        int require_approve_authority = zzRequireApproveAuthorityService.needApprove(userInfo.getOrgCode());
        //无需审批(1特殊权限2非密的研讨群不用审批)，直接审批通过，生成会议或者群组。注:该功能与本类approve的逻辑保持一致。
        if(((MessageType.NO_REQUIRE_APPROVE_AUTHORITY == require_approve_authority) || !needApproveFlg )&& objectRestResponse.isRel()){

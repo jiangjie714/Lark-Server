@@ -54,10 +54,10 @@ public class ZzAtServiceImpl implements ZzAtService  {
      * @param limit 查询条数
      * @return 对象列表
      */
-    @Override
-    public List<ZzAt> queryAllByLimit(int offset, int limit) {
-        return this.zzAtDao.queryAllByLimit(offset, limit);
-    }
+//    @Override
+//    public List<ZzAt> queryAllByLimit(int offset, int limit) {
+//        return this.zzAtDao.queryAllByLimit(offset, limit);
+//    }
 
     /**
      * 新增数据
@@ -133,5 +133,15 @@ public class ZzAtServiceImpl implements ZzAtService  {
                 pageInfo.getList()
         );
         return res;
+    }
+    /**
+     * at已读消息删除
+     * @param msgId 消息id
+     * @param userId 人员id
+     * @return
+     */
+    @Override
+    public int deleteByMsgIdAndUserId(String msgId,String userId){
+        return this.zzAtDao.deleteByMsgIdAndUserId(msgId,userId);
     }
 }

@@ -331,7 +331,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             answerToFrontReponse.setCode(MEET_CHANGE);
             answerToFrontReponse.setData(resMeeting);
             // TODO: 2019/10/14 通知会议所有人员JSON.toJSONString(data)
-            systemMessage.sendMessageToMeet(meetingId,userId,JSON.toJSONString(answerToFrontReponse, SerializerFeature.DisableCircularReferenceDetect));
+            systemMessage.sendMessageToMeet(meetingId,userId,JSON.toJSONString(answerToFrontReponse, SerializerFeature.DisableCircularReferenceDetect),rabbitMqMsgProducer);
         }catch (Exception e){
             logger.error("会议变更推送前端报错！");
             logger.error(common.getExceptionMessage(e));

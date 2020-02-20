@@ -2,7 +2,6 @@ package com.workhub.z.servicechat.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
@@ -10,17 +9,17 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupApplyVo;
 import com.workhub.z.servicechat.VO.GroupApproveVo;
 import com.workhub.z.servicechat.VO.MeetingVo;
+import com.workhub.z.servicechat.VO.SocketMsgVo;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.dao.group.ZzGroupApproveDao;
-import com.workhub.z.servicechat.entity.group.ZzGroupApprove;
-import com.workhub.z.servicechat.entity.group.ZzGroupApproveLog;
+import com.workhub.z.servicechat.dao.ZzGroupApproveDao;
+import com.workhub.z.servicechat.entity.UserInfo;
+import com.workhub.z.servicechat.entity.ZzGroupApprove;
+import com.workhub.z.servicechat.entity.ZzGroupApproveLog;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.processor.ProcessEditGroup;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;
 import com.workhub.z.servicechat.redis.RedisUtil;
-import com.workhub.z.servicechat.server.IworkServerConfig;
-import com.workhub.z.servicechat.server.IworkWebsocketStarter;
 import com.workhub.z.servicechat.service.ZzGroupApproveLogService;
 import com.workhub.z.servicechat.service.ZzGroupApproveService;
 import com.workhub.z.servicechat.service.ZzGroupService;
@@ -31,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.tio.core.Tio;
-import org.tio.websocket.common.WsResponse;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -76,9 +73,7 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
     @Override
     public Map<String,String> approve(Map params){
         ZzGroupApproveLog approveLog = new ZzGroupApproveLog();
-        Map p2 = new HashMap<>(16);
-        p2.put("userid",params.get("userId").toString());
-        AdminUser userInfo0 = iUserService.getUserInfo(params.get("userId").toString());
+        UserInfo userInfo0 = iUserService.getUserInfoByUserId(params.get("userId").toString());
         params.put("userNo",common.nulToEmptyString(userInfo0.getPId()));
         //是否已经审批了
         String ifApproveFlg = this.zzGroupApproveDao.ifApprove(params);
@@ -119,7 +114,11 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
                     ObjectRestResponse restResponse = zzGroupService.createGroup(message);
                     //如果建群正常，发送socket
                     if(restResponse.isRel()){
-                        Tio.sendToUser(IworkWebsocketStarter.getGroupContext(),userInfo0.getId(),WsResponse.fromText(msg, IworkServerConfig.CHARSET));
+                        SocketMsgVo msgVo = new SocketMsgVo();
+                        msgVo.setCode(code);
+                        msgVo.setReceiver(userInfo0.getId());
+                        msgVo.setMsg(msg);
+                        rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
                     }else{
                         res.put("res","0");
                         /*//手动回滚事务*/
@@ -138,8 +137,11 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
                     String meet =  JSONObject.toJSONString(answerToFrontReponse);
                     for (int i = 0; i < userListuserList.size(); i++) {
                         String user = userListuserList.getJSONObject(i).getString("userId");
-                        Tio.sendToUser(IworkWebsocketStarter.getGroupContext(),user,WsResponse.fromText(meet, IworkServerConfig.CHARSET));
-
+                        SocketMsgVo msgVo = new SocketMsgVo();
+                        msgVo.setCode(code);
+                        msgVo.setReceiver(user);
+                        msgVo.setMsg(meet);
+                        rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
                         //redis 缓存处理 把用户的群列表缓存更新
                         String key = CacheConst.userMeetIds+":"+user;
                         boolean keyExist = RedisUtil.isKeyExist(key);

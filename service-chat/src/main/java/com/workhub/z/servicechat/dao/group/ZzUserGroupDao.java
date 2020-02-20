@@ -1,8 +1,9 @@
-package com.workhub.z.servicechat.dao.group;
+package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
-import com.workhub.z.servicechat.entity.group.ZzUserGroup;
+import com.workhub.z.servicechat.entity.ZzUserGroup;
+import com.workhub.z.servicechat.model.RawMessageDto;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -81,7 +82,8 @@ public interface ZzUserGroupDao extends Mapper<ZzUserGroup> {
 
     int deleteByGroupId(@Param("groupId") String groupId);
 
-    List<UserNewMsgVo> getUserNewMsgList(@Param("id")String id);
+    List<UserNewMsgVo> getUserNewMsgList2(@Param("id")String id);
+    List<RawMessageDto> getUserNewMsgList(@Param("id")String id);
     /**
      * 修改用户群个性化信息--是否置顶
      * @param userId 用户id；groupId 群id；topFlg 1置顶，0不置顶

@@ -1,25 +1,31 @@
-package com.workhub.z.servicechat.controller.group;
+package com.workhub.z.servicechat.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.pagehelper.PageInfo;
-import com.workhub.z.servicechat.VO.*;
+import com.workhub.z.servicechat.VO.GroupInfoVO;
+import com.workhub.z.servicechat.VO.GroupUserListVo;
+import com.workhub.z.servicechat.VO.GroupVO;
+import com.workhub.z.servicechat.VO.UserInfoVO;
+import com.workhub.z.servicechat.config.CacheConst;
+import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.group.ZzGroup;
+import com.workhub.z.servicechat.entity.UserInfo;
+import com.workhub.z.servicechat.entity.ZzGroup;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.GroupEditDto;
-import com.workhub.z.servicechat.service.ZzGroupMsgService;
+import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.ZzGroupService;
 import com.workhub.z.servicechat.service.ZzMessageInfoService;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.tio.core.ChannelContext;
 
@@ -50,9 +56,6 @@ public class ZzGroupController  {
     private ZzUserGroupService userGroupService;
 
     @Resource
-    private ZzGroupMsgService groupMsgService;
-
-    @Resource
     private ZzMessageInfoService messageInfoService;
 
     @Autowired
@@ -68,7 +71,6 @@ public class ZzGroupController  {
      */
     private static final String FAIL = "-1";
     /**
-     * todo:使用
      * 通过主键查询单条数据
      *
      * @param groupId 主键
@@ -181,7 +183,6 @@ public class ZzGroupController  {
     }
 
     /**
-     * todo:使用
     *@Description: 根据用户id查询用户所在群组信息
     *@Param: 用户id
     *@return: 群组列表
@@ -195,12 +196,13 @@ public class ZzGroupController  {
         return new ListRestResponse("200",groups.size(),groups);
     }
 
-    /**
-     * todo:使用
-     * @param userId
-     * @return
-     * @throws Exception
-     */
+    @GetMapping("/queryContactListById2")
+    public ListRestResponse queryContactListById2(@RequestParam("userId")String userId) throws Exception {
+        List<ContactVO> contactVOS = userGroupService.getContactVOList2(userId);
+        common.putVoNullStringToEmptyString(contactVOS);
+//        List<ZzGroup> groups = this.zzGroupService.queryGroupListByUserId(userId);
+        return new ListRestResponse("200", contactVOS.size(), contactVOS);
+    }
     @GetMapping("/queryContactListById")
     public ListRestResponse queryContactListById(@RequestParam("userId")String userId) throws Exception {
         List<ContactVO> contactVOS = userGroupService.getContactVOList(userId);
@@ -208,22 +210,36 @@ public class ZzGroupController  {
 //        List<ZzGroup> groups = this.zzGroupService.queryGroupListByUserId(userId);
         return new ListRestResponse("200", contactVOS.size(), contactVOS);
     }
-
-    /**
-     * todo:使用
-     * @param userId
-     * @return
-     * @throws Exception
-     */
+    @GetMapping("/queryHistoryMessageById2")
+    public ListRestResponse queryHistoryMessageById2(@RequestParam("userId")String userId) throws Exception {
+//        List<HistoryMessageVO> query = this.groupMsgService.queryHistoryMessageById(userId);
+        String res =  messageInfoService.queryContactsMessage2(userId);
+        JSONArray myJsonArray = JSONArray.parseArray(res);
+        return new ListRestResponse("200", 0,myJsonArray);
+    }
     @GetMapping("/queryHistoryMessageById")
     public ListRestResponse queryHistoryMessageById(@RequestParam("userId")String userId) throws Exception {
 //        List<HistoryMessageVO> query = this.groupMsgService.queryHistoryMessageById(userId);
         String res =  messageInfoService.queryContactsMessage(userId);
         JSONArray myJsonArray = JSONArray.parseArray(res);
+        return new ListRestResponse("200", myJsonArray.size(),myJsonArray);
+    }
+    /**
+     * @MethodName: queryMessageList
+     * @Description:
+     * @Param: [type 消息类型 USER私人 GROUP群 MEET会议, receiver 接收人]
+     * @Return: com.github.hollykunge.security.common.msg.ListRestResponse
+     * @Author: zhuqz
+     * @Date: 2019/10/18
+     **/
+    @GetMapping("/queryMessageList2")
+    public ListRestResponse queryMessageList2(@RequestParam("type")String type,@RequestParam("receiver")String receiver) throws Exception {
+        String userId=common.nulToEmptyString(request.getHeader("userId"));
+        String res =  messageInfoService.queryMessageList2(type,receiver,userId);
+        JSONArray myJsonArray = JSONArray.parseArray(res);
         return new ListRestResponse("200", 0,myJsonArray);
     }
     /**
-     * todo:使用
     * @MethodName: queryMessageList
      * @Description:
      * @Param: [type 消息类型 USER私人 GROUP群 MEET会议, receiver 接收人]
@@ -236,7 +252,7 @@ public class ZzGroupController  {
         String userId=common.nulToEmptyString(request.getHeader("userId"));
         String res =  messageInfoService.queryMessageList(type,receiver,userId);
         JSONArray myJsonArray = JSONArray.parseArray(res);
-        return new ListRestResponse("200", 0,myJsonArray);
+        return new ListRestResponse("200", myJsonArray.size(),myJsonArray);
     }
     /**
      * 逻辑删除群
@@ -267,8 +283,13 @@ public class ZzGroupController  {
         return objectRestResponse;
     }
 
+
+    @GetMapping("/queryHistoryMessageForSingle2")
+    public TableResultResponse queryHistoryMessageForSingle2(@RequestParam("userId")String userId,@RequestParam("contactId")String contactId,@RequestParam("isGroup")String isGroup,@RequestParam("query")String query,@RequestParam("page")String page,@RequestParam("size")String size) throws Exception {
+        TableResultResponse resultResponse = messageInfoService.queryHistoryMessageForSingle2(userId,contactId,isGroup,query,page,size);
+        return resultResponse;
+    }
     /**
-     * todo:使用
      * 当前登录人查询具体某个人或者群的聊天记录,contactId表示个人或者群id
      * query 聊天内容、接收人
      * @param userId
@@ -286,7 +307,6 @@ public class ZzGroupController  {
         return resultResponse;
     }
     /**
-     * todo:使用
      * 查询群成员列表信息
      *
      * @param groupId 主键
@@ -296,9 +316,9 @@ public class ZzGroupController  {
     public ListRestResponse getGroupUserList(@RequestParam("groupId")String groupId) throws Exception {
 
         String userIds= this.zzGroupService.getGroupUserList(groupId);
-        List<AdminUser> list  = iUserService.userList(userIds);
+        List<UserInfo> list  = iUserService.userList(userIds);
         List<UserInfoVO> dataList = new ArrayList<>();
-        for(AdminUser userTemp:list){
+        for(UserInfo userTemp:list){
             UserInfoVO vo = new UserInfoVO();
             vo.setId(userTemp.getId());
             vo.setName(userTemp.getName());
@@ -306,7 +326,8 @@ public class ZzGroupController  {
             vo.setOrgId(userTemp.getOrgCode());
             vo.setOrgName(userTemp.getOrgName());
             vo.setAvatar(userTemp.getAvatar());
-            vo.setOnline(common.isUserOnSocket(userTemp.getId()));
+            String online = common.nulToEmptyString(RedisUtil.getValue(CacheConst.userOnlineCahce+common.nulToEmptyString(userTemp.getId())));
+            vo.setOnline((MessageType.ONLINE+"").equals(online)?"1":"0");
             vo.setPathName(userTemp.getPathName());
             dataList.add(vo);
         }
@@ -323,7 +344,6 @@ public class ZzGroupController  {
         return res;
     }
     /**
-     * todo:使用
      * 群列表监控
      //param:page 页码 size 每页几条;group_name群组名称；creator创建人姓名；level密级；
      // dateBegin创建时间开始；dateEnd创建时间结束；pname项目名称；isclose是否关闭;groupOwnerName群主名称
@@ -370,7 +390,6 @@ public class ZzGroupController  {
     }
 
     /**
-     * todo:使用
      * 群编辑接口
      */
     @PostMapping("editGroup")
