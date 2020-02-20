@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(value = "lark-admin",fallback = AdminLogServiceFallback.class)
 public interface AdminLogServiceFeignClient {
   @RequestMapping(value="/api/log/save",method = RequestMethod.POST)
-  public void saveLog(LogInfo info);
+  void saveLog(LogInfo info);
 }

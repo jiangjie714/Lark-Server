@@ -36,7 +36,7 @@ public class OrgUser implements Serializable {
      */
     private String name;
 
-    private String pId;
+    private String PId;
 
     private String avatar;
     /**

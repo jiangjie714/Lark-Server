@@ -2,6 +2,7 @@ package com.github.hollykunge.security.admin.entity;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
@@ -20,14 +21,16 @@ public class User extends BaseEntity implements Serializable {
      * 姓名
      */
     @ExcelProperty(value = {"姓名"}, index = 0)
+    @ColumnWidth(20)
     @Column(name = "NAME")
     private String name;
     /**
      * 身份证号
      */
     @ExcelProperty(value = {"身份证号"}, index = 1)
+    @ColumnWidth(20)
     @Column(name = "P_ID")
-    private String pId;
+    private String PId;
     /**
      * 组织机构编码
      */
@@ -38,6 +41,7 @@ public class User extends BaseEntity implements Serializable {
      * 组织名称
      */
     @ExcelProperty(value = {"组织名称"}, index = 3)
+    @ColumnWidth(15)
     @Column(name = "ORG_NAME")
     private String orgName;
     /**
@@ -62,73 +66,85 @@ public class User extends BaseEntity implements Serializable {
      * 出入证号
      */
     @ExcelProperty(value = {"出入证号"}, index = 7)
+    @ColumnWidth(13)
     @Column(name = "EMP_CODE")
     private String empCode;
     /**
      * 出生年月
      */
     @ExcelProperty(value = {"出生年月"}, index = 8)
+    @ColumnWidth(13)
     @Column(name = "BIRTH_DATE")
     private Date birthDate;
     /**
      * 办公电话
      */
     @ExcelProperty(value = {"办公电话"}, index = 9)
+    @ColumnWidth(13)
     @Column(name = "O_TEL")
     private String oTel;
     /**
      * 办公邮件
      */
     @ExcelProperty(value = {"办公邮件"}, index = 10)
+    @ColumnWidth(13)
     @Column(name = "O_EMAIL")
     private String oEmail;
     /**
      * 行政岗位
      */
     @ExcelProperty(value = {"行政岗位"}, index = 11)
+    @ColumnWidth(13)
     @Column(name = "WORK_POST")
     private String workPost;
     /**
      * 技术岗位
      */
     @ExcelProperty(value = {"技术岗位"}, index = 12)
+    @ColumnWidth(13)
     @Column(name = "TEC_POST")
     private String tecPost;
     /**
      * 是否删除，0否，1是
      */
     @ExcelProperty(value = {"是否删除"}, index = 13)
+    @ColumnWidth(13)
     @Column(name = "DELETED")
     private String deleted;
     /**
      * 姓
      */
+    @ExcelIgnore
     @ExcelProperty(value = {"姓"}, index = 14)
     @Column(name = "REFA")
     private String refa;
     /**
      * 名
      */
+    @ExcelIgnore
     @ExcelProperty(value = {"名"}, index = 15)
     @Column(name = "REFB")
     private String refb;
     /**
      * 头像
      */
-    @ExcelProperty(value = {"头像"}, index = 16)
+
+    @ExcelProperty(value = {"头像"}, index = 14)
+    @ColumnWidth(55)
     @Column(name = "AVATAR")
     private String avatar;
     /**
      * 描述
      */
-    @ExcelProperty(value = {"描述"}, index = 17)
+    @ExcelProperty(value = {"描述"}, index = 15)
     @Column(name = "DESCRIPTION")
     private String description;
 
     /**
      * 密码
      */
-    @ExcelProperty(value = {"密码"}, index = 18)
+    @ExcelProperty(value = {"密码"}, index = 16)
+    @ColumnWidth(60)
     @Column(name = "PASSWORD")
     private String password;
 

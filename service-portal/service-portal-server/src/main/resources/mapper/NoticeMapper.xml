@@ -13,5 +13,6 @@
     <result column="ORG_CODE" property="orgCode" jdbcType="VARCHAR" />
     <result column="SEND_TIME" property="sendTime" jdbcType="TIMESTAMP" />
     <result column="SECRET_LEVEL" property="secretLevel" jdbcType="VARCHAR" />
+    <result column="FROM_ID" property="fromId" jdbcType="VARCHAR" />
   </resultMap>
 </mapper>

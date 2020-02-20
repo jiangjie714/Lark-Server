@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 public class UserInfo implements Serializable{
     private String id;
-    private String pId;
+    private String PId;
     private String name;
     private String password;
     private String description;

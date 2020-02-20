@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzMessageInfo;
+import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 
 import java.util.Map;
 

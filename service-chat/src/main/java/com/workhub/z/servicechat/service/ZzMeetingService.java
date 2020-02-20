@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.service;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.MeetingVo;
-import com.workhub.z.servicechat.entity.ZzMeeting;
+import com.workhub.z.servicechat.entity.meeting.ZzMeeting;
 import com.workhub.z.servicechat.model.MeetingDto;
 
 import java.util.Map;

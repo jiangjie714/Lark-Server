@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.ZzGroupApproveDao">
+<mapper namespace="com.workhub.z.servicechat.dao.group.ZzGroupApproveDao">
 
     <insert id="add" >
         insert into zz_group_approve(id,create_time,group_id,creator,creator_name,group_name,type,approve_list,msg)

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.ZzUserGroupMsgTagDao">
+<mapper namespace="com.workhub.z.servicechat.dao.group.ZzUserGroupMsgTagDao">
 
-    <resultMap type="com.workhub.z.servicechat.entity.ZzUserGroupMsgTag" id="ZzUserGroupMsgTagMap">
+    <resultMap type="com.workhub.z.servicechat.entity.group.ZzUserGroupMsgTag" id="ZzUserGroupMsgTagMap">
         <result property="id" column="ID" jdbcType="VARCHAR"/>
         <result property="userId" column="USER_ID" jdbcType="VARCHAR"/>
         <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>

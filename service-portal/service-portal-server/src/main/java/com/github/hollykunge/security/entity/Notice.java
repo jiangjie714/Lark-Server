@@ -32,6 +32,9 @@ public class Notice implements Comparable<Notice>{
     private Date sendTime;
     @Column(name = "SECRET_LEVEL")
     private String secretLevel;
+    /** fansq 20-2-18  标注消息发送id */
+    @Column(name = "FROM_ID")
+    private String fromId;
 
     @Override
     public int compareTo(Notice o) {

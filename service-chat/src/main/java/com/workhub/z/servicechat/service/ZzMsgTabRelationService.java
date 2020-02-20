@@ -1,6 +1,6 @@
 package com.workhub.z.servicechat.service;
 
-import com.workhub.z.servicechat.entity.ZzMsgTabRelation;
+import com.workhub.z.servicechat.entity.message.ZzMsgTabRelation;
 import java.util.List;
 
 /**

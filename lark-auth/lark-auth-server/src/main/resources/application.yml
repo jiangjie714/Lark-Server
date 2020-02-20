@@ -15,10 +15,7 @@ spring:
     password: 123456
   datasource:
     name: test
-    #      url: jdbc:mysql://${MYSQL_HOST:10.12.97.30}:${MYSQL_PORT:3306}/lark-auth?useUnicode=true&characterEncoding=UTF8&useSSL=false
-    #      username: root
-    #      password: 123456
-    url: jdbc:oracle:thin:@${ORACLE_HOST:47.99.247.83}:${ORACLE_PORT:1521}:arltr
+    url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
     username: lark_auth
     password: 123456
     # 使用druid数据源

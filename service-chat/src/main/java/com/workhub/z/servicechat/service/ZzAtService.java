@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzAt;
+import com.workhub.z.servicechat.entity.message.ZzAt;
 
 import java.util.List;
 
@@ -20,15 +20,15 @@ public interface ZzAtService {
      * @return 实例对象
      */
     ZzAt queryById(String id);
-
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<ZzAt> queryAllByLimit(int offset, int limit);
+//
+//    /**
+//     * 查询多条数据
+//     *
+//     * @param offset 查询起始位置
+//     * @param limit 查询条数
+//     * @return 对象列表
+//     */
+//    List<ZzAt> queryAllByLimit(int offset, int limit);
 
     /**
      * 新增数据

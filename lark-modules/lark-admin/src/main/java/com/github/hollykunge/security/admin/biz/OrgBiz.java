@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.api.dto.OrgUser;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.OrgUserMap;
@@ -50,7 +51,7 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
     private final String USER_ONLINE = "700";
     private final String USER_OFFLINE = "701";
     @FilterByDeletedAndOrderHandler
-    public List<AdminUser> getOrgUsers(String orgCode, String secretLevels, String pid, String grouptype, String localUserOrg) {
+    public List<AdminUser> getOrgUsers(String orgCode, String secretLevels, String PId, String grouptype, String localUserOrg) {
         //如果orgCode为航天二院，则直接返回空数据
         if (AdminCommonConstant.NO_DATA_ORG_CODE.equals(orgCode)) {
             return new ArrayList<AdminUser>();
@@ -67,8 +68,8 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
                 criteria.andIn("secretLevel", secretList);
             }
         }
-        if (!StringUtils.isEmpty(pid)) {
-            criteria.andNotEqualTo("pId", pid);
+        if (!StringUtils.isEmpty(PId)) {
+            criteria.andNotEqualTo("PId", PId);
         }
         List<User> users = userMapper.selectByExample(userExample);
         List<AdminUser> userList;
@@ -137,8 +138,8 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
     }
 
     @FilterByDeletedAndOrderHandler
-    public List<com.github.hollykunge.security.admin.api.dto.OrgUser> getChildOrgUser(String parentCode) throws Exception{
-        List<com.github.hollykunge.security.admin.api.dto.OrgUser> result = new ArrayList<>();
+    public List<OrgUser> getChildOrgUser(String parentCode) throws Exception{
+        List<OrgUser> result = new ArrayList<>();
         Example example = new Example(Org.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("parentId",parentCode);

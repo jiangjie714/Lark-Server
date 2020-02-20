@@ -22,7 +22,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableDiscoveryClient
 @MapperScan("com.workhub.z.servicechat.dao")
 @EnableTransactionManagement
-@EnableCaching  //开启缓存
+@EnableCaching
 public class ServiceChatApplication {
     static Logger logger = LoggerFactory.getLogger(ServiceChatApplication.class);
     //是否清理缓存
@@ -47,6 +47,8 @@ public class ServiceChatApplication {
                 RedisUtil.removeKeys(CacheConst.userGroupIds+":");
                 //清理用户会议缓存
                 RedisUtil.removeKeys(CacheConst.userMeetIds+":");
+                //6清理涉密词汇表
+                RedisUtil.removeKeys(CacheConst.SECRET_WORDSCACHE);
             } catch (Exception e) {
                 logger.error("初始化清除缓存操作异常");
                 logger.error(common.getExceptionMessage(e));

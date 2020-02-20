@@ -39,6 +39,23 @@ public class ProduceSenderConfig{
     }
 
     /**
+     * fansq
+     * 20-2-18
+     * 发送消息 取消公告发布
+     * @param id
+     * @param message
+     */
+    public void sendCancelPortal(String id,Object message) {
+        //消息id
+        CorrelationData correlationId = new CorrelationData(id);
+        //发送到门户服务
+        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.CANCEL_NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
+        //发送到研讨服务  我看chat服务中指定消费方法没什么具体业务 所以没有修改  路由键
+        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOCHAT_ROTEING_KEY,message, correlationId);
+    }
+
+
+    /**
      * 发送消息，没有确认机制
      * @param id
      * @param message

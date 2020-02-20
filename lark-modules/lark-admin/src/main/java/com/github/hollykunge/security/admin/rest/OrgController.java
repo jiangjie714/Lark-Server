@@ -124,10 +124,10 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     public ListRestResponse<List<AdminUser>> getUsers(@RequestParam Map<String,String> map, HttpServletRequest request) {
         String orgCode = map.get("orgCode");
         String secretLevels = map.get("secretLevels");
-        String pId = map.get("pId");
+        String PId = map.get("PId");
         String grouptype = map.get("grouptype");
         String userOrgCode = map.get("userOrgCode");
-        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, pId,grouptype,userOrgCode);
+        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, PId,grouptype,userOrgCode);
         return new ListRestResponse("", orgUsers.size(), orgUsers);
     }
 

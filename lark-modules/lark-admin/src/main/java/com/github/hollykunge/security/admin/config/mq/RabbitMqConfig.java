@@ -83,6 +83,16 @@ public class RabbitMqConfig {
     }
 
     /**
+     * fansq
+     * 绑定 cancelNoticeQueue noticeExchange
+     * @return
+     */
+    @Bean
+    @Order(value = 14)
+    public Binding bindingCancelPortal() {
+        return BindingBuilder.bind(queueConfig.cancelNoticeQueue()).to(exchangeConfig.directExchange()).with(CommonConstants.CANCEL_NOTICE_TOPORTAL_ROTEING_KEY);
+    }
+    /**
      * 定义rabbit template用于数据的接收和发送
      * @return
      */

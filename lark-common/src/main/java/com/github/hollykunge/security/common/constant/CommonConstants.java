@@ -29,6 +29,9 @@ public class CommonConstants {
     public static final String NOTICE_EXCHANGE = "noticeExchange";
     /** 公告队列名称 */
     public static final String NOTICE_QUEUE_NAMA = "noticeQueue";
+
+    /** 取消公告分布*/
+    public static final String CANCEL_NOTICE_QUEUE_NAME = "cancelNoticeQueue";
     /**
      * 公告推送到研讨服务队列名称
      */
@@ -37,6 +40,11 @@ public class CommonConstants {
      * 通知公告发送到门户服务路由键
      */
     public static final String NOTICE_TOPORTAL_ROTEING_KEY = "notic_to_portal";
+
+    /**
+     * fansq 发送取消公告到portal服务路由键
+     */
+    public static final String CANCEL_NOTICE_TOPORTAL_ROTEING_KEY = "cancel_notic_to_portal";
     /**
      * 通知公告发送到研讨服务路由键
      */

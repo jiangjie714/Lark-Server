@@ -22,7 +22,7 @@ public class User extends BaseEntity implements Serializable {
      * 身份证号
      */
     @Column(name = "P_ID")
-    private String pId;
+    private String PId;
     /**
      * 组织机构编码
      */

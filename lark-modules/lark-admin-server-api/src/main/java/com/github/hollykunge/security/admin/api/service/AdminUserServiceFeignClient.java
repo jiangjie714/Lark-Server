@@ -81,15 +81,7 @@ public interface AdminUserServiceFeignClient {
    * @param orgCode 组织编码
    * @return List<AdminUser>
    */
-  @RequestMapping(value="/api/user/{positionId}/{secretLevel}/{orgCode}/list", method = RequestMethod.GET)
-  List<AdminUser> getUserListByPosAndSecAndOrg(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel, @PathVariable("orgCode") String orgCode);
+//  @RequestMapping(value="/api/user/{positionId}/{secretLevel}/{orgCode}/list", method = RequestMethod.GET)
+//  List<AdminUser> getUserListByPosAndSecAndOrg(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel, @PathVariable("orgCode") String orgCode);
 
-  /**
-   * 根据组织编码获取通讯录
-   * @param orgCode 组织编码
-   * @return List<OrgUser>
-   * @throws Exception 查询异常
-   */
-  @RequestMapping(value = "/{orgCode}/contacts", method = RequestMethod.GET)
-  List<OrgUser> getContactsByOrg(@PathVariable("orgCode") String orgCode) throws Exception;
 }

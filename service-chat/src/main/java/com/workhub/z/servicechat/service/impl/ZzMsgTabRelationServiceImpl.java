@@ -1,8 +1,8 @@
 package com.workhub.z.servicechat.service.impl;
 
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.ZzMsgTabRelationDao;
-import com.workhub.z.servicechat.entity.ZzMsgTabRelation;
+import com.workhub.z.servicechat.dao.message.ZzMsgTabRelationDao;
+import com.workhub.z.servicechat.entity.message.ZzMsgTabRelation;
 import com.workhub.z.servicechat.service.ZzMsgTabRelationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

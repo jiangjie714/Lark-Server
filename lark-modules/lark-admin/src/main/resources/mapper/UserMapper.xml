@@ -7,7 +7,7 @@
     -->
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="P_ID" jdbcType="VARCHAR" property="pId" />
+    <result column="P_ID" jdbcType="VARCHAR" property="PId" />
     <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
     <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
     <result column="SECRET_LEVEL" jdbcType="VARCHAR" property="secretLevel" />
@@ -44,7 +44,7 @@
     -->
     u.ID id,
     u.NAME name,
-    u.P_ID pId,
+    u.P_ID PId,
     u.ORG_CODE orgCode,
     u.SECRET_LEVEL secretLevel,
     u.ORDER_ID orderId,
@@ -160,19 +160,27 @@
     ORG_NAME,
     SECRET_LEVEL,
     GENDER,
-    ORDER_ID
+    ORDER_ID,
+    EMP_CODE,
+    DELETED,
+    AVATAR,
+    PASSWORD
     )
     <foreach collection="users" item="item" index= "index" separator ="UNION ALL">
       (
       select
       #{item.id},
       #{item.name},
-      #{item.pId},
+      #{item.PId},
       #{item.orgCode},
       #{item.orgName},
       #{item.secretLevel},
       #{item.gender},
-      #{item.orderId}
+      #{item.orderId},
+      #{item.empCode},
+      #{item.deleted},
+      #{item.avatar},
+      #{item.password}
       from dual
       )
     </foreach>

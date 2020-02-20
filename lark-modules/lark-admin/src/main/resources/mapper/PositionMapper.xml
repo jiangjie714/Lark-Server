@@ -45,7 +45,7 @@
         <collection property="users" ofType="com.github.hollykunge.security.admin.entity.User">
             <id column="USERID" jdbcType="VARCHAR" property="id" />
             <result column="UNAME" jdbcType="VARCHAR" property="name" />
-            <result column="UPID" jdbcType="VARCHAR" property="pId" />
+            <result column="UPID" jdbcType="VARCHAR" property="PId" />
             <result column="UORGCODE" jdbcType="VARCHAR" property="orgCode" />
             <result column="uorgName" jdbcType="VARCHAR" property="orgName" />
             <result column="usecretLevel" jdbcType="VARCHAR" property="secretLevel" />

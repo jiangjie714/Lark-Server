@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.service;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.FileMonitoringVO;
 import com.workhub.z.servicechat.VO.GroupFileVo;
-import com.workhub.z.servicechat.entity.ZzGroupFile;
+import com.workhub.z.servicechat.entity.group.ZzGroupFile;
 
 import java.util.List;
 import java.util.Map;

@@ -27,15 +27,15 @@
     insert into ADMIN_POSITIONUSERMAP
     (
     ID,
-    USER_ID
+    USER_ID,
     POSITION_ID
     )
     <foreach collection="userPositions" item="item" index= "index" separator ="UNION ALL">
       (
       select
       #{item.id},
-      #{item.userId}
-      #{item.positionId},
+      #{item.userId},
+      #{item.positionId}
       from dual
       )
     </foreach>

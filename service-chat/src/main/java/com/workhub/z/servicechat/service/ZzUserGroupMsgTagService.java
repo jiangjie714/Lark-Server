@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.entity.ZzUserGroupMsgTag;
+import com.workhub.z.servicechat.entity.group.ZzUserGroupMsgTag;
 
 /**
  * 用户标记群消息
