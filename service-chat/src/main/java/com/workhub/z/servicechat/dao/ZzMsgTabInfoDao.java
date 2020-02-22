@@ -1,18 +1,18 @@
-package com.workhub.z.servicechat.dao.message;
+package com.workhub.z.servicechat.dao;
 
-import com.workhub.z.servicechat.entity.message.ZzMsgTabRelation;
+import com.workhub.z.servicechat.entity.message.ZzMsgTabInfo;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
 /**
- * 标记消息关系表(ZzMsgTabRelation)表数据库访问层
+ * 消息标记信息表(ZzMsgTabInfo)表数据库访问层
  *
  * @author makejava
- * @since 2019-05-23 16:12:40
+ * @since 2019-05-23 16:46:13
  */
-public interface ZzMsgTabRelationDao extends Mapper<ZzMsgTabRelation> {
+public interface ZzMsgTabInfoDao extends Mapper<ZzMsgTabInfo> {
 
     /**
      * 通过ID查询单条数据
@@ -20,7 +20,7 @@ public interface ZzMsgTabRelationDao extends Mapper<ZzMsgTabRelation> {
      * @param id 主键
      * @return 实例对象
      */
-    ZzMsgTabRelation queryById(String id);
+    ZzMsgTabInfo queryById(String id);
 
     /**
      * 查询指定行数据
@@ -29,33 +29,33 @@ public interface ZzMsgTabRelationDao extends Mapper<ZzMsgTabRelation> {
      * @param limit 查询条数
      * @return 对象列表
      */
-    List<ZzMsgTabRelation> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
+    List<ZzMsgTabInfo> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
 
 
     /**
      * 通过实体作为筛选条件查询
      *
-     * @param zzMsgTabRelation 实例对象
+     * @param zzMsgTabInfo 实例对象
      * @return 对象列表
      */
-    List<ZzMsgTabRelation> queryAll(ZzMsgTabRelation zzMsgTabRelation);
+    List<ZzMsgTabInfo> queryAll(ZzMsgTabInfo zzMsgTabInfo);
 
     /**
      * 新增数据
      *
-     * @param zzMsgTabRelation 实例对象
+     * @param zzMsgTabInfo 实例对象
      * @return 影响行数
      */
     @Override
-    int insert(ZzMsgTabRelation zzMsgTabRelation);
+    int insert(ZzMsgTabInfo zzMsgTabInfo);
 
     /**
      * 修改数据
      *
-     * @param zzMsgTabRelation 实例对象
+     * @param zzMsgTabInfo 实例对象
      * @return 影响行数
      */
-    int update(ZzMsgTabRelation zzMsgTabRelation);
+    int update(ZzMsgTabInfo zzMsgTabInfo);
 
     /**
      * 通过主键删除数据
@@ -65,5 +65,4 @@ public interface ZzMsgTabRelationDao extends Mapper<ZzMsgTabRelation> {
      */
     int deleteById(String id);
 
-    int deleteByTabId(@Param("tabId") String tabId);
 }

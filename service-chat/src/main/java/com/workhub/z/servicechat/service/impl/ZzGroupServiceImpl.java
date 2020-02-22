@@ -2,6 +2,7 @@ package com.workhub.z.servicechat.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -17,10 +18,9 @@ import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.dao.ZzGroupDao;
 import com.workhub.z.servicechat.dao.ZzUserGroupDao;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroup;
-import com.workhub.z.servicechat.entity.ZzGroupStatus;
-import com.workhub.z.servicechat.entity.ZzUserGroup;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
+import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
+import com.workhub.z.servicechat.entity.group.ZzUserGroup;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.GroupEditDto;
 import com.workhub.z.servicechat.model.GroupEditUserList;
@@ -259,9 +259,9 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         List<GroupVO> dataList =this.zzGroupDao.groupListMonitoring(params);
         //null的String类型属性转换空字符串
         common.putVoNullStringToEmptyString(dataList);
-        UserInfo userInfo=null;
+        AdminUser userInfo=null;
         for(GroupVO groupVO:dataList){
-            userInfo=iUserService.getUserInfoByUserId(common.nulToEmptyString(groupVO.getCreator()));
+            userInfo=iUserService.getUserInfo(common.nulToEmptyString(groupVO.getCreator()));
             groupVO.setCreatorName(userInfo==null?"":userInfo.getName());
         }
         PageInfo<GroupVO> pageInfo = new PageInfo<>(dataList);
@@ -351,8 +351,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
     @Override
     @Transactional(rollbackFor={RuntimeException.class, Exception.class})
     public int groupMemberEdit(GroupEditDto groupEditDto, String userId, String userName){
-        List<UserInfo> addUserInfoList = null;
-        List<UserInfo> removeUserInfoList = null;
+        List<AdminUser> addUserInfoList = null;
+        List<AdminUser> removeUserInfoList = null;
         try {
             String groupId = groupEditDto.getGroupId();
             List<GroupEditUserList> userListDtos = groupEditDto.getUserList();
@@ -429,7 +429,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                 addUserInfoList = iUserService.userList(addUserIds);
                 String userNames = "";
                 String userIds = "";
-                for (UserInfo userInfo:addUserInfoList){
+                for (AdminUser userInfo:addUserInfoList){
                     msgUserList.add(userInfo.getId());
                     userNames += ","+userInfo.getName();
                     userIds += ","+userInfo.getId();
@@ -480,7 +480,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                 removeUserInfoList = iUserService.userList(removeUserIds);
                 String userNames = "";
                 String userIds = "";
-                for (UserInfo userInfo:removeUserInfoList){
+                for (AdminUser userInfo:removeUserInfoList){
                     msgUserList2.add(userInfo.getId());
                     userNames += ","+userInfo.getName();
                     userIds += ","+userInfo.getId();
@@ -528,7 +528,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             log.error(common.getExceptionMessage(e));
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             if(addUserInfoList!=null){
-                for (UserInfo userInfo:addUserInfoList){
+                for (AdminUser userInfo:addUserInfoList){
                     //redis 缓存处理 把用户脏数据删除
                     String key = CacheConst.userGroupIds+":"+userInfo.getId();
                     boolean keyExist = RedisUtil.isKeyExist(key);
@@ -541,7 +541,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             if(removeUserInfoList!=null){
 
             }
-            for (UserInfo userInfo:removeUserInfoList){
+            for (AdminUser userInfo:removeUserInfoList){
                 //redis 缓存处理 把脏数据删除
                 String key = CacheConst.userGroupIds+":"+userInfo.getId();
                 boolean keyExist = RedisUtil.isKeyExist(key);
@@ -587,7 +587,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             zzGroupInfo.setGroupName(jsonObject.getString("groupName"));
             zzGroupInfo.setCreator(jsonObject.getString("creator"));
             zzGroupInfo.setGroupOwnerId(jsonObject.getString("creator"));
-            UserInfo userInfo = iUserService.getUserInfoByUserId(jsonObject.getString("creator"));
+            AdminUser userInfo = iUserService.getUserInfo(jsonObject.getString("creator"));
             if(userInfo!=null){
                 zzGroupInfo.setCreatorName(common.nulToEmptyString(userInfo.getName()));
                 zzGroupInfo.setGroupOwnerName(common.nulToEmptyString(userInfo.getName()));

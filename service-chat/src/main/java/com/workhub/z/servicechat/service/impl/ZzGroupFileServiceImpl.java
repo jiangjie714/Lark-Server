@@ -9,7 +9,7 @@ import com.workhub.z.servicechat.config.FileTypeEnum;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzGroupFileDao;
+import com.workhub.z.servicechat.dao.ZzGroupFileDao;
 import com.workhub.z.servicechat.entity.group.ZzGroupFile;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.feign.IFileUploadService;

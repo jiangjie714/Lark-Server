@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.message;
+package com.workhub.z.servicechat.dao;
 
 import com.github.pagehelper.Page;
 import com.workhub.z.servicechat.entity.message.ZzMegReadLog;

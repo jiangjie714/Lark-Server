@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.meeting;
+package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.VO.UserCurrentDayMeetJobVo;
 import com.workhub.z.servicechat.entity.meeting.ZzMeetingUser;

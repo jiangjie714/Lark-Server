@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.group;
+package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.VO.GroupUserListVo;
 import com.workhub.z.servicechat.VO.GroupVO;

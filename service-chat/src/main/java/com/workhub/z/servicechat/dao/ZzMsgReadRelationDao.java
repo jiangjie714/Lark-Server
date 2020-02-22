@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.message;
+package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.VO.NoReadVo;
 import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;

@@ -5,7 +5,7 @@ import com.workhub.z.servicechat.config.AnswerToFrontReponse;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.config.systemMessage;
-import com.workhub.z.servicechat.entity.ZzRequireApproveAuthority;
+import com.workhub.z.servicechat.entity.config.ZzRequireApproveAuthority;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.server.Const;
 import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;

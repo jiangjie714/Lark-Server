@@ -3,16 +3,14 @@ package com.workhub.z.servicechat.service.impl;
 
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.config.fileManage;
-import com.workhub.z.servicechat.dao.config.JobDao;
+import com.workhub.z.servicechat.dao.JobDao;
 import com.workhub.z.servicechat.service.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 定时任务-历史消息处理

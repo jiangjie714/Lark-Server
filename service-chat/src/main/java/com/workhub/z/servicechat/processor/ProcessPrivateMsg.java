@@ -7,7 +7,7 @@ import com.workhub.z.servicechat.VO.MsgSendStatusVo;
 import com.workhub.z.servicechat.VO.SocketMsgVo;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.ZzPrivateMsg;
+import com.workhub.z.servicechat.entity.message.ZzPrivateMsg;
 import com.workhub.z.servicechat.service.ZzPrivateMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

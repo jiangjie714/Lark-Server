@@ -2,6 +2,7 @@ package com.workhub.z.servicechat.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
@@ -12,9 +13,8 @@ import com.workhub.z.servicechat.VO.MeetingVo;
 import com.workhub.z.servicechat.VO.SocketMsgVo;
 import com.workhub.z.servicechat.config.*;
 import com.workhub.z.servicechat.dao.ZzGroupApproveDao;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroupApprove;
-import com.workhub.z.servicechat.entity.ZzGroupApproveLog;
+import com.workhub.z.servicechat.entity.group.ZzGroupApprove;
+import com.workhub.z.servicechat.entity.group.ZzGroupApproveLog;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.processor.ProcessEditGroup;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
@@ -73,7 +73,7 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
     @Override
     public Map<String,String> approve(Map params){
         ZzGroupApproveLog approveLog = new ZzGroupApproveLog();
-        UserInfo userInfo0 = iUserService.getUserInfoByUserId(params.get("userId").toString());
+        AdminUser userInfo0 = iUserService.getUserInfo(params.get("userId").toString());
         params.put("userNo",common.nulToEmptyString(userInfo0.getPId()));
         //是否已经审批了
         String ifApproveFlg = this.zzGroupApproveDao.ifApprove(params);

@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.hollykunge.security.common.vo.rpcvo.MessageContent;
 import com.github.pagehelper.PageHelper;
@@ -11,9 +12,8 @@ import com.workhub.z.servicechat.VO.UserNewMsgVo;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.dao.ZzUserGroupDao;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroup;
-import com.workhub.z.servicechat.entity.ZzUserGroup;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
+import com.workhub.z.servicechat.entity.group.ZzUserGroup;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.RawMessageDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
@@ -233,7 +233,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 ZzGroup group = new ZzGroup();
                 group = zzGroupService.queryById(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
-                UserInfo userInfo = iUserService.getUserInfoByUserId(n.getMsgReceiver());
+                AdminUser userInfo = iUserService.getUserInfo(n.getMsgReceiver());
 //                JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class);
 //                MessageContent testProcessInfo = (MessageContent)JSONObject.toBean(n.getMsg(), MessageContent.class);
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
@@ -261,7 +261,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 contactVO.setIsGroup(n.getTableType().equals("GROUP"));
                 contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(group.getGroupId(),id));
             } else if ("USER".equals(n.getTableType())) {
-                UserInfo userInfo = iUserService.getUserInfoByUserId(n.getMsgSener());
+                AdminUser userInfo = iUserService.getUserInfo(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
                 contactVO.setFullTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(n.getSendTime()==null?(new Date()):n.getSendTime()));

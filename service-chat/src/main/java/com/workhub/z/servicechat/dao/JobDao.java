@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.config;
+package com.workhub.z.servicechat.dao;
 
 import java.util.List;
 

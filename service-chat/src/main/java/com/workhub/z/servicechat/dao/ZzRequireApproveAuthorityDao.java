@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.config;
+package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.entity.config.ZzRequireApproveAuthority;
 import org.apache.ibatis.annotations.Param;

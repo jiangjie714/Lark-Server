@@ -166,7 +166,7 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
         zzGroupInfo.setGroupName(groupJson.getString("groupName"));
         zzGroupInfo.setCreator(groupJson.getString("creator"));
         zzGroupInfo.setGroupOwnerId(groupJson.getString("creator"));
-        UserInfo userInfo = iUserService.getUserInfoByUserId(groupJson.getString("creator"));
+        AdminUser userInfo = iUserService.getUserInfo(groupJson.getString("creator"));
         if(userInfo!=null){
             zzGroupInfo.setCreatorName(common.nulToEmptyString(userInfo.getName()));
             zzGroupInfo.setGroupOwnerName(common.nulToEmptyString(userInfo.getName()));

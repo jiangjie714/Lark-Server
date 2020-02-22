@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.group;
+package com.workhub.z.servicechat.dao;
 /**
  * 用户标记群消息
  *
