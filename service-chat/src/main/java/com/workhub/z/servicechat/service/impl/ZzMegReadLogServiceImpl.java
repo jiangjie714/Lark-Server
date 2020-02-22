@@ -1,17 +1,16 @@
 package com.workhub.z.servicechat.service.impl;
 
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.workhub.z.servicechat.VO.MegReadLogVO;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.dao.ZzGroupDao;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroup;
-import com.workhub.z.servicechat.entity.ZzMegReadLog;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
+import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
 import com.workhub.z.servicechat.dao.ZzMegReadLogDao;
 import com.workhub.z.servicechat.feign.IUserService;
-import com.workhub.z.servicechat.service.ZzGroupService;
 import com.workhub.z.servicechat.service.ZzMegReadLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * (ZzMegReadLog)表服务实现类
@@ -121,7 +118,7 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
             megReadLogVO.setId(data.getId());
             megReadLogVO.setReadtime(data.getReadtime());
             megReadLogVO.setSender(data.getSender());
-            UserInfo userInfo = userService.getUserInfoByUserId(data.getSender());
+            AdminUser userInfo = userService.getUserInfo(data.getSender());
             if (userInfo.getId() != null){
                 megReadLogVO.setSenderName(userInfo.getName());
                 megReadLogVO.setSenderSN(userInfo.getPId());
@@ -130,7 +127,7 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
                 megReadLogVO.setSenderName(groupinfo.getGroupName());
                 megReadLogVO.setSenderSN(groupinfo.getGroupId());
             }
-            UserInfo userinfo1 = userService.getUserInfoByUserId(data.getReviser());
+            AdminUser userinfo1 = userService.getUserInfo(data.getReviser());
             megReadLogVO.setReviser(data.getReviser());
             megReadLogVO.setReviserName(userinfo1.getName());
             megReadLogVO.setReviserSN(userinfo1.getPId());

@@ -2,7 +2,7 @@ package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
-import com.workhub.z.servicechat.entity.ZzUserGroup;
+import com.workhub.z.servicechat.entity.group.ZzUserGroup;
 import com.workhub.z.servicechat.model.RawMessageDto;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;

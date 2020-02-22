@@ -6,7 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.message.ZzMessageInfoDao;
+import com.workhub.z.servicechat.dao.ZzMessageInfoDao;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
 import com.workhub.z.servicechat.model.RawMessageDto;

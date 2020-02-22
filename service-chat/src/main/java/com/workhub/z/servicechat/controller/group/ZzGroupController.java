@@ -1,21 +1,19 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.group;
 
 import com.alibaba.fastjson.JSONArray;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.pagehelper.PageInfo;
-import com.workhub.z.servicechat.VO.GroupInfoVO;
-import com.workhub.z.servicechat.VO.GroupUserListVo;
-import com.workhub.z.servicechat.VO.GroupVO;
-import com.workhub.z.servicechat.VO.UserInfoVO;
+import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroup;
+import com.workhub.z.servicechat.entity.config.UserInfo;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.GroupEditDto;
 import com.workhub.z.servicechat.redis.RedisUtil;
@@ -316,9 +314,9 @@ public class ZzGroupController  {
     public ListRestResponse getGroupUserList(@RequestParam("groupId")String groupId) throws Exception {
 
         String userIds= this.zzGroupService.getGroupUserList(groupId);
-        List<UserInfo> list  = iUserService.userList(userIds);
+        List<AdminUser> list  = iUserService.userList(userIds);
         List<UserInfoVO> dataList = new ArrayList<>();
-        for(UserInfo userTemp:list){
+        for(AdminUser userTemp:list){
             UserInfoVO vo = new UserInfoVO();
             vo.setId(userTemp.getId());
             vo.setName(userTemp.getName());

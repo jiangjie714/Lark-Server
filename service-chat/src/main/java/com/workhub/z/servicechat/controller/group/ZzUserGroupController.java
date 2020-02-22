@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.group;
 
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -7,7 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.entity.ZzUserGroup;
+import com.workhub.z.servicechat.entity.group.ZzUserGroup;
 import com.workhub.z.servicechat.model.RawMessageDto;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
 import org.springframework.web.bind.annotation.*;

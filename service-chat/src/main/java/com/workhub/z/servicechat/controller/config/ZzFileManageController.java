@@ -6,10 +6,10 @@ import com.workhub.z.servicechat.config.EncryptionAndDeciphering;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.UserInfo;
-import com.workhub.z.servicechat.entity.ZzGroup;
-import com.workhub.z.servicechat.entity.ZzGroupFile;
-import com.workhub.z.servicechat.entity.ZzGroupStatus;
+import com.workhub.z.servicechat.entity.config.UserInfo;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
+import com.workhub.z.servicechat.entity.group.ZzGroupFile;
+import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.feign.IFileUploadService;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.MeetingDto;
@@ -352,7 +352,7 @@ public class ZzFileManageController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            UserInfo userInfo = iUserService.getUserInfoByUserId(userId);
+            AdminUser userInfo = iUserService.getUserInfo(userId);
             int require_approve_authority = zzRequireApproveAuthorityService.needApprove(userInfo.getOrgCode());
             //如果无需审批
             if(MessageType.NO_REQUIRE_APPROVE_AUTHORITY == require_approve_authority){

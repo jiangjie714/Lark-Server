@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.dao.meeting;
+package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.entity.meeting.ZzCodeMeetingRole;
 import org.apache.ibatis.annotations.Param;

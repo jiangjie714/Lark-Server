@@ -8,7 +8,7 @@ import com.workhub.z.servicechat.VO.SocketMsgVo;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.group.ZzGroupMsg;
-import com.workhub.z.servicechat.entity.ZzGroupMsg;
+import com.workhub.z.servicechat.entity.group.ZzGroupMsg;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.service.ZzDictionaryWordsService;
 import com.workhub.z.servicechat.service.ZzGroupService;

@@ -4,7 +4,7 @@ import com.workhub.z.servicechat.entity.ZzContactInf;
 
 /**
  * @author:zhuqz
- * description: 联系人
+ * description: 联系人,研讨联系人信息
  * date:2019/12/3 15:02
  **/
 public interface ZzContactService {

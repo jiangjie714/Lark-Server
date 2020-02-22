@@ -8,7 +8,7 @@ import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.dao.meeting.ZzMeetingDao;
+import com.workhub.z.servicechat.dao.ZzMeetingDao;
 import com.workhub.z.servicechat.entity.meeting.ZzMeeting;
 import com.workhub.z.servicechat.entity.meeting.ZzMeetingUser;
 import com.workhub.z.servicechat.model.MeetingDto;

@@ -64,10 +64,12 @@ public class ProcessMsg extends AbstractMsgProcessor {
                         super.deleteNoReadMsg(temp.getString("sender"),temp.getString("reviser"),temp.getString("reviserName"),temp.getString("senderName"));
                     break;
                 default:
+                    // TODO: 2020/2/22 消息类型未知错误
                     System.out.println("你说的什么鬼");
                     break;
             }
         }catch (Exception e){
+            // TODO: 2020/2/22   消息解析错误 向前端返回错误信息
             System.out.println("别提了又错了"+ e.getMessage());
             if(sendStatusVo==null){
                 sendStatusVo = new MsgSendStatusVo();
