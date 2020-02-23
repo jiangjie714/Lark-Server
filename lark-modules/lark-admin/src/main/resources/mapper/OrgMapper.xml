@@ -43,4 +43,47 @@
   <select id="findOrgByParentID" resultType="com.github.hollykunge.security.admin.entity.OrgDTO">
      select ID,PARENT_ID from admin_org where PARENT_ID=#{id}
   </select>
+
+  <!-- fansq 20-2-7 添加 导入excel -->
+  <insert id="insertExcelOrg">
+    insert into ADMIN_ORG
+    (
+    ID,
+    ORG_NAME,
+    PARENT_ID,
+    ORG_LEVEL,
+    EXTERNAL_NAME,
+    ORDER_ID,
+    DELETED,
+    DESCRIPTION,
+    CRT_TIME,
+    CRT_USER,
+    CRT_NAME,
+    CRT_HOST,
+    ORG_CODE,
+    PATH_CODE,
+    PATH_NAME
+    )
+    <foreach collection="orgs" item="item" index= "index" separator ="UNION ALL">
+      (
+      select
+      #{item.id},
+      #{item.orgName},
+      #{item.parentId},
+      #{item.orgLevel},
+      #{item.externalName},
+      #{item.orderId},
+      #{item.deleted},
+      #{item.description},
+      #{item.crtTime},
+      #{item.crtUser},
+      #{item.crtName},
+      #{item.crtHost},
+      #{item.orgCode},
+      #{item.pathCode},
+      #{item.pathName}
+      from dual
+      )
+    </foreach>
+  </insert>
 </mapper>

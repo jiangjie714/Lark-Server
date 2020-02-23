@@ -3,6 +3,7 @@ package com.github.hollykunge.security.admin.util;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.github.hollykunge.security.admin.biz.UserBiz;
+import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
@@ -81,6 +82,19 @@ public class EasyExcelUtil {
             ){
         ExcelListener excelListener = new ExcelListener(userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
         EasyExcel.read(inputStream, User.class, excelListener).sheet().doRead();
+        return excelListener;
+    }
+
+    /**
+     * fansq
+     * 组织数据导入
+     */
+    public static ExcelListener  importOrgExcel(
+            InputStream inputStream,
+            OrgMapper orgMapper
+    ){
+        ExcelListener excelListener = new ExcelListener(orgMapper);
+            EasyExcel.read(inputStream, Org.class, excelListener).sheet().doRead();
         return excelListener;
     }
 }

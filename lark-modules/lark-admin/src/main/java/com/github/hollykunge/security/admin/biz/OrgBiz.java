@@ -15,15 +15,21 @@ import com.github.hollykunge.security.admin.mapper.OrgUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.redis.service.IRedisDataBaseService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
+import com.github.hollykunge.security.admin.util.EasyExcelUtil;
+import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.common.biz.BaseBiz;
+import com.github.hollykunge.security.common.constant.CommonConstants;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -46,6 +52,8 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
     IRedisDataBaseService iRedisDataBaseService;
     @Autowired
     private UserRestService userRestService;
+    @Autowired
+    private OrgMapper orgMapper;
     //用户缓存namespace
     private final String USER_ONLINE_KEY = "users_on_line:";
     private final String USER_ONLINE = "700";
@@ -200,4 +208,28 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
         List<Org> orgs = this.selectByExample(example);
         return orgs;
     }
+
+
+    /**
+     * fansq
+     * 20-2-23
+     * 添加组织数据导入
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public ObjectRestResponse importExcel(MultipartFile file) throws Exception {
+        ExcelListener excelListener = EasyExcelUtil.importOrgExcel(file.getInputStream(),orgMapper);
+        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
+        if(StringUtils.isEmpty(excelListener.errMsg)){
+            objectRestResponse.setStatus(CommonConstants.HTTP_SUCCESS);
+            objectRestResponse.setMessage("导入成功！");
+            return objectRestResponse;
+        }else{
+            objectRestResponse.setStatus(CommonConstants.EX_OTHER_CODE);
+            objectRestResponse.setMessage(excelListener.errMsg);
+            return objectRestResponse;
+        }
+    }
+
 }
