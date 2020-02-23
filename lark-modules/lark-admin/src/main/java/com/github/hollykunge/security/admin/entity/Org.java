@@ -28,6 +28,8 @@ public class Org extends BaseEntity {
     /**
      * 组织层级（几级单位）
      */
+    @ExcelProperty(value = {"组织层级"}, index = 3)
+    @ColumnWidth(10)
     @Column(name = "ORG_LEVEL")
     private Integer orgLevel;
     /**
@@ -43,7 +45,7 @@ public class Org extends BaseEntity {
     /**
      * 排序号
      */
-    @ExcelProperty(value = {"排序"}, index = 2)
+    @ExcelProperty(value = {"排序"}, index = 4)
     @ColumnWidth(10)
     @Column(name = "ORDER_ID")
     private Long orderId;
@@ -55,14 +57,14 @@ public class Org extends BaseEntity {
     /**
      * 描述
      */
-    @ExcelProperty(value = {"描述"}, index = 3)
-    @ColumnWidth(20)
     @Column(name = "DESCRIPTION")
     private String description;
 
     /**
      * 组织code
      */
+    @ExcelProperty(value = {"组织编码"}, index = 2)
+    @ColumnWidth(10)
     @Column(name = "ORG_CODE")
     private String orgCode;
 
