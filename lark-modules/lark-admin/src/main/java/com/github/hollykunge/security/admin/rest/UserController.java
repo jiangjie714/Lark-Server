@@ -47,7 +47,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("user")
-public class  UserController extends BaseController<UserBiz,User> {
+public class UserController extends BaseController<UserBiz, User> {
     @Value("${auth.user.token-header}")
     private String headerName;
 
@@ -77,10 +77,11 @@ public class  UserController extends BaseController<UserBiz,User> {
 
     @Autowired
     private OrgMapper orgMapper;
+
     /**
      * todo:使用
      * 登录获取用户人信息
-     * fansq 20-2-21 修改异常返回类型
+     *
      * @param token
      * @param request
      * @return
@@ -89,7 +90,7 @@ public class  UserController extends BaseController<UserBiz,User> {
     @RequestMapping(value = "/front/info", method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<?> getUserInfo(String token, HttpServletRequest request) throws Exception {
-        if(StringUtils.isEmpty(token)){
+        if (StringUtils.isEmpty(token)) {
             token = request.getHeader(headerName);
         }
         FrontUser userInfo = permissionService.getUserInfo(token);
@@ -102,23 +103,24 @@ public class  UserController extends BaseController<UserBiz,User> {
      * ps：由于添加用户的时候需要给用户角色，故而单独提供一个
      * fansq  19-12-2 添加接口整合
      * 添加用户的接口，该接口携带返回值
+     *
      * @param entity 用户实体
      * @return 用户id
      */
-    @RequestMapping(value = "/userInfo",method = RequestMethod.POST)
+    @RequestMapping(value = "/userInfo", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<AdminUser> addUser(@RequestBody User entity,
-                                                 @RequestParam("roles")String roles,
-                                                 @RequestParam("positions")String positions) {
+                                                 @RequestParam("roles") String roles,
+                                                 @RequestParam("positions") String positions) {
         //添加用户信息
         User user = baseBiz.addUser(entity);
         //未防止暴露密码使用AdminUser携带id返回前端
         AdminUser adminUser = new AdminUser();
-        BeanUtils.copyProperties(user,adminUser);
+        BeanUtils.copyProperties(user, adminUser);
         //添加用户角色信息
-        baseBiz.modifyRoles(adminUser.getId(),roles);
+        baseBiz.modifyRoles(adminUser.getId(), roles);
         //添加用户权限信息
-        baseBiz.insertUserPosition(positions,adminUser.getId());
+        baseBiz.insertUserPosition(positions, adminUser.getId());
         return new ObjectRestResponse<AdminUser>().data(adminUser).rel(true);
     }
 
@@ -126,6 +128,7 @@ public class  UserController extends BaseController<UserBiz,User> {
      * todo:使用
      * 更新用户信息
      * fansq 10-12-2 接口整合
+     *
      * @param entity
      * @param roles
      * @param positions
@@ -138,12 +141,12 @@ public class  UserController extends BaseController<UserBiz,User> {
                                                String positions) {
         baseBiz.updateSelectiveById(entity);
         //添加用户角色信息
-        if(!StringUtils.isEmpty(roles)){
-            baseBiz.modifyRoles(entity.getId(),roles);
+        if (!StringUtils.isEmpty(roles)) {
+            baseBiz.modifyRoles(entity.getId(), roles);
         }
         //添加用户权限信息
-        if(!StringUtils.isEmpty(positions)){
-            baseBiz.insertUserPosition(positions,entity.getId());
+        if (!StringUtils.isEmpty(positions)) {
+            baseBiz.insertUserPosition(positions, entity.getId());
         }
         return new ObjectRestResponse<User>().rel(true);
     }
@@ -152,23 +155,25 @@ public class  UserController extends BaseController<UserBiz,User> {
      * todo:使用
      * 获取用户信息
      * fansq 19-12-2 接口整合
+     *
      * @param userId 用户id
      * @return
      */
-    @RequestMapping (value = "userInfo",method = RequestMethod.GET)
+    @RequestMapping(value = "userInfo", method = RequestMethod.GET)
     @ResponseBody
-    public ListRestResponse<List<Object>> getUser(@RequestParam("id") String userId){
+    public ListRestResponse<List<Object>> getUser(@RequestParam("id") String userId) {
         List<Role> roleList = roleBiz.getRoleByUserId(userId);
         List<Position> positionList = positionBiz.getPositionsByUserId(userId);
         List<Object> list = new ArrayList<>();
         list.add(roleList);
         list.add(positionList);
-        return new ListRestResponse("查询成功！",list.size(),list);
+        return new ListRestResponse("查询成功！", list.size(), list);
     }
 
     /**
      * 用户删除  根据用户id同步删除角色 和 权限 两张关联表的数据
      * fansq 19-12-2
+     *
      * @param id
      * @return
      */
@@ -180,19 +185,22 @@ public class  UserController extends BaseController<UserBiz,User> {
     /**
      * todo:使用
      * 给用户设置角色接口
+     *
      * @param userId 用户id
-     * @param roles 角色集（以“，”隔开的字符串）
+     * @param roles  角色集（以“，”隔开的字符串）
      * @return
      */
-    @RequestMapping(value = "/role",method = RequestMethod.PUT)
+    @RequestMapping(value = "/role", method = RequestMethod.PUT)
     @ResponseBody
-    public ObjectRestResponse modifyUserRoles(@RequestParam("userId")String userId, @RequestParam("roles")String roles){
-        baseBiz.modifyRoles(userId,roles);
+    public ObjectRestResponse modifyUserRoles(@RequestParam("userId") String userId, @RequestParam("roles") String roles) {
+        baseBiz.modifyRoles(userId, roles);
         return new ObjectRestResponse().rel(true).msg("");
     }
+
     /**
      * todo:使用
      * 根据用户id获取用户角色
+     *
      * @param userId 用户id
      * @return 角色
      */
@@ -200,25 +208,27 @@ public class  UserController extends BaseController<UserBiz,User> {
     @ResponseBody
     public ListRestResponse<List<Role>> getRolesByUserId(@RequestParam("id") String userId) {
         List<Role> roleList = roleBiz.getRoleByUserId(userId);
-        return new ListRestResponse("",roleList.size(),roleList);
+        return new ListRestResponse("", roleList.size(), roleList);
     }
 
     /**
      * fansq 19-11-28
      * 根据用户id获取权限信息
+     *
      * @param userId 用户id
      * @return 权限列表
      */
     @RequestMapping(value = "/getPositionByUserId", method = RequestMethod.GET)
     @ResponseBody
-    public ListRestResponse<List<Position>> getPositionsByUserId(@RequestParam("userId") String userId){
+    public ListRestResponse<List<Position>> getPositionsByUserId(@RequestParam("userId") String userId) {
         List<Position> positions = positionBiz.getPositionsByUserId(userId);
-        return new ListRestResponse<>("查询成功",positions.size(),positions);
+        return new ListRestResponse<>("查询成功", positions.size(), positions);
     }
 
 
     /**
      * 根据姓名匹配返回人员
+     *
      * @param nameLike 用户id
      * @return 角色
      */
@@ -228,20 +238,21 @@ public class  UserController extends BaseController<UserBiz,User> {
         List<AdminUser> adminUsers = new ArrayList<>();
         if (StringUtils.isEmpty(nameLike)) {
 
-        }else{
+        } else {
             List<User> users = baseBiz.selectUserByNameLike(nameLike);
             users.stream().forEach(user -> {
                 AdminUser adminUser = new AdminUser();
-                BeanUtils.copyProperties(user,adminUser);
+                BeanUtils.copyProperties(user, adminUser);
                 adminUser.setPathName(orgBiz.getPathName(user.getOrgCode()).get(0).getPathName());
                 adminUsers.add(adminUser);
             });
         }
-        return new ListRestResponse("",adminUsers.size(),adminUsers);
+        return new ListRestResponse("", adminUsers.size(), adminUsers);
     }
 
     /**
      * todo:使用
+     *
      * @param params
      * @return
      */
@@ -254,16 +265,40 @@ public class  UserController extends BaseController<UserBiz,User> {
         return baseBiz.selectByQuery(new Query(params));
     }
 
+    /**
+     * fansq
+     * 20-2-4
+     * 用户数据导出excel
+     * 指定导出路径
+     *
+     * @return
+     */
+    @RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
+    public ObjectRestResponse exportUserExcel(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) {
+        Object excelType = params.get("type");
+        String type = excelType == null ? "" : excelType.toString();
+        if (type != null) {
+            params.remove("type");
+        }
+        List<User> userExcelList = getUser(params);
+        String fileName = "用户信息";
+        String sheetName = "用户数据";
+        //暂时测试导出到D盘
+        String path = "D:/";
+        EasyExcelUtil.exportFile(type, path, fileName, sheetName, User.class, userExcelList);
+        return new ObjectRestResponse().msg("导出成功!");
+    }
 
     /**
      * fansq 导出给前端
+     *
      * @param params
      * @param httpServletResponse
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/exportExcelWeb",method = RequestMethod.GET)
-    public  void exportUserExcelWeb(
+    @RequestMapping(value = "/exportExcelWeb", method = RequestMethod.GET)
+    public void exportUserExcelWeb(
             @RequestParam Map<String, Object> params,
             HttpServletResponse httpServletResponse) throws Exception {
         userBiz.exportUserExcelWeb(params,httpServletResponse);
@@ -272,6 +307,7 @@ public class  UserController extends BaseController<UserBiz,User> {
     /**
      * fansq
      * excel文件导入
+     *
      * @param file
      * @return
      * @throws Exception
@@ -281,5 +317,4 @@ public class  UserController extends BaseController<UserBiz,User> {
     public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
         return userBiz.importExcel(file,userBiz);
     }
-
 }
