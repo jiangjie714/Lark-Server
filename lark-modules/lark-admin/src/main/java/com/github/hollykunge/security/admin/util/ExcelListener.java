@@ -132,17 +132,23 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			errMsg = "排序字段不可为空！";
 			return;
 		}
+		if(StringUtils.isEmpty(org.getOrgCode())){
+			errMsg = "组织编码不可为空！";
+			return;
+		}
+		if(org.getOrgLevel()==null){
+			errMsg = "组织层级不可为空！";
+			return;
+		}
 		if(StringUtils.isEmpty(org.getDescription())){
 			org.setDescription("添加方式为数据导入！");
 		}
 		String orgId = UUIDUtils.generateShortUuid();
 		org.setId(orgId);
 		org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
-		org.setPathCode(result.getPathCode()+orgId+AdminCommonConstant.ORG_PATH_CODE);
+		org.setPathCode(result.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
 		org.setPathName(result.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
-		org.setOrgLevel(result.getOrgLevel()+1);
 		org.setExternalName(org.getOrgName());
-		org.setOrgCode(orgId);
 		EntityUtils.setCreatAndUpdatInfo(org);
 		orgList.add(org);
 		log.info("解析到一条数据:{}", JSON.toJSONString(org));
