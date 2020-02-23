@@ -8,9 +8,13 @@ import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
+import com.github.hollykunge.security.admin.util.EasyExcelUtil;
+import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.common.biz.BaseBiz;
+import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
@@ -25,9 +29,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -272,5 +279,64 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
 
     public void insertUserExcel(List<User> users){
         userMapper.insertUserExcel(users);
+    }
+
+    /**
+     * 20-2-23
+     * fansq 修改 把controller中的业务逻辑移到userbiz中
+     * @param file
+     * @param userBiz
+     * @return
+     * @throws IOException
+     */
+    public ObjectRestResponse importExcel(MultipartFile file,UserBiz userBiz) throws IOException {
+        ExcelListener excelListener = EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
+        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
+        if(StringUtils.isEmpty(excelListener.errMsg)){
+            objectRestResponse.setStatus(CommonConstants.HTTP_SUCCESS);
+            objectRestResponse.setMessage("导入成功！");
+            return objectRestResponse;
+        }else{
+            objectRestResponse.setStatus(CommonConstants.EX_OTHER_CODE);
+            objectRestResponse.setMessage(excelListener.errMsg);
+            return objectRestResponse;
+        }
+    }
+
+    /**
+     * 20-2-23
+     * fansq 将controller中业务逻辑移动到userbiz
+     * @param params
+     * @param httpServletResponse
+     * @throws Exception
+     */
+    public void exportUserExcelWeb(Map<String, Object> params, HttpServletResponse httpServletResponse) throws Exception {
+        Object excelType = params.get("type");
+        String type = excelType == null ? "" : excelType.toString();
+        if(type!=null){
+            params.remove("type");
+        }
+        List<User> userExcelList = getUser(params);
+        String fileName ="用户信息";
+        String sheetName = "用户数据";
+        EasyExcelUtil.exportWeb(type,httpServletResponse,fileName,sheetName,User.class,userExcelList);
+    }
+
+    /**
+     * fansq
+     * 根据导出规则获取用户数据
+     * @param params
+     */
+    public  List<User> getUser(Map<String, Object> params){
+        Example example = new Example(User.class);
+        Query query = new Query(params);
+        if(query.entrySet().size()>0) {
+            Example.Criteria criteria = example.createCriteria();
+            for (Map.Entry<String, Object> entry : query.entrySet()) {
+                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
+            }
+        }
+        List<User> userEasyExcelList = userMapper.selectByExample(example);
+        return userEasyExcelList;
     }
 }
