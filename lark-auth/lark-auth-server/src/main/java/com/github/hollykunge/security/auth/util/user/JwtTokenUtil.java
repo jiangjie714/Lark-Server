@@ -9,7 +9,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by 协同设计小组 on 2017/9/10.
+ *
+ * @author 协同设计小组
+ * @date 2017/9/10
  */
 @Component
 public class JwtTokenUtil {
