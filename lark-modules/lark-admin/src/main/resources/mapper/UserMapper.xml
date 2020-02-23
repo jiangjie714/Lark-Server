@@ -164,6 +164,10 @@
     EMP_CODE,
     DELETED,
     AVATAR,
+    CRT_TIME,
+    CRT_USER,
+    CRT_NAME,
+    CRT_HOST,
     PASSWORD
     )
     <foreach collection="users" item="item" index= "index" separator ="UNION ALL">
@@ -180,6 +184,10 @@
       #{item.empCode},
       #{item.deleted},
       #{item.avatar},
+      #{item.crtTime},
+      #{item.crtUser},
+      #{item.crtName},
+      #{item.crtHost},
       #{item.password}
       from dual
       )
