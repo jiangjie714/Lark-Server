@@ -188,20 +188,5 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         return TreeUtil.bulid(trees, parentTreeId);
     }
 
-    /**
-     * 组织用户树枝包含用户接口
-     *
-     * @param parentTreeId 默认root
-     * @return
-     */
-//    @RequestMapping(value = "/orgUsers", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ListRestResponse<List<OrgUser>> orgUsers(@RequestParam("parentTreeId") String parentTreeId) {
-//        if (StringUtils.isEmpty(parentTreeId)) {
-//            parentTreeId = AdminCommonConstant.ROOT;
-//        }
-//        List<OrgUser> tree = baseBiz.getOrg(parentTreeId);
-//        return new ListRestResponse("", tree.size(), tree);
-//    }
 
 }
