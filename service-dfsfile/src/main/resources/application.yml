@@ -2,9 +2,9 @@ spring:
   application:
       name: service-dfsfile
   datasource:
-    url: jdbc:oracle:thin:@${ORACLE_HOST:10.100.1.43}:${ORACLE_PORT:1521}:workhub
+    url: jdbc:oracle:thin:@${ORACLE_HOST:10.100.1.43}:${ORACLE_PORT:1521}:artlr
     username: lark_file
-    password: 123456
+    password: dba$ht3
     # 使用druid数据源
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: oracle.jdbc.OracleDriver

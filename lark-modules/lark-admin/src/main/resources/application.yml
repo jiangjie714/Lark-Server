@@ -30,9 +30,9 @@ spring:
     #        username: root
     #        password: 123456
     #url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
-    url: jdbc:oracle:thin:@${ORACLE_HOST:10.100.1.43}:${ORACLE_PORT:1521}:workhub
+    url: jdbc:oracle:thin:@${ORACLE_HOST:10.100.1.43}:${ORACLE_PORT:1521}:artlr
     username: lark_admin
-    password: 123456
+    password: dba$ht3
     # 使用druid数据源
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: oracle.jdbc.OracleDriver
