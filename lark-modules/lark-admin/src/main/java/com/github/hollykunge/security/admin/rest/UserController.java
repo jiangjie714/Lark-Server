@@ -273,21 +273,21 @@ public class UserController extends BaseController<UserBiz, User> {
      *
      * @return
      */
-    @RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
-    public ObjectRestResponse exportUserExcel(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) {
-        Object excelType = params.get("type");
-        String type = excelType == null ? "" : excelType.toString();
-        if (type != null) {
-            params.remove("type");
-        }
-        List<User> userExcelList = getUser(params);
-        String fileName = "用户信息";
-        String sheetName = "用户数据";
-        //暂时测试导出到D盘
-        String path = "D:/";
-        EasyExcelUtil.exportFile(type, path, fileName, sheetName, User.class, userExcelList);
-        return new ObjectRestResponse().msg("导出成功!");
-    }
+//    @RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
+//    public ObjectRestResponse exportUserExcel(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) {
+//        Object excelType = params.get("type");
+//        String type = excelType == null ? "" : excelType.toString();
+//        if (type != null) {
+//            params.remove("type");
+//        }
+//        List<User> userExcelList = getUser(params);
+//        String fileName = "用户信息";
+//        String sheetName = "用户数据";
+//        //暂时测试导出到D盘
+//        String path = "D:/";
+//        EasyExcelUtil.exportFile(type, path, fileName, sheetName, User.class, userExcelList);
+//        return new ObjectRestResponse().msg("导出成功!");
+//    }
 
     /**
      * fansq 导出给前端
