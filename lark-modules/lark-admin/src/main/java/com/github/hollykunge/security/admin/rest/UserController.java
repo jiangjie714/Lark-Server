@@ -66,18 +66,6 @@ public class UserController extends BaseController<UserBiz, User> {
     @Autowired
     private UserBiz userBiz;
 
-    @Autowired
-    private RoleUserMapMapper roleUserMapMapper;
-
-    @Autowired
-    private PositionUserMapMapper positionUserMapMapper;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private OrgMapper orgMapper;
-
     /**
      * todo:使用
      * 登录获取用户人信息
@@ -263,30 +251,6 @@ public class UserController extends BaseController<UserBiz, User> {
             return new TableResultResponse<>();
         }
         return baseBiz.selectByQuery(new Query(params));
-    }
-
-    /**
-     * fansq
-     * 20-2-4
-     * 用户数据导出excel
-     * 指定导出路径
-     *
-     * @return
-     */
-    @RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
-    public ObjectRestResponse exportUserExcel(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) {
-        Object excelType = params.get("type");
-        String type = excelType == null ? "" : excelType.toString();
-        if (type != null) {
-            params.remove("type");
-        }
-        List<User> userExcelList = getUser(params);
-        String fileName = "用户信息";
-        String sheetName = "用户数据";
-        //暂时测试导出到D盘
-        String path = "D:/";
-        EasyExcelUtil.exportFile(type, path, fileName, sheetName, User.class, userExcelList);
-        return new ObjectRestResponse().msg("导出成功!");
     }
 
     /**

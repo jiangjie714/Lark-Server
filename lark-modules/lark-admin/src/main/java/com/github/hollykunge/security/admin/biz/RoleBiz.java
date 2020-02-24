@@ -276,15 +276,14 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
         for (Menu menu : menus) {
             List<Element> elementList = null;
             if(!Objects.equals(roleId,sysAuthConfig.getSysUsername())){
-                //roleId下的element
+                // roleId下的element
                 elementList = elementMapper.getAuthorityMenuElement(roleId, menu.getId(), AdminCommonConstant.RESOURCE_TYPE_BTN);
             }
             if(Objects.equals(roleId,sysAuthConfig.getSysUsername())){
-                Element parmTemp = new Element();
-                parmTemp.setMenuId(menu.getId());
-                elementList = elementMapper.select(parmTemp);
+                Element paramTemp = new Element();
+                paramTemp.setMenuId(menu.getId());
+                elementList = elementMapper.select(paramTemp);
             }
-//            List<Element> elementList = resourceElement.stream().filter((Element e) -> menu.getId().contains(e.getMenuId())).collect(Collectors.toList());
             if (elementList.size() > 0) {
                 FrontPermission frontPermission = this.transferFrontPermission(menu, roleId, elementList);
                 resultPermission.add(frontPermission);
