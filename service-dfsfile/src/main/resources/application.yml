@@ -2,7 +2,7 @@ spring:
   application:
       name: service-dfsfile
   datasource:
-    url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
+    url: jdbc:oracle:thin:@${ORACLE_HOST:10.100.1.43}:${ORACLE_PORT:1521}:workhub
     username: lark_file
     password: 123456
     # 使用druid数据源
@@ -63,7 +63,7 @@ fdfs:
     width: 150
     height: 150
   trackerList: #TrackerList参数,支持多个，我这里只有一个，如果有多个在下方加- x.x.x.x:port
-  - 10.11.24.138:22122
+  - 10.100.8.43:22122
 upload:
    picture:
      mast: jpg,png
@@ -89,7 +89,7 @@ redis:
       maxIdle: 100
       maxWait: 10000
   #需要修改地址
-  host: 10.11.24.135
+  host: 10.100.8.42
   port:  6379
   password: 123456
   timeout: 20000
