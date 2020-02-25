@@ -6,6 +6,8 @@ import com.github.hollykunge.security.auth.common.util.jwt.JWTInfo;
 import com.github.hollykunge.security.auth.feign.IUserService;
 import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtTokenUtil;
+import com.github.hollykunge.security.common.constant.CommonConstants;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,6 +28,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(String pid, String password) throws Exception {
+        //fansq 20-2-24 添加异常抛出 ClientInvalidException
+        if(StringUtils.isEmpty(pid)||StringUtils.isEmpty(password)){
+            throw  new ClientInvalidException("User name or password is empty");
+        }
         AdminUser info = userService.validate(pid,password);
         String token = "";
         if (!StringUtils.isEmpty(info.getId())) {

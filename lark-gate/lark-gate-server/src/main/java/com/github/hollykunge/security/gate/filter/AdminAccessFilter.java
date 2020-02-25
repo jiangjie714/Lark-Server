@@ -141,7 +141,7 @@ public class AdminAccessFilter extends ZuulFilter {
         try {
             user = getJWTUser(request, ctx);
         } catch (Exception e) {
-            setFailedRequest(JSON.toJSONString(new TokenErrorResponse(e.getMessage())), 200);
+            setFailedRequest(JSON.toJSONString(new TokenErrorResponse(e.getMessage())), CommonConstants.HTTP_SUCCESS);
             return null;
         }
         //如果为超级管理员，则干直接通过
@@ -253,7 +253,7 @@ public class AdminAccessFilter extends ZuulFilter {
         if (permissionInfos.size() == 0) {
             BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("请求接口没有权限...");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_NOT_PERMISSION);
-            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), 200);
+            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }
         boolean anyMatch =
                 permissionInfos.parallelStream()
@@ -272,7 +272,7 @@ public class AdminAccessFilter extends ZuulFilter {
         } else {
             BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("请求接口操作没有权限...");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_METHOD_NOT_PERMISSION);
-            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), 200);
+            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }
     }
 
