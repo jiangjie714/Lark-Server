@@ -8,14 +8,14 @@ spring:
   redis:
     database: 1
     #需要修改地址
-    host: ${REDIS_HOST:192.168.1.4}
+    host: ${REDIS_HOST:10.11.24.135}
     port: ${REDIS_PORT:6379}
     pool:
       max-active: 200
     password: 123456
   datasource:
     name: test
-    url: jdbc:oracle:thin:@${ORACLE_HOST:61.161.239.224}:${ORACLE_PORT:5566}:arltr
+    url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
     username: lark_auth
     password: 123456
     # 使用druid数据源
@@ -33,7 +33,7 @@ spring:
       #      testWhileIdle: true
       #      testOnBorrow: false
       #      testOnReturn: false
-      #      poolPreparedStatements: true
+    #      poolPreparedStatements: true
     #      maxOpenPreparedStatements: 20
     ###优化数据库连接池配置,该配置支持2000并发
     druid:
