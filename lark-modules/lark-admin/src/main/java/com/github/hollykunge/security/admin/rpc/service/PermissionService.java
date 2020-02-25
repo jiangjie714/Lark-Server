@@ -205,7 +205,7 @@ public class PermissionService {
             //20-2-21 fansq添加异常返回类型
             throw new ClientInvalidException("Token parsing user ID exception");
         }
-        FrontUser frontUser = new FrontUser();
+         FrontUser frontUser = new FrontUser();
         //如果是超级管理员，则显示所有的菜单和操作
         if(Objects.equals(sysAuthConfig.getSysUsername(),userId)){
             frontUser.setId(userAuthUtil.getInfoFromToken(token).getId());
