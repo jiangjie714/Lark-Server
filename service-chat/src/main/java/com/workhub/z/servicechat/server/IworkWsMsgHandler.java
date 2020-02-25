@@ -85,7 +85,25 @@ public class IworkWsMsgHandler implements IWsMsgHandler {
         String userPId = JSONObject.toJSONString(request.getParam("userPId"));
 //        JSONObject userPid = JSON.parseObject(request.getParam("userPid"));
         String userid=request.getParam("userId");
-//推送前端上线消息
+        if (userid == null) {
+            httpResponse.addHeader(HeaderName.from("msg"), HeaderValue.from("建联信息获取失败"));
+            return httpResponse;
+        }
+//      用户token验证
+//      iValidateService.validate(token);
+//      Tio.bindToken(channelContext,token);
+//      前端 参数 绑定信息
+        Tio.bindBsId(channelContext,userid);
+        Tio.bindUser(channelContext,userid);
+//      加入系统消息组
+        Tio.bindGroup(channelContext, Const.GROUP_SYS);
+        return httpResponse;
+    }
+
+    @Override
+    public void onAfterHandshaked(HttpRequest httpRequest, HttpResponse httpResponse, ChannelContext channelContext) throws Exception {
+        String userid = channelContext.getBsId();
+        //推送前端上线消息
         AnswerToFrontReponse answerToFrontReponse = new AnswerToFrontReponse();
         answerToFrontReponse.setCode(MessageType.LINESTATUS);
         UserOnOffLineVo userOnOffLineVo = new UserOnOffLineVo();
@@ -98,22 +116,10 @@ public class IworkWsMsgHandler implements IWsMsgHandler {
 //      获取用户群组信息,组织机构
         Map p2 = new HashMap<>(16);
         p2.put("userid",userid);
-        if (userid == null) {
-            httpResponse.addHeader(HeaderName.from("msg"), HeaderValue.from("建联信息获取失败"));
-            return httpResponse;
-        }
         AdminUser userInfo = serverHandler.userService.getUserInfo(userid);
 //      加入组织
         Tio.bindGroup(channelContext, userInfo.getOrgCode());
-//      用户token验证
-//      iValidateService.validate(token);
-//      Tio.bindToken(channelContext,token);
-//      前端 参数 绑定信息
-        Tio.bindBsId(channelContext,userid);
-        Tio.bindUser(channelContext,userid);
-//      加入系统消息组
-        Tio.bindGroup(channelContext, Const.GROUP_SYS);
-//       根据握手信息，将用户绑定到群组
+        //       根据握手信息，将用户绑定到群组
         List<String> grouplist =  serverHandler.userGroupService.getGroupByUserId(userid);
         for (int i = 0; i < grouplist.size() ; i++) {
             String groupId  =grouplist.get(i);
@@ -121,27 +127,20 @@ public class IworkWsMsgHandler implements IWsMsgHandler {
 //            System.out.println("join group +"+ listGroupModel.get(i).getGroupName());
         }
 //        加入会议
-       List<String> meetlist =  serverHandler.meetingUserService.getMeetingByUserId(userid);
+        List<String> meetlist =  serverHandler.meetingUserService.getMeetingByUserId(userid);
         meetlist.stream().forEach((String i) ->{
 //            System.out.println(i);
             Tio.bindGroup(channelContext,i);
-            });
-
+        });
 
 //       IntStream.range(0,meetlist.size())
 //               .forEach(i -> System.out.println(i.stream()));
-       int count =  Tio.getAllChannelContexts(channelContext.getGroupContext()).size();
+        int count =  Tio.getAllChannelContexts(channelContext.getGroupContext()).size();
         System.out.println("系统当前登录"+ count + "人");
 //      log.info("收到来自{}的ws握手包\r\n{}", clientip, request.toString());
         //serverHandler.processLogin.isOnline(channelContext.getBsId(),ONLINE);
         ProcessLogin.setOnLineSatus(channelContext.getBsId(), MessageType.ONLINE);
-        return httpResponse;
-    }
 
-    @Override
-    public void onAfterHandshaked(HttpRequest httpRequest, HttpResponse httpResponse, ChannelContext channelContext) throws Exception {
-//        serverHandler.processLogin.offLine(channelContext.getBsId(),OFFLINE);
-//        log.info("握手结束了\r\n{}", httpRequest.getClientIp(), httpRequest.toString());
     }
 
     /**

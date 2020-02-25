@@ -200,7 +200,7 @@ public class PermissionService {
         if (userId == null) {
             return null;
         }
-        FrontUser frontUser = new FrontUser();
+         FrontUser frontUser = new FrontUser();
         //如果是超级管理员，则显示所有的菜单和操作
         if(Objects.equals(sysAuthConfig.getSysUsername(),userId)){
             frontUser.setId(userAuthUtil.getInfoFromToken(token).getId());
