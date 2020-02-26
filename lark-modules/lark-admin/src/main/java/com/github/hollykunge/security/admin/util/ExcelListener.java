@@ -163,7 +163,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		log.info("解析到一条数据:{}", JSON.toJSONString(org));
 		if (orgList.size() >= BATCH_COUNT) {
 			saveData();
-			list.clear();
+			orgList.clear();
 		}
 	}
 	/**
@@ -248,6 +248,8 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if (list.size() >= BATCH_COUNT) {
 			saveData();
 			list.clear();
+			roleUserMaps.clear();
+			positionUserMaps.clear();
 		}
 	}
 
