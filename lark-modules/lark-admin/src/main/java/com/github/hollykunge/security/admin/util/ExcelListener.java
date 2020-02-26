@@ -153,12 +153,13 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			org.setDescription("添加方式为数据导入！");
 		}
 		String orgId = UUIDUtils.generateShortUuid();
-		org.setId(org.getOrgCode());
+
 		org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
 		org.setPathCode(result.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
 		org.setPathName(result.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
 		org.setExternalName(org.getOrgName());
 		EntityUtils.setCreatAndUpdatInfo(org);
+		org.setId(org.getOrgCode());
 		orgList.add(org);
 		log.info("解析到一条数据:{}", JSON.toJSONString(org));
 		if (orgList.size() >= BATCH_COUNT) {
@@ -235,13 +236,13 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
         //建跨研究室群
         PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
         positionUserMapRoomOutter.setUserId(userId);
-        positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
+        positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSTTION_ROOM_OUTTER);
         positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
         positionUserMaps.add(positionUserMapRoomOutter);
         //建跨厂所群
         PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
         positionUserMapInstitutesOutter.setUserId(userId);
-        positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
+        positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_INSTITUTES_OUTTER);
         positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
 		positionUserMaps.add(positionUserMapInstitutesOutter);
 		log.info("解析到一条数据:{}", JSON.toJSONString(data));
