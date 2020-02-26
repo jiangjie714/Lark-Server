@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.admin.util;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,13 +71,14 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	@SneakyThrows
 	@Override
 	public void invoke(T t, AnalysisContext context) {
+		int rowIndex = context.readRowHolder().getRowIndex()+1;
 		if(t instanceof User){
 			User user =(User)t;
-			importUserExcel(user);
+			importUserExcel(user,rowIndex);
 		}
 		if(t instanceof  Org){
 			Org org = (Org) t;
-			importOrgExcel(org);
+			importOrgExcel(org,rowIndex);
 		}
 	}
 
@@ -127,27 +127,27 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	 * 导入组织数据
 	 * @param org
 	 */
-	public void importOrgExcel(Org org) throws Exception{
+	public void importOrgExcel(Org org,int rowIndex) throws Exception{
 		if(StringUtils.isEmpty(org.getParentId())){
-			throw new BaseException("上级组织编码不可为空！");
+			throw new BaseException("第"+rowIndex+"行，上级组织编码不可为空！");
 		}
 		Org orgSelect = new Org();
 		orgSelect.setId(org.getParentId());
 		Org result = orgMapper.selectByPrimaryKey(orgSelect);
 		if(result==null){
-			throw new BaseException("上级组织编码填写错误,没有对应的组织名称！");
+			throw new BaseException("第"+rowIndex+"行，上级组织编码填写错误,没有对应的组织名称！");
 		}
 		if(StringUtils.isEmpty(org.getOrgName())){
-			throw new BaseException("组织名称不可为空！");
+			throw new BaseException("第"+rowIndex+"行，组织名称不可为空！");
 		}
 		if(org.getOrderId()==null){
-			throw new BaseException("排序字段不可为空！");
+			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
 		}
 		if(StringUtils.isEmpty(org.getOrgCode())){
-			throw new BaseException("组织编码不可为空！");
+			throw new BaseException("第"+rowIndex+"行，组织编码不可为空！");
 		}
 		if(org.getOrgLevel()==null){
-			throw new BaseException("组织层级不可为空！");
+			throw new BaseException("第"+rowIndex+"行，组织层级不可为空！");
 		}
 		if(StringUtils.isEmpty(org.getDescription())){
 			org.setDescription("添加方式为数据导入！");
@@ -172,44 +172,44 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	 * 导入用户数据
 	 * @param data
 	 */
-	public void importUserExcel(User data){
+	public void importUserExcel(User data,int rowIndex){
 		String userId = UUIDUtils.generateShortUuid();
 		if(StringUtils.isEmpty(data.getName())){
-			throw new BaseException("姓名不可为空！");
+			throw new BaseException("第"+rowIndex+"行，姓名不可为空！");
 		}
 		if (SpecialStrUtils.check(data.getName())) {
-			throw new BaseException("姓名中不能包含特殊字符!");
+			throw new BaseException("第"+rowIndex+"行，姓名中不能包含特殊字符!");
 		}
 		if(StringUtils.isEmpty(data.getPId())){
-			throw  new BaseException("身份证号不可为空！");
+			throw  new BaseException("第"+rowIndex+"行，身份证号不可为空！");
 		}
 		//校验身份证是否在数据库中存在
 		User user = new User();
 		user.setPId(data.getPId());
 		if (userMapper.selectCount(user) > 0) {
-			throw new BaseException("身份证号已存在!");
+			throw new BaseException("第"+rowIndex+"行，身份证号已存在!");
 		}
 		if(StringUtils.isEmpty(data.getOrgCode())){
-			throw  new BaseException("所属组织机构编码，不可为空！");
+			throw  new BaseException("第"+rowIndex+"行，所属组织机构编码，不可为空！");
 		}
 		if(StringUtils.isEmpty(data.getOrgName())){
-			throw new BaseException("所属机构名称，不可为空！");
+			throw new BaseException("第"+rowIndex+"行，所属机构名称，不可为空！");
 		}
 		Org org = new Org();
 		org.setId(data.getOrgCode());
 		Org orgName = orgMapper.selectOne(org);
 		if(!StringUtils.equals(orgName.getOrgName(),data.getOrgName())){
-			throw new BaseException("组织机构编码和组织机构名称不匹配!");
+			throw new BaseException("第"+rowIndex+"行，组织机构编码和组织机构名称不匹配!");
 		}
 
 		if(!NumberUtils.isNumber(data.getSecretLevel())){
-			throw new BaseException("密级应为数字!");
+			throw new BaseException("第"+rowIndex+"行，密级应为数字!");
 		}
 		if(StringUtils.isEmpty(data.getGender())){
-			throw new BaseException("性别不可为空！");
+			throw new BaseException("第"+rowIndex+"行，性别不可为空！");
 		}
 		if(data.getOrderId()==null){
-			throw new BaseException("排序字段不可为空！");
+			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
 		}
 		String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(AdminCommonConstant.USER_PASSWORD_DEFAULT);
 		data.setPassword(password);
