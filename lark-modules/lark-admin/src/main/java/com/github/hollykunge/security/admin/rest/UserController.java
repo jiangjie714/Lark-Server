@@ -19,6 +19,7 @@ import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.FrontUser;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -66,17 +67,6 @@ public class UserController extends BaseController<UserBiz, User> {
     @Autowired
     private UserBiz userBiz;
 
-    @Autowired
-    private RoleUserMapMapper roleUserMapMapper;
-
-    @Autowired
-    private PositionUserMapMapper positionUserMapMapper;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private OrgMapper orgMapper;
 
     /**
      * todo:使用
@@ -231,13 +221,14 @@ public class UserController extends BaseController<UserBiz, User> {
      *
      * @param nameLike 用户id
      * @return 角色
+     * fansq 修改 添加异常 ClientInvalidException
      */
     @RequestMapping(value = "/nameLike", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<AdminUser>> getUserByNameLike(@RequestParam("nameLike") String nameLike) {
         List<AdminUser> adminUsers = new ArrayList<>();
         if (StringUtils.isEmpty(nameLike)) {
-
+            throw new ClientInvalidException("Name is empty");
         } else {
             List<User> users = baseBiz.selectUserByNameLike(nameLike);
             users.stream().forEach(user -> {
@@ -255,39 +246,17 @@ public class UserController extends BaseController<UserBiz, User> {
      *
      * @param params
      * @return
+     * fansq 修改 添加异常 ClientInvalidException
      */
     @RequestMapping(value = "/findUsers", method = RequestMethod.GET)
     @ResponseBody
     public TableResultResponse<User> findUsers(@RequestParam Map<String, Object> params) {
         if (StringUtils.isEmpty(params.get("name"))) {
-            return new TableResultResponse<>();
+            //return new TableResultResponse<>();
+            throw new ClientInvalidException("params is empty");
         }
         return baseBiz.selectByQuery(new Query(params));
     }
-
-    /**
-     * fansq
-     * 20-2-4
-     * 用户数据导出excel
-     * 指定导出路径
-     *
-     * @return
-     */
-//    @RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
-//    public ObjectRestResponse exportUserExcel(@RequestParam Map<String, Object> params, HttpServletResponse httpServletResponse) {
-//        Object excelType = params.get("type");
-//        String type = excelType == null ? "" : excelType.toString();
-//        if (type != null) {
-//            params.remove("type");
-//        }
-//        List<User> userExcelList = getUser(params);
-//        String fileName = "用户信息";
-//        String sheetName = "用户数据";
-//        //暂时测试导出到D盘
-//        String path = "D:/";
-//        EasyExcelUtil.exportFile(type, path, fileName, sheetName, User.class, userExcelList);
-//        return new ObjectRestResponse().msg("导出成功!");
-//    }
 
     /**
      * fansq 导出给前端

@@ -32,12 +32,12 @@ public class ProcessMeetMsg extends AbstractMsgProcessor{
         }
         //判断涉密词汇end
         if(messageSecretValidVo.getSendStatus().equals("1")){
+            super.saveMessageInfo("MEET",zzGroupMsg.getMsgSender(),zzGroupMsg.getMsgReceiver()
+                    ,zzGroupMsg.getLevels(),zzGroupMsg.getSendTime(),message,zzGroupMsg.getMsgId(),channelContext.getClientNode().getIp(),channelContext.getBsId());
             //如果可以发送消息
             Tio.sendToGroup(channelContext.getGroupContext(),zzGroupMsg.getMsgReceiver(),this.getWsResponse(msg));
             //存储消息信息（新）
-            super.saveMessageInfo("MEET",zzGroupMsg.getMsgSender(),zzGroupMsg.getMsgReceiver()
-                    ,zzGroupMsg.getLevels(),zzGroupMsg.getSendTime(),message,zzGroupMsg.getMsgId(),channelContext.getClientNode().getIp(),channelContext.getBsId());
-            super.msgAnswer(msg,zzGroupMsg.getMsgId(),channelContext);
+             super.msgAnswer(msg,zzGroupMsg.getMsgId(),channelContext);
         }else{//
             super.msgAnswer(msg,zzGroupMsg.getMsgId(),channelContext, MessageType.FAIL_ANSWER,"消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
         }

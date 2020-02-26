@@ -14,6 +14,7 @@ import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.OrgTreeAll;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -105,6 +106,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * 删除方法  如果组织下存在用户不能进行删除
      * @param id
      * @return
+     * fansq 添加异常 ClientInvalidException
      */
     @Override
     public ObjectRestResponse<Org> remove(String id) {
@@ -113,10 +115,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         user.setDeleted("0");
         List<User> userList = userBiz.selectList(user);
         if(userList.size()>0){
-            ObjectRestResponse<Org> or = new ObjectRestResponse<>();
-            or.setMessage("该组织下存在用户,暂时无法删除");
-            or.setStatus(500);
-            return or;
+            throw new ClientInvalidException("The organization has users and cannot be deleted");
         }
         return super.remove(id);
     }
