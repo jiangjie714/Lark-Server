@@ -221,15 +221,9 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
     public ObjectRestResponse importExcel(MultipartFile file) throws Exception {
         ExcelListener excelListener = EasyExcelUtil.importOrgExcel(file.getInputStream(),orgMapper);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
-        if(StringUtils.isEmpty(excelListener.errMsg)){
             objectRestResponse.setStatus(CommonConstants.HTTP_SUCCESS);
             objectRestResponse.setMessage("导入成功！");
             return objectRestResponse;
-        }else{
-            objectRestResponse.setStatus(CommonConstants.EX_OTHER_CODE);
-            objectRestResponse.setMessage(excelListener.errMsg);
-            return objectRestResponse;
-        }
     }
 
 }
