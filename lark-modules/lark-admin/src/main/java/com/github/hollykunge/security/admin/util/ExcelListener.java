@@ -235,19 +235,21 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
         //建跨研究室群
         PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
         positionUserMapRoomOutter.setUserId(userId);
-        positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
+        positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSTTION_ROOM_OUTTER);
         positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
         positionUserMaps.add(positionUserMapRoomOutter);
         //建跨厂所群
         PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
         positionUserMapInstitutesOutter.setUserId(userId);
-        positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
+        positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_INSTITUTES_OUTTER);
         positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
 		positionUserMaps.add(positionUserMapInstitutesOutter);
 		log.info("解析到一条数据:{}", JSON.toJSONString(data));
 		if (list.size() >= BATCH_COUNT) {
 			saveData();
 			list.clear();
+			roleUserMaps.clear();
+			positionUserMaps.clear();
 		}
 	}
 
