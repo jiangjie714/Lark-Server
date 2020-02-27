@@ -201,6 +201,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		org.setId(data.getOrgCode());
 		Org orgName = orgMapper.selectOne(org);
 		if(!StringUtils.equals(orgName.getOrgName(),data.getOrgName())){
+            log.error("错误数据为{}",JSON.toJSONString(data));
 			throw new BaseException("组织机构编码和组织机构名称不匹配!");
 		}
 
