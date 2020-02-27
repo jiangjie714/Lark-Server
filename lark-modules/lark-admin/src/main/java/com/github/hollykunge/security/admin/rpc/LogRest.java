@@ -37,7 +37,13 @@ public class LogRest implements AdminLogServiceFeignClient {
         Org orgTemp = new Org();
         orgTemp.setOrgCode(user.getOrgCode());
         Org org = orgBiz.selectOne(orgTemp);
-        BeanUtils.copyProperties(org,log);
+        setOrg(log,org);
         gateLogBiz.insertSelective(log);
+    }
+    private void setOrg(GateLog log,Org org){
+        log.setOrgCode(org.getOrgCode());
+        log.setOrgName(org.getOrgName());
+        log.setPathCode(org.getPathCode());
+        log.setPathName(org.getPathName());
     }
 }
