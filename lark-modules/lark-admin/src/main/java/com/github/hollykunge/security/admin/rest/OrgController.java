@@ -9,8 +9,12 @@ import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.OrgRestService;
+import com.github.hollykunge.security.admin.util.EasyExcelUtil;
+import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.OrgTreeAll;
+import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -22,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +42,9 @@ import java.util.*;
 public class OrgController extends BaseController<OrgBiz, Org> {
     @Autowired
     private UserBiz userBiz;
+
+    @Autowired
+    private OrgBiz orgBiz;
 
     @Autowired
     private OrgRestService orgRestService;
@@ -98,6 +106,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * 删除方法  如果组织下存在用户不能进行删除
      * @param id
      * @return
+     * fansq 添加异常 ClientInvalidException
      */
     @Override
     public ObjectRestResponse<Org> remove(String id) {
@@ -106,10 +115,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         user.setDeleted("0");
         List<User> userList = userBiz.selectList(user);
         if(userList.size()>0){
-            ObjectRestResponse<Org> or = new ObjectRestResponse<>();
-            or.setMessage("该组织下存在用户,暂时无法删除");
-            or.setStatus(500);
-            return or;
+            throw new ClientInvalidException("The organization has users and cannot be deleted");
         }
         return super.remove(id);
     }
@@ -188,20 +194,9 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         return TreeUtil.bulid(trees, parentTreeId);
     }
 
-    /**
-     * 组织用户树枝包含用户接口
-     *
-     * @param parentTreeId 默认root
-     * @return
-     */
-//    @RequestMapping(value = "/orgUsers", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ListRestResponse<List<OrgUser>> orgUsers(@RequestParam("parentTreeId") String parentTreeId) {
-//        if (StringUtils.isEmpty(parentTreeId)) {
-//            parentTreeId = AdminCommonConstant.ROOT;
-//        }
-//        List<OrgUser> tree = baseBiz.getOrg(parentTreeId);
-//        return new ListRestResponse("", tree.size(), tree);
-//    }
-
+    @PostMapping("/importOrg")
+    @ResponseBody
+    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
+        return orgBiz.importExcel(file);
+    }
 }

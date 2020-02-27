@@ -12,6 +12,7 @@ import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenForbiddenResponse;
@@ -101,7 +102,7 @@ public class AdminAccessFilter extends ZuulFilter {
         try {
             dnname = new String(dnname.getBytes(CommonConstants.PERSON_CHAR_SET));
         } catch (UnsupportedEncodingException e) {
-            throw new BaseException("身份信息编码转化错误...");
+            throw new ClientInvalidException("身份信息编码转化错误...");
         }
         String[] userObjects = dnname.trim().split(",", 0);
         String PId = null;
@@ -141,7 +142,7 @@ public class AdminAccessFilter extends ZuulFilter {
         try {
             user = getJWTUser(request, ctx);
         } catch (Exception e) {
-            setFailedRequest(JSON.toJSONString(new TokenErrorResponse(e.getMessage())), 200);
+            setFailedRequest(JSON.toJSONString(new TokenErrorResponse(e.getMessage())), CommonConstants.HTTP_SUCCESS);
             return null;
         }
         //如果为超级管理员，则干直接通过
@@ -237,7 +238,7 @@ public class AdminAccessFilter extends ZuulFilter {
      */
     private void checkUserPermission(String requestUri, List<FrontPermission> permissionInfos, RequestContext ctx, IJWTInfo user) {
         if (StringUtils.isEmpty(requestUri)) {
-            throw new BaseException("requestUri 参数异常...");
+            throw new ClientInvalidException("requestUri 参数异常...");
         }
         permissionInfos = permissionInfos.stream()
                 .filter(new Predicate<FrontPermission>() {
@@ -253,7 +254,7 @@ public class AdminAccessFilter extends ZuulFilter {
         if (permissionInfos.size() == 0) {
             BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("请求接口没有权限...");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_NOT_PERMISSION);
-            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), 200);
+            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }
         boolean anyMatch =
                 permissionInfos.parallelStream()
@@ -272,7 +273,7 @@ public class AdminAccessFilter extends ZuulFilter {
         } else {
             BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("请求接口操作没有权限...");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_METHOD_NOT_PERMISSION);
-            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), 200);
+            setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }
     }
 

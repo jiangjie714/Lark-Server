@@ -8,22 +8,50 @@ import org.tio.utils.time.Time;
  * @date 2017/8/29
  */
 public class CommonConstants {
+    /**
+     * 资源类型
+     */
     public final static String RESOURCE_TYPE_MENU = "menu";
     public final static String RESOURCE_TYPE_BTN = "button";
-    // 用户token异常
-    public static final Integer EX_USER_INVALID_CODE = 40101;
-    // 客户端token异常
-    public static final Integer EX_CLIENT_INVALID_CODE = 40301;
-    public static final Integer EX_CLIENT_FORBIDDEN_CODE = 40331;
-    public static final Integer EX_OTHER_CODE = 500;
-    public static final Integer HTTP_SUCCESS = 200;
+    /**
+     * 用户身份认证失败
+     */
+    public static final int EX_USER_INVALID_CODE = 40101;
+    /**
+     * 无效的客户端请求
+     */
+    public static final int EX_CLIENT_INVALID_CODE = 40301;
+    /**
+     * 拒绝执行当前的客户端请求
+     */
+    public static final int EX_CLIENT_FORBIDDEN_CODE = 40331;
+    /**
+     * 没有请求该资源的权限
+     */
+    public static final int URL_NOT_PERMISSION = 40304;
+    /**
+     * 没有请求该资源操作方法的权限
+     */
+    public static final int URL_METHOD_NOT_PERMISSION = 40305;
+    /**
+     * 拒绝执行当前请求
+     */
+    public static final int EX_OTHER_CODE = 500;
+    /**
+     * 拒绝执行当前请求
+     */
+    public static final int HTTP_SUCCESS = 200;
+
+
     public static final String CONTEXT_KEY_USER_ID = "currentUserId";
     public static final String CONTEXT_KEY_USERNAME = "currentUserName";
     public static final String CONTEXT_KEY_USER_NAME = "currentUser";
     public static final String CONTEXT_KEY_USER_TOKEN = "currentUserToken";
     public static final String JWT_KEY_USER_ID = "userId";
     public static final String JWT_KEY_NAME = "name";
-    //adminUser默认密码
+    /**
+     * 超级管理员adminUser默认密码
+     */
     public static final String ADMIN_PASSWORD = "$2a$12$0pS6RoQtr2ASZyhpdUwmvO/VPBdYu.S.BFASQiJVo0ZblGrlqmABm";
     /** 公告通知交换机名称*/
     public static final String NOTICE_EXCHANGE = "noticeExchange";
@@ -151,10 +179,5 @@ public class CommonConstants {
 
     public static final String GET_GATE_LOG_REQUEST_EXPORT = "export";
     public static final String GET_GATE_LOG_REQUEST_FEIGN = "/front/info";
-    /**
-     * 没有权限编码
-     */
-    public static final int URL_NOT_PERMISSION = 40304;
-    public static final int URL_METHOD_NOT_PERMISSION = 40305;
 
 }

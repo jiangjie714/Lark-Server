@@ -10,4 +10,10 @@ import java.util.List;
 public interface OrgMapper extends Mapper<Org> {
 
     public List<OrgDTO> findOrg(@Param("id") String id);
+
+    /**
+     *  fansq 20-2-23 添加 导入excel
+     * @param orgs 导入组织信息
+     */
+    void insertExcelOrg(@Param("orgs") List<Org> orgs);
 }

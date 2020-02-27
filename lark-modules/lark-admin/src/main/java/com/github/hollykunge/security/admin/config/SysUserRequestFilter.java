@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * @author dd
+ */
 @Slf4j
 @WebFilter(filterName = "sysUserRequestFilter", urlPatterns = "/api/org/treeComponent")
 public class SysUserRequestFilter implements Filter {
@@ -42,9 +45,9 @@ public class SysUserRequestFilter implements Filter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            Map paramter = new HashMap(16);
-            paramter.put("userOrgCode", sysAuthConfig.getSysOrgCode());
-            ParameterRequestWrapper wrapper = new ParameterRequestWrapper(req, paramter);
+            Map parameter = new HashMap(16);
+            parameter.put("userOrgCode", sysAuthConfig.getSysOrgCode());
+            ParameterRequestWrapper wrapper = new ParameterRequestWrapper(req, parameter);
             filterChain.doFilter(wrapper, response);
         } catch (Exception e) {
             log.error(ExceptionCommonUtil.getExceptionMessage(e));

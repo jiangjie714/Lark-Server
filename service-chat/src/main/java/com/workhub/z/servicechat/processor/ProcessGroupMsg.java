@@ -89,7 +89,6 @@ public class ProcessGroupMsg extends AbstractMsgProcessor {
                     //todo 发消息后期改成前端连接信息中心
                     //rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
                 }
-
             }
 
         }catch (Exception e){

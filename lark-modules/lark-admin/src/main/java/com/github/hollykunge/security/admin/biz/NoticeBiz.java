@@ -83,7 +83,7 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
      * fansq
      * 20-2-18
      * 取消发布公告
-     * @param id
+     * @param id 主键id
      */
     public void sentCancelNotice(String id){
         Notice entity = new Notice();

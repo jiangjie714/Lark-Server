@@ -47,7 +47,7 @@ public class NoticeController extends BaseController<NoticeBiz,Notice> {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/cancel/{id}" ,method = RequestMethod.GET)
+    @RequestMapping(value = "/cancel/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<Notice> sendCancelNotice(@PathVariable("id") String id) {
         baseBiz.sentCancelNotice(id);
