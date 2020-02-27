@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.StatisticsDao">
+
+    <resultMap type="com.workhub.z.servicechat.VO.StatisticsMsgVo" id="statisticsMsgVo">
+        <result property="msgCount" column="msg_count" jdbcType="VARCHAR"/>
+        <result property="pirivateMsgCount" column="pirivate_msg_count" jdbcType="VARCHAR"/>
+        <result property="groupMsgCount" column="group_msg_count" jdbcType="VARCHAR"/>
+        <result property="meetMsgCount" column="meet_msg_count" jdbcType="VARCHAR"/>
+        <result property="textMsgCount" column="text_msg_count" jdbcType="VARCHAR"/>
+        <result property="picMsgCount" column="pic_msg_count" jdbcType="VARCHAR"/>
+        <result property="fileMsgCount" column="file_msg_count" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.workhub.z.servicechat.VO.StatisticsGroupVo" id="statisticsGroupVo">
+        <result property="pathName" column="path_name" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="crtName" column="crt_name" jdbcType="VARCHAR"/>
+        <result property="isCross" column="is_cross" jdbcType="VARCHAR"/>
+        <result property="msgCount" column="msg_count" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--消息统计-->
+    <select id="msgStatistics" resultMap="statisticsMsgVo">
+       select to_char(msg_count) msg_count,
+       to_char(text_msg_count) text_msg_count,
+       to_char(pic_msg_count) pic_msg_count,
+       to_char(file_msg_count) file_msg_count,
+       to_char(pirivate_msg_count) pirivate_msg_count,
+       to_char(group_msg_count) group_msg_count,
+       to_char(meet_msg_count) meet_msg_count
+          from (
+                ---发消息条数
+                select 'msg_count' as title, count(1) as msgcount
+                  from zz_message_info msg
+                 where 1 = 1
+                union
+                ---文字消息条数
+                select 'text_msg_count' as title, count(1) as msgcount
+                  from zz_message_info msg
+                 where FILE_TYPE = '1'
+                union
+                --图片个数
+                select 'pic_msg_count' as title, count(1) as msgcount
+                  from zz_message_info msg
+                 where FILE_TYPE = '2'
+                union
+                --附件个数
+                select 'file_msg_count' as title, count(1) as msgcount
+                  from zz_message_info msg
+                 where FILE_TYPE = '3'
+                union
+                --私聊消息个数
+                select 'pirivate_msg_count' as title, count(1) as msgcount
+                  from zz_message_info msg
+                 where TYPE = 'USER'
+                union
+                --群消息个数
+                select 'group_msg_count' as title, count(1) as msgcount
+                  from zz_message_info msg
+                 where TYPE = 'GROUP'
+                union
+                --会议消息个数
+                select 'meet_msg_count' as title, count(1) as msgcount
+                  from zz_message_info msg
+                 where TYPE = 'MEET')
+        pivot(max(msgcount)
+           for title in('msg_count' as msg_count,
+                        'text_msg_count' as text_msg_count,
+                        'pic_msg_count' as pic_msg_count,
+                        'file_msg_count' as file_msg_count,
+                        'pirivate_msg_count' as pirivate_msg_count,
+                        'group_msg_count' as group_msg_count,
+                        'meet_msg_count' as meet_msg_count))
+         where 1 = 1
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="groupStatistics" resultMap="statisticsGroupVo">
+        select org.path_name,
+                yyy.group_name,
+                yyy.crt_name,
+                yyy.is_cross,
+                to_char(yyy.msg_count) msg_count
+                from (select t.group_name,
+                u.name as crt_name,
+                u.org_name,
+                u.org_code,
+                t.iscross is_cross,
+                nvl(m.msgcount, 0) msg_count
+                from zz_group t,
+                lark_admin.admin_user u,
+                (select count(1) as msgcount, receiver
+                from zz_message_info
+                where type = 'GROUP'
+                group by receiver) m
+                where u.id = t.creator
+                and t.group_id = m.receiver(+)) yyy,
+                lark_admin.admin_org org
+          where org.id = yyy.org_code
+        <if test="groupName != null and groupName != ''">
+                and group_name like '%'||#{groupName}||'%'
+            </if>
+            <if test="isCross != null and isCross != ''">
+                and is_cross = #{isCross}
+            </if>
+
+    </select>
+</mapper>

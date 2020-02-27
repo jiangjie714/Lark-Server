@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.group.ZzGroupFileDao">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzGroupFileDao">
 
     <resultMap type="com.workhub.z.servicechat.entity.group.ZzGroupFile" id="ZzGroupFileMap">
         <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"/>

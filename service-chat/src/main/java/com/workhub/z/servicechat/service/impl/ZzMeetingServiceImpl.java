@@ -8,7 +8,7 @@ import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.dao.meeting.ZzMeetingDao;
+import com.workhub.z.servicechat.dao.ZzMeetingDao;
 import com.workhub.z.servicechat.entity.meeting.ZzMeeting;
 import com.workhub.z.servicechat.entity.meeting.ZzMeetingUser;
 import com.workhub.z.servicechat.model.MeetingDto;
@@ -331,7 +331,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             answerToFrontReponse.setCode(MEET_CHANGE);
             answerToFrontReponse.setData(resMeeting);
             // TODO: 2019/10/14 通知会议所有人员JSON.toJSONString(data)
-            systemMessage.sendMessageToMeet(meetingId,userId,JSON.toJSONString(answerToFrontReponse, SerializerFeature.DisableCircularReferenceDetect));
+            systemMessage.sendMessageToMeet(meetingId,userId,JSON.toJSONString(answerToFrontReponse, SerializerFeature.DisableCircularReferenceDetect),rabbitMqMsgProducer);
         }catch (Exception e){
             logger.error("会议变更推送前端报错！");
             logger.error(common.getExceptionMessage(e));

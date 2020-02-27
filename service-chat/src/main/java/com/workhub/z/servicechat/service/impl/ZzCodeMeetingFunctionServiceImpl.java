@@ -6,7 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.CodeMeetingFunctionVo;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.meeting.ZzCodeMeetingFunctionDao;
+import com.workhub.z.servicechat.dao.ZzCodeMeetingFunctionDao;
 import com.workhub.z.servicechat.entity.meeting.ZzCodeMeetingFunction;
 import com.workhub.z.servicechat.service.ZzCodeMeetingFunctionService;
 import org.slf4j.Logger;
