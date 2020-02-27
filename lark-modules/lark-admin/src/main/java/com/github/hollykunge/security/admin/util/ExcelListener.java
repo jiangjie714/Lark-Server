@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.admin.util;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.alibaba.excel.context.AnalysisContext;
@@ -67,6 +67,8 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	List<User> list = new ArrayList<User>();
 	List<Org> orgList = new ArrayList<>();
 	List<RoleUserMap> roleUserMaps = new ArrayList<RoleUserMap>();
+	LinkedHashMap<String ,Integer> userPidRowIndex = new LinkedHashMap<>();
+	LinkedHashMap<String ,Integer> orgOrgCodeRowIndex = new LinkedHashMap<>();
 	List<PositionUserMap> positionUserMaps = new ArrayList<PositionUserMap>();
 
 	@SneakyThrows
@@ -144,8 +146,20 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if(org.getOrderId()==null){
 			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
 		}
-		if(StringUtils.isEmpty(org.getOrgCode())){
+		String orgCode = org.getOrgCode();
+		if(StringUtils.isEmpty(orgCode)){
 			throw new BaseException("第"+rowIndex+"行，组织编码不可为空！");
+		}
+		Org orgByOrgCode = new Org();
+		orgByOrgCode.setOrgCode(orgCode);
+		if(orgMapper.selectCount(orgByOrgCode)>0){
+			throw new BaseException("第"+rowIndex+"行，该组织编码已存在！");
+		}
+		if(!orgOrgCodeRowIndex.containsKey(orgCode)){
+			orgOrgCodeRowIndex.put(orgCode,rowIndex);
+		}else{
+			int orgCodeIndex = orgOrgCodeRowIndex.get(orgCode);
+			throw new BaseException("第"+rowIndex+"行和第"+orgCodeIndex+"行的组织编码重复，请修改！");
 		}
 		if(org.getOrgLevel()==null){
 			throw new BaseException("第"+rowIndex+"行，组织层级不可为空！");
@@ -175,21 +189,30 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	 */
 	public void importUserExcel(User data,int rowIndex){
 		String userId = UUIDUtils.generateShortUuid();
+		String pId = data.getPId();
 		if(StringUtils.isEmpty(data.getName())){
 			throw new BaseException("第"+rowIndex+"行，姓名不可为空！");
 		}
 		if (SpecialStrUtils.check(data.getName())) {
 			throw new BaseException("第"+rowIndex+"行，姓名中不能包含特殊字符!");
 		}
-		if(StringUtils.isEmpty(data.getPId())){
+		if(StringUtils.isEmpty(pId)){
 			throw  new BaseException("第"+rowIndex+"行，身份证号不可为空！");
 		}
 		//校验身份证是否在数据库中存在
 		User user = new User();
-		user.setPId(data.getPId());
+		user.setPId(pId);
 		if (userMapper.selectCount(user) > 0) {
 			throw new BaseException("第"+rowIndex+"行，身份证号已存在!");
 		}
+
+		if(!userPidRowIndex.containsKey(pId)){
+			userPidRowIndex.put(pId,rowIndex);
+		}else{
+			int pidIndex = userPidRowIndex.get(pId);
+			throw new BaseException("第"+rowIndex+"行和第"+pidIndex+"行的身份证号重复，请修改！");
+		}
+
 		if(StringUtils.isEmpty(data.getOrgCode())){
 			throw  new BaseException("第"+rowIndex+"行，所属组织机构编码，不可为空！");
 		}
