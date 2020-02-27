@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.admin.util;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.alibaba.excel.context.AnalysisContext;
@@ -51,7 +52,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 
 	public String errMsg = null;
 	public ExcelListener(UserBiz userBiz,RoleUserMapMapper roleUserMapMapper
-	,PositionUserMapMapper positionUserMapMapper,UserMapper userMapper,OrgMapper orgMapper) {
+			,PositionUserMapMapper positionUserMapMapper,UserMapper userMapper,OrgMapper orgMapper) {
 		this.userBiz=userBiz;
 		this.roleUserMapMapper=roleUserMapMapper;
 		this.positionUserMapMapper=positionUserMapMapper;
@@ -66,6 +67,8 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	List<User> list = new ArrayList<User>();
 	List<Org> orgList = new ArrayList<>();
 	List<RoleUserMap> roleUserMaps = new ArrayList<RoleUserMap>();
+	LinkedHashMap<String ,Integer> userPidRowIndex = new LinkedHashMap<>();
+	LinkedHashMap<String ,Integer> orgOrgCodeRowIndex = new LinkedHashMap<>();
 	List<PositionUserMap> positionUserMaps = new ArrayList<PositionUserMap>();
 
 	@SneakyThrows
@@ -99,7 +102,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			positionUserMapMapper.insertExcelUserRole(positionUserMaps);
 		}
 		if(!CollectionUtils.isEmpty(orgList)){
-				orgMapper.insertExcelOrg(orgList);
+			orgMapper.insertExcelOrg(orgList);
 		}
 		log.info("存储数据库成功！");
 	}
@@ -143,8 +146,20 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if(org.getOrderId()==null){
 			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
 		}
-		if(StringUtils.isEmpty(org.getOrgCode())){
+		String orgCode = org.getOrgCode();
+		if(StringUtils.isEmpty(orgCode)){
 			throw new BaseException("第"+rowIndex+"行，组织编码不可为空！");
+		}
+		Org orgByOrgCode = new Org();
+		orgByOrgCode.setOrgCode(orgCode);
+		if(orgMapper.selectCount(orgByOrgCode)>0){
+			throw new BaseException("第"+rowIndex+"行，该组织编码已存在！");
+		}
+		if(!orgOrgCodeRowIndex.containsKey(orgCode)){
+			orgOrgCodeRowIndex.put(orgCode,rowIndex);
+		}else{
+			int orgCodeIndex = orgOrgCodeRowIndex.get(orgCode);
+			throw new BaseException("第"+rowIndex+"行和第"+orgCodeIndex+"行的组织编码重复，请修改！");
 		}
 		if(org.getOrgLevel()==null){
 			throw new BaseException("第"+rowIndex+"行，组织层级不可为空！");
@@ -153,12 +168,12 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			org.setDescription("添加方式为数据导入！");
 		}
 		String orgId = UUIDUtils.generateShortUuid();
-		org.setId(org.getOrgCode());
 		org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
 		org.setPathCode(result.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
 		org.setPathName(result.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
 		org.setExternalName(org.getOrgName());
 		EntityUtils.setCreatAndUpdatInfo(org);
+		org.setId(org.getOrgCode());
 		orgList.add(org);
 		log.info("解析到一条数据:{}", JSON.toJSONString(org));
 		if (orgList.size() >= BATCH_COUNT) {
@@ -174,21 +189,30 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	 */
 	public void importUserExcel(User data,int rowIndex){
 		String userId = UUIDUtils.generateShortUuid();
+		String pId = data.getPId();
 		if(StringUtils.isEmpty(data.getName())){
 			throw new BaseException("第"+rowIndex+"行，姓名不可为空！");
 		}
 		if (SpecialStrUtils.check(data.getName())) {
 			throw new BaseException("第"+rowIndex+"行，姓名中不能包含特殊字符!");
 		}
-		if(StringUtils.isEmpty(data.getPId())){
+		if(StringUtils.isEmpty(pId)){
 			throw  new BaseException("第"+rowIndex+"行，身份证号不可为空！");
 		}
 		//校验身份证是否在数据库中存在
 		User user = new User();
-		user.setPId(data.getPId());
+		user.setPId(pId);
 		if (userMapper.selectCount(user) > 0) {
 			throw new BaseException("第"+rowIndex+"行，身份证号已存在!");
 		}
+
+		if(!userPidRowIndex.containsKey(pId)){
+			userPidRowIndex.put(pId,rowIndex);
+		}else{
+			int pidIndex = userPidRowIndex.get(pId);
+			throw new BaseException("第"+rowIndex+"行和第"+pidIndex+"行的身份证号重复，请修改！");
+		}
+
 		if(StringUtils.isEmpty(data.getOrgCode())){
 			throw  new BaseException("第"+rowIndex+"行，所属组织机构编码，不可为空！");
 		}
@@ -228,21 +252,21 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		roleUserMaps.add(roleUserMap);
 		//给导入的用户默认一个权限信息  建研究室内群 0
 		PositionUserMap positionUserMapRoomInner = new PositionUserMap();
-        positionUserMapRoomInner.setUserId(userId);
-        positionUserMapRoomInner.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
-        positionUserMapRoomInner.setId(UUIDUtils.generateShortUuid());
-        positionUserMaps.add(positionUserMapRoomInner);
-        //建跨研究室群
-        PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
-        positionUserMapRoomOutter.setUserId(userId);
-        positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
-        positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
-        positionUserMaps.add(positionUserMapRoomOutter);
-        //建跨厂所群
-        PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
-        positionUserMapInstitutesOutter.setUserId(userId);
-        positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
-        positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
+		positionUserMapRoomInner.setUserId(userId);
+		positionUserMapRoomInner.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
+		positionUserMapRoomInner.setId(UUIDUtils.generateShortUuid());
+		positionUserMaps.add(positionUserMapRoomInner);
+		//建跨研究室群
+		PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
+		positionUserMapRoomOutter.setUserId(userId);
+		positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSTTION_ROOM_OUTTER);
+		positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
+		positionUserMaps.add(positionUserMapRoomOutter);
+		//建跨厂所群
+		PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
+		positionUserMapInstitutesOutter.setUserId(userId);
+		positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_INSTITUTES_OUTTER);
+		positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
 		positionUserMaps.add(positionUserMapInstitutesOutter);
 		log.info("解析到一条数据:{}", JSON.toJSONString(data));
 		if (list.size() >= BATCH_COUNT) {
@@ -253,17 +277,17 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		}
 	}
 
-    /**
-     * 是否为数字
-     * @param str
-     * @return
-     */
-    public static boolean isNumeric(String str){
-        for (int i = str.length();--i>=0;){
-            if (!Character.isDigit(str.charAt(i))){
-                return false;
-            }
-        }
-        return true;
-    }
+	/**
+	 * 是否为数字
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNumeric(String str){
+		for (int i = str.length();--i>=0;){
+			if (!Character.isDigit(str.charAt(i))){
+				return false;
+			}
+		}
+		return true;
+	}
 }
