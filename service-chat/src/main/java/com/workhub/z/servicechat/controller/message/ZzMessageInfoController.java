@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.message;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -106,4 +106,21 @@ public class ZzMessageInfoController {
             }
             return  res;
     }
+    /**
+     * @MethodName:
+     * @Description: 消息确认
+     * @Param:
+     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse 返回会议id
+     * @Author:
+     * @Date: 2020/02/23
+     **/
+    @PostMapping("msgIdentify")
+    public ObjectRestResponse msgIdentify(){
+        ObjectRestResponse res = new ObjectRestResponse();
+        res.rel(true);
+        res.msg("200");
+
+        return res;
+    }
+
 }

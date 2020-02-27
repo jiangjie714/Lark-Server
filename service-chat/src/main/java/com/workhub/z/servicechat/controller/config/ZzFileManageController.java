@@ -1,4 +1,4 @@
-package com.workhub.z.servicechat.controller;
+package com.workhub.z.servicechat.controller.config;
 
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
