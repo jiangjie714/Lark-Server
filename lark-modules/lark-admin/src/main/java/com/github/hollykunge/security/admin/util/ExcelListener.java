@@ -249,6 +249,8 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if (list.size() >= BATCH_COUNT) {
 			saveData();
 			list.clear();
+			roleUserMaps.clear();
+			positionUserMaps.clear();
 		}
 	}
 
