@@ -2,62 +2,113 @@ package com.workhub.z.servicechat.processor;
 
 import com.alibaba.fastjson.JSONObject;
 import com.workhub.z.servicechat.VO.MessageSecretValidVo;
+import com.workhub.z.servicechat.VO.MsgAnswerVO;
+import com.workhub.z.servicechat.VO.MsgSendStatusVo;
+import com.workhub.z.servicechat.VO.SocketMsgVo;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.message.ZzPrivateMsg;
 import com.workhub.z.servicechat.service.ZzPrivateMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tio.core.ChannelContext;
-import org.tio.core.Tio;
 
-import static com.workhub.z.servicechat.config.VoToEntity.*;
+import static com.workhub.z.servicechat.config.MessageType.MSG_ANSWER;
+import static com.workhub.z.servicechat.config.VoToEntity.MsgVOToModel;
+import static com.workhub.z.servicechat.config.common.getJsonStringKeyValue;
 
 @Service
-public class ProcessPrivateMsg extends AbstractMsgProcessor{
+public class ProcessPrivateMsg extends AbstractMsgProcessor {
 
     @Autowired
     protected ZzPrivateMsgService privateMsgService;
 
-    public boolean sendMsg(ChannelContext channelContext, String msg) throws Exception {
-        JSONObject jsonObject = JSONObject.parseObject(msg);
+    public MsgSendStatusVo sendMsg(String msg, String ip) throws Exception {
+        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(msg);
 
 //      String code = jsonObject.getString("code");
-        String message = jsonObject.getString("data");
-        //判断涉密词汇begin
-        MessageSecretValidVo messageSecretValidVo = new MessageSecretValidVo();
-        messageSecretValidVo.setSendStatus("1");//可以发送
-        String level = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.secretLevel"));
-        String type = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.type"));
-        if(type.equals("1")){//如果是文字信息
-            //文字内容
-            String title = common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title"));
-            messageSecretValidVo = super.messageSecretValid(title,level);
-        }
-        //判断涉密词汇end
-        ZzPrivateMsg privateMsg = (ZzPrivateMsg)MsgVOToModel(message);
-        if(messageSecretValidVo.getSendStatus().equals("1")){//如果可以发送消息
-            saveMsg(privateMsg);
-            //存储消息信息（新）
-            super.saveMessageInfo("USER",privateMsg.getMsgSender(),privateMsg.getMsgReceiver()
-                    ,privateMsg.getLevels(),privateMsg.getSendTime(),message,privateMsg.getMsgId(),channelContext.getClientNode().getIp(),channelContext.getBsId());
-            super.msgAnswer(msg,privateMsg.getMsgId(),channelContext);
-            //如果不在线则不发
-            Boolean temp =  checkUserOnline(channelContext,privateMsg.getMsgReceiver());
-            if (true) {
-                Tio.sendToUser(channelContext.getGroupContext(),privateMsg.getMsgReceiver(),this.getWsResponse(msg));
-            }else {
+            String message = jsonObject.getString("data");
+            //判断涉密词汇begin
+            MessageSecretValidVo messageSecretValidVo = new MessageSecretValidVo();
+            messageSecretValidVo.setSendStatus("1");//可以发送
+            String level = common.nulToEmptyString(common.getJsonStringKeyValue(message, "content.secretLevel"));
+            String type = common.nulToEmptyString(common.getJsonStringKeyValue(message, "content.type"));
 
+            String oId = common.nulToEmptyString(common.getJsonStringKeyValue(message, "id"));
+            msgSendStatusVo.setOId(oId);
+            if (type.equals("1")) {//如果是文字信息
+                //文字内容
+                String title = common.nulToEmptyString(common.getJsonStringKeyValue(message, "content.title"));
+                messageSecretValidVo = super.messageSecretValid(title, level);
             }
-        }else{//涉密词汇校验不通过
-            super.msgAnswer(msg,privateMsg.getMsgId(),channelContext, MessageType.FAIL_ANSWER,"消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
-        }
+            //判断涉密词汇end
+            ZzPrivateMsg privateMsg = (ZzPrivateMsg) MsgVOToModel(message);
+            if (messageSecretValidVo.getSendStatus().equals("1")) {//如果可以发送消息
+                saveMsg(privateMsg);
+                //存储消息信息（新）
+                String msgId = super.saveMessageInfo("USER", ip, msg);
+                msgSendStatusVo.setId(msgId);
+                //把前端的消息id替换成后端的id
+                String newMsg = common.setJsonStringKeyValue(msg,"data.id",msgId);
+                SocketMsgVo msgVo = new SocketMsgVo();
+                /**消息确认id*/
+                msgVo.setId(msgId);
+                msgVo.setCode(jsonObject.getString("code"));
+                msgVo.setSender(privateMsg.getMsgSender());
+                msgVo.setReceiver(privateMsg.getMsgReceiver());
+                msgVo.setMsg(newMsg);
+                /**需要接收确认*/
+                msgVo.setConfirmFlg(true);
+                //todo SocketMsgVo加密
+                msgSendStatusVo.setMsg(msgVo);
+                //todo 发消息后期改成前端连接信息中心
+                //rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
+           /* //如果不在线则不发
+            String online = common.nulToEmptyString(RedisUtil.getValue(CacheConst.userOnlineCahce+privateMsg.getMsgReceiver()));
 
-        return true;
+                if ((MessageType.ONLINE+"").equals(online)) {
+                    SocketMsgVo msgVo = new SocketMsgVo();
+                    msgVo.setCode(jsonObject.getString("code"));
+                    msgVo.setSender(privateMsg.getMsgSender());
+                    msgVo.setReceiver(privateMsg.getMsgReceiver());
+                    msgVo.setMsg(msg);
+                    //应答消息
+                    MsgAnswerVO answerVO = super.msgAnswer(msg,privateMsg.getMsgId());
+                    msgVo.setMsgAnswerVO(answerVO);
+                    rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
+                }else {
+                    //告知对方不在线
+                    *//*SocketMsgVo socketMsgVo = new SocketMsgVo();
+                    socketMsgVo.setCode(MSG_ANSWER+"");
+                    socketMsgVo.setSender((String)getJsonStringKeyValue(msg,"data.fromId"));
+                    socketMsgVo.setReceiver((String)getJsonStringKeyValue(msg,"data.fromId"));
+                    MsgAnswerVO answerVO = super.msgAnswer(msg,privateMsg.getMsgId(), MessageType.OFFLINE_ANSWER,"消息不能发送,对方不在线");
+                    socketMsgVo.setMsgAnswerVO(answerVO);
+                    rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);*//*
+                }
+*/
+            } else {//涉密词汇校验不通过
+                msgSendStatusVo.setStatus(false);
+                msgSendStatusVo.setContent("消息不能发送，包含如下涉密词汇：" + messageSecretValidVo.getSecretWords());
+
+                SocketMsgVo socketMsgVo = new SocketMsgVo();
+                socketMsgVo.setCode(MSG_ANSWER + "");
+                socketMsgVo.setSender((String) getJsonStringKeyValue(msg, "data.fromId"));
+                socketMsgVo.setReceiver((String) getJsonStringKeyValue(msg, "data.fromId"));
+                MsgAnswerVO answerVO = super.msgAnswer(msg, privateMsg.getMsgId(), MessageType.FAIL_ANSWER, "消息不能发送，包含如下涉密词汇：" + messageSecretValidVo.getSecretWords());
+                socketMsgVo.setMsg(answerVO);
+                //todo 发消息后期改成前端连接信息中心
+                //rabbitMqMsgProducer.sendSocketMsgAnswer(socketMsgVo);
+            }
+        }catch (Exception e){
+            throw e;
+        }
+        return msgSendStatusVo;
     }
 
     public void saveMsg(ZzPrivateMsg privateMsg){
-        privateMsgService.insert(privateMsg);
+        //privateMsgService.insert(privateMsg);
         super.saveNoReadMsg(privateMsg.getMsgSender(),privateMsg.getMsgReceiver());
     }
 }

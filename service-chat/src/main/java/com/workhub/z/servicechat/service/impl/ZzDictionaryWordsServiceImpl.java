@@ -4,7 +4,7 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.dao.config.ZzDictionaryWordsDao;
+import com.workhub.z.servicechat.dao.ZzDictionaryWordsDao;
 import com.workhub.z.servicechat.entity.config.ZzDictionaryWords;
 import com.workhub.z.servicechat.service.ZzDictionaryWordsService;
 import org.apache.poi.ss.usermodel.Workbook;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.group.ZzUserGroupDao">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzUserGroupDao">
 
     <resultMap type="com.workhub.z.servicechat.entity.group.ZzUserGroup" id="ZzUserGroupMap">
         <result property="id" column="ID" jdbcType="VARCHAR"/>
@@ -80,8 +80,31 @@
         <result column="MSG_TYPE" property="msgType" jdbcType="VARCHAR"></result>
         <result column="LEVELS_USER" property="levels" jdbcType="VARCHAR"></result>
     </resultMap>
-
-    <select id="getUserNewMsgList" resultMap="UserNewMsgVo">
+    <resultMap id="rawMsgDto" type="com.workhub.z.servicechat.model.RawMessageDto">
+        <result property="msgId" column="msg_id" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="senderid" column="senderid" jdbcType="VARCHAR"/>
+        <result property="sendername" column="sendername" jdbcType="VARCHAR"/>
+        <result property="senderavatar" column="senderavatar" jdbcType="VARCHAR"/>
+        <result property="senderlevels" column="senderlevels" jdbcType="VARCHAR"/>
+        <result property="senderpid" column="senderpid" jdbcType="VARCHAR"/>
+        <result property="receiverid" column="receiverid" jdbcType="VARCHAR"/>
+        <result property="receivername" column="receivername" jdbcType="VARCHAR"/>
+        <result property="receiveravatar" column="receiveravatar" jdbcType="VARCHAR"/>
+        <result property="receivermembernum" column="receivermembernum" jdbcType="VARCHAR"/>
+        <result property="receiverlevels" column="receiverlevels" jdbcType="VARCHAR"/>
+        <result property="receiverpid" column="receiverpid" jdbcType="VARCHAR"/>
+        <result property="fileid" column="fileid" jdbcType="VARCHAR"/>
+        <result property="fileext" column="fileext" jdbcType="VARCHAR"/>
+        <result property="filesize" column="filesize" jdbcType="VARCHAR"/>
+        <result property="levels" column="levels" jdbcType="VARCHAR"/>
+        <result property="frontid" column="frontid" jdbcType="VARCHAR"/>
+        <result property="filetype" column="filetype" jdbcType="VARCHAR"/>
+        <result property="msg" column="msg" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="VARCHAR"/>
+        <result property="contactsid" column="contactsid" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getUserNewMsgList2" resultMap="UserNewMsgVo">
      SELECT * FROM (
            SELECT * FROM (
                      SELECT ROW_NUMBER() OVER(PARTITION BY MSG_SENDER,TABLE_TYPE ORDER BY SEND_TIME DESC) RN ,t.*
@@ -121,7 +144,72 @@
                 ) VO where rn =1
          ORDER BY VO.SEND_TIME DESC
     </select>
+    <select id="getUserNewMsgList" resultMap="rawMsgDto">
+     SELECT * FROM (
+           SELECT * FROM (
+                     SELECT ROW_NUMBER() OVER(PARTITION BY senderid, type ORDER BY createtime DESC) RN ,t.*
+                          FROM (
+                               select   t.msg_id,
+                                         T.TYPE,
+                                         (case when t.SENDER = #{id,jdbcType=VARCHAR} then t.RECEIVER else t.SENDER end) as senderid,
+                                         (case when t.SENDER = #{id,jdbcType=VARCHAR} then receiver.name else sender.name end) as sendername,
+                                         (case when t.SENDER = #{id,jdbcType=VARCHAR} then receiver.avartar else sender.avartar end) as senderavatar,
+                                         (case when t.SENDER = #{id,jdbcType=VARCHAR} then receiver.levels else sender.levels end) as senderlevels,
+                                         receiver.id receiverid,
+                                         receiver.name receivername,
+                                         receiver.avartar receiveravatar,
+                                         receiver.levels receiverlevels,
+                                         nvl(f.file_id, '0') fileid,
+                                         nvl(f.file_ext, '0') fileext,
+                                         t.levels levels,
+                                         t.file_type filetype,
+                                         t.msg msg,
+                                         to_char(t.createtime, 'yyyy-mm-dd HH24:MI:SS') createtime
+                                    FROM zz_message_info t,
+                                         zz_contact_inf  sender,
+                                         zz_contact_inf  receiver,
+                                         zz_group_file   f
+                                   WHERE t.type = 'USER'
+                                     and t.sender = sender.id
+                                     and t.receiver = receiver.id
+                                     and t.file_id = f.file_id(+)
+                                     and (t.sender = #{id,jdbcType=VARCHAR} or t.receiver = #{id,jdbcType=VARCHAR})
+                     UNION ALL
+                      select   t.msg_id,
+                                T.TYPE,
+                                receiver.id senderid,
+                                receiver.name sendername,
+                                receiver.avartar senderavatar,
+                                receiver.levels senderlevels,
+                                t.SENDER as receiverid,
+                                sender.name as receivername,
+                                sender.avartar as receiveravatar,
+                                sender.levels as receiverlevels,
+                                nvl(f.file_id, '0') fileid,
+                                nvl(f.file_ext, '0') fileext,
+                                t.levels levels,
+                                t.file_type filetype,
+                                t.msg msg,
+                                to_char(t.createtime, 'yyyy-mm-dd HH24:MI:SS') createtime
+                           FROM zz_message_info t,
+                                ZZ_USER_GROUP   u,
+                                zz_contact_inf  sender,
+                                zz_contact_inf  receiver,
+                                zz_group_file   f
+                          where t.type = 'GROUP'
+                            and t.sender = sender.id
+                            and t.receiver = receiver.id
+                            and t.file_id = f.file_id(+)
+                            and t.receiver = u.GROUP_ID
+                            and u.USER_ID = #{id,jdbcType=VARCHAR}
+                            and nvl(t.createtime, to_date('1900-01-01', 'yyyy-mm-dd')) >=
+                                nvl(u.createtime, to_date('2099-01-01', 'yyyy-mm-dd'))
 
+                                ) t
+                       )
+                ) VO where rn =1
+         ORDER BY VO.createtime DESC
+    </select>
     <delete id="deleteByGroupIdAndUserId">
         delete from ZZ_USER_GROUP where GROUP_ID=#{groupId} AND USER_ID = #{userId}
     </delete>

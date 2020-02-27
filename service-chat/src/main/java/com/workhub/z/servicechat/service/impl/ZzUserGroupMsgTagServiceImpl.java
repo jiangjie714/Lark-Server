@@ -6,7 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.SingleMessageVO;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzUserGroupMsgTagDao;
+import com.workhub.z.servicechat.dao.ZzUserGroupMsgTagDao;
 import com.workhub.z.servicechat.entity.group.ZzUserGroupMsgTag;
 import com.workhub.z.servicechat.service.ZzUserGroupMsgTagService;
 import org.slf4j.Logger;

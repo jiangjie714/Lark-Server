@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service.impl;
 
 import com.workhub.z.servicechat.config.MessageType;
-import com.workhub.z.servicechat.dao.config.ZzRequireApproveAuthorityDao;
+import com.workhub.z.servicechat.dao.ZzRequireApproveAuthorityDao;
 import com.workhub.z.servicechat.entity.config.ZzRequireApproveAuthority;
 import com.workhub.z.servicechat.server.Const;
 import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;
