@@ -189,7 +189,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	 */
 	public void importUserExcel(User data,int rowIndex){
 		String userId = UUIDUtils.generateShortUuid();
-		String pId = data.getPId();
+		String pId = data.getPId().toLowerCase();
 		if(StringUtils.isEmpty(data.getName())){
 			throw new BaseException("第"+rowIndex+"行，姓名不可为空！");
 		}
@@ -239,6 +239,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		data.setPassword(password);
 		EntityUtils.setCreatAndUpdatInfo(data);
 		data.setId(userId);
+		data.setPId(pId);
 		data.setDeleted(AdminCommonConstant.USER_DELETED_DEFAULT);
 		data.setEmpCode(UUIDUtils.generateShortUuid());
 		data.setAvatar(AdminCommonConstant.USER_AVATAR);
