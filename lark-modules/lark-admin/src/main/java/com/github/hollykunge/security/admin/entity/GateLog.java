@@ -45,4 +45,16 @@ public class GateLog {
     @Column(name = "OPT_INFO")
     private String optInfo;
 
+    @Column(name = "ORG_CODE")
+    private String orgCode;
+
+    @Column(name = "ORG_NAME")
+    private String orgName;
+
+    @Column(name = "PATH_CODE")
+    private String pathCode;
+
+    @Column(name = "PATH_NAME")
+    private String pathName;
+
 }
