@@ -222,6 +222,9 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		Org org = new Org();
 		org.setId(data.getOrgCode());
 		Org orgName = orgMapper.selectOne(org);
+		if(orgName == null) {
+			throw new BaseException("第"+rowIndex+"行，组织机构不存在!");
+		}
 		if(!StringUtils.equals(orgName.getOrgName(),data.getOrgName())){
 			throw new BaseException("第"+rowIndex+"行，组织机构编码和组织机构名称不匹配!");
 		}
