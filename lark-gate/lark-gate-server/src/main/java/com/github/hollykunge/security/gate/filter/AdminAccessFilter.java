@@ -85,6 +85,9 @@ public class AdminAccessFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         final String requestUri = request.getRequestURI().substring(zuulPrefix.length());
+        if(requestUri==null){
+            throw new ClientInvalidException("Invalid customer request");
+        }
         BaseContextHandler.setToken(null);
 
         String dnname = request.getHeader(CommonConstants.PERSON_ID_ARG);
@@ -238,7 +241,7 @@ public class AdminAccessFilter extends ZuulFilter {
      */
     private void checkUserPermission(String requestUri, List<FrontPermission> permissionInfos, RequestContext ctx, IJWTInfo user) {
         if (StringUtils.isEmpty(requestUri)) {
-            throw new ClientInvalidException("requestUri 参数异常...");
+            throw new ClientInvalidException("requestUri Parameter exception...");
         }
         permissionInfos = permissionInfos.stream()
                 .filter(new Predicate<FrontPermission>() {
