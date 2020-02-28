@@ -168,12 +168,12 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			org.setDescription("添加方式为数据导入！");
 		}
 		String orgId = UUIDUtils.generateShortUuid();
-		org.setId(org.getOrgCode());
 		org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
 		org.setPathCode(result.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
 		org.setPathName(result.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
 		org.setExternalName(org.getOrgName());
 		EntityUtils.setCreatAndUpdatInfo(org);
+		org.setId(org.getOrgCode());
 		orgList.add(org);
 		log.info("解析到一条数据:{}", JSON.toJSONString(org));
 		if (orgList.size() >= BATCH_COUNT) {
