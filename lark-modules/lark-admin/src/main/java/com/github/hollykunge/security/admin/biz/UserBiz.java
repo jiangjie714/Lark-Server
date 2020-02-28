@@ -76,6 +76,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         if (mapper.selectCount(user) > 0) {
             throw new BaseException("身份证已存在...");
         }
+        entity.setPId(entity.getPId().toLowerCase());
         String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(defaultPassword);
         entity.setPassword(password);
         EntityUtils.setCreatAndUpdatInfo(entity);
