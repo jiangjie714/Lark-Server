@@ -52,7 +52,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 
 	public String errMsg = null;
 	public ExcelListener(UserBiz userBiz,RoleUserMapMapper roleUserMapMapper
-	,PositionUserMapMapper positionUserMapMapper,UserMapper userMapper,OrgMapper orgMapper) {
+			,PositionUserMapMapper positionUserMapMapper,UserMapper userMapper,OrgMapper orgMapper) {
 		this.userBiz=userBiz;
 		this.roleUserMapMapper=roleUserMapMapper;
 		this.positionUserMapMapper=positionUserMapMapper;
@@ -102,7 +102,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			positionUserMapMapper.insertExcelUserRole(positionUserMaps);
 		}
 		if(!CollectionUtils.isEmpty(orgList)){
-				orgMapper.insertExcelOrg(orgList);
+			orgMapper.insertExcelOrg(orgList);
 		}
 		log.info("存储数据库成功！");
 	}
@@ -168,12 +168,12 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			org.setDescription("添加方式为数据导入！");
 		}
 		String orgId = UUIDUtils.generateShortUuid();
-		org.setId(org.getOrgCode());
 		org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
 		org.setPathCode(result.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
 		org.setPathName(result.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
 		org.setExternalName(org.getOrgName());
 		EntityUtils.setCreatAndUpdatInfo(org);
+		org.setId(org.getOrgCode());
 		orgList.add(org);
 		log.info("解析到一条数据:{}", JSON.toJSONString(org));
 		if (orgList.size() >= BATCH_COUNT) {
@@ -252,21 +252,21 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		roleUserMaps.add(roleUserMap);
 		//给导入的用户默认一个权限信息  建研究室内群 0
 		PositionUserMap positionUserMapRoomInner = new PositionUserMap();
-        positionUserMapRoomInner.setUserId(userId);
-        positionUserMapRoomInner.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
-        positionUserMapRoomInner.setId(UUIDUtils.generateShortUuid());
-        positionUserMaps.add(positionUserMapRoomInner);
-        //建跨研究室群
-        PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
-        positionUserMapRoomOutter.setUserId(userId);
-        positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
-        positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
-        positionUserMaps.add(positionUserMapRoomOutter);
-        //建跨厂所群
-        PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
-        positionUserMapInstitutesOutter.setUserId(userId);
-        positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
-        positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
+		positionUserMapRoomInner.setUserId(userId);
+		positionUserMapRoomInner.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
+		positionUserMapRoomInner.setId(UUIDUtils.generateShortUuid());
+		positionUserMaps.add(positionUserMapRoomInner);
+		//建跨研究室群
+		PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
+		positionUserMapRoomOutter.setUserId(userId);
+		positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSTTION_ROOM_OUTTER);
+		positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
+		positionUserMaps.add(positionUserMapRoomOutter);
+		//建跨厂所群
+		PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
+		positionUserMapInstitutesOutter.setUserId(userId);
+		positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_INSTITUTES_OUTTER);
+		positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
 		positionUserMaps.add(positionUserMapInstitutesOutter);
 		log.info("解析到一条数据:{}", JSON.toJSONString(data));
 		if (list.size() >= BATCH_COUNT) {
@@ -277,17 +277,17 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		}
 	}
 
-    /**
-     * 是否为数字
-     * @param str
-     * @return
-     */
-    public static boolean isNumeric(String str){
-        for (int i = str.length();--i>=0;){
-            if (!Character.isDigit(str.charAt(i))){
-                return false;
-            }
-        }
-        return true;
-    }
+	/**
+	 * 是否为数字
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNumeric(String str){
+		for (int i = str.length();--i>=0;){
+			if (!Character.isDigit(str.charAt(i))){
+				return false;
+			}
+		}
+		return true;
+	}
 }
