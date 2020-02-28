@@ -60,9 +60,8 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     public ObjectRestResponse<Org> add(@RequestBody Org org) {
         //添加空字段默认值 以及pathcode  pathname  值
         String id = UUIDUtils.generateShortUuid();
-        org.setId(id);
         org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
-        org.setPathCode(org.getPathCode()+id+AdminCommonConstant.ORG_PATH_CODE);
+        org.setPathCode(org.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
         org.setPathName(org.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
         org.setOrgLevel(org.getOrgLevel()+1);
         baseBiz.insertSelective(org);
@@ -84,7 +83,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         String parentPathName = org.getPathName();
         String parentPathCode = org.getPathCode();
         org.setPathName(parentPathName+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
-        org.setPathCode(parentPathCode+org.getId()+AdminCommonConstant.ORG_PATH_CODE);
+        org.setPathCode(parentPathCode+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
         Org o = new Org();
         o.setParentId(org.getId());
         List<Org> orgs = baseBiz.selectList(o);
@@ -93,7 +92,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         if(orgs.size()>0){
             for(Org or:orgs){
                 or.setPathName(org.getPathName()+or.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
-                or.setPathCode(org.getPathCode()+or.getId()+AdminCommonConstant.ORG_PATH_CODE);
+                or.setPathCode(org.getPathCode()+or.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
                 baseBiz.updateSelectiveById(or);
             }
         }
