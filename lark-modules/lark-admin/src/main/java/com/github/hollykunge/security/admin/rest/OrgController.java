@@ -83,7 +83,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         String parentPathName = org.getPathName();
         String parentPathCode = org.getPathCode();
         org.setPathName(parentPathName+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
-        org.setPathCode(parentPathCode+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
+        org.setPathCode(parentPathCode+org.getId()+AdminCommonConstant.ORG_PATH_CODE);
         Org o = new Org();
         o.setParentId(org.getId());
         List<Org> orgs = baseBiz.selectList(o);
@@ -92,7 +92,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         if(orgs.size()>0){
             for(Org or:orgs){
                 or.setPathName(org.getPathName()+or.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
-                or.setPathCode(org.getPathCode()+or.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
+                or.setPathCode(org.getPathCode()+or.getId()+AdminCommonConstant.ORG_PATH_CODE);
                 baseBiz.updateSelectiveById(or);
             }
         }
