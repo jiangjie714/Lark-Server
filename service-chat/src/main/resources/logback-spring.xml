@@ -14,6 +14,10 @@
             </pattern>
         </layout>
         -->
+        <!-- fansq 20-2-19 添加 控制台输出error级别 -->
+<!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+<!--            <level>error</level>-->
+<!--        </filter>-->
         <!-- 彩色控制台日志 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
@@ -23,7 +27,7 @@
     <!-- 专门用来存放sql语句打印的日志-->
     <appender name="sqlLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
+            <level>error</level>
             <!--
             <onMatch> ACCEPT</onMatch>
             <onMismatch> DENY</onMismatch>
@@ -41,25 +45,28 @@
         </rollingPolicy>
     </appender>
     <!-- 记录info日志-->
-    <appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+    <!-- fansq 20-2-19 注释 日志只输出error级别 -->
+    <!--<appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
-            <!--
+            &lt;!&ndash;
             <onMatch> ACCEPT</onMatch>
             <onMismatch> DENY</onMismatch>
-            -->
+            &ndash;&gt;
         </filter>
         <encoder>
             <pattern>
                 %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
         </encoder>
-        <!--滚动策略  每天一份-->
+        &lt;!&ndash;滚动策略  每天一份&ndash;&gt;
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!--路径-->
+            &lt;!&ndash;路径&ndash;&gt;
             <fileNamePattern>${self-log-path}/service-chat/logs/info/info.%d.log</fileNamePattern>
         </rollingPolicy>
-    </appender>
+    </appender>-->
+
     <!-- 记录error日志 -->
     <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -92,7 +99,7 @@
             </then>
         </if>
         <!--<appender-ref ref="consoleLog" />-->
-        <appender-ref ref="infoLog" />
+        <!--<appender-ref ref="infoLog" />-->
     </logger>
     <!-- root 的日志级别如果改成debug会有很多程序内部日志信息，所以这里写为INFO-->
     <root level="info">
@@ -102,7 +109,7 @@
             </then>
         </if>
         <!--<appender-ref ref="consoleLog" />-->
-        <appender-ref ref="infoLog" />
+        <!--<appender-ref ref="infoLog" />-->
         <appender-ref ref="errorLog" />
     </root>
 
