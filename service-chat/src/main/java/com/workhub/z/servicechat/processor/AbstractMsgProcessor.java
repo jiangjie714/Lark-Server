@@ -2,8 +2,7 @@ package com.workhub.z.servicechat.processor;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.workhub.z.servicechat.VO.MessageSecretValidVo;
-import com.workhub.z.servicechat.VO.MsgAnswerVO;
+import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.FileTypeEnum;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
@@ -27,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.workhub.z.servicechat.config.MessageType.MSG_ANSWER;
 import static com.workhub.z.servicechat.config.MessageType.SUCCESS_ANSWER;
@@ -137,6 +133,27 @@ public class AbstractMsgProcessor {
         common.nulToEmptyString(megReadLog);
         megReadLogService.insert(megReadLog);
         msgReadRelationService.deleteByConsumerAndSender(sender,receiver);
+        //通知发消息的人，接收人已经点开了消息的页面
+        //判断发消息和接收人是否是私人
+        ZzContactInf senderContact = zzContactService.queryById(sender);
+        ZzContactInf receiverContact = zzContactService.queryById(receiver);
+        if(senderContact!=null &&
+                receiverContact !=null &&
+                senderContact.getType().equals("USER") &&
+                receiverContact.getType().equals("USER")){
+            //todo 改成socket代码规范
+            SocketMsgVo msgVo = new SocketMsgVo();
+            msgVo.setCode(MessageType.SOCKET_PRIVATE_SEEMSG);
+            msgVo.setSender(receiver);
+            msgVo.setReceiver(sender);
+            SocketMsgReaderVo readerVo = new SocketMsgReaderVo();
+            readerVo.setReaderId(receiver);
+            readerVo.setSenderId(sender);
+            msgVo.setMsg(readerVo);
+            //todo SocketMsgVo加密
+            rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
+        }
+
     }
 
     /**

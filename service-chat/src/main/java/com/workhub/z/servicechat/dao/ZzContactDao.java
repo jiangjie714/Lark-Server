@@ -37,4 +37,11 @@ public interface ZzContactDao extends Mapper<ZzContactInf> {
      * @return
      */
     int deleteData(@Param("id") String id);
+
+    /**
+     * 查询单条
+     * @param id
+     * @return
+     */
+    ZzContactInf queryById(@Param("id") String id);
 }
