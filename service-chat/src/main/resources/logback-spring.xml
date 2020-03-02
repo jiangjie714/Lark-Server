@@ -15,9 +15,9 @@
         </layout>
         -->
         <!-- fansq 20-2-19 添加 控制台输出error级别 -->
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>error</level>
-        </filter>
+<!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+<!--            <level>error</level>-->
+<!--        </filter>-->
         <!-- 彩色控制台日志 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
