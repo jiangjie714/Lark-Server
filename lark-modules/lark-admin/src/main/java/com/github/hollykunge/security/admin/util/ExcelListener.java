@@ -239,6 +239,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		data.setPassword(password);
 		EntityUtils.setCreatAndUpdatInfo(data);
 		data.setId(userId);
+		data.setPId(data.getPId().toLowerCase());
 		data.setDeleted(AdminCommonConstant.USER_DELETED_DEFAULT);
 		data.setEmpCode(UUIDUtils.generateShortUuid());
 		data.setAvatar(AdminCommonConstant.USER_AVATAR);

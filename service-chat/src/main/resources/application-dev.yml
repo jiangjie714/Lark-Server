@@ -21,13 +21,26 @@ spring:
       initial-size: 5
       max-wait: 10000
     driverClassName: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@192.168.43.202:1521:arltr
+    url: jdbc:oracle:thin:@127.0.0.1:1521:yunwang
     username: workhub_iwork
+    druid:
+      max-active: 18
+      initial-size: 3
+      min-idle: 3
+      max-wait: 250000
+      time-between-eviction-runs-millis: 250000
+      min-evictable-idle-time-millis: 120000
+      validation-query: select 'x' from dual
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      max-open-prepared-statements: 20
+      filter: stat,wall,slf4j
   rabbitmq:
-    host: 192.168.43.202
+    host: 127.0.0.1
     port: 5672
-    username: hollykunge
-    password: 123456
+    username: guest
+    password: guest
     listener:
       simple:
         acknowledge-mode: manual
@@ -41,7 +54,7 @@ spring:
         max-active: 300
         max-idle: 100
         max-wait: 5000ms
-    host: 192.168.43.202
+    host: 127.0.0.01
     port: 6379
     password: 123456
     database: 3
