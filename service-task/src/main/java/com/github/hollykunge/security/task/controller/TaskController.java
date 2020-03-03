@@ -133,8 +133,8 @@ public class TaskController {
      *       return $http.post('project/task/like', {like: like, taskCode: code});
      *   }
      */
-    @RequestMapping(value = "/setTag",method = RequestMethod.POST)
-    public BaseResponse setTag(@RequestParam("like") String like,@RequestParam("taskCode") String code){
+    @RequestMapping(value = "/like",method = RequestMethod.POST)
+    public BaseResponse like(@RequestParam("like") String like,@RequestParam("taskCode") String code){
         return new BaseResponse(200,"已点赞");
     }
 
