@@ -78,8 +78,8 @@ public class TaskStagesController {
      *       return $http.post('project/task_stages/edit', data);
      *   }
      */
-    @RequestMapping(value = "/inviteMemberBatch",method = RequestMethod.POST)
-    public BaseResponse inviteMemberBatch(@RequestBody Object data){
+    @RequestMapping(value = "/edit",method = RequestMethod.POST)
+    public BaseResponse edit(@RequestBody Object data){
         return new BaseResponse(200,"修改成功！");
     }
 
