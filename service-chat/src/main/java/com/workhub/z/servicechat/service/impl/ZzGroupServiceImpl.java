@@ -8,10 +8,8 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.workhub.z.servicechat.VO.GroupUserListVo;
-import com.workhub.z.servicechat.VO.GroupVO;
-import com.workhub.z.servicechat.VO.SocketMsgVo;
-import com.workhub.z.servicechat.VO.SocketTeamBindVo;
+import com.google.common.base.Joiner;
+import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
@@ -367,66 +365,43 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             ){
                 return 0;
             }
-            //新增了人员设置参数
+           /* //新增了人员设置参数
             String addUserIds = "";
             //删除了人员设置参数
-            String removeUserIds = "";
+            String removeUserIds = "";*/
 
             List<String> userList = zzGroupDao.queryGroupUserIdListByGroupId(groupId);
-            //新增判断
-            for(GroupEditUserList userListDto:userListDtos){
-                boolean addFlg = true;//该人员是新增的
-                for(String temp: userList){
-                    if(temp.equals(userListDto.getId())){
-                        addFlg = false;
-                        break;
-                    }
-                }
-                if(addFlg){
-                    addUserIds += ","+userListDto.getId();
-                }
-
+            List<String> nowUserList =  new ArrayList<>();
+            for(GroupEditUserList nowUser :userListDtos){
+                nowUserList.add(common.nulToEmptyString(nowUser.getId()));
             }
-            //删除判断
-            for(String temp: userList){
-                boolean removeFlg = true;//该人员是删除的
-                for(GroupEditUserList userListDto:userListDtos){
-                    if(temp.equals(userListDto.getId())){
-                        removeFlg = false;
-                        break;
-                    }
-                }
-                if(removeFlg){
-                    removeUserIds += ","+temp;
-                }
-            }
+            TeamMemberChangeListVo memberChangeListVo = common.teamMemberChangeInf(userList,nowUserList);
+            List<String> addUserList = memberChangeListVo.getAddList();
+            List<String> delUserList = memberChangeListVo.getDelList();
             //处理群成员begin
             //添加
-            if(!addUserIds.equals("")){
-                addUserIds = addUserIds.substring(1);
+            if(addUserList!=null && addUserList.size()!=0){
                 List<ZzUserGroup> userGroupList = new ArrayList<>();
-                String[] userGroupStrs = addUserIds.split(",");
-                for(int i=0;i<userGroupStrs.length;i++){
+                for(int i=0;i<addUserList.size();i++){
                     ZzUserGroup zzUserGroup = new ZzUserGroup();
                     zzUserGroup.setId(RandomId.getUUID());
                     zzUserGroup.setGroupId(groupId);
-                    zzUserGroup.setUserId(userGroupStrs[i]);
+                    zzUserGroup.setUserId(addUserList.get(i));
                     userGroupList.add(zzUserGroup);
                 }
                 this.zzUserGroupDao.addMemeberList(groupId,userId,userGroupList) ;
             }
             //删除
-            if(!removeUserIds.equals("")){
-                removeUserIds = removeUserIds.substring(1);
-                this.zzUserGroupDao.deleteByGroupIdAndUserIdList(groupId,Arrays.asList(removeUserIds.split(","))) ;
+            if(delUserList!=null && delUserList.size()!=0){
+                this.zzUserGroupDao.deleteByGroupIdAndUserIdList(groupId,delUserList) ;
             }
             //处理群成员end
             ZzGroup zzGroup = zzGroupDao.queryById(groupId);
 
             //如果有新增人员 发送消息
             List msgUserList = new ArrayList();
-            if(!addUserIds.equals("")){
-                addUserInfoList = iUserService.userList(addUserIds);
+            if(addUserList!=null  && addUserList.size()!=0 ){
+                addUserInfoList = iUserService.userList(Joiner.on(",").join(addUserList));
                 String userNames = "";
                 String userIds = "";
                 for (AdminUser userInfo:addUserInfoList){
@@ -476,8 +451,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
 
             //如果有删除人员发送消息
             List msgUserList2 = new ArrayList();
-            if(!removeUserIds.equals("")){
-                removeUserInfoList = iUserService.userList(removeUserIds);
+            if(delUserList!=null && delUserList.size()!=0){
+                removeUserInfoList = iUserService.userList(Joiner.on(",").join(delUserList));
                 String userNames = "";
                 String userIds = "";
                 for (AdminUser userInfo:removeUserInfoList){
