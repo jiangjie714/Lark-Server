@@ -15,14 +15,13 @@ import java.util.List;
  */
 @Data
 @Document(collection="task_project")
-public class Project {
+public class Project extends BaseEntity{
 
     /**
-     * id 是 mongodb的 objectId
+     * 项目id
      */
-    @Id
-    private String id;
-
+    @Field("project_id")
+    private String projectId;
     /**
      * 封面
      */
@@ -51,13 +50,20 @@ public class Project {
      */
     @Field("access_control_type")
     private String accessControlType;
+//    /**
+//     *可以访问项目的权限组（白名单）
+//     * todo 内嵌文档直接保存权限组信息 list
+//     * 字段 white_list
+//     */
+//    @Field("white_list")
+//    private List<ProjectAuth> whiteList;
     /**
-     *可以访问项目的权限组（白名单）
-     * todo 内嵌文档直接保存权限组信息 list
+     *
+     * todo 内嵌文档直接保存用户信息 list
      * 字段 white_list
      */
-    @Field("white_list")
-    private List<ProjectAuth> whiteList;
+    @Field("user_list")
+    private List<ProjectMember> userList;
     /**
      *排序
      */
@@ -80,12 +86,6 @@ public class Project {
      */
     @Field("schedule")
     private Double schedule;
-    /**
-     *创建时间
-     * 字段 create_time
-     */
-    @Field("create_time")
-    private Date createTime;
     /**
      *组织id
      * 字段 organization_code

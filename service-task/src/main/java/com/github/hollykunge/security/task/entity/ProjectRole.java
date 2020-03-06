@@ -6,26 +6,34 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author fansq
  * @since 20-3-3
- * @deprecation task_project_auth 项目权限
+ * @deprecation task_project_auth 角色
  */
 @Data
 @Document(collection="task_project_auth")
-public class ProjectAuth {
+public class ProjectRole extends BaseEntity{
 
     /**
-     * id 是 mongodb的 objectId
+     *角色id
      */
-    @Id
-    private String id;
+    @Field("role_id")
+    private String roleId;
+
     /**
-     *权限名称
+     *角色名称
      */
     @Field("title")
     private String title;
+
+    /**
+     * 角色对应的权限资源列表
+     */
+    @Field("element_list")
+    private List<ProjectElement> elementList;
     /**
      *状态 1禁用 0启用
      */
@@ -42,28 +50,19 @@ public class ProjectAuth {
     @Field("desc")
     private String desc;
     /**
-     *创建人
-     */
-    @Field("create_by")
-    private String createBy;
-    /**
-     *创建时间
-     */
-    @Field("create_at")
-    private Date createAt;
-    /**
      *所属组织
      */
     @Field("organization_code")
     private String organizationCode;
     /**
+     * 所属团队
+     * fansq 后续补充字段 20-3-4
+     */
+    @Field("team_code")
+    private String teamCode;
+    /**
      *是否默认 1是 0否
      */
     @Field("is_default")
     private String isDefault;
-    /**
-     *权限类型
-     */
-    @Field("type")
-    private String type;
 }

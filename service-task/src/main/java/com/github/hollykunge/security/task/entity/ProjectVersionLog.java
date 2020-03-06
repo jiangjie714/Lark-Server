@@ -14,13 +14,14 @@ import javax.persistence.Id;
  */
 @Data
 @Document(collection = "task_project_version_log")
-public class ProjectVersionLog {
+public class ProjectVersionLog extends BaseEntity{
 
     /**
-     * id 是 mongodb的 objectId
+     *code
      */
-    @Id
-    private String id;
+    @Field("version_log_id")
+    private String versionLogId;
+
     /**
      *code
      */
@@ -46,11 +47,6 @@ public class ProjectVersionLog {
      */
     @Field("type")
     private String type;
-    /**
-     *添加时间
-     */
-    @Field("create_time")
-    private String createTime;
     /**
      *任务id
      */

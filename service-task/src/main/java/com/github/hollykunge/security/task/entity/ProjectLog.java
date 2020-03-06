@@ -14,23 +14,19 @@ import java.util.Date;
  */
 @Data
 @Document(collection = "task_project_log")
-public class ProjectLog {
+public class ProjectLog extends BaseEntity{
 
     /**
-     * id 是 mongodb的 objectId
+     * 项目日志id
      */
-    @Id
-    private String id;
+    @Field("code_id")
+    private String codeId;
+
     /**
      * code
      */
     @Field("code")
     private String code;
-    /**
-     * 操作人id
-     */
-    @Field("member_code")
-    private String memberCode;
     /**
      * 操作内容
      */
@@ -46,11 +42,6 @@ public class ProjectLog {
      */
     @Field("type")
     private String type;
-    /**
-     * 添加时间
-     */
-    @Field("create_time")
-    private Date createTime;
     /**
      * 任务id
      */

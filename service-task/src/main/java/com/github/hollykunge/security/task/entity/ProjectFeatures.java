@@ -14,13 +14,13 @@ import java.util.Date;
  */
 @Data
 @Document(collection="task_project_features")
-public class ProjectFeatures {
+public class ProjectFeatures extends BaseEntity{
 
     /**
-     * id 是 mongodb的 objectId
+     * 版本库id
      */
-    @Id
-    private String id;
+    @Field("features_id")
+    private String featuresId;
     /**
      * 编号
      */
@@ -37,20 +37,16 @@ public class ProjectFeatures {
     @Field("description")
     private String  description;
     /**
-     * 创建时间
-     */
-    @Field("create_time")
-    private Date createTime;
-    /**
-     * 更新时间
-     */
-    @Field("update_time")
-    private Date updateTime;
-    /**
      * 组织id
      */
     @Field("organization_code")
     private String organizationCode;
+    /**
+     * 团队id
+     * fansq 后续补充字段 20-3-4
+     */
+    @Field("team_code")
+    private String team_code;
     /**
      * 项目id
      */

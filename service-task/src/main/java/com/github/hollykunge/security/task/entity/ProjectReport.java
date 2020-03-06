@@ -14,13 +14,13 @@ import java.util.Date;
  */
 @Data
 @Document(collection = "task_project_report")
-public class ProjectReport {
+public class ProjectReport extends BaseEntity{
 
     /**
-     * id 是 mongodb的 objectId
+     *报表id
      */
-    @Id
-    private String id;
+    @Field("report_id")
+    private String reportId;
     /**
      *项目编号
      */
@@ -36,14 +36,4 @@ public class ProjectReport {
      */
     @Field("content")
     private String content;
-    /**
-     *创建时间
-     */
-    @Field("create_time")
-    private Date createTime;
-    /**
-     *更新时间
-     */
-    @Field("update_time")
-    private Date updateTime;
 }

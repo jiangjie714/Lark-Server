@@ -1,4 +1,4 @@
-package com.github.hollykunge.security.task.service;
+package com.github.hollykunge.security.task.service.impl;
 
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;

@@ -3,7 +3,10 @@ package com.github.hollykunge.security.task.controller;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.github.hollykunge.security.task.entity.Project;
+import com.github.hollykunge.security.task.service.ProjectService;
 import com.sun.xml.internal.rngom.parse.host.Base;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,6 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/project")
 public class ProjectController {
 
+    @Autowired
+    private ProjectService projectService;
+
+    @RequestMapping(value = "/",method = RequestMethod.POST)
+    public ObjectRestResponse<Project> createProject(@RequestBody Project project){
+        projectService.createProject(project);
+        return new ObjectRestResponse<>().data(project).msg("项目新建成功！");
+    }
 
     /**
      * 项目列表
