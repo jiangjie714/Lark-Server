@@ -215,8 +215,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
      * @since 2019-06-11
      */
     @Override
-    public String deleteGroupLogic(String groupId, String delFlg) {
-        int i=this.zzGroupDao.deleteGroupLogic( groupId, delFlg);
+    public String deleteGroupLogic(String groupId, String delFlg,String userId) {
+        int i=this.zzGroupDao.deleteGroupLogic( groupId, delFlg, userId);
         return  "1";
     }
     /**
@@ -281,6 +281,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         ZzGroup group = new ZzGroup();
         group.setGroupId(groupId);
         group.setIsdelete("1");
+        group.setUpdator(userId);
+        group.setUpdateTime(new Date());
         zzGroupDao.update(group);
         //记录群状态变动begin
         ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
@@ -349,6 +351,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
     @Override
     @Transactional(rollbackFor={RuntimeException.class, Exception.class})
     public int groupMemberEdit(GroupEditDto groupEditDto, String userId, String userName){
+
         List<AdminUser> addUserInfoList = null;
         List<AdminUser> removeUserInfoList = null;
         try {
@@ -365,11 +368,6 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             ){
                 return 0;
             }
-           /* //新增了人员设置参数
-            String addUserIds = "";
-            //删除了人员设置参数
-            String removeUserIds = "";*/
-
             List<String> userList = zzGroupDao.queryGroupUserIdListByGroupId(groupId);
             List<String> nowUserList =  new ArrayList<>();
             for(GroupEditUserList nowUser :userListDtos){

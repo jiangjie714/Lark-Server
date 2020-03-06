@@ -243,7 +243,9 @@
     <!--逻辑删除群-->
     <update id="deleteGroupLogic">
         update ZZ_GROUP
-           set ISDELETE = #{delFlg}
+           set ISDELETE = #{delFlg},
+           update_time = sysdate,
+           updator = #{userId}
         where GROUP_ID = #{groupId}
     </update>
 

@@ -12,10 +12,10 @@ import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.entity.config.UserInfo;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.GroupEditDto;
+import com.workhub.z.servicechat.model.GroupEditUserList;
 import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.ZzGroupService;
 import com.workhub.z.servicechat.service.ZzMessageInfoService;
@@ -23,7 +23,6 @@ import com.workhub.z.servicechat.service.ZzUserGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.tio.core.ChannelContext;
 
@@ -263,8 +262,9 @@ public class ZzGroupController  {
     public ObjectRestResponse deleteGroupLogic(@RequestParam("groupId")String groupId,@RequestParam("delFlg")String delFlg) {
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
         String oppRes = "1";
+        String userId=common.nulToEmptyString(request.getHeader("userId"));
         try {
-            this.zzGroupService.deleteGroupLogic(groupId,delFlg);
+            this.zzGroupService.deleteGroupLogic(groupId,delFlg,userId);
         }catch (Exception e){
             e.printStackTrace();
             oppRes = FAIL;
@@ -392,14 +392,39 @@ public class ZzGroupController  {
      */
     @PostMapping("editGroup")
     public ObjectRestResponse groupMemberEdit(@RequestBody GroupEditDto groupInfo) throws Exception{
-//    public ObjectRestResponse groupMemberEdit(@RequestBody GroupEditDto groupEditDto) throws Exception{
-//        GroupEditDto groupEditDto = JSON.parseObject(groupInfo,GroupEditDto.class);
-        String userId=common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        int res = zzGroupService.groupMemberEdit(groupInfo,userId,userName);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
         objectRestResponse.rel(true);
         objectRestResponse.msg("编辑成员成功");
+        String userId=common.nulToEmptyString(request.getHeader("userId"));
+        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
+
+        ZzGroup zzGroupNow = zzGroupService.queryById(groupInfo.getGroupId());
+        String groupOwner = zzGroupNow.getGroupOwnerId();
+        List<GroupEditUserList> userListDtos = groupInfo.getUserList();
+        boolean delGroupOwnerFlg = true;
+        if(userListDtos!=null){
+            for(GroupEditUserList nowUser :userListDtos){
+                //不能删除群主
+                if(nowUser.getId().equals(groupOwner)){
+                    delGroupOwnerFlg =false;
+                    break;
+                }
+            }
+        }
+        if(delGroupOwnerFlg){
+            objectRestResponse.rel(false);
+            objectRestResponse.msg("操作失败，不能删除群主");
+        }
+        //如果只有群主自己了，解散群
+        if(userListDtos.size()==1){
+            this.zzGroupService.dissolveGroup(groupInfo.getGroupId(),userId,userName);
+            objectRestResponse.msg("群解散成功");
+            return objectRestResponse;
+        }
+
+
+        int res = zzGroupService.groupMemberEdit(groupInfo,userId,userName);
+
         if(res==-1){
             objectRestResponse.rel(false);
             objectRestResponse.msg("操作失败，群组可能已经不存在");
