@@ -13,12 +13,14 @@ import javax.persistence.Id;
  */
 @Data
 @Document(collection = "task_project_version")
-public class ProjectVersion {
+public class ProjectVersion extends BaseEntity{
+
     /**
-     * id 是 mongodb的 objectId
+     *编号
      */
-    @Id
-    private String id;
+    @Field("version_id")
+    private String versionId;
+
     /**
      *编号
      */

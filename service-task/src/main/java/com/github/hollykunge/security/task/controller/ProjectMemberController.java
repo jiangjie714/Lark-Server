@@ -3,6 +3,8 @@ package com.github.hollykunge.security.task.controller;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.github.hollykunge.security.task.service.ProjectMemberService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -14,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/project_member")
 public class ProjectMemberController {
 
-
+    @Autowired
+    private ProjectMemberService projectMemberService;
     /**
      * 查询邀请成员
      * @param {*} keyword
@@ -29,6 +32,7 @@ public class ProjectMemberController {
         return new TableResultResponse();
     }
     /**
+     * 20-3-6 修改
      * 邀请成员
      * @param {*} memberCode
      * @param {*} code
@@ -38,8 +42,40 @@ public class ProjectMemberController {
      */
     @RequestMapping(value = "/inviteMember",method = RequestMethod.POST)
     public BaseResponse inviteMember(@RequestParam("memberCode") String memberCode,@RequestParam("projectCode") String code){
+        projectMemberService.inviteMember(memberCode,code);
         return new BaseResponse(200,"已发送邀请");
     }
+
+    /**
+     * 分配角色
+     * @param memberCode
+     * @param roleCode
+     * @param code
+     * @return
+     *
+     * {
+     * 	"_id" : ObjectId("5e629a2243dbdf0a2c1aff39"),
+     * 	"project_id" : "1",
+     * 	"name" : "fansq测试项目",
+     * 	"_class" : "com.github.hollykunge.security.task.entity.Project",
+     * 	"user_list" : [
+     *                {
+     * 			"user_id" : "1",
+     * 			"authorize" : {
+     * 				"role_id" : "1"
+     *            }
+     *        }
+     * 	]
+     * }
+     */
+    @RequestMapping(value = "/assignRoles",method = RequestMethod.POST)
+    public BaseResponse assignRoles(@RequestParam("memberCode") String memberCode,
+                                    @RequestParam("roleCode") String roleCode,
+                                    @RequestParam("projectCode") String code){
+        projectMemberService.assignRoles(memberCode,roleCode,code);
+        return new BaseResponse(200,"成员角色已分配!");
+    }
+
     /**
      * 移除成员
      * @param {*} memberCode

@@ -10,18 +10,18 @@ import java.util.Date;
 
 /**
  * @author fansq
- * @deprecation task_project_template 项目类型
+ * @deprecation task_project_template 项目模板
  * @since 20-3-3
  */
 @Data
 @Document(collection = "task_project_template")
-public class ProjectTemplate {
+public class ProjectTemplate extends BaseEntity{
 
     /**
-     * id 是 mongodb的 objectId
+     *模板id
      */
-    @Id
-    private String id;
+    @Field("template_id")
+    private String templateId;
     /**
      *类型名称
      */
@@ -37,11 +37,6 @@ public class ProjectTemplate {
      */
     @Field("sort")
     private Long sort;
-    /**
-     *创建时间
-     */
-    @Field("create_time")
-    private Date createTime;
     /**
      *编号
      */
@@ -62,8 +57,8 @@ public class ProjectTemplate {
      * todo  我感觉可以直接写对象信息 内嵌文档 减少多表关联
      * todo  例如 private User usr
      */
-    @Field("member_code")
-    private String memberCode;
+    @Field("user_information")
+    private ProjectMember userInformation;
     /**
      *系统默认
      */

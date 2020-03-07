@@ -10,7 +10,7 @@ import javax.persistence.Id;
 /**
  * @author fansq
  * @since 20-3-3
- * @deprecation task_project_auth_node 项目角色与节点绑定
+ * @deprecated task_project_auth_node 项目角色与权限
  */
 @Data
 @Document(collection="task_project_auth_node")
@@ -23,7 +23,7 @@ public class ProjectAuthNode {
     private String id;
 
     /**
-     * 角色id
+     * 角色 id
      */
     @Field("auth")
     private String auth;

@@ -1,4 +1,4 @@
-package com.github.hollykunge.security.task.service;
+package com.github.hollykunge.security.task.service.impl;
 
 import com.github.hollykunge.security.task.entity.TaskDetails;
 import javafx.concurrent.Task;

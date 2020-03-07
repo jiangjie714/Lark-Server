@@ -3,7 +3,7 @@ package com.github.hollykunge.security.task.controller;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.task.service.FileService;
+import com.github.hollykunge.security.task.service.impl.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

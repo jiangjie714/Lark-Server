@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.task.entity.TaskDetails;
-import com.github.hollykunge.security.task.service.TestService;
+import com.github.hollykunge.security.task.service.impl.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
