@@ -21,7 +21,7 @@ spring:
       initial-size: 5
       max-wait: 10000
     driverClassName: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@127.0.0.1:1521:yunwang
+    url: jdbc:oracle:thin:@127.0.0.1:1521:arltr
     username: workhub_iwork
     druid:
       max-active: 18

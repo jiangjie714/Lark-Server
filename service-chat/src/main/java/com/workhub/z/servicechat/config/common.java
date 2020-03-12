@@ -4,13 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.workhub.z.servicechat.VO.MessageSecretValidVo;
+import com.workhub.z.servicechat.VO.TeamMemberChangeListVo;
 import com.workhub.z.servicechat.entity.config.UserInfo;
 import com.workhub.z.servicechat.entity.config.ZzDictionaryWords;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tio.core.ChannelContext;
-import org.tio.core.Tio;
 
 import javax.servlet.http.HttpServletRequest;
 import java.beans.BeanInfo;
@@ -777,5 +776,46 @@ public class common {
             }
         }
         return resList;
+    }
+
+    /**
+     * 群或者会议，返回人员增加或者删除列表
+     * @param oriList 原来人员列表
+     * @param nowList 最新人员列表
+     */
+    public  static TeamMemberChangeListVo  teamMemberChangeInf(List<String> oriList,List<String> nowList){
+        TeamMemberChangeListVo vo = new TeamMemberChangeListVo();
+        List<String> addList = new ArrayList<>();
+        List<String> delList = new ArrayList<>();
+        //新增判断
+        for(String now:nowList){
+            boolean addFlg = true;//该人员是新增的
+            for(String temp: oriList){
+                if(temp.equals(now)){
+                    addFlg = false;
+                    break;
+                }
+            }
+            if(addFlg){
+                addList.add(now);
+            }
+
+        }
+        //删除判断
+        for(String temp: oriList){
+            boolean removeFlg = true;//该人员是删除的
+            for(String now : nowList){
+                if(temp.equals(now)){
+                    removeFlg = false;
+                    break;
+                }
+            }
+            if(removeFlg){
+                delList.add(temp);
+            }
+        }
+        vo.setAddList(addList);
+        vo.setDelList(delList);
+        return vo;
     }
 }

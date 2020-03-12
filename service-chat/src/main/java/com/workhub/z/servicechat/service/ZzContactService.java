@@ -35,4 +35,11 @@ public interface ZzContactService {
      * @return
      */
     int deleteData(String id);
+
+    /**
+     * 查询单条
+     * @param id
+     * @return
+     */
+    ZzContactInf queryById(String id);
 }

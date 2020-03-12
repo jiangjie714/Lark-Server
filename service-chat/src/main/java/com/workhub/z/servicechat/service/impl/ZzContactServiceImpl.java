@@ -35,4 +35,9 @@ public class ZzContactServiceImpl implements ZzContactService {
     public int deleteData(String id) {
         return this.zzContactDao.deleteData(id);
     }
+
+    @Override
+    public ZzContactInf queryById(String id) {
+        return this.zzContactDao.queryById(id);
+    }
 }

@@ -3,6 +3,7 @@ package com.workhub.z.servicechat.service.impl;
 
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
+import com.google.common.base.Joiner;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.MessageType;
@@ -208,56 +209,33 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 //会议不存在
                 return -1;
             }
-            //新增了人员设置参数
-            String addUserIds = "";
-            //删除了人员设置参数
-            String removeUserIds = "";
-
-            //新增判断
-            for(MeetUserVo now:nowUserList){
-                boolean addFlg = true;//该人员是新增的
-                for(MeetUserVo temp: beforeUserList){
-                    if(temp.getUserId().equals(now.getUserId())){
-                        addFlg = false;
-                        break;
-                    }
-                }
-                if(addFlg){
-                    addUserIds += ","+now.getUserId();
-                }
-
+            List<String> userListStr = new ArrayList<>();
+            for(MeetUserVo vo:beforeUserList){
+                userListStr.add(common.nulToEmptyString(vo.getUserId()));
             }
-            //删除判断
-            for(MeetUserVo temp: beforeUserList){
-                boolean removeFlg = true;//该人员是删除的
-                for(MeetUserVo now:nowUserList){
-                    if(temp.getUserId().equals(now.getUserId())){
-                        removeFlg = false;
-                        break;
-                    }
-                }
-                if(removeFlg){
-                    removeUserIds += ","+temp.getUserId();
-                }
+            List<String> nowUserListStr = new ArrayList<>();
+            for(MeetUserVo vo:nowUserList){
+                nowUserListStr.add(common.nulToEmptyString(vo.getUserId()));
             }
+            TeamMemberChangeListVo memberChangeListVo = common.teamMemberChangeInf(userListStr,nowUserListStr);
+            List<String> addUserList = memberChangeListVo.getAddList();
+            List<String> delUserList = memberChangeListVo.getDelList();
             //处理群成员begin
             //添加
-            if(!addUserIds.equals("")){
-                addUserIds = addUserIds.substring(1);
+            if(addUserList!=null && addUserList.size()!=0){
                 List<ZzMeetingUser> userGroupList = new ArrayList<>();
-                String[] userGroupStrs = addUserIds.split(",");
-                for(int i=0;i<userGroupStrs.length;i++){
+                for(int i=0;i<addUserList.size();i++){
                     MeetUserVo userVo = null;
                     for(int j=0;j<nowUserList.size();j++){
-                        if(userGroupStrs[i].equals(nowUserList.get(j).getUserId())){
+                        if(addUserList.get(i).equals(nowUserList.get(j).getUserId())){
                             userVo = nowUserList.get(j);
                         }
                     }
-                    AdminUser userInfo = this.iUserService.getUserInfo(userGroupStrs[i]);
+                    AdminUser userInfo = this.iUserService.getUserInfo(addUserList.get(i));
                     ZzMeetingUser zzMeetingUser = new ZzMeetingUser();
                     zzMeetingUser.setId(RandomId.getUUID());
                     zzMeetingUser.setMeetingId(meetId);
-                    zzMeetingUser.setUserId(userGroupStrs[i]);
+                    zzMeetingUser.setUserId(addUserList.get(i));
                     zzMeetingUser.setCanMsg((userVo.getCanMsg()==null||"".equals(userVo.getCanMsg()))?"1":userVo.getCanMsg());
                     zzMeetingUser.setRoleCode(userVo.getUserRoleCode());
                     zzMeetingUser.setUserName(userVo.getUserName());
@@ -272,24 +250,22 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 this.zzMeetingUserDao.addListUsers(userGroupList) ;
             }
             //删除
-            if(!removeUserIds.equals("")){
-                removeUserIds = removeUserIds.substring(1);
+            if(delUserList!=null && delUserList.size()!=0){
                 List<ZzMeetingUser> userGroupList = new ArrayList<>();
-                String[] userGroupStrs = removeUserIds.split(",");
-                for(int i=0;i<userGroupStrs.length;i++){
+                for(int i=0;i<delUserList.size();i++){
                     ZzMeetingUser zzMeetingUser = new ZzMeetingUser();
                     zzMeetingUser.setMeetingId(meetId);
-                    zzMeetingUser.setUserId(userGroupStrs[i]);
+                    zzMeetingUser.setUserId(delUserList.get(i));
                     userGroupList.add(zzMeetingUser);
                 }
                 this.zzMeetingUserDao.delListUsers(userGroupList) ;
             }
             //处理群成员end
-            MeetingDto zzMeeting = zzMeetingService.getMeetInf(meetId);
+            //MeetingDto zzMeeting = zzMeetingService.getMeetInf(meetId);
             //如果有新增人员 发送消息
             List msgUserList = new ArrayList();
-            if(!addUserIds.equals("")){
-                addUserInfoList = iUserService.userList(addUserIds);
+            if(addUserList!=null && addUserList.size()!=0){
+                addUserInfoList =  iUserService.userList(Joiner.on(",").join(addUserList));
                 String userNames = "";
                 String userIds = "";
                 for (AdminUser userInfo:addUserInfoList){
@@ -340,8 +316,8 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
 
             //如果有删除人员发送消息
             List msgUserList2 = new ArrayList();
-            if(!removeUserIds.equals("")){
-                removeUserInfoList = iUserService.userList(removeUserIds);
+            if(delUserList!=null && delUserList.size()!=0){
+                removeUserInfoList = iUserService.userList(Joiner.on(",").join(delUserList));
                 String userNames = "";
                 String userIds = "";
                 for (AdminUser userInfo:removeUserInfoList){

@@ -145,4 +145,6 @@ public class MessageType {
     public static final String SOCKET_MEET_CHANGE = "400000000000000";
     /**系统通知**/
     public static final String SOCKET_SYSTEM = "500000000000000";
+    /**socket通知发送人，接收人点开了和他聊天的界面,看见了所有消息**/
+    public static final String SOCKET_PRIVATE_SEEMSG = "200000000000000001";
 }

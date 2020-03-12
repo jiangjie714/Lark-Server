@@ -3,7 +3,7 @@
 <mapper namespace="com.workhub.z.servicechat.dao.ZzContactDao">
     <resultMap type="com.workhub.z.servicechat.entity.ZzContactInf" id="zzContactInf">
         <result property="id" column="id" jdbcType="VARCHAR"/>
-        <result property="name" column="meet_name" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="avartar" column="avartar" jdbcType="VARCHAR"/>
         <result property="levels" column="levels" jdbcType="VARCHAR"/>
         <result property="type" column="type" jdbcType="VARCHAR"/>
@@ -18,7 +18,12 @@
         where 1=1
         and id = #{id}
     </select>
-
+    <select id="queryById" resultMap="zzContactInf">
+        select id,name,avartar,levels,type,pid,member_num,group_owner
+        from ZZ_CONTACT_INF
+        where 1=1
+        and id = #{id}
+    </select>
     <update id="add" >
         merge into ZZ_CONTACT_INF a using (select #{params.pid} as id from dual  ) c on (c.id =  #{params.id})
         when not matched then

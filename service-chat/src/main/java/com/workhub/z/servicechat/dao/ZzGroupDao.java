@@ -85,7 +85,7 @@ public interface ZzGroupDao extends Mapper<ZzGroup> {
      * @author zhuqz
      * @since 2019-06-11
      */
-    int deleteGroupLogic(@Param("groupId") String groupId, @Param("delFlg") String delFlg);
+    int deleteGroupLogic(@Param("groupId") String groupId, @Param("delFlg") String delFlg,@Param("userId")String userId);
 
     /**
      * 群组信息监控
