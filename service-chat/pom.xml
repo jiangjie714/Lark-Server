@@ -41,11 +41,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.hollykunge</groupId>
-            <artifactId>lark-admin-server-api</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
         <!-- oracle驱动 -->
         <dependency>
             <groupId>com.oracle</groupId>
@@ -56,11 +51,6 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
             <version>1.r.57.r3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.t-io</groupId>
-            <artifactId>tio-websocket-server</artifactId>
-            <version>3.3.3.v20190620-RELEASE</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -107,6 +97,7 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <!-- will be automatically pulled in by Maven's transitivity rules -->
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
@@ -148,6 +139,11 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.1.4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

@@ -4,14 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.workhub.z.servicechat.VO.MessageSecretValidVo;
+import com.workhub.z.servicechat.VO.TeamMemberChangeListVo;
 import com.workhub.z.servicechat.entity.config.UserInfo;
 import com.workhub.z.servicechat.entity.config.ZzDictionaryWords;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
-import com.workhub.z.servicechat.server.IworkWebsocketStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tio.core.ChannelContext;
-import org.tio.core.Tio;
 
 import javax.servlet.http.HttpServletRequest;
 import java.beans.BeanInfo;
@@ -216,7 +214,7 @@ public class common {
     *@Author: 忠
     *@date: 2019/5/30
     */
-    public static void checkUserOnline(ChannelContext channelContext,String userId){
+    /*public static void checkUserOnline(ChannelContext channelContext,String userId){
         ChannelContext previousChannelContext = Tio.getChannelContextByBsId(channelContext.groupContext, userId);
         if (!channelContext.equals(previousChannelContext) && previousChannelContext != null) {
             previousChannelContext.setAttribute("kickOut", true); // 踢掉的标志
@@ -225,7 +223,7 @@ public class common {
             System.out.println("踢掉 {} 已经登录的连接 {}"+ userId + previousChannelContext.getClientNode());
         }
 
-    }
+    }*/
     /**
      *@Description: 判断msg数据体是否正确
      *@Param: string 接收的消息
@@ -604,6 +602,19 @@ public class common {
         }
         return  null;
     }
+    //objec转字符串 null-> "0"
+    public static String nulToZeroString(Object object){
+        try{
+            if(object==null){
+                return "0";
+            }
+            return  object.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error(getExceptionMessage(e));
+        }
+        return  null;
+    }
     //判断群组织是否跨越场所，参数是所有的成员列表,true跨越场所 false不跨越
     public static boolean  isGroupCross(List<UserInfo> userInfoList){
         boolean iscross = false;
@@ -695,16 +706,6 @@ public class common {
         }
         return ip;
     }
-    /**判断用户是否在线 1在线 0不在线*/
-    public static String isUserOnSocket(String userId){
-        ChannelContext channelContext = Tio.getChannelContextByBsId(IworkWebsocketStarter.getWsServerStarter().getServerGroupContext(),userId);
-        if (channelContext != null) {
-            return "1";
-        }
-        else {
-            return "0";
-        }
-    }
 
     /**
      * getter setter 的object 进行复制 主要针对 dto 转 vo 通用部分
@@ -775,5 +776,46 @@ public class common {
             }
         }
         return resList;
+    }
+
+    /**
+     * 群或者会议，返回人员增加或者删除列表
+     * @param oriList 原来人员列表
+     * @param nowList 最新人员列表
+     */
+    public  static TeamMemberChangeListVo  teamMemberChangeInf(List<String> oriList,List<String> nowList){
+        TeamMemberChangeListVo vo = new TeamMemberChangeListVo();
+        List<String> addList = new ArrayList<>();
+        List<String> delList = new ArrayList<>();
+        //新增判断
+        for(String now:nowList){
+            boolean addFlg = true;//该人员是新增的
+            for(String temp: oriList){
+                if(temp.equals(now)){
+                    addFlg = false;
+                    break;
+                }
+            }
+            if(addFlg){
+                addList.add(now);
+            }
+
+        }
+        //删除判断
+        for(String temp: oriList){
+            boolean removeFlg = true;//该人员是删除的
+            for(String now : nowList){
+                if(temp.equals(now)){
+                    removeFlg = false;
+                    break;
+                }
+            }
+            if(removeFlg){
+                delList.add(temp);
+            }
+        }
+        vo.setAddList(addList);
+        vo.setDelList(delList);
+        return vo;
     }
 }

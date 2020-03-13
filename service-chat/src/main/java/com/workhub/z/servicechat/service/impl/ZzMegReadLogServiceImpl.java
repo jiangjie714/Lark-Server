@@ -6,10 +6,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.workhub.z.servicechat.VO.MegReadLogVO;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzGroupDao;
+import com.workhub.z.servicechat.dao.ZzGroupDao;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
-import com.workhub.z.servicechat.dao.message.ZzMegReadLogDao;
+import com.workhub.z.servicechat.dao.ZzMegReadLogDao;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.service.ZzMegReadLogService;
 import org.slf4j.Logger;
@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * (ZzMegReadLog)表服务实现类
@@ -120,8 +118,6 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
             megReadLogVO.setId(data.getId());
             megReadLogVO.setReadtime(data.getReadtime());
             megReadLogVO.setSender(data.getSender());
-            Map p = new HashMap<>(16);
-            p.put("userid",data.getSender());
             AdminUser userInfo = userService.getUserInfo(data.getSender());
             if (userInfo.getId() != null){
                 megReadLogVO.setSenderName(userInfo.getName());
@@ -131,8 +127,6 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
                 megReadLogVO.setSenderName(groupinfo.getGroupName());
                 megReadLogVO.setSenderSN(groupinfo.getGroupId());
             }
-            Map p2 = new HashMap<>(16);
-            p2.put("userid",data.getReviser());
             AdminUser userinfo1 = userService.getUserInfo(data.getReviser());
             megReadLogVO.setReviser(data.getReviser());
             megReadLogVO.setReviserName(userinfo1.getName());

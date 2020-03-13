@@ -3,6 +3,7 @@ package com.github.hollykunge.security.gate.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
@@ -139,13 +140,13 @@ public class GateLogUtils {
 
     private String checkFunctionParam(RequestContext ctx) {
         if (ctx == null) {
-            throw new BaseException("request must be not null...");
+            throw new ClientInvalidException("request must be not null...");
         }
         String requestURI = ctx.getRequest().getRequestURI();
         requestURI = requestURI.substring(zuulPrefix.length() + 1, requestURI.length());
         requestURI = requestURI.substring(requestURI.indexOf("/"), requestURI.length());
         if (StringUtils.isEmpty(requestURI)) {
-            throw new BaseException("request no request uri .. ");
+            throw new ClientInvalidException("request no request uri .. ");
         }
         return requestURI;
     }

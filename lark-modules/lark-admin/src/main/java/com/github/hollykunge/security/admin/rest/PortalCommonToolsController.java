@@ -102,11 +102,18 @@ public class PortalCommonToolsController {
                 List<User> userList = userMapper.selectByExample(example);
                 hashMap.put("user",userList);
             }else {
-                List<OrgDTO> orgDTOS = orgMapper.findOrg(orgCode);
-                System.out.println(orgDTOS);
-                List<String> os = new ArrayList<String>();
-                this.findOrdId(orgDTOS,os);
-                List<User> userList = userMapper.findUserByOrgCode(os);
+//                List<OrgDTO> orgDTOS = orgMapper.findOrg(orgCode);
+//                System.out.println(orgDTOS);
+//                List<String> os = new ArrayList<String>();
+//                this.findOrdId(orgDTOS,os);
+//                List<User> userList = userMapper.findUserByOrgCode(os);
+//                if(userList.size()>0){
+//                    hashMap.put("user", userList);
+//                }
+                Example example = new Example(User.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andLike("orgCode",orgCode);
+                List<User> userList = userMapper.selectByExample(example);
                 if(userList.size()>0){
                     hashMap.put("user", userList);
                 }

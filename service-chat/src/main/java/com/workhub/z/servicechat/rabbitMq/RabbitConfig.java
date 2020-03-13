@@ -50,12 +50,12 @@ public class RabbitConfig {
     public static final String EXCHANGE_CONTACT = "exchange_contact";
 
     public static final String EXCHANGE_SYSMSG = "exchange_sysmsg";
+    /**socket消息队列*/
+    public static final String EXCHANGE_SOCKET = "exchange_socket";
     //public static final String EXCHANGE_C = "my-mq-exchange_C";
 
 
     public static final String QUEUE_CONTACT = "queue_contact";
-    //群消息队列
-    public static final String QUEUE_GROUPEDIT = "queue_groupedit";
 
     public static final String QUEUE_SYSMSG = "queue_sysmsg";
     /**群(会议)变更消息队列*/
@@ -65,8 +65,6 @@ public class RabbitConfig {
     //public static final String QUEUE_C = "QUEUE_C";
 
     public static final String ROUTINGKEY_CONTACT = "routingkey_contact";
-    //群信息编辑队列路由
-    public static final String ROUTINGKEY_GROUPEDIT = "routingkey_groupedit";
 
     //群(会议)变更消息队列路由
     public static final String ROUTINGKEY_GROUPCHANGE = "routingkey_groupchange";
@@ -76,6 +74,28 @@ public class RabbitConfig {
     public static final String ROUTINGKEY_SYSMSG = "routingKey_sysmsg";
     //public static final String ROUTINGKEY_C = "spring-boot-routingKey_C";
 
+    /**socket消息队列 begin*/
+    /*群体消息（群，会议，系统通知等等）*/
+    public static final String ROUTINGKEY_SOCKET_TEAM_MSG = "routingkey_socket_team_msg";
+    public static final String QUEUE_SOCKET_TEAM_MSG  = "queue_socket_team_msg";
+    /*消息应答*/
+    public static final String ROUTINGKEY_SOCKET_MSG_ANSWER = "routingkey_socket_msg_answer";
+    public static final String QUEUE_SOCKET_MSG_ANSWER  = "queue_socket_msg_answer";
+    /*私人消息*/
+    public static final String ROUTINGKEY_SOCKET_PRIVATE_MSG = "routingkey_socket_private_msg";
+    public static final String QUEUE_SOCKET_PRIVATE_MSG  = "queue_socket_private_msg";
+    /*群体消息绑定（把单个人的id绑定到某个群体，如群、会议等等）*/
+    public static final String ROUTINGKEY_SOCKET_TEAM_BIND = "routingkey_socket_team_bind";
+    public static final String QUEUE_SOCKET_TEAM_BIND  = "queue_socket_team_bind";
+    /*群体消息绑定（把单个人的id绑定到某些群体，如群、会议等等）*/
+    public static final String ROUTINGKEY_SOCKET_TEAMLIST_BIND = "routingkey_socket_teamlist_bind";
+    public static final String QUEUE_SOCKET_TEAMLIST_BIND  = "queue_socket_teamlist_bind";
+    /*群体消息解除绑定（把单个人的id绑定到某个群体，如群、会议等等）*/
+    public static final String ROUTINGKEY_SOCKET_TEAM_UNBIND = "routingkey_socket_team_unbind";
+    public static final String QUEUE_SOCKET_TEAM_UNBIND  = "queue_socket_team_unbind";
+    /**socket消息队列 end*/
+    /*来自socket的通知：研讨服务进行人员会议、群组绑定*/
+    public static final String QUEUE_CHAT_USER_TEAM_BIND  = "queue_chat_user_team_bind";
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory(host,port);
@@ -145,17 +165,6 @@ public class RabbitConfig {
     public Binding Msgbinding() {
         return BindingBuilder.bind(queueMsg()).to(MsgExchange()).with(RabbitConfig.ROUTINGKEY_SYSMSG );
     }
-   //群编辑队列
-    @Bean
-    public Queue queueGroupEdit() {
-        return new Queue(QUEUE_GROUPEDIT, true); //队列持久
-    }
-    //群编辑绑定队列
-    @Bean
-    public Binding groupEditbinding() {
-        return BindingBuilder.bind(queueGroupEdit()).to(defaultExchange()).with(RabbitConfig.ROUTINGKEY_GROUPEDIT );
-    }
-
     /**群（会议）变更队列 true 表示队列持久*/
     @Bean
     public Queue queueGroupChange() {
@@ -176,4 +185,64 @@ public class RabbitConfig {
     public Binding groupApprovebinding() {
         return BindingBuilder.bind(queueGroupApprove()).to(defaultExchange()).with(RabbitConfig.ROUTINGKEY_GROUPAPPROVELOG );
     }
+    /** sokcet消息 begin**/
+    @Bean
+    public DirectExchange SocketExchange() {
+        return new DirectExchange(EXCHANGE_SOCKET );
+    }
+    /*群体（群、会议、系统通知）消息*/
+    @Bean
+    public Queue socketTeamMsg() {
+        return new Queue(QUEUE_SOCKET_TEAM_MSG , true); //队列持久
+    }
+    @Bean
+    public Binding socketTeamMsgBinding() {
+        return BindingBuilder.bind(socketTeamMsg()).to(SocketExchange()).with(RabbitConfig.ROUTINGKEY_SOCKET_TEAM_MSG );
+    }
+    /*消息应答*/
+    @Bean
+    public Queue socketMsgAnswer() {
+        return new Queue(QUEUE_SOCKET_MSG_ANSWER , true); //队列持久
+    }
+    @Bean
+    public Binding socketMsgAnswerBinding() {
+        return BindingBuilder.bind(socketMsgAnswer()).to(SocketExchange()).with(RabbitConfig.ROUTINGKEY_SOCKET_MSG_ANSWER );
+    }
+    /*私聊消息*/
+    @Bean
+    public Queue socketPrivateMsg() {
+        return new Queue(QUEUE_SOCKET_PRIVATE_MSG , true); //队列持久
+    }
+    @Bean
+    public Binding socketPrivateMsgBinding() {
+        return BindingBuilder.bind(socketPrivateMsg()).to(SocketExchange()).with(RabbitConfig.ROUTINGKEY_SOCKET_PRIVATE_MSG );
+    }
+    /*群体绑定消息*/
+    @Bean
+    public Queue socketTeamListBindMsg() {
+        return new Queue(QUEUE_SOCKET_TEAMLIST_BIND, true); //队列持久
+    }
+    @Bean
+    public Binding socketTeamListBindBinding() {
+        return BindingBuilder.bind(socketTeamListBindMsg()).to(SocketExchange()).with(RabbitConfig.ROUTINGKEY_SOCKET_TEAMLIST_BIND );
+    }
+    /*群体绑定消息*/
+    @Bean
+    public Queue socketTeamBindMsg() {
+        return new Queue(QUEUE_SOCKET_TEAM_BIND, true); //队列持久
+    }
+    @Bean
+    public Binding socketTeamBindBinding() {
+        return BindingBuilder.bind(socketTeamBindMsg()).to(SocketExchange()).with(RabbitConfig.ROUTINGKEY_SOCKET_TEAM_BIND );
+    }
+    /*群体解除绑定消息*/
+    @Bean
+    public Queue socketTeamUnBindMsg() {
+        return new Queue(QUEUE_SOCKET_TEAM_UNBIND, true); //队列持久
+    }
+    @Bean
+    public Binding socketTeamUnBindBinding() {
+        return BindingBuilder.bind(socketTeamUnBindMsg()).to(SocketExchange()).with(RabbitConfig.ROUTINGKEY_SOCKET_TEAM_UNBIND );
+    }
+    /** sokcet消息 end**/
 }

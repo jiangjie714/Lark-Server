@@ -37,7 +37,7 @@
         <module>service-cron</module>
         <!--<module>service-unitproject</module>-->
         <!--   <module>service-tools</module>-->
-        <!--   <module>service-task</module>-->
+        <module>service-task</module>
     </modules>
     <packaging>pom</packaging>
     <developers>
