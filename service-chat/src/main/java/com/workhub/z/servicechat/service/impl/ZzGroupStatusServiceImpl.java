@@ -6,7 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupStatusVo;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.ZzGroupStatusDao;
+import com.workhub.z.servicechat.dao.group.ZzGroupStatusDao;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.model.GroupStatusDto;
 import com.workhub.z.servicechat.service.ZzGroupStatusService;

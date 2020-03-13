@@ -33,6 +33,7 @@ public class OperateLogAspect {
     @Pointcut("execution(public * com.workhub.z.servicechat.service.impl..*.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzLogServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzPrivateMsgServiceImpl.*(..)) " +
+            "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupMsgServiceImpl.*(..))" +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMessageInfoServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupStatusServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMegReadLogServiceImpl.*(..)) " +

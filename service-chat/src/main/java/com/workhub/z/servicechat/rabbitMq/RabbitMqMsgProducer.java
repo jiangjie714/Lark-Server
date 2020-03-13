@@ -33,6 +33,11 @@ public class RabbitMqMsgProducer  implements RabbitTemplate.ReturnCallback, Rabb
         rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_CONTACT, RabbitConfig.ROUTINGKEY_CONTACT, obj, correlationId);
     }
 
+    //群组信息变更发送到MQ上
+    public void sendMsgEditGroup(Object obj) {
+        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
+        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_CONTACT, RabbitConfig.ROUTINGKEY_GROUPEDIT, obj, correlationId);
+    }
     //群变动消息记录
     public void sendMsgGroupChange(Object obj) {
         CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
@@ -43,40 +48,6 @@ public class RabbitMqMsgProducer  implements RabbitTemplate.ReturnCallback, Rabb
         CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
         rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_CONTACT, RabbitConfig.ROUTINGKEY_GROUPAPPROVELOG, obj, correlationId);
     }
-
-    /**socket 消息begin*/
-    /*群体（群 会议 系统通知）消息*/
-    public void sendSocketTeamMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_MSG, obj, correlationId);
-    }
-    /*消息应答*/
-    public void sendSocketMsgAnswer(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_MSG_ANSWER, obj, correlationId);
-    }
-    /*私聊消息*/
-    public void sendSocketPrivateMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_PRIVATE_MSG, obj, correlationId);
-    }
-    /*绑定群体消息*/
-    public void sendSocketTeamBindMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_BIND, obj, correlationId);
-    }
-    /*绑定群体列表消息*/
-    public void sendSocketTeamListBindMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAMLIST_BIND, obj, correlationId);
-    }
-    /*解除绑定群体消息*/
-    public void sendSocketTeamUnBindMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_UNBIND, obj, correlationId);
-    }
-    /**socket 消息end*/
-
     /**
      * 消息是否到交换机中都有callback
      */

@@ -16,7 +16,7 @@ public interface StatisticsDao {
      * @param isCross 跨场所
      * @return
      */
-    List<StatisticsGroupVo> groupStatistics(@Param("groupName") String groupName,@Param("isCross") String isCross);
+    List<StatisticsGroupVo> groupStatistics(@Param("groupName") String groupName, @Param("isCross") String isCross);
 
     /**
      * 消息统计
