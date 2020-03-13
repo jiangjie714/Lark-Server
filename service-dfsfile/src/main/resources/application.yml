@@ -2,7 +2,7 @@ spring:
   application:
       name: service-dfsfile
   datasource:
-    url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
+    url: jdbc:oracle:thin:@${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}:workhub
     username: lark_file
     password: 123456
     # 使用druid数据源
@@ -89,7 +89,7 @@ redis:
       maxIdle: 100
       maxWait: 10000
   #需要修改地址
-  host: 10.11.24.135
+  host: localhost
   port:  6379
   password: 123456
   timeout: 20000

@@ -13,7 +13,7 @@ spring:
     #需要修改地址
     #        host: 10.11.24.5
     #host: 10.11.24.135  47.99.247.83
-    host: 10.11.24.135
+    host: localhost
     jedis:
       pool:
         max-active: 200
@@ -110,8 +110,8 @@ zuul:
 ribbon:
   eureka:
     enabled: true
-  ReadTimeout: 30000
-  ConnectTimeout: 30000
+  ReadTimeout: 1800000
+  ConnectTimeout: 1800000
   MaxAutoRetries: 0
   MaxAutoRetriesNextServer: 1
   OkToRetryOnAllOperations: false

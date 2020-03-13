@@ -189,7 +189,8 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	 */
 	public void importUserExcel(User data,int rowIndex){
 		String userId = UUIDUtils.generateShortUuid();
-		String pId = data.getPId();
+		String pId = data.getPId().toLowerCase();
+
 		if(StringUtils.isEmpty(data.getName())){
 			throw new BaseException("第"+rowIndex+"行，姓名不可为空！");
 		}
@@ -222,6 +223,9 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		Org org = new Org();
 		org.setId(data.getOrgCode());
 		Org orgName = orgMapper.selectOne(org);
+		if(orgName == null) {
+			throw new BaseException("第"+rowIndex+"行，组织机构不存在!");
+		}
 		if(!StringUtils.equals(orgName.getOrgName(),data.getOrgName())){
 			throw new BaseException("第"+rowIndex+"行，组织机构编码和组织机构名称不匹配!");
 		}
@@ -239,7 +243,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		data.setPassword(password);
 		EntityUtils.setCreatAndUpdatInfo(data);
 		data.setId(userId);
-		data.setPId(data.getPId().toLowerCase());
+		data.setPId(pId.toLowerCase());
 		data.setDeleted(AdminCommonConstant.USER_DELETED_DEFAULT);
 		data.setEmpCode(UUIDUtils.generateShortUuid());
 		data.setAvatar(AdminCommonConstant.USER_AVATAR);
@@ -253,21 +257,23 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		roleUserMaps.add(roleUserMap);
 		//给导入的用户默认一个权限信息  建研究室内群 0
 		PositionUserMap positionUserMapRoomInner = new PositionUserMap();
-		positionUserMapRoomInner.setUserId(userId);
-		positionUserMapRoomInner.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
-		positionUserMapRoomInner.setId(UUIDUtils.generateShortUuid());
-		positionUserMaps.add(positionUserMapRoomInner);
-		//建跨研究室群
-		PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
-		positionUserMapRoomOutter.setUserId(userId);
-		positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSTTION_ROOM_OUTTER);
-		positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
-		positionUserMaps.add(positionUserMapRoomOutter);
-		//建跨厂所群
-		PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
-		positionUserMapInstitutesOutter.setUserId(userId);
-		positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_INSTITUTES_OUTTER);
-		positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
+
+        positionUserMapRoomInner.setUserId(userId);
+        positionUserMapRoomInner.setPositionId(AdminCommonConstant.USER_POSITION_DEFAULT);
+        positionUserMapRoomInner.setId(UUIDUtils.generateShortUuid());
+        positionUserMaps.add(positionUserMapRoomInner);
+        //建跨研究室群
+        PositionUserMap positionUserMapRoomOutter = new PositionUserMap();
+        positionUserMapRoomOutter.setUserId(userId);
+        positionUserMapRoomOutter.setPositionId(AdminCommonConstant.USER_POSTTION_ROOM_OUTTER);
+        positionUserMapRoomOutter.setId(UUIDUtils.generateShortUuid());
+        positionUserMaps.add(positionUserMapRoomOutter);
+        //建跨厂所群
+        PositionUserMap positionUserMapInstitutesOutter = new PositionUserMap();
+        positionUserMapInstitutesOutter.setUserId(userId);
+        positionUserMapInstitutesOutter.setPositionId(AdminCommonConstant.USER_POSITION_INSTITUTES_OUTTER);
+        positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
+
 		positionUserMaps.add(positionUserMapInstitutesOutter);
 		log.info("解析到一条数据:{}", JSON.toJSONString(data));
 		if (list.size() >= BATCH_COUNT) {

@@ -129,6 +129,7 @@ public class UserController extends BaseController<UserBiz, User> {
     public ObjectRestResponse<User> updateUser(@RequestBody User entity,
                                                String roles,
                                                String positions) {
+        entity.setPId(entity.getPId().toLowerCase());
         baseBiz.updateSelectiveById(entity);
         //添加用户角色信息
         if (!StringUtils.isEmpty(roles)) {
