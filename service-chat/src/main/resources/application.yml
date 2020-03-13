@@ -1,5 +1,6 @@
 server:
   port: 8089
+
 eureka:
   client:
     serviceUrl:
@@ -13,30 +14,17 @@ spring:
   application:
     name: service-chat
   datasource:
-    password: workhub_iwork
     tomcat:
       max-idle: 10
       min-idle: 5
       initial-size: 5
       max-wait: 10000
     driverClassName: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@192.168.43.202:1521:arltr
+    url: jdbc:oracle:thin:@10.11.24.136:1521:arltr
     username: workhub_iwork
-    druid:
-      max-active: 18
-      initial-size: 3
-      min-idle: 3
-      max-wait: 250000
-      time-between-eviction-runs-millis: 250000
-      min-evictable-idle-time-millis: 120000
-      validation-query: select 'x' from dual
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      max-open-prepared-statements: 20
-      filter: stat,wall,slf4j
+    password: workhub_iwork
   rabbitmq:
-    host: 192.168.43.202
+    host: 10.11.24.135
     port: 5672
     username: hollykunge
     password: 123456
@@ -53,13 +41,11 @@ spring:
         max-active: 300
         max-idle: 100
         max-wait: 5000ms
-    host: 192.168.43.202
+    host: 10.11.24.135
     port: 6379
     password: 123456
     database: 3
     timeout: 5000ms
-  profiles:
-    active: dev
 
 
 #处理无用附件的定时任务时间
@@ -71,7 +57,10 @@ aceNoticeRabbitMqQueueName: noticeToChatService
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 #是否显示控制台输出，1显示0不显示，生产环境配置0即可
-showConsoleInf: 1
+showConsoleInf: 0
+#处理历史消息的定时任务时间
+#每月凌晨一点
+deal_his_msg_job_cron: 0 0 1 1 * ?
 #运行日志
 #logging:
 #  file: ${user.home}/logs/chat.log
@@ -106,7 +95,6 @@ auth:
 #    module: service-chat
 #用户上传文件大小限制（单位M）
 file_size_max: 500
-file_save_path_group: C:/file-management-center/upload/
 #日志存放目录
 self-log-path: C:/lark_log
 #创建群、会议、附件下载是否需要审批 标志位定时读取的表达式

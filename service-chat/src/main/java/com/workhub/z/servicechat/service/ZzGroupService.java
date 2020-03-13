@@ -82,7 +82,7 @@ public interface ZzGroupService {
      * @author zhuqz
      * @since 2019-06-11
      */
-    String deleteGroupLogic(String groupId, String delFlg,String userId) throws Exception;
+    String deleteGroupLogic(String groupId, String delFlg) throws Exception;
     //获取群成员列表
     String getGroupUserList(String groupId) throws Exception;
     //群组信息监控

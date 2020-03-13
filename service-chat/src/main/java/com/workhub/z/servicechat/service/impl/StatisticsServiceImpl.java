@@ -29,7 +29,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return
      */
     @Override
-    public TableResultResponse<StatisticsGroupVo> groupStatistics(int page,int size,String groupName, String isCross) {
+    public TableResultResponse<StatisticsGroupVo> groupStatistics(int page, int size, String groupName, String isCross) {
         PageHelper.startPage(page, size);
         List<StatisticsGroupVo> dataList =this.statisticsDao.groupStatistics(groupName,isCross);
         PageInfo<StatisticsGroupVo> pageInfo = new PageInfo<>(dataList);

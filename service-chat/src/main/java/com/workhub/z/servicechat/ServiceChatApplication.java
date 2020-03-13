@@ -4,6 +4,7 @@ package com.workhub.z.servicechat;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.redis.RedisUtil;
+import com.workhub.z.servicechat.server.IworkWebsocketStarter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +44,15 @@ public class ServiceChatApplication {
         if(restartServiceClearCache){
             //清理缓存
             try {
-                //清理用户群组缓存
+                //1清理用户在线离线缓存
+                RedisUtil.removeKeys(CacheConst.userOnlineCahce);
+                //2清理在线用户列表缓存
+                RedisUtil.removeKeys(CacheConst.USER_ONLINE_LIST);
+                //3清理用户信息缓存
+                //RedisUtil.removeKeys(CacheConst.USER_INF+":");
+                //4清理用户群组缓存
                 RedisUtil.removeKeys(CacheConst.userGroupIds+":");
-                //清理用户会议缓存
+                //5清理用户会议缓存
                 RedisUtil.removeKeys(CacheConst.userMeetIds+":");
                 //6清理涉密词汇表
                 RedisUtil.removeKeys(CacheConst.SECRET_WORDSCACHE);
@@ -54,7 +61,9 @@ public class ServiceChatApplication {
                 logger.error(common.getExceptionMessage(e));
             }
         }
+//        初始化网络
+        IworkWebsocketStarter iworkWebsocketStarter = new IworkWebsocketStarter();
+        iworkWebsocketStarter.run();
     }
 
 }
-

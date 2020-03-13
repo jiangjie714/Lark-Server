@@ -17,7 +17,7 @@ public interface StatisticsService {
      * @param isCross 跨场所
      * @return
      */
-     TableResultResponse<StatisticsGroupVo> groupStatistics(int page,int size,String groupName, String isCross) ;
+     TableResultResponse<StatisticsGroupVo> groupStatistics(int page, int size, String groupName, String isCross) ;
 
     /**
      * 消息统计

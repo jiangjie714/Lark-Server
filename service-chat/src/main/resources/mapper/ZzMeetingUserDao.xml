@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.ZzMeetingUserDao">
+<mapper namespace="com.workhub.z.servicechat.dao.meeting.ZzMeetingUserDao">
     <resultMap type="com.workhub.z.servicechat.VO.UserCurrentDayMeetJobVo" id="userCurrentDayMeetJobVo">
         <result property="meetId" column="id" jdbcType="VARCHAR"/>
         <result property="meetName" column="meet_name" jdbcType="VARCHAR"/>

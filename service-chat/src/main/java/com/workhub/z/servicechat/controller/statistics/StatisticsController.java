@@ -31,10 +31,10 @@ public class StatisticsController {
      * @return
      */
     @GetMapping("groupStatistics")
-    public  TableResultResponse<StatisticsGroupVo> groupStatistics(@RequestParam(value = "page",required=false,defaultValue = "1") int page,
-                                                                   @RequestParam(value = "size",required=false,defaultValue = "10") int size,
-                                                                   @RequestParam(value = "groupName",required=false,defaultValue = "") String groupName,
-                                                                   @RequestParam(value = "isCross",required=false,defaultValue = "") String isCross){
+    public TableResultResponse<StatisticsGroupVo> groupStatistics(@RequestParam(value = "page",required=false,defaultValue = "1") int page,
+                                                                  @RequestParam(value = "size",required=false,defaultValue = "10") int size,
+                                                                  @RequestParam(value = "groupName",required=false,defaultValue = "") String groupName,
+                                                                  @RequestParam(value = "isCross",required=false,defaultValue = "") String isCross){
         return this.statisticsService.groupStatistics(page,size,groupName,isCross);
     }
 
