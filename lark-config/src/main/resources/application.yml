@@ -1,0 +1,44 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://peer1:8761/eureka,http://peer2:8762/eureka
+server:
+  port: 8888
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      fail-fast: true
+      label: master
+      retry:
+        initial-interval: 1000
+        max-attempts: 6
+        max-interval: 2000
+        multiplier: 1.1
+      server:
+        git:
+          force-pull: true
+          password: 123456
+          searchPaths: respo
+          timeout: 5000
+          uri: http://10.11.24.136:3000/root/ace_config
+          username: root
+        health:
+          repositories:
+            check:
+              label: master
+              name: address
+              profiles: dev
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:10.11.24.135}
+    port:  ${RABBIT_MQ_PORT:5672}
+    username: hollykunge
+    password: 123456
