@@ -3,6 +3,8 @@ package com.github.hollykunge.security.admin.util;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
@@ -190,15 +192,24 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	public void importUserExcel(User data,int rowIndex){
 		String userId = UUIDUtils.generateShortUuid();
 		String pId = data.getPId().toLowerCase();
-
-		if(StringUtils.isEmpty(data.getName())){
+		String name = data.getName();
+		if(StringUtils.isEmpty(name)){
 			throw new BaseException("第"+rowIndex+"行，姓名不可为空！");
 		}
-		if (SpecialStrUtils.check(data.getName())) {
+		if (name.length()>10) {
+			throw new BaseException("第"+rowIndex+"行，姓名不可超过10个字符!");
+		}
+		if (SpecialStrUtils.check(name)) {
 			throw new BaseException("第"+rowIndex+"行，姓名中不能包含特殊字符!");
 		}
 		if(StringUtils.isEmpty(pId)){
 			throw  new BaseException("第"+rowIndex+"行，身份证号不可为空！");
+		}
+		String pattern = "\\d{17}[\\d|x]|\\d{15}";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(pId);
+		if(!m.matches()){
+			throw new BaseException("第"+rowIndex+"行，身份证号格式错误!");
 		}
 		//校验身份证是否在数据库中存在
 		User user = new User();
@@ -230,11 +241,23 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			throw new BaseException("第"+rowIndex+"行，组织机构编码和组织机构名称不匹配!");
 		}
 
-		if(!NumberUtils.isNumber(data.getSecretLevel())){
+		String secretLevel = data.getSecretLevel();
+		if(!NumberUtils.isNumber(secretLevel)){
 			throw new BaseException("第"+rowIndex+"行，密级应为数字!");
 		}
-		if(StringUtils.isEmpty(data.getGender())){
+		String patternSecret = "[1-9]\\d*";
+		Pattern rSecret = Pattern.compile(patternSecret);
+		Matcher mSecret = rSecret.matcher(secretLevel);
+		int  secretLevelInt = NumberUtils.toInt(secretLevel);
+		if(!(secretLevelInt>=30 && secretLevelInt<=90)||!mSecret.matches()){
+			throw new BaseException("第"+rowIndex+"行，密级应在30-90之间的正整数!");
+		}
+		String gender = data.getGender();
+		if(StringUtils.isEmpty(gender)){
 			throw new BaseException("第"+rowIndex+"行，性别不可为空！");
+		}
+		if(!StringUtils.equals(gender,"男")&&!StringUtils.equals(gender,"女")){
+			throw new BaseException("第"+rowIndex+"行，性别填写错误，只能为男或者女！");
 		}
 		if(data.getOrderId()==null){
 			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
