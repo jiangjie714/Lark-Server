@@ -11,6 +11,7 @@ import com.github.hollykunge.security.gate.utils.DBLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * Created by 协同设计小组 on 2017/6/2.
  */
+@EnableHystrix
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients({"com.github.hollykunge.security"})

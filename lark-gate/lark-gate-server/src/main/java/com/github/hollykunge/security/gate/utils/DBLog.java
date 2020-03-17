@@ -1,7 +1,12 @@
 package com.github.hollykunge.security.gate.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.admin.api.log.LogInfo;
 import com.github.hollykunge.security.admin.api.service.AdminLogServiceFeignClient;
+import com.github.hollykunge.security.gate.constants.GateConstants;
+import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
+import com.github.hollykunge.security.search.dto.MessageDto;
+import com.github.hollykunge.security.search.dto.TopicDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -20,18 +25,19 @@ public class DBLog extends Thread {
     private static DBLog dblog = null;
     private static BlockingQueue<LogInfo> logInfoQueue = new LinkedBlockingQueue<LogInfo>(1024);
 
-    public AdminLogServiceFeignClient getLogService() {
-        return logService;
+    public ILarkSearchFeign getLogService() {
+        return searchFeign;
     }
 
-    public DBLog setLogService(AdminLogServiceFeignClient logService) {
-        if(this.logService==null) {
-            this.logService = logService;
+    public DBLog setLogService(ILarkSearchFeign searchFeign) {
+        if(this.searchFeign==null) {
+            this.searchFeign = searchFeign;
         }
         return this;
     }
 
-    private AdminLogServiceFeignClient logService;
+//    private AdminLogServiceFeignClient logService;
+    private ILarkSearchFeign searchFeign;
     public static synchronized DBLog getInstance() {
         if (dblog == null) {
             dblog = new DBLog();
@@ -61,7 +67,15 @@ public class DBLog extends Thread {
                 if (bufferedLogList != null && bufferedLogList.size() > 0) {
                     // 写入日志
                     for(LogInfo log:bufferedLogList){
-                        logService.saveLog(log);
+                        //发送kafka消息，同步到es中
+                        if(log != null){
+                            TopicDto topicDto = new TopicDto();
+                            topicDto.setTopicName(GateConstants.GATE_LOG_TOPIC);
+                            MessageDto messageDto = new MessageDto();
+                            messageDto.setMessage(JSONObject.toJSONString(log));
+                            topicDto.setMessage(messageDto);
+                            searchFeign.sendKafka(topicDto);
+                        }
                     }
                 }
             } catch (Exception e) {

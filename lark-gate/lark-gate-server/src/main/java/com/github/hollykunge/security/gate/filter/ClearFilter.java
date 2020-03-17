@@ -9,6 +9,7 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.util.ClientUtil;
 import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
+import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
 import com.github.hollykunge.security.gate.utils.DBLog;
 import com.github.hollykunge.security.gate.utils.GateLogUtils;
 import com.netflix.zuul.ZuulFilter;
@@ -32,7 +33,7 @@ import java.util.Objects;
 public class ClearFilter extends ZuulFilter {
     @Autowired
     @Lazy
-    private AdminLogServiceFeignClient logService;
+    private ILarkSearchFeign larkSearchFeign;
     @Autowired
     private GateLogUtils gateLogUtils;
     @Autowired
@@ -102,7 +103,7 @@ public class ClearFilter extends ZuulFilter {
             if (pm != null && user != null) {
                 LogInfo logInfo = new LogInfo(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
                         new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo);
-                DBLog.getInstance().setLogService(logService).offerQueue(logInfo);
+                DBLog.getInstance().setLogService(larkSearchFeign).offerQueue(logInfo);
             }
         }catch (Exception e){
             log.info("日志采集失败...");
@@ -112,7 +113,7 @@ public class ClearFilter extends ZuulFilter {
             if (pm != null && user != null) {
                 LogInfo logInfo = new LogInfo(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
                         new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo);
-                DBLog.getInstance().setLogService(logService).offerQueue(logInfo);
+                DBLog.getInstance().setLogService(larkSearchFeign).offerQueue(logInfo);
             }
         }
     }
