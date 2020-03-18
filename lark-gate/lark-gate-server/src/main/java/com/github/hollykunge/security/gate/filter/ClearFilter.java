@@ -9,6 +9,7 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.util.ClientUtil;
 import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
+import com.github.hollykunge.security.gate.dto.LogInfoDto;
 import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
 import com.github.hollykunge.security.gate.utils.DBLog;
 import com.github.hollykunge.security.gate.utils.GateLogUtils;
@@ -101,8 +102,8 @@ public class ClearFilter extends ZuulFilter {
                 optinfo = gateLogUtils.requestDelete(ctx);
             }
             if (pm != null && user != null) {
-                LogInfo logInfo = new LogInfo(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
-                        new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo);
+                LogInfoDto logInfo = new LogInfoDto(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
+                        new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo,user.getOrgPathCode());
                 DBLog.getInstance().setLogService(larkSearchFeign).offerQueue(logInfo);
             }
         }catch (Exception e){
@@ -111,8 +112,8 @@ public class ClearFilter extends ZuulFilter {
             //有解析异常的情况下也进行日志采集，操作详细信息不进行记录
             optinfo = null;
             if (pm != null && user != null) {
-                LogInfo logInfo = new LogInfo(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
-                        new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo);
+                LogInfoDto logInfo = new LogInfoDto(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
+                        new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo,user.getOrgPathCode());
                 DBLog.getInstance().setLogService(larkSearchFeign).offerQueue(logInfo);
             }
         }
