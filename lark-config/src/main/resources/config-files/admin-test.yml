@@ -1,5 +1,5 @@
 server:
-  port: 8999 #启动端口
+  port: 8762 #启动端口
 logging:
   level:
     com.github.hollykunge.security.admin: DEBUG
@@ -30,7 +30,7 @@ spring:
     #        username: root
     #        password: 123456
     #url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
-    url: jdbc:oracle:thin:@${ORACLE_HOST:61.161.239.224}:${ORACLE_PORT:5566}:arltr
+    url: jdbc:oracle:thin:@${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}:workhub
     username: lark_admin
     password: 123456
     # 使用druid数据源
@@ -51,10 +51,10 @@ spring:
       filter: stat,wall,log4j
   rabbitmq:
     #需要修改地址
-    host: ${RABBIT_MQ_HOST:172.20.10.5}
+    host: ${RABBIT_MQ_HOST:10.11.24.135}
 #    host: ${RABBIT_MQ_HOST:127.0.0.1}
     port:  ${RABBIT_MQ_PORT:5672}
-    username: fansq
+    username: hollykunge
     password: 123456
     virtual-host: /
     ###使用rabbitmq消息发送确认机制
@@ -140,7 +140,7 @@ redis:
     maxIdle: 100
     maxWait: 10000
     #需要修改地址
-  host: ${REDIS_HOST:172.20.10.5}
+  host: ${REDIS_HOST:localhost}
 #  host: ${REDIS_HOST:127.0.0.1}
   port:  ${REDIS_PORT:6379}
   password: 123456
