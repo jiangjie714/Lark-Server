@@ -120,10 +120,8 @@ public class AdminAccessFilter extends ZuulFilter {
                         }
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new ClientInvalidException("身份信息编码转化错误...");
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
         //正常用户名密码登录
