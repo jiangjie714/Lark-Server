@@ -262,8 +262,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if(data.getOrderId()==null){
 			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
 		}
-		String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(AdminCommonConstant.USER_PASSWORD_DEFAULT);
-		data.setPassword(password);
+		data.setPassword(AdminCommonConstant.ENCRYPTION_PASSWORD);
 		EntityUtils.setCreatAndUpdatInfo(data);
 		data.setId(userId);
 		data.setPId(pId.toLowerCase());
