@@ -91,7 +91,8 @@ public class JWTHelper {
         Claims body = claimsJws.getBody();
         return new JWTInfo(body.getSubject(), StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_USER_ID)),
                 StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_NAME)),
-                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)));
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)),
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_PATHCODE)));
     }
     /**
      * 获取token中的用户信息
@@ -106,6 +107,7 @@ public class JWTHelper {
         Claims body = claimsJws.getBody();
         return new JWTInfo(body.getSubject(), StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_USER_ID)),
                 StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_NAME)),
-                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)));
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)),
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_PATHCODE)));
     }
 }

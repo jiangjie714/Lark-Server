@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         AdminUser info = userService.validate(pid,password);
         String token = "";
         if (!StringUtils.isEmpty(info.getId())) {
-            token = jwtTokenUtil.generateToken(new JWTInfo(info.getPId(), info.getId() + "", info.getName(),info.getSecretLevel()));
+            token = jwtTokenUtil.generateToken(new JWTInfo(info.getPId(), info.getId() + "", info.getName(),info.getSecretLevel(),info.getPathCode()));
         }
         return token;
     }
