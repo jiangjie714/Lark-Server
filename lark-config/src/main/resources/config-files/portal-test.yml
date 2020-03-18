@@ -1,14 +1,14 @@
 #rabbitmq配置
 spring:
   application:
-      name: service-portal
+    name: service-portal
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
     default-property-inclusion: non_null
 
   datasource:
-#    name: test
+    #    name: test
     #url: jdbc:oracle:thin:@${ORACLE_HOST:10.11.24.136}:${ORACLE_PORT:1521}:arltr
     url: jdbc:oracle:thin:@${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}:workhub
     username: lark_portal
@@ -30,46 +30,46 @@ spring:
       test-on-return: false
       max-open-prepared-statements: 20
       filter: stat,wall,log4j
-#    filters: stat
-#    maxActive: 20
-#    initialSize: 1
-#    maxWait: 60000
-#    minIdle: 1
-#    timeBetweenEvictionRunsMillis: 60000
-#    minEvictableIdleTimeMillis: 300000
-#    validationQuery: select 'x' from dual
-#    testWhileIdle: true
-#    testOnBorrow: false
-#    testOnReturn: false
-#    poolPreparedStatements: true
-#    maxOpenPreparedStatements: 20
+  #    filters: stat
+  #    maxActive: 20
+  #    initialSize: 1
+  #    maxWait: 60000
+  #    minIdle: 1
+  #    timeBetweenEvictionRunsMillis: 60000
+  #    minEvictableIdleTimeMillis: 300000
+  #    validationQuery: select 'x' from dual
+  #    testWhileIdle: true
+  #    testOnBorrow: false
+  #    testOnReturn: false
+  #    poolPreparedStatements: true
+  #    maxOpenPreparedStatements: 20
   rabbitmq:
     #需要修改地址
     host: localhost
-#    host: 127.0.0.1
+    #    host: 127.0.0.1
     port: 5672
     username: hollykunge
     password: 123456
     virtual-host: /
     ###使用rabbitmq消息发送确认机制
     publisher-confirms: true
-#开启消费者（程序出现异常的情况下会）进行重试,
+    #开启消费者（程序出现异常的情况下会）进行重试,
     listener:
       simple:
         #开启手动ack
         acknowledge-mode: manual
         retry:
-        #重试机制适用于门户服务数据库暂时24秒内连接不上等情况
+          #重试机制适用于门户服务数据库暂时24秒内连接不上等情况
           enabled: true
-        #最大重试次数
+          #最大重试次数
           max-attempts: 8
-        #重试间隔次数
+          #重试间隔次数
           initial-interval: 3000ms
 
 mybatis:
-    basepackage: com.github.hollykunge.security.mapper
-    xmlLocation: classpath:mapper/**/*.xml
-    mapper-locations: "classpath*:mapper/*.xml"
+  basepackage: com.github.hollykunge.security.mapper
+  xmlLocation: classpath:mapper/**/*.xml
+  mapper-locations: "classpath*:mapper/*.xml"
 
 http:
   #最大连接数
@@ -109,9 +109,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
-        ###向注册中心上注册自己
+      ###向注册中心上注册自己
       register-with-eureka: true
-        ###是否需要从eureka上获取注册信息
+      ###是否需要从eureka上获取注册信息
       fetch-registry: true
 #      register-with-eureka: false
 #      #是否需要从eureka上获取注册信息
@@ -135,9 +135,3 @@ druid:
   blackip: 192.168.1.1
   loginUsername: admin
   loginPassword: 123456
-
-
-
-
-
-
