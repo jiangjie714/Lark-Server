@@ -38,7 +38,4 @@ public class Role extends BaseEntity {
 
     @Column(name = "ORG_NAME")
     private String orgName;
-
-    @Column(name = "STATUS")
-    private String status;
 }
