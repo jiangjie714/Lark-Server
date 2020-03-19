@@ -179,5 +179,6 @@ public class CommonConstants {
 
     public static final String GET_GATE_LOG_REQUEST_EXPORT = "export";
     public static final String GET_GATE_LOG_REQUEST_FEIGN = "/front/info";
+    public static final String AUTH_JWT_TOKEN = "/auth/jwt/token";
 
 }
