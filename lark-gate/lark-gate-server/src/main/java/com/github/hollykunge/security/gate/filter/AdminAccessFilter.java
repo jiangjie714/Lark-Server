@@ -105,7 +105,7 @@ public class AdminAccessFilter extends ZuulFilter {
             ctx.addZuulRequestHeader(CommonConstants.CLIENT_IP_ARG, clientIp);
         }
         String body = null;
-        if (!ctx.isChunkedRequestBody()) {
+        if (!ctx.isChunkedRequestBody()&&StringUtils.equals(requestUri,CommonConstants.AUTH_JWT_TOKEN)) {
             try {
                 ServletInputStream inp = ctx.getRequest().getInputStream();
                 if (inp != null) {
