@@ -11,7 +11,7 @@ eureka:
 #      #是否需要从eureka上获取注册信息
 #      fetch-registry: false
 server:
-  port: 8888
+  port: 8779
   tomcat:
     uri-encoding: UTF-8
 spring:

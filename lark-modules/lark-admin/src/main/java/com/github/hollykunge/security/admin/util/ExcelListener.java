@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.admin.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -52,7 +53,8 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 
 	private OrgMapper orgMapper;
 
-	public String errMsg = null;
+	private static String[] secretArr = {"30","40","50","60","70","80","90"};
+
 	public ExcelListener(UserBiz userBiz,RoleUserMapMapper roleUserMapMapper
 			,PositionUserMapMapper positionUserMapMapper,UserMapper userMapper,OrgMapper orgMapper) {
 		this.userBiz=userBiz;
@@ -245,19 +247,15 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if(!NumberUtils.isNumber(secretLevel)){
 			throw new BaseException("第"+rowIndex+"行，密级应为数字!");
 		}
-		String patternSecret = "[1-9]\\d*";
-		Pattern rSecret = Pattern.compile(patternSecret);
-		Matcher mSecret = rSecret.matcher(secretLevel);
-		int  secretLevelInt = NumberUtils.toInt(secretLevel);
-		if(!(secretLevelInt>=30 && secretLevelInt<=90)||!mSecret.matches()){
-			throw new BaseException("第"+rowIndex+"行，密级应在30-90之间的正整数!");
+		if(Arrays.binarySearch(secretArr,secretLevel)<0){
+			throw new BaseException("第"+rowIndex+"行，密级只能为30,40,50,60,70,80,90！");
 		}
 		String gender = data.getGender();
 		if(StringUtils.isEmpty(gender)){
 			throw new BaseException("第"+rowIndex+"行，性别不可为空！");
 		}
 		if(!StringUtils.equals(gender,"男")&&!StringUtils.equals(gender,"女")){
-			throw new BaseException("第"+rowIndex+"行，性别填写错误，只能为男或者女！");
+			throw new BaseException("第"+rowIndex+"行，性别填写错误，只能为男或女！");
 		}
 		if(data.getOrderId()==null){
 			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
