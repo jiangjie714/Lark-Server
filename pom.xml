@@ -38,6 +38,7 @@
         <!--<module>service-unitproject</module>-->
         <!--   <module>service-tools</module>-->
         <module>service-task</module>
+        <module>lark-search</module>
     </modules>
     <packaging>pom</packaging>
     <developers>
