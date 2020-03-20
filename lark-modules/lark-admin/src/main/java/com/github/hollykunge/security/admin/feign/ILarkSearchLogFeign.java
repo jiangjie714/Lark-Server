@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.admin.feign;
 
 import com.github.hollykunge.security.admin.feign.hystrix.ILarkSearchLogHystrix;
-import com.github.hollykunge.security.search.web.api.GateLogAPIService;
+import com.github.hollykunge.security.search.web.api.bizmd.GateLogAPIService;
 import org.springframework.cloud.openfeign.FeignClient;
 
 /**
