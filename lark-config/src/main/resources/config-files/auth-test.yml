@@ -32,7 +32,7 @@ spring:
       #      validationQuery: select 'x' from dual
       #      testWhileIdle: true
       #      testOnBorrow: false
-      #      testOnReturn: false
+    #      testOnReturn: false
     #      poolPreparedStatements: true
     #      maxOpenPreparedStatements: 20
     ###优化数据库连接池配置,该配置支持2000并发
