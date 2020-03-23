@@ -107,6 +107,10 @@ zuul:
       path: /simulation/**
       serviceId: service-simulation
 
+    knowledge:
+      path: /knowledge/**
+      serviceId: service-knowledge
+
 #    unit:
 #      path: /unit/**
 #      serviceId: service-unitproject
