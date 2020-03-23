@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.github.tobato</groupId>
             <artifactId>fastdfs-client</artifactId>
-            <version>1.26.2</version>
+            <version>1.27.2</version>
         </dependency>
         <!-- oracle驱动 -->
         <dependency>
