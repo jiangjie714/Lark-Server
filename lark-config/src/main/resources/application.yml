@@ -38,7 +38,8 @@ spring:
 #          uri: http://10.11.24.136:3000/root/ace_config
 #          username: root
         native:
-          search-locations: classpath:/config-files
+          #file 如果为相对路径 就是相对于本项目  classpath：为相对路径就是从resource下寻找文件 默认为file
+          search-locations: file:/config-files
 #        health:
 #          repositories:
 #            check:
