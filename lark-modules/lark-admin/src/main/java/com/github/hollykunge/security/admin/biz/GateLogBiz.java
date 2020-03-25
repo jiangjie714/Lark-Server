@@ -1,11 +1,9 @@
 package com.github.hollykunge.security.admin.biz;
 
 import com.alibaba.fastjson.JSONArray;
+import com.github.hollykunge.security.admin.api.authority.AccessNum;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.admin.entity.GateLog;
-import com.github.hollykunge.security.admin.entity.Role;
-import com.github.hollykunge.security.admin.entity.RoleUserMap;
-import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.GateLogMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
@@ -45,6 +43,8 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     private RoleUserMapMapper roleUserMapMapper;
     @Autowired
     private UserBiz userBiz;
+    @Autowired
+    private GateLogMapper gateLogMapper;
     @Value("${role.code.system}")
     private String sysRoleCode;
     @Value("${role.code.log}")
@@ -266,5 +266,23 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 统计功能 获取登录量计数
+     *
+     * @return
+     */
+    public List<AccessNum> findLogCountByOrgCode(List<Org> orgList,String startTime,String endTime){
+        List<AccessNum> accessNums = new ArrayList<>();
+        //select * from admin_user where org_code like '%0010%';
+        for(Org o:orgList){
+            AccessNum accessNum = new AccessNum();
+            accessNum.setX(o.getOrgName());
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),startTime,endTime,"/api/admin/user/front/info");
+            accessNum.setY(num);
+            accessNums.add(accessNum);
+        }
+        return accessNums;
     }
 }
