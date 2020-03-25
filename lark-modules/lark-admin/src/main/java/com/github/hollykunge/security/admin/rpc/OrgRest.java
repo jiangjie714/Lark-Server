@@ -1,10 +1,18 @@
 package com.github.hollykunge.security.admin.rpc;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.biz.OrgBiz;
+import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.rpc.service.OrgRestService;
 import com.github.hollykunge.security.admin.vo.OrgTree;
+import com.github.hollykunge.security.admin.vo.StatesOrgVo;
+import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +29,8 @@ import java.util.Map;
 public class OrgRest {
     @Autowired
     private OrgRestService orgRestService;
+    @Autowired
+    private OrgBiz orgBiz;
     /**
      * todo:使用
      * 权限组织树接口
@@ -51,5 +61,26 @@ public class OrgRest {
                                                        @RequestParam String pid) throws Exception{
         List<AdminUser> treeUsers = orgRestService.getOrgUsers(orgCode, secretLevels,pid);
         return new ListRestResponse("",treeUsers.size(),treeUsers);
+    }
+
+    /**
+     * 统计页面的组件，下拉组织树接口
+     * @return
+     */
+    @RequestMapping(value = "stateTree", method = RequestMethod.GET)
+    @ResponseBody
+    public ListRestResponse tree(@RequestParam("orgLevel") Integer orgLevel){
+        List<Org> orgs = getOrgs(orgLevel);
+        List<StatesOrgVo> statesOrgVos = JSONArray.parseArray(JSONObject.toJSONString(orgs), StatesOrgVo.class);
+        return new ListRestResponse("",statesOrgVos.size(),statesOrgVos);
+    }
+    @FilterByDeletedAndOrderHandler
+    public List<Org> getOrgs(Integer orgLevel){
+        if(orgLevel == null){
+            throw new BaseException("组织层级不能为空...");
+        }
+        Org temp = new Org();
+        temp.setOrgLevel(orgLevel);
+        return orgBiz.selectList(temp);
     }
 }
