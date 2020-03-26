@@ -179,5 +179,14 @@ public class CommonConstants {
 
     public static final String GET_GATE_LOG_REQUEST_EXPORT = "export";
     public static final String GET_GATE_LOG_REQUEST_FEIGN = "/front/info";
+    public static final String AUTH_JWT_TOKEN = "/auth/jwt/token";
+
+    /**
+     * fansq 统计功能 时间
+     */
+    public static final String JIN_RI="jinri";
+    public static final String BEN_ZHOU="benzhou";
+    public static final String BEN_YUE="benyue";
+    public static final String QUAN_BU="quanbu";
 
 }

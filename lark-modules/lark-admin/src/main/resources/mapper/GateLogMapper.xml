@@ -40,4 +40,18 @@
     FROM
         ADMIN_GATELOG
   </select>
+
+    <select id="getOrgCodeLogNum" resultType="long">
+        select count(*) from admin_gatelog gate left join
+        (select id from admin_user where org_code like '%'|| #{orgCode}||'%') us
+        on gate.crt_user = us.id
+        where  uri=#{menu}
+        <if test="startTime != null and startTime != ''">
+            and  crt_time
+            between
+            to_date(#{startTime},'yyyy-MM-dd')
+            AND
+            to_date(#{endTime},'yyyy-MM-dd')
+        </if>
+    </select>
 </mapper>

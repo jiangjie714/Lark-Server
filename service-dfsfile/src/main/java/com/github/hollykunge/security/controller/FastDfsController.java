@@ -246,18 +246,18 @@ public class FastDfsController extends BaseController<FileInfoBiz, FileInfoEntit
      */
     @ResponseBody
     @RequestMapping(value = "/appendUploadFile",method = RequestMethod.POST)
-    @HystrixCommand(
-            fallbackMethod = "uploadAppendFileFallback",
-            threadPoolProperties = {
-                @HystrixProperty(name = "coreSize", value = "50"),
-                @HystrixProperty(name = "maxQueueSize", value = "500"),
-                @HystrixProperty(name = "queueSizeRejectionThreshold", value = "20")},
-            commandProperties = {
-                @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "30000"),
-                @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20")
-            },
-            ignoreExceptions = BaseException.class
-            )
+//    @HystrixCommand(
+//            fallbackMethod = "uploadAppendFileFallback",
+//            threadPoolProperties = {
+//                @HystrixProperty(name = "coreSize", value = "50"),
+//                @HystrixProperty(name = "maxQueueSize", value = "500"),
+//                @HystrixProperty(name = "queueSizeRejectionThreshold", value = "20")},
+//            commandProperties = {
+//                @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "30000"),
+//                @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20")
+//            },
+//            ignoreExceptions = BaseException.class
+//            )
     public ObjectRestResponse<FileInfoVO> uploadAppendFile(@RequestParam("file") MultipartFile file,HttpServletRequest request
     ) throws Exception {
         String currentNo = request.getHeader("currentNo");

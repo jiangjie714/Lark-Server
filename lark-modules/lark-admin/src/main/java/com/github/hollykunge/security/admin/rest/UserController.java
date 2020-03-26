@@ -19,6 +19,7 @@ import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.FrontUser;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -65,6 +66,7 @@ public class UserController extends BaseController<UserBiz, User> {
 
     @Autowired
     private UserBiz userBiz;
+
 
     /**
      * todo:使用
@@ -127,6 +129,7 @@ public class UserController extends BaseController<UserBiz, User> {
     public ObjectRestResponse<User> updateUser(@RequestBody User entity,
                                                String roles,
                                                String positions) {
+        entity.setPId(entity.getPId().toLowerCase());
         baseBiz.updateSelectiveById(entity);
         //添加用户角色信息
         if (!StringUtils.isEmpty(roles)) {
@@ -219,13 +222,14 @@ public class UserController extends BaseController<UserBiz, User> {
      *
      * @param nameLike 用户id
      * @return 角色
+     * fansq 修改 添加异常 ClientInvalidException
      */
     @RequestMapping(value = "/nameLike", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<AdminUser>> getUserByNameLike(@RequestParam("nameLike") String nameLike) {
         List<AdminUser> adminUsers = new ArrayList<>();
         if (StringUtils.isEmpty(nameLike)) {
-
+            throw new ClientInvalidException("Name is empty");
         } else {
             List<User> users = baseBiz.selectUserByNameLike(nameLike);
             users.stream().forEach(user -> {
@@ -243,12 +247,14 @@ public class UserController extends BaseController<UserBiz, User> {
      *
      * @param params
      * @return
+     * fansq 修改 添加异常 ClientInvalidException
      */
     @RequestMapping(value = "/findUsers", method = RequestMethod.GET)
     @ResponseBody
     public TableResultResponse<User> findUsers(@RequestParam Map<String, Object> params) {
         if (StringUtils.isEmpty(params.get("name"))) {
-            return new TableResultResponse<>();
+            //return new TableResultResponse<>();
+            throw new ClientInvalidException("params is empty");
         }
         return baseBiz.selectByQuery(new Query(params));
     }

@@ -76,6 +76,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         if (mapper.selectCount(user) > 0) {
             throw new BaseException("身份证已存在...");
         }
+        entity.setPId(entity.getPId().toLowerCase());
         String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(defaultPassword);
         entity.setPassword(password);
         EntityUtils.setCreatAndUpdatInfo(entity);
@@ -292,15 +293,9 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     public ObjectRestResponse importExcel(MultipartFile file,UserBiz userBiz) throws IOException {
         ExcelListener excelListener = EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
-        if(StringUtils.isEmpty(excelListener.errMsg)){
             objectRestResponse.setStatus(CommonConstants.HTTP_SUCCESS);
             objectRestResponse.setMessage("导入成功！");
             return objectRestResponse;
-        }else{
-            objectRestResponse.setStatus(CommonConstants.EX_OTHER_CODE);
-            objectRestResponse.setMessage(excelListener.errMsg);
-            return objectRestResponse;
-        }
     }
 
     /**

@@ -13,8 +13,10 @@ import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
 
+import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.util.StringHelper;
 
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -142,6 +144,8 @@ public class PermissionService {
      * 根据userId获取角色所属菜单功能
      * @param userId
      * @return
+     *
+     * 20-2-21 fansq 修改异常类型 baseException ->ClientInvalidException
      */
     public List<FrontPermission> getPermissionByUserId(String userId) {
         String roleId = null;
@@ -150,7 +154,7 @@ public class PermissionService {
         }else{
             List<Role> roleByUserId = roleBiz.getRoleByUserId(userId);
             if(roleByUserId.size()==0){
-                throw new BaseException("该人员没有访问权限...");
+                throw new ClientInvalidException("No permission to request the resource ");
             }
             roleId = roleByUserId.get(0).getId();
         }
@@ -198,7 +202,8 @@ public class PermissionService {
     public FrontUser getUserInfo(String token) throws Exception {
         String userId = userAuthUtil.getInfoFromToken(token).getId();
         if (userId == null) {
-            return null;
+            //20-2-21 fansq添加异常返回类型
+            throw new ClientInvalidException("Token parsing user ID exception");
         }
          FrontUser frontUser = new FrontUser();
         //如果是超级管理员，则显示所有的菜单和操作
