@@ -1,11 +1,19 @@
 package com.github.hollykunge.security.admin.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class DateUntil {
+/**
+ * @author fansq
+ * @since 20-3-26
+ * @deprecation 时间操作类
+ */
+@Slf4j
+public class DateUtil {
     /**
      * 获取当前时间的指定天数之前的时间
      * @return date
@@ -17,6 +25,7 @@ public class DateUntil {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         calendar.add(Calendar.DAY_OF_MONTH,num);
         String dateStr = fmt.format(calendar.getTime());
+        //log.info("前"+num+"的时间为："+dateStr);
         Date date = fmt.parse(dateStr);
         return date;
     }
@@ -28,7 +37,9 @@ public class DateUntil {
     public static Date getToday() throws Exception{
         Date date = new Date();
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        return fmt.parse(fmt.format(date));
+        String d = fmt.format(date);
+        //log.info("今天的时间为："+d);
+        return fmt.parse(d);
     }
 
     /**
@@ -41,7 +52,9 @@ public class DateUntil {
         cal.add(Calendar.WEEK_OF_MONTH, 0);
         cal.set(Calendar.DAY_OF_WEEK, 2);
         Date time=cal.getTime();
-        return fmt.format(time);
+        String d = fmt.format(time);
+        //log.info("本周第一天时间为："+d);
+        return d;
     }
 
     /**
@@ -51,10 +64,13 @@ public class DateUntil {
     public static String getEndWeek(){
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal=Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_WEEK, cal.getActualMaximum(Calendar.DAY_OF_WEEK));
-        cal.add(Calendar.DAY_OF_WEEK, 1);
+        cal.add(Calendar.WEEK_OF_MONTH, 0);
+        cal.set(Calendar.DAY_OF_WEEK, 2);
+        cal.add(Calendar.WEEK_OF_MONTH, 1);
         Date time=cal.getTime();
-        return fmt.format(time);
+        String d = fmt.format(time);
+        //log.info("下一周第一天时间为："+d);
+        return d;
     }
     /**
      * 获取本月 月初时间
@@ -66,49 +82,57 @@ public class DateUntil {
         Calendar cale = Calendar.getInstance();
         cale.add(Calendar.MONTH, 0);
         cale.set(Calendar.DAY_OF_MONTH, 1);
-        return format.format(cale.getTime());
+        String d = format.format(cale.getTime());
+        //log.info("本月月初时间为："+d);
+        return d;
     }
 
     /**
-     * 获取指定月 月末时间
+     * 获取 下个月月初时间
      * @return
      * @throws Exception
      */
     public static String getEndMonth() throws Exception{
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cale = Calendar.getInstance();
-        cale.add(Calendar.MONTH, 1);
-        cale.set(Calendar.DAY_OF_MONTH, 0);
-        return format.format(cale.getTime());
-    }
-    /**
-     * 获取指定月 月初时间
-     * @return
-     * @throws Exception
-     */
-    public static String getBeforeMonth(int num) throws Exception{
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar cale = Calendar.getInstance();
         cale.add(Calendar.MONTH, 0);
         cale.set(Calendar.DAY_OF_MONTH, 1);
-        cale.add(Calendar.MONTH, num);
-        return format.format(cale.getTime());
+        cale.add(Calendar.MONTH, 1);
+        String d = format.format(cale.getTime());
+        //log.info("下一个月月初时间为："+d);
+        return d;
     }
+
     /**
      * 获取当前时间的前一年 年初时间
      * @return date
      */
     public static Date getBeforeYear() throws Exception{
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         TimeZone tz = TimeZone.getTimeZone("Asia/Shanghai");
         TimeZone.setDefault(tz);
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy");
         calendar.add(Calendar.YEAR,-1);
         String dateStr = fmt.format(calendar.getTime());
-        System.out.println(dateStr+ "-01-01");
-        return fmt.parse(dateStr);
+        //log.info("前一年年初时间为："+dateStr+ "-01-01");
+        return fmt.parse(dateStr+ "-01-01");
     }
-
+    /**
+     * 获取当前时间的下一年 年初时间
+     * @return date
+     */
+    public static Date getLasterYear() throws Exception{
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        TimeZone tz = TimeZone.getTimeZone("Asia/Shanghai");
+        TimeZone.setDefault(tz);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy");
+        calendar.add(Calendar.YEAR,1);
+        String dateStr = fmt.format(calendar.getTime());
+        //log.info("下一年的年初时间为："+dateStr+ "-01-01");
+        return fmt.parse(dateStr+ "-01-01");
+    }
     /**
      * 获取今年 年初时间
      * @return
@@ -118,8 +142,10 @@ public class DateUntil {
         TimeZone tz = TimeZone.getTimeZone("Asia/Shanghai");
         TimeZone.setDefault(tz);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        String time = format.format(new Date());
+        SimpleDateFormat f = new SimpleDateFormat("yyyy");
+        String time = f.format(new Date());
         Date startTime = format.parse(time + "-01-01");
+        //log.info("今年的年初时间为："+time+ "-01-01");
         return startTime;
     }
 }

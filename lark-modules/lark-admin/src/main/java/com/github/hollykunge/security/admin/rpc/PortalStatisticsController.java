@@ -8,7 +8,7 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.GateLog;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
-import com.github.hollykunge.security.admin.util.DateUntil;
+import com.github.hollykunge.security.admin.util.DateUtil;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -55,30 +55,55 @@ public class PortalStatisticsController  {
     @ResponseBody
     public ObjectRestResponse<PortalStatistics> statisticsAll(HttpServletRequest request) throws Exception{
         PortalStatistics portalStatistics = new PortalStatistics();
+        //获取总访问量 所有请求之和
         int totalAccess = getTotalAccess();
+        //log.info("总访问量"+totalAccess);
         portalStatistics.setTotalAccess(new Long(totalAccess));
-        int dayAccess = getDayAccess(-1);
+        //获取日访问量  昨天的请求综合
+        int dayAccess = getYesDayAccess(-1);
+        //log.info("日访问量"+dayAccess);
         portalStatistics.setDayAccess(new Long(dayAccess));
+        //获取今年总访问量 今年所有请求之和
+        int yearTotalAccess = getYearTotalAccess();
+        //log.info("今年访问量"+yearTotalAccess);
+        //获取去年总访问量  去年所有请求之和
         int  lastYearTotalAccess = getLastYearTotalAccess();
-        if(lastYearTotalAccess==0){
-            lastYearTotalAccess=1;
+        //log.info("去年访问量"+lastYearTotalAccess);
+        //如果增长率为负 修改为0
+        if(yearTotalAccess<lastYearTotalAccess){
+            portalStatistics.setTotalRate(0.00);
+            //log.info("年增长率"+0.00);
+        }else{
+            //如果去年增长量为0  被除数修改为1
+            if(lastYearTotalAccess==0){
+                lastYearTotalAccess=1;
+            }
+            //总增长率（今年的请求之和-去年请求之和）/去年请求之和
+            double accessDiff = new Double(totalAccess-lastYearTotalAccess).doubleValue();
+            double  lastYearTotalAccessDouble = new Double(lastYearTotalAccess).doubleValue();
+            String result = new DecimalFormat("0.00").format(accessDiff/lastYearTotalAccess);
+            portalStatistics.setTotalRate(Math.ceil(Double.parseDouble(result)));
+            //log.info("年增长率"+result);
         }
-        //总增长率（今年的请求之和-去年请求之和）/去年请求之和
-        double accessDiff = new Double(totalAccess-lastYearTotalAccess).doubleValue();
-        double  lastYearTotalAccessDouble = new Double(lastYearTotalAccess).doubleValue();
-        String result = new DecimalFormat("0.0000").format(accessDiff/lastYearTotalAccess);
-        portalStatistics.setTotalRate(Math.ceil(Double.parseDouble(result)));
+        //获取日访问量  前天的请求综合
         int dayAccessTwo = getDayAccess(-2);
-        if(dayAccessTwo==0){
-            dayAccessTwo=1;
+        //log.info("前天访问量"+dayAccessTwo);
+        if(dayAccess<dayAccessTwo){
+            portalStatistics.setDayRate(0.00);
+            //log.info("日增长率"+0.00);
+        }else{
+            if(dayAccessTwo==0){
+                dayAccessTwo=1;
+            }
+            //日增长率（昨天请求之和-前天请求之和）/前天请求之和
+            double dayAccessDiff = new Double(dayAccess-dayAccessTwo).doubleValue();
+            double  dayAccessTwoDouble = new Double(dayAccessTwo).doubleValue();
+            String resultDay = new DecimalFormat("0.00").format(dayAccessDiff/dayAccessTwoDouble);
+            portalStatistics.setDayRate(Math.ceil(Double.parseDouble(resultDay)));
+            //log.info("日增长率"+resultDay);
         }
-        //日增长率（昨天请求之和-前天请求之和）/前天请求之和
-        double dayAccessDiff = new Double(dayAccess-dayAccessTwo).doubleValue();
-        double  dayAccessTwoDouble = new Double(dayAccessTwo).doubleValue();
-        String resultDay = new DecimalFormat("0.0000").format(dayAccessDiff/dayAccessTwoDouble);
-        portalStatistics.setDayRate(Math.ceil(Double.parseDouble(resultDay)));
         String userId = request.getHeader("userId");
-        List<AccessNum> accessNumList = accessNums("0010",null);
+        List<AccessNum> accessNumList = accessNums("0010",CommonConstants.BEN_YUE);
         portalStatistics.setAccessNums(accessNumList);
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
@@ -121,27 +146,30 @@ public class PortalStatisticsController  {
         Integer orgLevel = org.getOrgLevel();
         List<Org> orgList = orgBiz.findOrgByLevelAndParentId(orgCode,orgLevel+1);
         if(StringUtils.isEmpty(date)){
-            List<AccessNum> accessNums = gateLogBiz.findLogCountByOrgCode(orgList,DateUntil.getMonth(),DateUntil.getEndMonth());
+            List<AccessNum> accessNums = gateLogBiz.findLogCountByOrgCode(orgList, DateUtil.getMonth(), DateUtil.getEndMonth());
             return accessNums;
         }
         if(StringUtils.equals(CommonConstants.JIN_RI,date)){
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
             List<AccessNum> accessNums = gateLogBiz.
-                    findLogCountByOrgCode(orgList,fmt.format(DateUntil.getTimeDay(-1)),fmt.format(DateUntil.getToday()));
+                    findLogCountByOrgCode(orgList,fmt.format(DateUtil.getToday()),fmt.format(DateUtil.getTimeDay(1)));
             return accessNums;
         }
         if(StringUtils.equals(CommonConstants.BEN_ZHOU,date)){
             List<AccessNum> accessNums = gateLogBiz.
-                    findLogCountByOrgCode(orgList,DateUntil.getWeek(),DateUntil.getEndWeek());
+                    findLogCountByOrgCode(orgList, DateUtil.getWeek(), DateUtil.getEndWeek());
             return accessNums;
         }
         if(StringUtils.equals(CommonConstants.BEN_YUE,date)){
             List<AccessNum> accessNums = gateLogBiz.
-                    findLogCountByOrgCode(orgList,DateUntil.getMonth(),DateUntil.getEndMonth());
+                    findLogCountByOrgCode(orgList, DateUtil.getMonth(), DateUtil.getEndMonth());
             return accessNums;
         }
-        List<AccessNum> accessNums = gateLogBiz.findLogCountByOrgCode(orgList,null,null);
-        return accessNums;
+        if(StringUtils.equals(CommonConstants.QUAN_BU,date)) {
+            List<AccessNum> accessNums = gateLogBiz.findLogCountByOrgCode(orgList, null, null);
+            return accessNums;
+        }
+        return null;
     }
     /**
      * 获取总访问量 所有请求之和
@@ -153,17 +181,45 @@ public class PortalStatisticsController  {
     }
 
     /**
-     * 获取日访问量  前一天的请求综合
+     * 获取日访问量  前天的请求综合
      * @return
      * @throws Exception
      */
     public int getDayAccess(int num) throws Exception{
         Example example = new Example(GateLog.class);
-        Date dateYes = DateUntil.getTimeDay(num);
-        Date dateTod = DateUntil.getToday();
+        Date dateYes = DateUtil.getTimeDay(num);
+        Date dateTod = DateUtil.getTimeDay(-1);
         Example.Criteria criteria = example.createCriteria();
         criteria.andBetween("crtTime",dateYes,dateTod);
-        Integer dayAccess = gateLogBiz.selectCountByExample(example);
+        int dayAccess = gateLogBiz.selectCountByExample(example);
+        return dayAccess;
+    }
+    /**
+     * 获取日访问量  昨天的请求综合
+     * @return
+     * @throws Exception
+     */
+    public int getYesDayAccess(int num) throws Exception{
+        Example example = new Example(GateLog.class);
+        Date dateYes = DateUtil.getTimeDay(num);
+        Date dateTod = DateUtil.getToday();
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andBetween("crtTime",dateYes,dateTod);
+        int dayAccess = gateLogBiz.selectCountByExample(example);
+        return dayAccess;
+    }
+    /**
+     * 获取今年总访问量  今年所有请求之和
+     * @return
+     * @throws Exception
+     */
+    public int getYearTotalAccess() throws Exception{
+        Example example = new Example(GateLog.class);
+        Date LastYear = DateUtil.getLasterYear();
+        Date year = DateUtil.getYear();
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andBetween("crtTime",year,LastYear);
+        int dayAccess = gateLogBiz.selectCountByExample(example);
         return dayAccess;
     }
     /**
@@ -173,11 +229,11 @@ public class PortalStatisticsController  {
      */
     public int getLastYearTotalAccess() throws Exception{
         Example example = new Example(GateLog.class);
-        Date LastYear = DateUntil.getBeforeYear();
-        Date year = DateUntil.getYear();
+        Date LastYear = DateUtil.getBeforeYear();
+        Date year = DateUtil.getYear();
         Example.Criteria criteria = example.createCriteria();
         criteria.andBetween("crtTime",LastYear,year);
-        Integer dayAccess = gateLogBiz.selectCountByExample(example);
+        int dayAccess = gateLogBiz.selectCountByExample(example);
         return dayAccess;
     }
 
