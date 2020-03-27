@@ -15,7 +15,7 @@ spring:
     password: 123456
   datasource:
     name: test
-    url: jdbc:oracle:thin:@${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}:workhub
+    url: jdbc:oracle:thin:@${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}:yunwang
     username: lark_auth
     password: 123456
     # 使用druid数据源
