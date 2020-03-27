@@ -33,6 +33,10 @@ public class PortalStatistics implements Serializable {
      */
     private List<AccessNum> accessNums;
     /**
+     * 消息量排行
+     */
+    private List<MessageNums> messageNums;
+    /**
      * 文件量排行
      */
     private List<FileNum> fileNums;
