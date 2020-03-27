@@ -69,10 +69,10 @@ public class OrgRest {
      * 统计页面的组件，下拉组织树接口
      * @return
      */
-    @RequestMapping(value = "stateTree", method = RequestMethod.GET)
+    @RequestMapping(value = "stateTree", method = RequestMethod.POST)
     @ResponseBody
-    public ListRestResponse tree(@RequestBody Integer[] orgLevel){
-        List<Org> orgs = getOrgs(orgLevel);
+    public ListRestResponse tree(@RequestBody Integer[] orgLevels){
+        List<Org> orgs = getOrgs(orgLevels);
         List<StatesOrgVo> statesOrgVos = JSONArray.parseArray(JSONObject.toJSONString(orgs), StatesOrgVo.class);
         return new ListRestResponse("",statesOrgVos.size(),statesOrgVos);
     }
