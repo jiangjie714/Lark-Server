@@ -20,14 +20,14 @@ spring:
       initial-size: 5
       max-wait: 10000
     driverClassName: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@10.11.24.136:1521:arltr
+    url: jdbc:oracle:thin:@127.0.0.1:1521:yunwang
     username: workhub_iwork
     password: workhub_iwork
   rabbitmq:
-    host: 10.11.24.135
+    host: 127.0.0.1
     port: 5672
-    username: hollykunge
-    password: 123456
+    username: guest
+    password: guest
     listener:
       simple:
         acknowledge-mode: manual
@@ -41,7 +41,7 @@ spring:
         max-active: 300
         max-idle: 100
         max-wait: 5000ms
-    host: 10.11.24.135
+    host: 127.0.0.1
     port: 6379
     password: 123456
     database: 3
