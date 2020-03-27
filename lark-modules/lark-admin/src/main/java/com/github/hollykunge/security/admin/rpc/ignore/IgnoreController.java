@@ -1,12 +1,13 @@
-package com.github.hollykunge.security.admin.rpc;
+package com.github.hollykunge.security.admin.rpc.ignore;
 
-import com.github.hollykunge.security.admin.api.authority.AccessNum;
-import com.github.hollykunge.security.admin.api.authority.PortalStatistics;
+import com.alibaba.fastjson.JSONArray;
+import com.github.hollykunge.security.admin.api.authority.*;
 import com.github.hollykunge.security.admin.biz.GateLogBiz;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.GateLog;
 import com.github.hollykunge.security.admin.entity.Org;
+import com.github.hollykunge.security.admin.rpc.ignore.service.IgnoreService;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.util.DateUtil;
 import com.github.hollykunge.security.common.constant.CommonConstants;
@@ -25,14 +26,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * @author fansq
+ * @author fansq  ignore
  * @since 20-3-23
- * @deprecation 门户统计功能
+ * @deprecation 不走网关并提供给其他服务的接口  ignoreController
  */
 @RestController
-@RequestMapping("/statistics")
+@RequestMapping("/ignore")
 @Slf4j
-public class PortalStatisticsController  {
+public class IgnoreController {
 
     @Autowired
     private GateLogBiz gateLogBiz;
@@ -45,13 +46,13 @@ public class PortalStatisticsController  {
     private String headerName;
 
     @Autowired
-    private PermissionService permissionService;
+    private IgnoreService ignoreService;
     /**
      * 用于门户统计页面数据初始化
      * @param request
      * @return
      */
-    @RequestMapping(value = "/all",method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/all",method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<PortalStatistics> statisticsAll(HttpServletRequest request) throws Exception{
         PortalStatistics portalStatistics = new PortalStatistics();
@@ -102,9 +103,10 @@ public class PortalStatisticsController  {
             portalStatistics.setDayRate(Math.ceil(Double.parseDouble(resultDay)));
             //log.info("日增长率"+resultDay);
         }
-        String userId = request.getHeader("userId");
-        List<AccessNum> accessNumList = accessNums("0010",CommonConstants.BEN_YUE);
-        portalStatistics.setAccessNums(accessNumList);
+        portalStatistics.setAccessNums(accessNums("0010",CommonConstants.BEN_YUE));
+        portalStatistics.setMessageNums(messageNums("0010",CommonConstants.BEN_YUE));
+        portalStatistics.setFileNums(fileNums("0010",CommonConstants.BEN_YUE));
+        portalStatistics.setGroupNums(groupNums("0010",CommonConstants.BEN_YUE));
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
 
@@ -113,7 +115,7 @@ public class PortalStatisticsController  {
      * @param map
      * @return
      */
-    @RequestMapping(value = "/bar",method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/bar",method = RequestMethod.GET)
     public ObjectRestResponse statisticsBar(@RequestParam Map<String, Object> map) throws Exception{
         PortalStatistics portalStatistics = new PortalStatistics();
         if(map.isEmpty()){
@@ -129,6 +131,9 @@ public class PortalStatisticsController  {
         }
         List<AccessNum> accessNums = accessNums(unitRange.toString(),dateRange.toString());
         portalStatistics.setAccessNums(accessNums);
+        portalStatistics.setMessageNums(messageNums(unitRange.toString(),dateRange.toString()));
+        portalStatistics.setFileNums(fileNums(unitRange.toString(),dateRange.toString()));
+        portalStatistics.setGroupNums(groupNums(unitRange.toString(),dateRange.toString()));
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
 
@@ -170,6 +175,51 @@ public class PortalStatisticsController  {
             return accessNums;
         }
         return null;
+    }
+
+    /**
+     * 获取消息量排行
+     * @param orgCode
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    public List<MessageNums> messageNums(String orgCode,String date) throws Exception{
+        ObjectRestResponse msgStatistics = ignoreService.msgStatistics(orgCode,date);
+        Object msg = msgStatistics.getResult();
+        String msgJson = JSONArray.toJSONString(msg);
+        List<MessageNums> messageNums= JSONArray.parseArray(msgJson, MessageNums.class);
+        return messageNums;
+    }
+
+    /**
+     * 获取文件量排行
+     * @param orgCode
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    public List<FileNum> fileNums(String orgCode,String date) throws Exception{
+        ObjectRestResponse fileStatistics = ignoreService.fileStatistics(orgCode,date);
+        Object msgFile = fileStatistics.getResult();
+        String msgJsonFile = JSONArray.toJSONString(msgFile);
+        List<FileNum> fileNums= JSONArray.parseArray(msgJsonFile, FileNum.class);
+        return fileNums;
+    }
+
+    /**
+     * 获取文群组量排行
+     * @param orgCode
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    public List<GroupNum> groupNums(String orgCode,String date) throws Exception{
+        ObjectRestResponse groupStatistics = ignoreService.groupStatistics(orgCode,date);
+        Object msgGroup = groupStatistics.getResult();
+        String msgJsonGroup = JSONArray.toJSONString(msgGroup);
+        List<GroupNum> groupNums= JSONArray.parseArray(msgJsonGroup, GroupNum.class);
+        return groupNums;
     }
     /**
      * 获取总访问量 所有请求之和
