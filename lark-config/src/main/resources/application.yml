@@ -52,7 +52,7 @@ spring:
       enabled: true
       force: true
   rabbitmq:
-    host: ${RABBIT_MQ_HOST:127.0.0.1}
+    host: ${RABBIT_MQ_HOST:10.11.24.160}
     port:  ${RABBIT_MQ_PORT:5672}
     username: hollykunge
     password: 123456

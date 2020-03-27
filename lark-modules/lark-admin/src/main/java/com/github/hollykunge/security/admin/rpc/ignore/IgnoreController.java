@@ -1,4 +1,4 @@
-package com.github.hollykunge.security.admin.rpc;
+package com.github.hollykunge.security.admin.rpc.ignore;
 
 import com.github.hollykunge.security.admin.api.authority.AccessNum;
 import com.github.hollykunge.security.admin.api.authority.PortalStatistics;
@@ -25,14 +25,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * @author fansq
+ * @author fansq  ignore
  * @since 20-3-23
- * @deprecation 门户统计功能
+ * @deprecation 不走网关并提供给其他服务的接口  ignoreController
  */
 @RestController
-@RequestMapping("/statistics")
+@RequestMapping("/ignore")
 @Slf4j
-public class PortalStatisticsController  {
+public class IgnoreController {
 
     @Autowired
     private GateLogBiz gateLogBiz;
@@ -51,7 +51,7 @@ public class PortalStatisticsController  {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/all",method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/all",method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<PortalStatistics> statisticsAll(HttpServletRequest request) throws Exception{
         PortalStatistics portalStatistics = new PortalStatistics();
@@ -113,7 +113,7 @@ public class PortalStatisticsController  {
      * @param map
      * @return
      */
-    @RequestMapping(value = "/bar",method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/bar",method = RequestMethod.GET)
     public ObjectRestResponse statisticsBar(@RequestParam Map<String, Object> map) throws Exception{
         PortalStatistics portalStatistics = new PortalStatistics();
         if(map.isEmpty()){

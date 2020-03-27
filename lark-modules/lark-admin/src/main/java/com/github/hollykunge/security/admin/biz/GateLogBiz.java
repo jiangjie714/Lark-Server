@@ -25,6 +25,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * ${DESCRIPTION}
@@ -283,6 +284,8 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
             accessNum.setY(num);
             accessNums.add(accessNum);
         }
+        accessNums = accessNums.stream().sorted(Comparator.comparing(AccessNum::getY).
+                reversed()).collect(Collectors.toList());
         return accessNums;
     }
 }
