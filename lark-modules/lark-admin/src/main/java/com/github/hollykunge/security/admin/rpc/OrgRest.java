@@ -14,8 +14,10 @@ import com.github.hollykunge.security.common.msg.ListRestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -69,18 +71,18 @@ public class OrgRest {
      */
     @RequestMapping(value = "stateTree", method = RequestMethod.GET)
     @ResponseBody
-    public ListRestResponse tree(@RequestParam("orgLevel") Integer orgLevel){
+    public ListRestResponse tree(@RequestBody Integer[] orgLevel){
         List<Org> orgs = getOrgs(orgLevel);
         List<StatesOrgVo> statesOrgVos = JSONArray.parseArray(JSONObject.toJSONString(orgs), StatesOrgVo.class);
         return new ListRestResponse("",statesOrgVos.size(),statesOrgVos);
     }
     @FilterByDeletedAndOrderHandler
-    public List<Org> getOrgs(Integer orgLevel){
-        if(orgLevel == null){
+    public List<Org> getOrgs(Integer[] orgLevels){
+        if(orgLevels == null || orgLevels.length == 0){
             throw new BaseException("组织层级不能为空...");
         }
-        Org temp = new Org();
-        temp.setOrgLevel(orgLevel);
-        return orgBiz.selectList(temp);
+        Example orgEx = new Example(Org.class);
+        orgEx.createCriteria().andIn("orgLevel", Arrays.asList(orgLevels));
+        return orgBiz.selectByExample(orgEx);
     }
 }
