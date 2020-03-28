@@ -19,5 +19,5 @@ public class SourceOrg implements Serializable {
     /**
      * 活动量
      */
-    private Integer count;
+    private Double count;
 }

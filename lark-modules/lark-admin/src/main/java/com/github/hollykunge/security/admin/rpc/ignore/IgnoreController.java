@@ -97,6 +97,8 @@ public class IgnoreController {
         portalStatistics.setMessageNums(messageNums("0010",CommonConstants.BEN_YUE));
         portalStatistics.setFileNums(fileNums("0010",CommonConstants.BEN_YUE));
         portalStatistics.setGroupNums(groupNums("0010",CommonConstants.BEN_YUE));
+        //饼图
+        portalStatistics.setSourceOrg(getSourceOrg("0010",CommonConstants.BEN_YUE));
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
 
@@ -119,11 +121,14 @@ public class IgnoreController {
         if(dateRange==""||dateRange==null){
             throw new BaseException("单位组织范围不可为空！");
         }
+        //柱状图
         List<AccessNum> accessNums = accessNums(unitRange.toString(),dateRange.toString());
         portalStatistics.setAccessNums(accessNums);
         portalStatistics.setMessageNums(messageNums(unitRange.toString(),dateRange.toString()));
         portalStatistics.setFileNums(fileNums(unitRange.toString(),dateRange.toString()));
         portalStatistics.setGroupNums(groupNums(unitRange.toString(),dateRange.toString()));
+        //饼图
+        portalStatistics.setSourceOrg(getSourceOrg(unitRange.toString(),dateRange.toString()));
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
 
@@ -133,13 +138,7 @@ public class IgnoreController {
      * @return
      */
     public List<AccessNum> accessNums(String orgCode,String date) throws Exception{
-        Example example = new Example(Org.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("id",orgCode);
-        criteria.andEqualTo("deleted","0");
-        Org org = orgBiz.selectByExample(example).get(0);
-        Integer orgLevel = org.getOrgLevel();
-        List<Org> orgList = orgBiz.findOrgByLevelAndParentId(orgCode,orgLevel+1);
+        List<Org>orgList = getOrg(orgCode);
         if(StringUtils.equals(CommonConstants.JIN_RI,date)){
             //SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
             List<AccessNum> accessNums = gateLogBiz.
@@ -163,6 +162,51 @@ public class IgnoreController {
         return null;
     }
 
+    /**
+     * 获取饼图数据
+     * @return
+     */
+    public List<SourceOrg> getSourceOrg(String orgCode,String date) throws Exception{
+        List<Org>orgList = getOrg(orgCode);
+        if(StringUtils.equals(CommonConstants.JIN_RI,date)){
+            //SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+            List<SourceOrg> sourceOrgs = gateLogBiz.
+                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.JIN_RI_TYPE);
+            return sourceOrgs;
+        }
+        if(StringUtils.equals(CommonConstants.BEN_ZHOU,date)){
+            List<SourceOrg> sourceOrgs = gateLogBiz.
+                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.BEN_ZHOU_TYPE);
+            return sourceOrgs;
+        }
+        if(StringUtils.equals(CommonConstants.BEN_YUE,date)){
+            List<SourceOrg> sourceOrgs = gateLogBiz.
+                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.BEN_YUE_TYPE);
+            return sourceOrgs;
+        }
+        if(StringUtils.equals(CommonConstants.QUAN_BU,date)) {
+            List<SourceOrg> sourceOrgs = gateLogBiz.findLogCountByOrgCodeAll(orgCode,orgList, CommonConstants.QUAN_BU_TYPE);
+            return sourceOrgs;
+        }
+        return null;
+    }
+
+
+    /**
+     * 获取部门
+     * @param orgCode
+     * @return
+     */
+    public List<Org> getOrg(String orgCode){
+        Example example = new Example(Org.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("id",orgCode);
+        criteria.andEqualTo("deleted","0");
+        Org org = orgBiz.selectByExample(example).get(0);
+        Integer orgLevel = org.getOrgLevel();
+        List<Org> orgList = orgBiz.findOrgByLevelAndParentId(orgCode,orgLevel+1);
+        return orgList;
+    }
     /**
      * 获取消息量排行
      * @param orgCode
