@@ -38,7 +38,7 @@ public class CommonConstants {
      */
     public static final int EX_OTHER_CODE = 500;
     /**
-     * 拒绝执行当前请求
+     * 成功
      */
     public static final int HTTP_SUCCESS = 200;
 
@@ -127,7 +127,9 @@ public class CommonConstants {
     public static final Long DURATION_1 = Time.MINUTE_1 * 5;
     public static final Long[] IPSTAT_DURATIONS = new Long[]{DURATION_1};
 
-    //密级判断
+    /**
+     * 不符合密级约束条件
+     */
     public static final Integer EX_LEVELS = 40000;
 
     public static final String WEB_USERHOST = "userHost";
