@@ -2,6 +2,7 @@ package com.github.hollykunge.security.admin.biz;
 
 import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.admin.api.authority.AccessNum;
+import com.github.hollykunge.security.admin.api.authority.SourceOrg;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.GateLogMapper;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -289,6 +291,32 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         return accessNums;
     }
 
+    public Long findLogCountByOrgCodeAll(String orgCode,String type){
+            Long num = gateLogMapper.getOrgCodeLogNum(orgCode,type,"");
+            return num;
+    }
+    public List<SourceOrg> findLogCountByOrgCodeAll(String orgCode,List<Org> orgList,String type){
+        //总活动量
+        Long numAll = findLogCountByOrgCodeAll(orgCode,type);
+        List<SourceOrg> sourceOrgs = new ArrayList<>();
+        for(Org o:orgList){
+            SourceOrg sourceOrg = new SourceOrg();
+            sourceOrg.setItem(o.getOrgName());
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"");
+            if(numAll==0||num==0){
+                sourceOrg.setCount(0.0);
+            }else{
+                double numAllD = new Double(numAll).doubleValue();
+                double  numD = new Double(num).doubleValue();
+                String n = new DecimalFormat("0.0").format(numD/numAllD);
+                sourceOrg.setCount(Double.parseDouble(n));
+            }
+            sourceOrgs.add(sourceOrg);
+        }
+        sourceOrgs = sourceOrgs.stream().sorted(Comparator.comparing(SourceOrg::getCount).
+                reversed()).collect(Collectors.toList());
+        return sourceOrgs;
+    }
     public int getAccess(String type){
         return gateLogMapper.getAccess(type);
     }
