@@ -13,13 +13,17 @@ public interface GateLogMapper extends Mapper<GateLog> {
     /**
      * fansq 获取指定部门的log数量
      * @param orgCode
-     * @param startTime
-     * @param endTime
      * @param menu
      * @return
      */
     Long getOrgCodeLogNum(@Param("orgCode") String orgCode,
-                          @Param("startTime") String startTime,
-                          @Param("endTime") String endTime,
+                          @Param("type") String type,
                           @Param("menu") String menu);
+
+    /**
+     * fansq 获取指定时间范围的数据量
+     * @param type
+     * @return
+     */
+    int getAccess(@Param("type") String type);
 }

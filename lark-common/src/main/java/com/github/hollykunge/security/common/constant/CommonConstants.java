@@ -189,4 +189,14 @@ public class CommonConstants {
     public static final String BEN_YUE="benyue";
     public static final String QUAN_BU="quanbu";
 
+    public static final String JIN_RI_TYPE="5";
+    public static final String BEN_ZHOU_TYPE="6";
+    public static final String BEN_YUE_TYPE="7";
+    public static final String QUAN_BU_TYPE="8";
+
+    public static final String YESTERDAY="1";
+    public static final String THIS_YEAR="2";
+    public static final String LAST_YEAR="3";
+    public static final String BEFOR_YESTERDAY ="4";
+
 }

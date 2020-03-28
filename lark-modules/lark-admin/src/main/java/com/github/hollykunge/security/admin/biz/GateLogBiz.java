@@ -274,18 +274,22 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      *
      * @return
      */
-    public List<AccessNum> findLogCountByOrgCode(List<Org> orgList,String startTime,String endTime){
+    public List<AccessNum> findLogCountByOrgCode(List<Org> orgList,String type){
         List<AccessNum> accessNums = new ArrayList<>();
         //select * from admin_user where org_code like '%0010%';
         for(Org o:orgList){
             AccessNum accessNum = new AccessNum();
             accessNum.setX(o.getOrgName());
-            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),startTime,endTime,"/api/admin/user/front/info");
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"/api/admin/user/front/info");
             accessNum.setY(num);
             accessNums.add(accessNum);
         }
         accessNums = accessNums.stream().sorted(Comparator.comparing(AccessNum::getY).
                 reversed()).collect(Collectors.toList());
         return accessNums;
+    }
+
+    public int getAccess(String type){
+        return gateLogMapper.getAccess(type);
     }
 }
