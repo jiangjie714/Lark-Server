@@ -34,6 +34,13 @@
         <result property="orgName" column="org_name" jdbcType="VARCHAR"/>
         <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
     </resultMap>
+    <resultMap type="com.workhub.z.servicechat.model.StatisticsGroupUserDto" id="statisticsGroupUserDto">
+        <result property="groupId" column="group_id" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="path" column="path_name" jdbcType="VARCHAR"/>
+    </resultMap>
     <!--获取横坐标-->
     <select id="getXLabel" resultMap="statisticsXLabelVo">
             select o.org_name, o.org_code,o.id
@@ -45,40 +52,40 @@
     </select>
     <!--消息统计-->
     <select id="msgStatistics" resultType="string">
-       select to_char(nvl(sum(data.msgcnt),'0')) msgcnt
-          from (select sum(a.msgcnt) msgcnt, b.org_code
-                  from (select count(1) as msgcnt, m.sender
-                          from zz_message_info m
-                         where 1 = 1
-                        <if test = "dateType=='0'|| dateType==0">
-                            <!--全部-->
-                        </if>
-                        <if test = "dateType=='1'|| dateType==1">
-                            <!--今天-->
-                            and to_char(CREATETIME,'yyyy-mm-dd') between to_char(sysdate,'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
-                        </if>
-                        <if test = "dateType=='2'|| dateType==2">
-                            <!--本周-->
-                            and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'd') + 1 from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
-                        </if>
-                        <if test = "dateType=='3'|| dateType==3">
-                            <!--本月-->
-                          and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'mm') from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
-                        </if>
-                        group by m.sender) a,
-                       (select org_name, org_code, id
-                          from lark_admin.admin_user
-                         where deleted != '1') b
-                 where a.sender = b.id
-                 group by org_code) data
-         where data.org_code in
-              --递归每个横坐标子集
-               (select org_code
-                  from lark_admin.admin_org o
-                 where o.org_code is not null
-                   and o.deleted != '1'
-                 start with id = #{xId}
-                connect by prior id = parent_id)
+        select to_char(nvl(sum(data.msgcnt),'0')) msgcnt
+        from (select sum(a.msgcnt) msgcnt, b.org_code
+        from (select count(1) as msgcnt, m.sender
+        from zz_message_info m
+        where 1 = 1
+        <if test = "dateType=='0'|| dateType==0">
+            <!--全部-->
+        </if>
+        <if test = "dateType=='1'|| dateType==1">
+            <!--今天-->
+            and to_char(CREATETIME,'yyyy-mm-dd') between to_char(sysdate,'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        <if test = "dateType=='2'|| dateType==2">
+            <!--本周-->
+            and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'd') + 1 from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        <if test = "dateType=='3'|| dateType==3">
+            <!--本月-->
+            and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'mm') from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        group by m.sender) a,
+        (select org_name, org_code, id
+        from lark_admin.admin_user
+        where deleted != '1') b
+        where a.sender = b.id
+        group by org_code) data
+        where data.org_code in
+        --递归每个横坐标子集
+        (select org_code
+        from lark_admin.admin_org o
+        where o.org_code is not null
+        and o.deleted != '1'
+        start with id = #{xId}
+        connect by prior id = parent_id)
 
     </select>
     <!--<select id="msgStatistics" resultMap="statisticsMsgVo">
@@ -296,4 +303,21 @@
       where 1 = 1
 
     </select>-->
+    <select id="groupUserStatistics" resultMap="statisticsGroupUserDto">
+        select g.group_id,g.group_name,u.name,o.org_code,o.path_name
+        from
+        zz_group g,zz_user_group gu,lark_admin.admin_user u,lark_admin.admin_org o
+        where g.group_id = gu.group_id
+        and gu.user_id = u.id
+        and u.org_code = o.org_code
+        and u.deleted != '1'
+        and o.deleted != '1'
+        and g.isdelete != '1'
+        and g.isclose != '1'
+        <if test = "groupId != null and groupId != ''">
+            and g.group_id = #{groupId}
+        </if>
+        order by g.create_time desc,gu.createtime desc,o.order_id,u.order_id
+    </select>
+
 </mapper>
