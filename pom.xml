@@ -34,6 +34,7 @@
         <module>service-webservice</module>
         <module>service-dfsfile</module>
         <module>lark-config</module>
+        <module>lark-common-mq-core</module>
         <!--<module>service-cron</module>-->
         <!--<module>service-unitproject</module>-->
         <!--   <module>service-tools</module>-->

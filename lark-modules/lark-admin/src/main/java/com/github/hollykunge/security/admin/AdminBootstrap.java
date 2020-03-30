@@ -12,6 +12,8 @@ import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -37,6 +39,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ServletComponentScan
 @EnableAspectJAutoProxy(exposeProxy=true)
 @EnableHystrix
+@ComponentScan({"com.github.hollykunge.security.mq"})
 public class AdminBootstrap {
     public static void main(String[] args) {
         new SpringApplicationBuilder(AdminBootstrap.class).web(true).run(args);    }
