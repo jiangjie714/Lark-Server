@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.vo.mq.AdminOrgVO;
 import com.github.hollykunge.security.common.vo.mq.AdminUserVO;
+import com.github.hollykunge.security.mq.constants.RabbitMqQueConstant;
 import com.github.hollykunge.servicewebservice.dao.EryuanOrgDao;
 import com.github.hollykunge.servicewebservice.dao.EryuanUserDao;
 import com.github.hollykunge.servicewebservice.model.EryuanOrg;
@@ -37,7 +38,7 @@ public class AdminUnAckCosumer {
     private EryuanUserDao eryuanUserDao;
 
     @RabbitHandler
-    @RabbitListener(queues = CommonConstants.ADMIN_UNACK_ORG,containerFactory = "rabbitListenerContainerFactory")
+    @RabbitListener(queues = RabbitMqQueConstant.ADMIN_UNACK_ORG,containerFactory = "rabbitListenerContainerFactory")
     public void handleOrgMessage(Message message, @Headers Map<String,Object> headers, Channel channel) throws Exception {
         try {
             String json = new String(message.getBody(),"utf-8");
@@ -63,7 +64,7 @@ public class AdminUnAckCosumer {
         channel.basicAck(deliveryTag,false);
     }
     @RabbitHandler
-    @RabbitListener(queues = CommonConstants.ADMIN_UNACK_USER,containerFactory = "rabbitListenerContainerFactory")
+    @RabbitListener(queues = RabbitMqQueConstant.ADMIN_UNACK_USER,containerFactory = "rabbitListenerContainerFactory")
     public void handleUserMessage(Message message, @Headers Map<String,Object> headers, Channel channel) throws Exception {
         try {
             String json = new String(message.getBody(),"utf-8");
@@ -93,7 +94,7 @@ public class AdminUnAckCosumer {
      * @throws Exception
      */
     @RabbitHandler
-    @RabbitListener(queues = CommonConstants.ONEDOC_ORG,containerFactory = "rabbitListenerContainerFactory")
+    @RabbitListener(queues = RabbitMqQueConstant.ONEDOC_ORG,containerFactory = "rabbitListenerContainerFactory")
     public void handleOnedocOrgMessage(Message message, @Headers Map<String,Object> headers, Channel channel) throws Exception {
         try {
             String json = new String(message.getBody(),"utf-8");
@@ -121,7 +122,7 @@ public class AdminUnAckCosumer {
      * @throws Exception
      */
     @RabbitHandler
-    @RabbitListener(queues = CommonConstants.ONEDOC_USER,containerFactory = "rabbitListenerContainerFactory")
+    @RabbitListener(queues = RabbitMqQueConstant.ONEDOC_USER,containerFactory = "rabbitListenerContainerFactory")
     public void handleOnedocUserMessage(Message message, @Headers Map<String,Object> headers, Channel channel) throws Exception {
         try {
             String json = new String(message.getBody(),"utf-8");
