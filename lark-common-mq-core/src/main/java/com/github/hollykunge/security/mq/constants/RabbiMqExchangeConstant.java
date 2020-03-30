@@ -20,4 +20,5 @@ public class RabbiMqExchangeConstant {
      * ADMIN组织用户交换机名称
      */
     public final static String WERSERVICE_ADMIN_USERANDORG_EXCHANGE = "webAdminUserAndOrgExchange";
+    public static final String EXCHANGE_CONTACT = "exchange_contact";
 }

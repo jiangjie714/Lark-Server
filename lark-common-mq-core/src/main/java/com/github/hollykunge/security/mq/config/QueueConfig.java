@@ -99,4 +99,13 @@ public class QueueConfig {
     public Queue oneDocOrgQueue(){
         return new Queue(RabbitMqQueConstant.ONEDOCORG_QUEUE_NAME,true);
     }
+
+    /**
+     * 获取队列A
+     * @return
+     */
+    @Bean
+    public Queue queueContact() {
+        return new Queue(RabbitMqQueConstant.QUEUE_CONTACT, true); //队列持久
+    }
 }

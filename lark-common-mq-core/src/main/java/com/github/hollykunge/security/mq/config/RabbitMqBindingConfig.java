@@ -105,4 +105,9 @@ public class RabbitMqBindingConfig {
         Binding binding = BindingBuilder.bind(queueConfig.oneDocUserQueue()).to(exchangeConfig.adminUserAndOrgExchange()).with(RabbitMqRoutingKeyConstant.ADMINUSER_ROTEING_KEY);
         return binding;
     }
+
+    @Bean
+    public Binding binding() {
+        return BindingBuilder.bind(queueConfig.queueContact()).to(exchangeConfig.defaultExchange()).with(RabbitMqRoutingKeyConstant.ROUTINGKEY_CONTACT);
+    }
 }

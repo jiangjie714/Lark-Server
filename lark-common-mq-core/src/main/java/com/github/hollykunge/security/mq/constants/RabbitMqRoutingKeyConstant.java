@@ -47,4 +47,6 @@ public class RabbitMqRoutingKeyConstant {
      */
     public static final String ADMINORG_ROTEING_KEY = "admin_org";
 
+    public static final String ROUTINGKEY_CONTACT = "routingkey_contact";
+
 }

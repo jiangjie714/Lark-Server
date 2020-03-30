@@ -52,4 +52,6 @@ public class RabbitMqQueConstant {
      * 协同编辑返回组织队列名称
      */
     public final static String ONEDOC_ORG = "onedoc_org";
+
+    public static final String QUEUE_CONTACT = "queue_contact";
 }
