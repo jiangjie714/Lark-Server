@@ -76,6 +76,12 @@
         </where>
     </select>
 
+    <select id="getCountLog" resultType="long">
+        select count(*) from admin_gatelog gate right join
+        (select id from admin_user where org_code like '%'|| #{orgCode}||'%') us
+        on gate.crt_user = us.id
+    </select>
+
     <select id="getAccess" resultType="java.lang.Integer">
         select count(*) from admin_gatelog
         <!-- 昨天 -->
