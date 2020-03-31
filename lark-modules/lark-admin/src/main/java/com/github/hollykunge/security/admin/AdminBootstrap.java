@@ -3,6 +3,7 @@ package com.github.hollykunge.security.admin;
 import com.ace.cache.EnableAceCache;
 import com.github.hollykunge.security.auth.client.EnableAceAuthClient;
 import com.github.hollykunge.security.common.config.DruidConfig;
+import com.github.hollykunge.security.mq.EnableRabbitMq;
 import com.spring4all.swagger.EnableSwagger2Doc;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ServletComponentScan
 @EnableAspectJAutoProxy(exposeProxy=true)
 @EnableHystrix
-@ComponentScan({"com.github.hollykunge.security.mq"})
+@EnableRabbitMq
 public class AdminBootstrap {
     public static void main(String[] args) {
         new SpringApplicationBuilder(AdminBootstrap.class).web(true).run(args);    }
