@@ -20,6 +20,10 @@ import tk.mybatis.mapper.entity.Example;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * @author fansq  ignore
@@ -45,60 +49,62 @@ public class IgnoreController {
     @RequestMapping(value = "/statistics/all",method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<PortalStatistics> statisticsAll(HttpServletRequest request) throws Exception{
-        PortalStatistics portalStatistics = new PortalStatistics();
-        //获取总访问量 所有请求之和
-        int totalAccess = getTotalAccess();
-        //log.info("总访问量"+totalAccess);
-        portalStatistics.setTotalAccess(new Long(totalAccess));
-        //获取日访问量  昨天的请求综合
-        int dayAccess = getAccess(CommonConstants.YESTERDAY);
-        //log.info("日访问量"+dayAccess);
-        portalStatistics.setDayAccess(new Long(dayAccess));
-        //获取今年总访问量 今年所有请求之和
-        int yearTotalAccess = getAccess(CommonConstants.THIS_YEAR);
-        //log.info("今年访问量"+yearTotalAccess);
-        //获取去年总访问量  去年所有请求之和
-        int  lastYearTotalAccess = getAccess(CommonConstants.LAST_YEAR);
-        //log.info("去年访问量"+lastYearTotalAccess);
-        //如果增长率为负 修改为0
-        if(yearTotalAccess<lastYearTotalAccess){
-            portalStatistics.setTotalRate(0.00);
-            log.info("年增长率"+0.00);
-        }else{
-            //如果去年增长量为0  被除数修改为1
-            if(lastYearTotalAccess==0){
-                lastYearTotalAccess=1;
-            }
-            //总增长率（今年的请求之和-去年请求之和）/去年请求之和
-            double accessDiff = new Double(totalAccess-lastYearTotalAccess).doubleValue();
-            double  lastYearTotalAccessDouble = new Double(lastYearTotalAccess).doubleValue();
-            String result = new DecimalFormat("0.00").format(accessDiff/lastYearTotalAccess);
-            portalStatistics.setTotalRate(Math.ceil(Double.parseDouble(result)));
-            log.info("年增长率"+result);
-        }
-        //获取日访问量  前天的请求综合
-        int dayAccessTwo = getAccess(CommonConstants.BEFOR_YESTERDAY);
-        log.info("前天访问量"+dayAccessTwo);
-        if(dayAccess<dayAccessTwo){
-            portalStatistics.setDayRate(0.00);
-            log.info("日增长率"+0.00);
-        }else{
-            if(dayAccessTwo==0){
-                dayAccessTwo=1;
-            }
-            //日增长率（昨天请求之和-前天请求之和）/前天请求之和
-            double dayAccessDiff = new Double(dayAccess-dayAccessTwo).doubleValue();
-            double  dayAccessTwoDouble = new Double(dayAccessTwo).doubleValue();
-            String resultDay = new DecimalFormat("0.00").format(dayAccessDiff/dayAccessTwoDouble);
-            portalStatistics.setDayRate(Math.ceil(Double.parseDouble(resultDay)));
-           log.info("日增长率"+resultDay);
-        }
-        portalStatistics.setAccessNums(accessNums("0010",CommonConstants.BEN_YUE));
-        portalStatistics.setMessageNums(messageNums("0010",CommonConstants.BEN_YUE));
-        portalStatistics.setFileNums(fileNums("0010",CommonConstants.BEN_YUE));
-        portalStatistics.setGroupNums(groupNums("0010",CommonConstants.BEN_YUE));
-        //饼图
-        portalStatistics.setSourceOrg(getSourceOrg("0010",CommonConstants.BEN_YUE));
+          PortalStatistics portalStatistics = new PortalStatistics();
+//        //获取总访问量 所有请求之和
+//        int totalAccess = getTotalAccess();
+//        //log.info("总访问量"+totalAccess);
+//        portalStatistics.setTotalAccess(new Long(totalAccess));
+//        //获取日访问量  昨天的请求综合
+//        int dayAccess = getAccess(CommonConstants.YESTERDAY);
+//        //log.info("日访问量"+dayAccess);
+//        portalStatistics.setDayAccess(new Long(dayAccess));
+//        //获取今年总访问量 今年所有请求之和
+//        int yearTotalAccess = getAccess(CommonConstants.THIS_YEAR);
+//        //log.info("今年访问量"+yearTotalAccess);
+//        //获取去年总访问量  去年所有请求之和
+//        int  lastYearTotalAccess = getAccess(CommonConstants.LAST_YEAR);
+//        //log.info("去年访问量"+lastYearTotalAccess);
+//        //如果增长率为负 修改为0
+//        if(yearTotalAccess<lastYearTotalAccess){
+//            portalStatistics.setTotalRate(0.00);
+//            log.info("年增长率"+0.00);
+//        }else{
+//            //如果去年增长量为0  被除数修改为1
+//            if(lastYearTotalAccess==0){
+//                lastYearTotalAccess=1;
+//            }
+//            //总增长率（今年的请求之和-去年请求之和）/去年请求之和
+//            double accessDiff = new Double(totalAccess-lastYearTotalAccess).doubleValue();
+//            double  lastYearTotalAccessDouble = new Double(lastYearTotalAccess).doubleValue();
+//            String result = new DecimalFormat("0.00").format(accessDiff/lastYearTotalAccess);
+//            portalStatistics.setTotalRate(Math.ceil(Double.parseDouble(result)));
+//            log.info("年增长率"+result);
+//        }
+//        //获取日访问量  前天的请求综合
+//        int dayAccessTwo = getAccess(CommonConstants.BEFOR_YESTERDAY);
+//        log.info("前天访问量"+dayAccessTwo);
+//        if(dayAccess<dayAccessTwo){
+//            portalStatistics.setDayRate(0.00);
+//            log.info("日增长率"+0.00);
+//        }else{
+//            if(dayAccessTwo==0){
+//                dayAccessTwo=1;
+//            }
+//            //日增长率（昨天请求之和-前天请求之和）/前天请求之和
+//            double dayAccessDiff = new Double(dayAccess-dayAccessTwo).doubleValue();
+//            double  dayAccessTwoDouble = new Double(dayAccessTwo).doubleValue();
+//            String resultDay = new DecimalFormat("0.00").format(dayAccessDiff/dayAccessTwoDouble);
+//            portalStatistics.setDayRate(Math.ceil(Double.parseDouble(resultDay)));
+//           log.info("日增长率"+resultDay);
+//        }
+//        portalStatistics.setAccessNums(accessNums("0010",CommonConstants.BEN_YUE));
+//        portalStatistics.setMessageNums(messageNums("0010",CommonConstants.BEN_YUE));
+//        portalStatistics.setFileNums(fileNums("0010",CommonConstants.BEN_YUE));
+//        portalStatistics.setGroupNums(groupNums("0010",CommonConstants.BEN_YUE));
+//        //饼图
+//        portalStatistics.setSourceOrg(getSourceOrg("0010",CommonConstants.BEN_YUE));
+          portalStatistics.setNodes(getNodes());
+          portalStatistics.setLinks(getLinks());
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
 
@@ -133,7 +139,7 @@ public class IgnoreController {
     }
 
     /**
-     *
+     *获取柱状图数据
      * @param orgCode
      * @return
      */
@@ -191,7 +197,67 @@ public class IgnoreController {
         return null;
     }
 
+    /**
+     * 获取散点关系图数据 点的大小
+     * @return
+     */
+    public List<Node> getNodes() throws Exception{
+        Example example = new Example(Org.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andNotEqualTo("id","99999");
+        criteria.andNotEqualTo("id","0010");
+        criteria.andIsNotNull("orgCode");
+        criteria.andEqualTo("deleted","0");
+        List<Org> org = orgBiz.selectByExample(example);
+        List<Node> nodes = gateLogBiz.findNodeLink(org);
+        return nodes;
+    }
 
+    /**
+     * 获取散点关系图数据 link线
+     * @return
+     * @throws Exception
+     */
+    public List<Link> getLinks() throws Exception{
+        List<Link> links = new ArrayList<>();
+        ObjectRestResponse groupUser = ignoreService.groupUserStatistics(null);
+        Object groupUserResult = groupUser.getResult();
+        String msgJson = JSONArray.toJSONString(groupUserResult);
+        List<StatisticsGroupUserVo> statisticsGroupUserVos= JSONArray.parseArray(msgJson, StatisticsGroupUserVo.class);
+        for (StatisticsGroupUserVo statisticsGroupUserVo :statisticsGroupUserVos){
+            List<StatisticsGroupUserDetailVo> statisticsGroupUserDetailVos  = statisticsGroupUserVo.getUserList().stream().collect(
+                    collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getOrgCode()))),
+                            ArrayList::new));
+            statisticsGroupUserVo.setUserList(statisticsGroupUserDetailVos);
+        }
+        for (int i = 0; i <statisticsGroupUserVos.size(); i++) {
+            List<StatisticsGroupUserDetailVo> detailVos = statisticsGroupUserVos.get(i).getUserList();
+            Link linkS = new Link();
+            Link linkT = new Link();
+            String last = detailVos.get(detailVos.size()-1).getOrgCode();
+            String first = detailVos.get(0).getOrgCode();
+            linkS.setSource(first);
+            linkS.setTarget(last);
+            linkT.setSource(last);
+            linkT.setTarget(first);
+            links.add(linkS);
+            links.add(linkT);
+            for (int j = 0; j <detailVos.size()-1; j++) {
+                Link linkSource = new Link();
+                Link linkTarget = new Link();
+                linkSource.setSource(detailVos.get(j).getOrgCode());
+                linkSource.setTarget(detailVos.get(j+1).getOrgCode());
+                linkTarget.setSource(detailVos.get(j+1).getOrgCode());
+                linkTarget.setTarget(detailVos.get(j).getOrgCode());
+                links.add(linkSource);
+                links.add(linkTarget);
+            }
+        }
+        links = links.stream().collect(
+                collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getSource()+";"+o.getTarget()))),
+                        ArrayList::new));
+        return links;
+    }
     /**
      * 获取部门
      * @param orgCode
@@ -208,7 +274,7 @@ public class IgnoreController {
         return orgList;
     }
     /**
-     * 获取消息量排行
+     * 获取柱状图消息量排行
      * @param orgCode
      * @param date
      * @return
@@ -223,7 +289,7 @@ public class IgnoreController {
     }
 
     /**
-     * 获取文件量排行
+     * 获取柱状图文件量排行
      * @param orgCode
      * @param date
      * @return
@@ -238,7 +304,7 @@ public class IgnoreController {
     }
 
     /**
-     * 获取文群组量排行
+     * 获取柱状图群组量排行
      * @param orgCode
      * @param date
      * @return

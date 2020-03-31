@@ -41,4 +41,12 @@ public interface IgnoreService {
      */
     @RequestMapping(value = "/statistics/fileStatistics", method = RequestMethod.GET)
     ObjectRestResponse fileStatistics(@RequestParam("orgCode")String orgCode, @RequestParam(name = "date",required = false)String dateType);
+
+    /**
+     * 群人员统计获取
+     * @param groupId
+     * @return
+     */
+    @RequestMapping(value = "/statistics/groupUserStatistics", method = RequestMethod.GET)
+    ObjectRestResponse groupUserStatistics(@RequestParam(name = "groupId",required = false)String groupId);
 }
