@@ -1,10 +1,9 @@
 package com.workhub.z.servicechat.service.impl;
 
-import com.workhub.z.servicechat.VO.StatisticsChartDataVo;
-import com.workhub.z.servicechat.VO.StatisticsGroupUserDetailVo;
-import com.workhub.z.servicechat.VO.StatisticsGroupUserVo;
+import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.dao.StatisticsDao;
 import com.workhub.z.servicechat.model.StatisticsChartDto;
+import com.workhub.z.servicechat.model.StatisticsGroupOrgDto;
 import com.workhub.z.servicechat.model.StatisticsGroupUserDto;
 import com.workhub.z.servicechat.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,6 +142,60 @@ public class StatisticsServiceImpl implements StatisticsService {
                 userVo.setPath(dto.getPath());
                 groupVo.getUserList().add(userVo);
                 groupVo.setGroupUsersCount(groupVo.getUserList().size());
+            }
+        }
+        return res;
+    }
+    /**
+     * 群org信息统计
+     * @param groupId
+     * @return
+     */
+    @Override
+    public  List<StatisticsGroupOrgVo> groupOrgStatistics(String groupId){
+        if(groupId==null){
+            groupId="";
+        }
+        List<StatisticsGroupOrgDto> groups = this.statisticsDao.groupOrgStatistics(groupId);
+        List<StatisticsGroupOrgVo> res = new ArrayList<>(16);
+        //数据格式转换
+        String preGroupId = null;
+        boolean isNextGroup = true;//是否下一组统计
+        for(int i=0;i<groups.size();i++){
+            StatisticsGroupOrgDto dto = groups.get(i);
+            if(i==0){//如果第一条统计
+                preGroupId = dto.getGroupId();
+                isNextGroup = true;
+            }else{//判断是否下一组
+                String newGroupId = dto.getGroupId();
+                if(newGroupId.equals(preGroupId)){//如果当前id和前一组id相同
+                    isNextGroup = false;
+                }else{
+                    isNextGroup = true;
+                    preGroupId = newGroupId;//更新群id
+                }
+
+            }
+            if(isNextGroup){//如果是新的群统计
+                StatisticsGroupOrgVo groupVo = new StatisticsGroupOrgVo();
+                groupVo.setGroupName(dto.getGroupName());
+                StatisticsGroupOrgDetailVo userVo = new StatisticsGroupOrgDetailVo();
+                userVo.setParentId(dto.getPid());
+                userVo.setOrgCode(dto.getOrgCode());
+                userVo.setPath(dto.getPath());
+                List<StatisticsGroupOrgDetailVo> userList = new ArrayList<>(16);
+                userList.add(userVo);
+                groupVo.setOrgList(userList);
+                groupVo.setGroupOrgCount(userList.size());
+                res.add(groupVo);
+            }else{//如果继续统计上一个群
+                StatisticsGroupOrgVo groupVo = res.get(res.size()-1);
+                StatisticsGroupOrgDetailVo userVo = new StatisticsGroupOrgDetailVo();
+                userVo.setParentId(dto.getPid());
+                userVo.setOrgCode(dto.getOrgCode());
+                userVo.setPath(dto.getPath());
+                groupVo.getOrgList().add(userVo);
+                groupVo.setGroupOrgCount(groupVo.getOrgList().size());
             }
         }
         return res;
