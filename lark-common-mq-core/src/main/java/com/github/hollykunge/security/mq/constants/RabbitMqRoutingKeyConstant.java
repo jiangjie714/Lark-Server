@@ -49,4 +49,8 @@ public class RabbitMqRoutingKeyConstant {
 
     public static final String ROUTINGKEY_CONTACT = "routingkey_contact";
 
+    public static final String ROUTINGKEY_ONE_DOC_USERUNACK = "onedoc_user_key";
+
+    public static final String ROUTINGKEY_ONE_DOC_ORGUNACK = "onedoc_org_key";
+
 }

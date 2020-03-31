@@ -108,4 +108,13 @@ public class QueueConfig {
     public Queue queueContact() {
         return new Queue(RabbitMqQueConstant.QUEUE_CONTACT, true); //队列持久
     }
+
+    @Bean
+    public Queue onedocOrgUnack() {
+        return new Queue(RabbitMqQueConstant.ONEDOC_ORG, true); //队列持久
+    }
+    @Bean
+    public Queue onedocUserUnack() {
+        return new Queue(RabbitMqQueConstant.ONEDOC_USER, true); //队列持久
+    }
 }

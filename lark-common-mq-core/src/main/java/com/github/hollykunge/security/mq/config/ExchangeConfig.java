@@ -63,4 +63,14 @@ public class ExchangeConfig {
         return new DirectExchange(RabbiMqExchangeConstant.EXCHANGE_CONTACT);
     }
 
+    /**
+     * 协同编辑交换机
+     * @return
+     */
+    @Bean
+    public DirectExchange onedocUserAndOrgExchange(){
+        DirectExchange directExchange = new DirectExchange(RabbiMqExchangeConstant.ONE_DOC_EXCHANGE,true,false);
+        return directExchange;
+    }
+
 }

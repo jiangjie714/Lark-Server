@@ -110,4 +110,14 @@ public class RabbitMqBindingConfig {
     public Binding binding() {
         return BindingBuilder.bind(queueConfig.queueContact()).to(exchangeConfig.defaultExchange()).with(RabbitMqRoutingKeyConstant.ROUTINGKEY_CONTACT);
     }
+
+    @Bean
+    public Binding onedocUnackUser() {
+        return BindingBuilder.bind(queueConfig.onedocUserUnack()).to(exchangeConfig.onedocUserAndOrgExchange()).with(RabbitMqRoutingKeyConstant.ROUTINGKEY_ONE_DOC_USERUNACK);
+    }
+
+    @Bean
+    public Binding onedocUnackOrg() {
+        return BindingBuilder.bind(queueConfig.onedocOrgUnack()).to(exchangeConfig.onedocUserAndOrgExchange()).with(RabbitMqRoutingKeyConstant.ROUTINGKEY_ONE_DOC_ORGUNACK);
+    }
 }
