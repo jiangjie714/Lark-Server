@@ -41,6 +41,13 @@
         <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
         <result property="path" column="path_name" jdbcType="VARCHAR"/>
     </resultMap>
+    <resultMap type="com.workhub.z.servicechat.model.StatisticsGroupOrgDto" id="statisticsGroupOrgDto">
+        <result property="groupId" column="group_id" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="path" column="path_name" jdbcType="VARCHAR"/>
+        <result property="pid" column="pid" jdbcType="VARCHAR"/>
+    </resultMap>
     <!--获取横坐标-->
     <select id="getXLabel" resultMap="statisticsXLabelVo">
             select o.org_name, o.org_code,o.id
@@ -318,6 +325,22 @@
             and g.group_id = #{groupId}
         </if>
         order by g.create_time desc,gu.createtime desc,o.order_id,u.order_id
+    </select>
+    <select id="groupOrgStatistics" resultMap="statisticsGroupOrgDto">
+        select distinct g.group_id,g.group_name,o.org_code,o.path_name,o.parent_id pid
+        from
+        zz_group g,zz_user_group gu,lark_admin.admin_user u,lark_admin.admin_org o
+        where g.group_id = gu.group_id
+        and gu.user_id = u.id
+        and u.org_code = o.org_code
+        and u.deleted != '1'
+        and o.deleted != '1'
+        and g.isdelete != '1'
+        and g.isclose != '1'
+        <if test = "groupId != null and groupId != ''">
+            and g.group_id = #{groupId}
+        </if>
+        order by g.group_id
     </select>
 
 </mapper>
