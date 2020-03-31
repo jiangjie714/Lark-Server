@@ -52,9 +52,9 @@ public class ProcessGroupMsg extends AbstractMsgProcessor {
             if(messageSecretValidVo.getSendStatus().equals("1")){//如果可以发送消息
                 super.saveMessageInfo("GROUP",zzGroupMsg.getMsgSender(),zzGroupMsg.getMsgReceiver()
                         ,zzGroupMsg.getLevels(),zzGroupMsg.getSendTime(),message,zzGroupMsg.getMsgId(),channelContext.getClientNode().getIp(),channelContext.getBsId());
-                Tio.sendToGroup(channelContext.getGroupContext(),zzGroupMsg.getMsgReceiver(),this.getWsResponse(msg));
                 saveMsg(zzGroupMsg);
                 //存储消息信息（新）
+                Tio.sendToGroup(channelContext.getGroupContext(),zzGroupMsg.getMsgReceiver(),this.getWsResponse(msg));
                                super.msgAnswer(msg,zzGroupMsg.getMsgId(),channelContext);
             }else{//
                 super.msgAnswer(msg,zzGroupMsg.getMsgId(),channelContext, MessageType.FAIL_ANSWER,"消息不能发送，包含如下涉密词汇："+messageSecretValidVo.getSecretWords());
