@@ -280,12 +280,6 @@ public class IgnoreController {
         criteria.andEqualTo("deleted","0");
         List<Org> orgs = orgBiz.selectByExample(exampl);
         for (Org org:orgList){
-//            for (Org o :orgs){
-//                Link link = new Link();
-//                link.setSource(org.getOrgCode());
-//                link.setTarget(o.getOrgCode());
-//                links.add(link);
-//            }
             treeMenuList(orgs,org.getId());
         }
         return linkList;
