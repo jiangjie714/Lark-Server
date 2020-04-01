@@ -279,13 +279,14 @@ public class IgnoreController {
         criteria.andIsNotNull("orgCode");
         criteria.andEqualTo("deleted","0");
         List<Org> orgs = orgBiz.selectByExample(exampl);
+        List<Link> linkList = new ArrayList<>();
         for (Org org:orgList){
-            treeMenuList(orgs,org.getId());
+            treeMenuList(orgs,org.getId(),linkList);
         }
         return linkList;
     }
-    List<Link> linkList = new ArrayList<>();
-    public List<Link> treeMenuList(List<Org> orgList, String  pid){
+
+    public List<Link> treeMenuList(List<Org> orgList, String  pid,List<Link> linkList){
             for(Org mu: orgList){
                 //遍历出父id等于参数的id，add进子节点集合
                 if(StringUtils.equals(pid,mu.getParentId())){
@@ -294,7 +295,7 @@ public class IgnoreController {
                     link.setSource(pid);
                     link.setTarget(mu.getOrgCode());
                     linkList.add(link);
-                    treeMenuList(orgList,mu.getId());
+                    treeMenuList(orgList,mu.getId(),linkList);
                 }
             }
             return linkList;
