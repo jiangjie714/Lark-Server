@@ -47,6 +47,6 @@ public interface IgnoreService {
      * @param groupId
      * @return
      */
-    @RequestMapping(value = "/statistics/groupUserStatistics", method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/groupOrgStatistics", method = RequestMethod.GET)
     ObjectRestResponse groupUserStatistics(@RequestParam(name = "groupId",required = false)String groupId);
 }

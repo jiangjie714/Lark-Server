@@ -331,10 +331,20 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
             Long num = gateLogMapper.getCountLog(o.getId());
             node.setId(o.getOrgCode());
             node.setName(o.getOrgName());
-            node.setSymbolSize(num);
+            node.setParnetId(o.getParentId());
+            node.setLevel(o.getOrgLevel());
+            node.setSymbolSize(getNormalizeDistance(num));
             nodes.add(node);
         }
         return nodes;
+    }
+
+    public Double getNormalizeDistance(long num){
+        double min = 0.0;
+        Example example = new Example(GateLog.class);
+        int max = gateLogMapper.selectCountByExample(example);
+        double normalize = ((num-min)/(max-min))*100;
+        return normalize;
     }
     public int getAccess(String type){
         return gateLogMapper.getAccess(type);

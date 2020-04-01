@@ -28,8 +28,8 @@ public class Node implements Serializable {
     /**
      * 点的大小
      */
-    private Long symbolSize;
-    private String x;
-    private String y;
+    private Double symbolSize;
+    private String parnetId;
+    private Integer level;
     private Attributes attributes;
 }
