@@ -7,7 +7,6 @@ import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.entity.GateLog;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.rpc.ignore.service.IgnoreService;
-import com.github.hollykunge.security.admin.util.DateUtil;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -20,6 +19,9 @@ import tk.mybatis.mapper.entity.Example;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.*;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * @author fansq  ignore
@@ -45,25 +47,20 @@ public class IgnoreController {
     @RequestMapping(value = "/statistics/all",method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<PortalStatistics> statisticsAll(HttpServletRequest request) throws Exception{
-        PortalStatistics portalStatistics = new PortalStatistics();
+          PortalStatistics portalStatistics = new PortalStatistics();
         //获取总访问量 所有请求之和
         int totalAccess = getTotalAccess();
-        //log.info("总访问量"+totalAccess);
         portalStatistics.setTotalAccess(new Long(totalAccess));
         //获取日访问量  昨天的请求综合
         int dayAccess = getAccess(CommonConstants.YESTERDAY);
-        //log.info("日访问量"+dayAccess);
         portalStatistics.setDayAccess(new Long(dayAccess));
         //获取今年总访问量 今年所有请求之和
         int yearTotalAccess = getAccess(CommonConstants.THIS_YEAR);
-        //log.info("今年访问量"+yearTotalAccess);
         //获取去年总访问量  去年所有请求之和
         int  lastYearTotalAccess = getAccess(CommonConstants.LAST_YEAR);
-        //log.info("去年访问量"+lastYearTotalAccess);
         //如果增长率为负 修改为0
         if(yearTotalAccess<lastYearTotalAccess){
             portalStatistics.setTotalRate(0.00);
-            log.info("年增长率"+0.00);
         }else{
             //如果去年增长量为0  被除数修改为1
             if(lastYearTotalAccess==0){
@@ -72,16 +69,14 @@ public class IgnoreController {
             //总增长率（今年的请求之和-去年请求之和）/去年请求之和
             double accessDiff = new Double(totalAccess-lastYearTotalAccess).doubleValue();
             double  lastYearTotalAccessDouble = new Double(lastYearTotalAccess).doubleValue();
-            String result = new DecimalFormat("0.00").format(accessDiff/lastYearTotalAccess);
+            String result = new DecimalFormat("0.00").format(accessDiff/lastYearTotalAccessDouble);
             portalStatistics.setTotalRate(Math.ceil(Double.parseDouble(result)));
-            log.info("年增长率"+result);
+            //log.info("年增长率"+result);
         }
         //获取日访问量  前天的请求综合
         int dayAccessTwo = getAccess(CommonConstants.BEFOR_YESTERDAY);
-        log.info("前天访问量"+dayAccessTwo);
         if(dayAccess<dayAccessTwo){
             portalStatistics.setDayRate(0.00);
-            log.info("日增长率"+0.00);
         }else{
             if(dayAccessTwo==0){
                 dayAccessTwo=1;
@@ -91,7 +86,6 @@ public class IgnoreController {
             double  dayAccessTwoDouble = new Double(dayAccessTwo).doubleValue();
             String resultDay = new DecimalFormat("0.00").format(dayAccessDiff/dayAccessTwoDouble);
             portalStatistics.setDayRate(Math.ceil(Double.parseDouble(resultDay)));
-           log.info("日增长率"+resultDay);
         }
         portalStatistics.setAccessNums(accessNums("0010",CommonConstants.BEN_YUE));
         portalStatistics.setMessageNums(messageNums("0010",CommonConstants.BEN_YUE));
@@ -99,6 +93,8 @@ public class IgnoreController {
         portalStatistics.setGroupNums(groupNums("0010",CommonConstants.BEN_YUE));
         //饼图
         portalStatistics.setSourceOrg(getSourceOrg("0010",CommonConstants.BEN_YUE));
+          portalStatistics.setNodes(getNodes());
+          portalStatistics.setLinks(getLinks());
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
 
@@ -133,14 +129,13 @@ public class IgnoreController {
     }
 
     /**
-     *
+     *获取柱状图数据
      * @param orgCode
      * @return
      */
     public List<AccessNum> accessNums(String orgCode,String date) throws Exception{
         List<Org>orgList = getOrg(orgCode);
         if(StringUtils.equals(CommonConstants.JIN_RI,date)){
-            //SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
             List<AccessNum> accessNums = gateLogBiz.
                     findLogCountByOrgCode(orgList,CommonConstants.JIN_RI_TYPE);
             return accessNums;
@@ -191,7 +186,144 @@ public class IgnoreController {
         return null;
     }
 
+    /**
+     * 获取散点关系图数据 点的大小
+     * @return
+     */
+    public List<Node> getNodes() throws Exception{
+        Example example = new Example(Org.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andNotEqualTo("id","99999");
+        criteria.andNotEqualTo("id","0010");
+        criteria.andIsNotNull("orgCode");
+        criteria.andEqualTo("deleted","0");
+        List<Org> org = orgBiz.selectByExample(example);
+        List<Node> nodes = gateLogBiz.findNodeLink(org);
+        return nodes;
+    }
 
+    /**
+     * 获取散点关系图数据 link线
+     * @return
+     * @throws Exception
+     */
+    public List<Link> getLinks() throws Exception{
+        List<Link> links = new ArrayList<>();
+        ObjectRestResponse groupUser = ignoreService.groupUserStatistics(null);
+        Object groupUserResult = groupUser.getResult();
+        String msgJson = JSONArray.toJSONString(groupUserResult);
+        List<StatisticsGroupOrgVo> statisticsGroupUserVos= JSONArray.parseArray(msgJson, StatisticsGroupOrgVo.class);
+        for (int i = 0; i <statisticsGroupUserVos.size(); i++) {
+            List<StatisticsGroupOrgDetailVo> detailVos = statisticsGroupUserVos.get(i).getOrgList();
+            Link linkS = new Link();
+            Link linkT = new Link();
+            Link linkP = new Link();
+            Link link = new Link();
+            StatisticsGroupOrgDetailVo last = detailVos.get(detailVos.size()-1);
+            StatisticsGroupOrgDetailVo first = detailVos.get(0);
+            linkS.setSource(first.getOrgCode());
+            linkS.setTarget(last.getOrgCode());
+            links.add(linkS);
+            linkT.setSource(last.getOrgCode());
+            linkT.setTarget(first.getOrgCode());
+            links.add(linkT);
+            linkP.setSource(first.getParentId());
+            linkP.setTarget(last.getParentId());
+            links.add(linkP);
+            link.setSource(last.getParentId());
+            link.setTarget(first.getParentId());
+            links.add(link);
+            for (int j = 0; j <detailVos.size()-1; j++) {
+                Link linkSource = new Link();
+                Link linkTarget = new Link();
+                Link linkParent = new Link();
+                Link linkParentT = new Link();
+                linkSource.setSource(detailVos.get(j).getOrgCode());
+                linkSource.setTarget(detailVos.get(j+1).getOrgCode());
+                linkTarget.setSource(detailVos.get(j+1).getOrgCode());
+                linkTarget.setTarget(detailVos.get(j).getOrgCode());
+                links.add(linkSource);
+                links.add(linkTarget);
+                linkParent.setSource(detailVos.get(j).getParentId());
+                linkParent.setTarget(detailVos.get(j+1).getParentId());
+                links.add(linkParent);
+                linkParentT.setSource(detailVos.get(j+1).getParentId());
+                linkParentT.setTarget(detailVos.get(j).getParentId());
+                links.add(linkParentT);
+            }
+        }
+        List<Link> linkList = setLink();
+        links = links.stream().collect(
+                collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getSource()+";"+o.getTarget()))),
+                        ArrayList::new));
+        links.addAll(linkList);
+        return links;
+    }
+
+    /**
+     * 部门连接线
+     * @return
+     */
+    public List<Link> setLink(){
+        Example example = new Example(Org.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgLevel","3");
+        criteria.andIsNotNull("orgCode");
+        criteria.andEqualTo("deleted","0");
+        List<Org> orgList = orgBiz.selectByExample(example);
+        Example exampl = new Example(Org.class);
+        Example.Criteria criteri = exampl.createCriteria();
+        criteri.andNotEqualTo("orgLevel",1);
+        criteri.andNotEqualTo("orgLevel",2);
+        criteri.andNotEqualTo("orgLevel",3);
+        criteria.andIsNotNull("orgCode");
+        criteria.andEqualTo("deleted","0");
+        List<Org> orgs = orgBiz.selectByExample(exampl);
+        List<Link> linkList = new ArrayList<>();
+        for (Org org:orgList){
+            treeMenuList(orgs,org.getId(),linkList);
+        }
+        return linkList;
+    }
+
+    public List<Link> treeMenuList(List<Org> orgList, String  pid,List<Link> linkList){
+            for(Org mu: orgList){
+                //遍历出父id等于参数的id，add进子节点集合
+                if(StringUtils.equals(pid,mu.getParentId())){
+                    //递归遍历下一级
+                    Link link = new Link();
+                    link.setSource(pid);
+                    link.setTarget(mu.getOrgCode());
+                    linkList.add(link);
+                    treeMenuList(orgList,mu.getId(),linkList);
+                }
+            }
+            return linkList;
+        }
+
+
+
+
+//        List<Link> links = new ArrayList<>();
+//        if(orgList==null||orgList.size()==0){
+//            return links;
+//        }
+//        for (Org org:orgList){
+//            Example exampl = new Example(Org.class);
+//            Example.Criteria criteri = exampl.createCriteria();
+//            criteri.andEqualTo("parentId",org.getId());
+//            criteri.andEqualTo("deleted","0");
+//            List<Org> orgs = orgBiz.selectByExample(exampl);
+//            for (Org o :orgs){
+//                Link link = new Link();
+//                link.setSource(org.getOrgCode());
+//                link.setTarget(o.getOrgCode());
+//                links.add(link);
+//            }
+//            return f(orgs);
+//        }
+//        return links;
+    //}
     /**
      * 获取部门
      * @param orgCode
@@ -208,7 +340,7 @@ public class IgnoreController {
         return orgList;
     }
     /**
-     * 获取消息量排行
+     * 获取柱状图消息量排行
      * @param orgCode
      * @param date
      * @return
@@ -223,7 +355,7 @@ public class IgnoreController {
     }
 
     /**
-     * 获取文件量排行
+     * 获取柱状图文件量排行
      * @param orgCode
      * @param date
      * @return
@@ -238,7 +370,7 @@ public class IgnoreController {
     }
 
     /**
-     * 获取文群组量排行
+     * 获取柱状图群组量排行
      * @param orgCode
      * @param date
      * @return

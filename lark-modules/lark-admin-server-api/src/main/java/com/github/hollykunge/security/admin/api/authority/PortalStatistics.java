@@ -48,4 +48,12 @@ public class PortalStatistics implements Serializable {
      * 饼图（默认二院）
      */
     private List<SourceOrg> sourceOrg;
+    /**
+     * 散点图 点
+     */
+    private List<Node> nodes;
+    /**
+     * 散点图 线
+     */
+    private List<Link> links;
 }

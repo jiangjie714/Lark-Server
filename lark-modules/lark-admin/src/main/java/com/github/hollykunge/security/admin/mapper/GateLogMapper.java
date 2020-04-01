@@ -20,6 +20,7 @@ public interface GateLogMapper extends Mapper<GateLog> {
                           @Param("type") String type,
                           @Param("menu") String menu);
 
+    Long getCountLog(@Param("orgCode") String orgCode);
 
     /**
      * fansq 获取指定时间范围的数据量

@@ -2,6 +2,7 @@ package com.github.hollykunge.security.admin.biz;
 
 import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.admin.api.authority.AccessNum;
+import com.github.hollykunge.security.admin.api.authority.Node;
 import com.github.hollykunge.security.admin.api.authority.SourceOrg;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.entity.*;
@@ -316,6 +317,34 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         sourceOrgs = sourceOrgs.stream().sorted(Comparator.comparing(SourceOrg::getCount).
                 reversed()).collect(Collectors.toList());
         return sourceOrgs;
+    }
+
+    /**
+     * 获取散点图点的大小
+     * @param orgList
+     * @return
+     */
+    public List<Node> findNodeLink(List<Org> orgList){
+        List<Node> nodes = new ArrayList<>();
+        for(Org o:orgList){
+            Node node = new Node();
+            Long num = gateLogMapper.getCountLog(o.getId());
+            node.setId(o.getOrgCode());
+            node.setName(o.getOrgName());
+            node.setParnetId(o.getParentId());
+            node.setLevel(o.getOrgLevel());
+            node.setSymbolSize(getNormalizeDistance(num));
+            nodes.add(node);
+        }
+        return nodes;
+    }
+
+    public Double getNormalizeDistance(long num){
+        double min = 0.0;
+        Example example = new Example(GateLog.class);
+        int max = gateLogMapper.selectCountByExample(example);
+        double normalize = ((num-min)/(max-min))*100;
+        return normalize;
     }
     public int getAccess(String type){
         return gateLogMapper.getAccess(type);
