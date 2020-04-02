@@ -1,17 +1,12 @@
 package com.github.hollykunge.servicewebservice.config.mq;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.vo.mq.AdminOrgVO;
 import com.github.hollykunge.security.common.vo.mq.AdminUserVO;
 import com.github.hollykunge.servicewebservice.dao.EryuanOrgDao;
 import com.github.hollykunge.servicewebservice.dao.EryuanUserDao;
-import com.github.hollykunge.servicewebservice.model.EryuanOrg;
 import com.github.hollykunge.servicewebservice.model.EryuanUser;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -22,9 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -40,47 +33,10 @@ public class RabbitMqConfig {
     private ConnectionFactory connectionFactory;
 
     @Autowired
-    private ExchangeConfig exchangeConfig;
-
-    @Autowired
-    private QueueConfig queueConfig;
-
-    @Autowired
     private EryuanOrgDao eryuanOrgDao;
 
     @Autowired
     private EryuanUserDao eryuanUserDao;
-
-    @Bean
-    public Binding orgBinding(){
-        Binding binding = BindingBuilder.bind(queueConfig.adminOrgQueue()).to(exchangeConfig.adminUserAndOrgExchange()).with(CommonConstants.ADMINORG_ROTEING_KEY);
-        return binding;
-    }
-    @Bean
-    public Binding userBinding(){
-        Binding binding = BindingBuilder.bind(queueConfig.adminUserQueue()).to(exchangeConfig.adminUserAndOrgExchange()).with(CommonConstants.ADMINUSER_ROTEING_KEY);
-        return binding;
-    }
-
-    /**
-     * 协同编辑组织队列绑定交换机
-     * @return
-     */
-    @Bean
-    public Binding oneDocOrgBinding(){
-        Binding binding = BindingBuilder.bind(queueConfig.oneDocOrgQueue()).to(exchangeConfig.adminUserAndOrgExchange()).with(CommonConstants.ADMINORG_ROTEING_KEY);
-        return binding;
-    }
-
-    /**
-     * 协同编辑用户队列绑定交换机
-     * @return
-     */
-    @Bean
-    public Binding oneDocUserBinding(){
-        Binding binding = BindingBuilder.bind(queueConfig.oneDocUserQueue()).to(exchangeConfig.adminUserAndOrgExchange()).with(CommonConstants.ADMINUSER_ROTEING_KEY);
-        return binding;
-    }
 
     @Bean
     @Qualifier("orgRabbitTemplate")

@@ -1,6 +1,8 @@
 package com.github.hollykunge.security.admin.config.mq;
 
 import com.github.hollykunge.security.common.constant.CommonConstants;
+import com.github.hollykunge.security.mq.constants.RabbiMqExchangeConstant;
+import com.github.hollykunge.security.mq.constants.RabbitMqRoutingKeyConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -33,9 +35,9 @@ public class ProduceSenderConfig{
         //消息id
         CorrelationData correlationId = new CorrelationData(id);
         //发送到门户服务
-        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
+        noticeRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.NOTICE_EXCHANGE, RabbitMqRoutingKeyConstant.NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
         //发送到研讨服务
-        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOCHAT_ROTEING_KEY,message, correlationId);
+        noticeRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.NOTICE_EXCHANGE, RabbitMqRoutingKeyConstant.NOTICE_TOCHAT_ROTEING_KEY,message, correlationId);
     }
 
     /**
@@ -49,9 +51,9 @@ public class ProduceSenderConfig{
         //消息id
         CorrelationData correlationId = new CorrelationData(id);
         //发送到门户服务
-        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.CANCEL_NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
+        noticeRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.NOTICE_EXCHANGE, RabbitMqRoutingKeyConstant.CANCEL_NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
         //发送到研讨服务  我看chat服务中指定消费方法没什么具体业务 所以没有修改  路由键
-        noticeRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOCHAT_ROTEING_KEY,message, correlationId);
+        noticeRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.NOTICE_EXCHANGE, RabbitMqRoutingKeyConstant.NOTICE_TOCHAT_ROTEING_KEY,message, correlationId);
     }
 
 
@@ -63,7 +65,7 @@ public class ProduceSenderConfig{
     public void sendAndNoConfirm(String id,Object message) {
         //消息id
         CorrelationData correlationId = new CorrelationData(id);
-        adminRabbitTemplate.convertAndSend(CommonConstants.NOTICE_EXCHANGE, CommonConstants.NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
+        adminRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.NOTICE_EXCHANGE, RabbitMqRoutingKeyConstant.NOTICE_TOPORTAL_ROTEING_KEY,message, correlationId);
     }
 
     /**
@@ -73,6 +75,6 @@ public class ProduceSenderConfig{
      * @param rotingKey 路由键
      */
     public void adminUserOrOrgSend(Message message,String rotingKey) {
-        adminRabbitTemplate.convertAndSend(CommonConstants.ADMIN_USERORORG_EXCHANGE, rotingKey,message);
+        adminRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.ADMIN_USERORORG_EXCHANGE, rotingKey,message);
     }
 }

@@ -60,12 +60,11 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     public ObjectRestResponse<Org> add(@RequestBody Org org) {
         //添加空字段默认值 以及pathcode  pathname  值
         String id = UUIDUtils.generateShortUuid();
-        org.setId(id);
         org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
-        org.setPathCode(org.getPathCode()+id+AdminCommonConstant.ORG_PATH_CODE);
+        org.setPathCode(org.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
         org.setPathName(org.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
         org.setOrgLevel(org.getOrgLevel()+1);
-        baseBiz.insertSelective(org);
+        orgBiz.insertSelective(org);
         return new ObjectRestResponse<Org>().rel(true);
     }
 
@@ -109,11 +108,17 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * fansq 添加异常 ClientInvalidException
      */
     @Override
-    public ObjectRestResponse<Org> remove(String id) {
+    public ObjectRestResponse<Org> remove(@PathVariable String id) {
         User user = new User();
         user.setOrgCode(id);
         user.setDeleted("0");
+        Org org = new Org();
+        org.setParentId(id);
         List<User> userList = userBiz.selectList(user);
+        List<Org> orgList = orgBiz.selectList(org);
+        if(orgList.size() > 0){
+            throw new ClientInvalidException("The organization has sub-organization and cannot be deleted");
+        }
         if(userList.size()>0){
             throw new ClientInvalidException("The organization has users and cannot be deleted");
         }

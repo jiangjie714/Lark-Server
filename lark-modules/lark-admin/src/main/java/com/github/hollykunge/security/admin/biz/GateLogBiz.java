@@ -1,11 +1,11 @@
 package com.github.hollykunge.security.admin.biz;
 
 import com.alibaba.fastjson.JSONArray;
+import com.github.hollykunge.security.admin.api.authority.AccessNum;
+import com.github.hollykunge.security.admin.api.authority.Node;
+import com.github.hollykunge.security.admin.api.authority.SourceOrg;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.admin.entity.GateLog;
-import com.github.hollykunge.security.admin.entity.Role;
-import com.github.hollykunge.security.admin.entity.RoleUserMap;
-import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.GateLogMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
@@ -25,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * ${DESCRIPTION}
@@ -45,6 +47,8 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     private RoleUserMapMapper roleUserMapMapper;
     @Autowired
     private UserBiz userBiz;
+    @Autowired
+    private GateLogMapper gateLogMapper;
     @Value("${role.code.system}")
     private String sysRoleCode;
     @Value("${role.code.log}")
@@ -266,5 +270,83 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 统计功能 获取登录量计数
+     *
+     * @return
+     */
+    public List<AccessNum> findLogCountByOrgCode(List<Org> orgList,String type){
+        List<AccessNum> accessNums = new ArrayList<>();
+        //select * from admin_user where org_code like '%0010%';
+        for(Org o:orgList){
+            AccessNum accessNum = new AccessNum();
+            accessNum.setX(o.getOrgName());
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"/api/admin/user/front/info");
+            accessNum.setY(num);
+            accessNums.add(accessNum);
+        }
+        accessNums = accessNums.stream().sorted(Comparator.comparing(AccessNum::getY).
+                reversed()).collect(Collectors.toList());
+        return accessNums;
+    }
+
+    public Long findLogCountByOrgCodeAll(String orgCode,String type){
+            Long num = gateLogMapper.getOrgCodeLogNum(orgCode,type,"");
+            return num;
+    }
+    public List<SourceOrg> findLogCountByOrgCodeAll(String orgCode,List<Org> orgList,String type){
+        //总活动量
+        Long numAll = findLogCountByOrgCodeAll(orgCode,type);
+        List<SourceOrg> sourceOrgs = new ArrayList<>();
+        for(Org o:orgList){
+            SourceOrg sourceOrg = new SourceOrg();
+            sourceOrg.setItem(o.getOrgName());
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"");
+            if(numAll==0||num==0){
+                sourceOrg.setCount(0.0);
+            }else{
+                double numAllD = new Double(numAll).doubleValue();
+                double  numD = new Double(num).doubleValue();
+                String n = new DecimalFormat("0.0").format(numD/numAllD);
+                sourceOrg.setCount(Double.parseDouble(n));
+            }
+            sourceOrgs.add(sourceOrg);
+        }
+        sourceOrgs = sourceOrgs.stream().sorted(Comparator.comparing(SourceOrg::getCount).
+                reversed()).collect(Collectors.toList());
+        return sourceOrgs;
+    }
+
+    /**
+     * 获取散点图点的大小
+     * @param orgList
+     * @return
+     */
+    public List<Node> findNodeLink(List<Org> orgList){
+        List<Node> nodes = new ArrayList<>();
+        for(Org o:orgList){
+            Node node = new Node();
+            Long num = gateLogMapper.getCountLog(o.getId());
+            node.setId(o.getOrgCode());
+            node.setName(o.getOrgName());
+            node.setParnetId(o.getParentId());
+            node.setLevel(o.getOrgLevel());
+            node.setSymbolSize(getNormalizeDistance(num));
+            nodes.add(node);
+        }
+        return nodes;
+    }
+
+    public Double getNormalizeDistance(long num){
+        double min = 0.0;
+        Example example = new Example(GateLog.class);
+        int max = gateLogMapper.selectCountByExample(example);
+        double normalize = ((num-min)/(max-min))*100;
+        return normalize;
+    }
+    public int getAccess(String type){
+        return gateLogMapper.getAccess(type);
     }
 }

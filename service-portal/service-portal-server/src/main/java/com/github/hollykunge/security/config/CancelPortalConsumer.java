@@ -9,6 +9,7 @@ import com.github.hollykunge.security.entity.HeatMap;
 import com.github.hollykunge.security.entity.Notice;
 import com.github.hollykunge.security.mapper.HeatMapMapper;
 import com.github.hollykunge.security.mapper.NoticeMapper;
+import com.github.hollykunge.security.mq.constants.RabbitMqQueConstant;
 import com.github.hollykunge.security.service.NoticeService;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -29,7 +30,7 @@ import java.util.Map;
  * 消费 取消公告发布的消息
  */
 @Component
-@RabbitListener(queues = CommonConstants.CANCEL_NOTICE_QUEUE_NAME,containerFactory = "rabbitListenerContainerFactory")
+@RabbitListener(queues = RabbitMqQueConstant.CANCEL_NOTICE_QUEUE_NAME,containerFactory = "rabbitListenerContainerFactory")
 public class CancelPortalConsumer {
 
     @Autowired

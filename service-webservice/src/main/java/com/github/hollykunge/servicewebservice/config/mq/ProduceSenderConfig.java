@@ -3,6 +3,8 @@ package com.github.hollykunge.servicewebservice.config.mq;
 import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.mq.constants.RabbiMqExchangeConstant;
+import com.github.hollykunge.security.mq.constants.RabbitMqRoutingKeyConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -38,7 +40,7 @@ public class ProduceSenderConfig {
                 .setContentType(MessageProperties.CONTENT_TYPE_JSON).setContentEncoding("gb2312")
                 .build();
         log.info(new String(message.getBody()));
-        orgRabbitTemplate.convertAndSend(CommonConstants.WERSERVICE_ADMIN_USERANDORG_EXCHANGE,CommonConstants.ADMINORG_ROTEING_KEY,message,correlationData);
+        orgRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.WERSERVICE_ADMIN_USERANDORG_EXCHANGE, RabbitMqRoutingKeyConstant.ADMINORG_ROTEING_KEY,message,correlationData);
         log.info("org消息发送至admin:" + orgList.toString());
     }
 
@@ -49,7 +51,7 @@ public class ProduceSenderConfig {
                 .setContentType(MessageProperties.CONTENT_TYPE_JSON).setContentEncoding("gb2312")
                 .build();
         log.info(new String(message.getBody()));
-        userRabbitTemplate.convertAndSend(CommonConstants.WERSERVICE_ADMIN_USERANDORG_EXCHANGE,CommonConstants.ADMINUSER_ROTEING_KEY,message,correlationData);
+        userRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.WERSERVICE_ADMIN_USERANDORG_EXCHANGE,RabbitMqRoutingKeyConstant.ADMINUSER_ROTEING_KEY,message,correlationData);
         log.info("user消息发送至admin:" + userList.toString());
     }
 
@@ -65,7 +67,7 @@ public class ProduceSenderConfig {
                 .setContentType(MessageProperties.CONTENT_TYPE_JSON).setContentEncoding("gb2312")
                 .build();
         log.info(new String(message.getBody()));
-        onedocOrgRabbitTemplate.convertAndSend(CommonConstants.WERSERVICE_ADMIN_USERANDORG_EXCHANGE,CommonConstants.ADMINORG_ROTEING_KEY,message,correlationData);
+        onedocOrgRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.WERSERVICE_ADMIN_USERANDORG_EXCHANGE,RabbitMqRoutingKeyConstant.ADMINORG_ROTEING_KEY,message,correlationData);
         log.info("org消息发送至oneDoc:" + orgList.toString());
     }
 
@@ -81,7 +83,7 @@ public class ProduceSenderConfig {
                 .setContentType(MessageProperties.CONTENT_TYPE_JSON).setContentEncoding("gb2312")
                 .build();
         log.info(new String(message.getBody()));
-        onedocUserRabbitTemplate.convertAndSend(CommonConstants.WERSERVICE_ADMIN_USERANDORG_EXCHANGE,CommonConstants.ADMINUSER_ROTEING_KEY,message,correlationData);
+        onedocUserRabbitTemplate.convertAndSend(RabbiMqExchangeConstant.WERSERVICE_ADMIN_USERANDORG_EXCHANGE,RabbitMqRoutingKeyConstant.ADMINUSER_ROTEING_KEY,message,correlationData);
         log.info("user消息发送至oneDoc:" + userList.toString());
     }
 }

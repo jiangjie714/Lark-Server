@@ -8,20 +8,22 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.base.Joiner;
-import com.workhub.z.servicechat.VO.*;
+import com.workhub.z.servicechat.VO.GroupEditVO;
+import com.workhub.z.servicechat.VO.GroupUserListVo;
+import com.workhub.z.servicechat.VO.GroupVO;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.ZzGroupDao;
-import com.workhub.z.servicechat.dao.ZzUserGroupDao;
+import com.workhub.z.servicechat.dao.group.ZzGroupDao;
+import com.workhub.z.servicechat.dao.group.ZzUserGroupDao;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.entity.group.ZzUserGroup;
 import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.model.GroupEditDto;
 import com.workhub.z.servicechat.model.GroupEditUserList;
+import com.workhub.z.servicechat.model.GroupTaskDto;
 import com.workhub.z.servicechat.model.UserListDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;
@@ -41,8 +43,7 @@ import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.workhub.z.servicechat.config.MessageType.HIGH_SECRECT_LEVEL;
-import static com.workhub.z.servicechat.config.MessageType.NORMAL_SECRECT_LEVEL;
+import static com.workhub.z.servicechat.config.MessageType.*;
 import static com.workhub.z.servicechat.config.RandomId.getUUID;
 import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
 
@@ -215,8 +216,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
      * @since 2019-06-11
      */
     @Override
-    public String deleteGroupLogic(String groupId, String delFlg,String userId) {
-        int i=this.zzGroupDao.deleteGroupLogic( groupId, delFlg, userId);
+    public String deleteGroupLogic(String groupId, String delFlg) {
+        int i=this.zzGroupDao.deleteGroupLogic( groupId, delFlg);
         return  "1";
     }
     /**
@@ -259,6 +260,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         common.putVoNullStringToEmptyString(dataList);
         AdminUser userInfo=null;
         for(GroupVO groupVO:dataList){
+            Map p2 = new HashMap<>(16);
+            p2.put("userid",common.nulToEmptyString(groupVO.getCreator()));
             userInfo=iUserService.getUserInfo(common.nulToEmptyString(groupVO.getCreator()));
             groupVO.setCreatorName(userInfo==null?"":userInfo.getName());
         }
@@ -281,8 +284,6 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         ZzGroup group = new ZzGroup();
         group.setGroupId(groupId);
         group.setIsdelete("1");
-        group.setUpdator(userId);
-        group.setUpdateTime(new Date());
         zzGroupDao.update(group);
         //记录群状态变动begin
         ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
@@ -319,7 +320,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
     @Override
     public void removeMember(String groupId, String userId){
         if (zzUserGroupDao.deleteByGroupIdAndUserId(groupId, userId)>0){
-            //rabbitMqMsgProducer.sendMsgEditGroup("移除组成员");
+            rabbitMqMsgProducer.sendMsgEditGroup("移除组成员");
         }
 
     }
@@ -351,7 +352,6 @@ public class ZzGroupServiceImpl implements ZzGroupService {
     @Override
     @Transactional(rollbackFor={RuntimeException.class, Exception.class})
     public int groupMemberEdit(GroupEditDto groupEditDto, String userId, String userName){
-
         List<AdminUser> addUserInfoList = null;
         List<AdminUser> removeUserInfoList = null;
         try {
@@ -368,42 +368,90 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             ){
                 return 0;
             }
+            //新增了人员设置参数
+            GroupEditVO addVo = new GroupEditVO();
+            addVo.setCode(GROUP_EDIT);//消息类型群编辑
+            GroupTaskDto addDto = new GroupTaskDto();
+            addDto.setType(GROUP_JOIN_MSG);//群编辑类型：加入群
+            addDto.setGroupId(groupId);
+            addDto.setTimestamp(new Date());
+            addDto.setReviser(userId);//
+            String addUserIds = "";
+            List<UserListDto> addUserList = new ArrayList<>();
+            //删除了人员设置参数
+            GroupEditVO removeVo = new GroupEditVO();
+            removeVo.setCode(GROUP_EDIT);//消息类型群编辑
+            GroupTaskDto removeDto = new GroupTaskDto();
+            removeDto.setType(GROUP_EXIT_MSG);//群编辑类型：退出群
+            removeDto.setGroupId(groupId);
+            removeDto.setTimestamp(new Date());
+            removeDto.setReviser(userId);//
+            String removeUserIds = "";
+            List<UserListDto> removeUserList = new ArrayList<>();
+
             List<String> userList = zzGroupDao.queryGroupUserIdListByGroupId(groupId);
-            List<String> nowUserList =  new ArrayList<>();
-            for(GroupEditUserList nowUser :userListDtos){
-                nowUserList.add(common.nulToEmptyString(nowUser.getId()));
+
+            //新增判断
+            for(GroupEditUserList userListDto:userListDtos){
+                boolean addFlg = true;//该人员是新增的
+                for(String temp: userList){
+                    if(temp.equals(userListDto.getId())){
+                        addFlg = false;
+                        break;
+                    }
+                }
+                if(addFlg){
+                    addUserIds += ","+userListDto.getId();
+                }
+
             }
-            TeamMemberChangeListVo memberChangeListVo = common.teamMemberChangeInf(userList,nowUserList);
-            List<String> addUserList = memberChangeListVo.getAddList();
-            List<String> delUserList = memberChangeListVo.getDelList();
+            //删除判断
+            for(String temp: userList){
+                boolean removeFlg = true;//该人员是删除的
+                for(GroupEditUserList userListDto:userListDtos){
+                    if(temp.equals(userListDto.getId())){
+                        removeFlg = false;
+                        break;
+                    }
+                }
+                if(removeFlg){
+                    removeUserIds += ","+temp;
+                }
+            }
             //处理群成员begin
             //添加
-            if(addUserList!=null && addUserList.size()!=0){
+            if(!addUserIds.equals("")){
+                addUserIds = addUserIds.substring(1);
                 List<ZzUserGroup> userGroupList = new ArrayList<>();
-                for(int i=0;i<addUserList.size();i++){
+                String[] userGroupStrs = addUserIds.split(",");
+                for(int i=0;i<userGroupStrs.length;i++){
                     ZzUserGroup zzUserGroup = new ZzUserGroup();
                     zzUserGroup.setId(RandomId.getUUID());
                     zzUserGroup.setGroupId(groupId);
-                    zzUserGroup.setUserId(addUserList.get(i));
+                    zzUserGroup.setUserId(userGroupStrs[i]);
                     userGroupList.add(zzUserGroup);
                 }
                 this.zzUserGroupDao.addMemeberList(groupId,userId,userGroupList) ;
             }
             //删除
-            if(delUserList!=null && delUserList.size()!=0){
-                this.zzUserGroupDao.deleteByGroupIdAndUserIdList(groupId,delUserList) ;
+            if(!removeUserIds.equals("")){
+                removeUserIds = removeUserIds.substring(1);
+                this.zzUserGroupDao.deleteByGroupIdAndUserIdList(groupId,Arrays.asList(removeUserIds.split(","))) ;
             }
             //处理群成员end
             ZzGroup zzGroup = zzGroupDao.queryById(groupId);
 
             //如果有新增人员 发送消息
-            List msgUserList = new ArrayList();
-            if(addUserList!=null  && addUserList.size()!=0 ){
-                addUserInfoList = iUserService.userList(Joiner.on(",").join(addUserList));
+            if(!addUserIds.equals("")){
+                addUserInfoList = iUserService.userList(addUserIds);
                 String userNames = "";
                 String userIds = "";
                 for (AdminUser userInfo:addUserInfoList){
-                    msgUserList.add(userInfo.getId());
+                    UserListDto userListDto = new UserListDto();
+                    userListDto.setUserId(userInfo.getId());
+                    userListDto.setImg(userInfo.getAvatar());
+                    userListDto.setUserLevels(userInfo.getSecretLevel());
+                    addUserList.add(userListDto);
                     userNames += ","+userInfo.getName();
                     userIds += ","+userInfo.getId();
                     //redis 缓存处理 把用户的群列表缓存更新
@@ -415,15 +463,10 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                     }
 
                 }
-                SocketMsgVo msgVo = new SocketMsgVo();
-                msgVo.setCode(MessageType.SOCKET_TEAM_BIND);
-                msgVo.setSender("");
-                msgVo.setReceiver("");
-                SocketTeamBindVo socketTeamBindVo  = new SocketTeamBindVo();
-                socketTeamBindVo.setTeamId(groupId);
-                socketTeamBindVo.setUserList(msgUserList);
-                msgVo.setMsg(socketTeamBindVo);
-                rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
+                addDto.setUserList(addUserList);
+                addDto.setZzGroup(zzGroup);
+                addVo.setData(addDto);
+                rabbitMqMsgProducer.sendMsgEditGroup(addVo);
 
                 //记录群状态变动begin
                 if(!userNames.equals("")){
@@ -448,13 +491,16 @@ public class ZzGroupServiceImpl implements ZzGroupService {
 
 
             //如果有删除人员发送消息
-            List msgUserList2 = new ArrayList();
-            if(delUserList!=null && delUserList.size()!=0){
-                removeUserInfoList = iUserService.userList(Joiner.on(",").join(delUserList));
+            if(!removeUserIds.equals("")){
+                removeUserInfoList = iUserService.userList(removeUserIds);
                 String userNames = "";
                 String userIds = "";
                 for (AdminUser userInfo:removeUserInfoList){
-                    msgUserList2.add(userInfo.getId());
+                    UserListDto userListDto = new UserListDto();
+                    userListDto.setUserId(userInfo.getId());
+                    userListDto.setImg(userInfo.getAvatar());
+                    userListDto.setUserLevels(userInfo.getSecretLevel());
+                    removeUserList.add(userListDto);
                     userNames += ","+userInfo.getName();
                     userIds += ","+userInfo.getId();
                     //redis 缓存处理 把用户的群列表缓存更新
@@ -466,16 +512,10 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                     }
 
                 }
-                SocketMsgVo msgVo2 = new SocketMsgVo();
-                msgVo2.setCode(MessageType.SOCKET_TEAM_UNBIND);
-                msgVo2.setSender("");
-                msgVo2.setReceiver("");
-                SocketTeamBindVo socketTeamBindVo2  = new SocketTeamBindVo();
-                socketTeamBindVo2.setTeamId(groupId);
-                socketTeamBindVo2.setUserList(msgUserList2);
-                msgVo2.setMsg(socketTeamBindVo2);
-                rabbitMqMsgProducer.sendSocketTeamUnBindMsg(msgVo2);
-
+                removeDto.setUserList(removeUserList);
+                removeDto.setZzGroup(zzGroup);
+                removeVo.setData(removeDto);
+                rabbitMqMsgProducer.sendMsgEditGroup(removeVo);
                 //记录群状态变动begin
                 if(!userNames.equals("")){
                     userNames = userNames.substring(1);
@@ -560,6 +600,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             zzGroupInfo.setGroupName(jsonObject.getString("groupName"));
             zzGroupInfo.setCreator(jsonObject.getString("creator"));
             zzGroupInfo.setGroupOwnerId(jsonObject.getString("creator"));
+            Map p2 = new HashMap<>(16);
+            p2.put("userid",jsonObject.getString("creator"));
             AdminUser userInfo = iUserService.getUserInfo(jsonObject.getString("creator"));
             if(userInfo!=null){
                 zzGroupInfo.setCreatorName(common.nulToEmptyString(userInfo.getName()));

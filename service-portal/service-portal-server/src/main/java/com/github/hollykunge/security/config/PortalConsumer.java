@@ -13,6 +13,7 @@ import com.github.hollykunge.security.entity.HeatMap;
 import com.github.hollykunge.security.entity.Notice;
 import com.github.hollykunge.security.mapper.HeatMapMapper;
 import com.github.hollykunge.security.mapper.NoticeMapper;
+import com.github.hollykunge.security.mq.constants.RabbitMqQueConstant;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -32,7 +33,7 @@ import java.util.Map;
  * @create 2019/5/9 17:32
  */
 @Component
-@RabbitListener(queues = CommonConstants.NOTICE_QUEUE_NAMA,containerFactory = "rabbitListenerContainerFactory")
+@RabbitListener(queues = RabbitMqQueConstant.NOTICE_QUEUE_NAMA,containerFactory = "rabbitListenerContainerFactory")
 public class PortalConsumer {
     @Autowired
     private NoticeMapper noticeMapper;

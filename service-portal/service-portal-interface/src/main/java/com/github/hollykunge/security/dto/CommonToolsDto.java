@@ -2,6 +2,8 @@ package com.github.hollykunge.security.dto;
 
 import lombok.Data;
 
+import java.util.HashMap;
+
 @Data
 public class CommonToolsDto {
     private String id;
@@ -18,4 +20,17 @@ public class CommonToolsDto {
      * 1 代表false
      */
     private String  portalOrgUserStatus;
+    /**
+     * fansq 20-3-13
+     * 添加 请求方式
+     * GET POST
+     */
+    private String requestType;
+    /**
+     * fansq 20-3-13
+     * 添加 请求参数
+     * key:value
+     * key:value
+     */
+    private Object requestParams;
 }
