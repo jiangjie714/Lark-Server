@@ -1,0 +1,58 @@
+#eruka注册中心
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+      ###向注册中心上注册自己
+      register-with-eureka: true
+      ###是否需要从eureka上获取注册信息
+      fetch-registry: true
+#      register-with-eureka: false
+#      #是否需要从eureka上获取注册信息
+#      fetch-registry: false
+server:
+  port: 8779
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  application:
+    name: lark-config
+  profiles:
+    #本地配置中心
+    active: native
+  cloud:
+    config:
+#      fail-fast: true
+#      label: master
+#      retry:
+#        initial-interval: 1000
+#        max-attempts: 6
+#        max-interval: 2000
+#        multiplier: 1.1
+      server:
+#        git:
+#          force-pull: true
+#          password: 123456
+#          searchPaths: respo
+#          timeout: 5000
+#          uri: http://10.11.24.136:3000/root/ace_config
+#          username: root
+        native:
+          #file 如果为相对路径 就是相对于本项目  classpath：为相对路径就是从resource下寻找文件 默认为file
+          search-locations: file:C:/lark-config/config-files
+#        health:
+#          repositories:
+#            check:
+#              label: master
+#              name: address
+#              profiles: dev
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:127.0.0.1}
+    port: ${RABBIT_MQ_PORT:5672}
+    username: hollykunge
+    password: 123456

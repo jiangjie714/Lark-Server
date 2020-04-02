@@ -145,6 +145,13 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
         return null;
     }
 
+    @Override
+    public void insertSelective(Org entity) {
+        EntityUtils.setCreatAndUpdatInfo(entity);
+        entity.setId(entity.getOrgCode());
+        mapper.insertSelective(entity);
+    }
+
     @FilterByDeletedAndOrderHandler
     public List<OrgUser> getChildOrgUser(String parentCode) throws Exception{
         List<OrgUser> result = new ArrayList<>();
@@ -226,4 +233,13 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
             return objectRestResponse;
     }
 
+    /**
+     *
+     * @param orgCode
+     * @param orgLevel
+     * @return
+     */
+    public List<Org> findOrgByLevelAndParentId(String orgCode, Integer orgLevel) {
+        return orgMapper.findOrgByLevelAndParentId(orgCode,orgLevel);
+    }
 }

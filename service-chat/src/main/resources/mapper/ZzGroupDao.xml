@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.ZzGroupDao">
+<mapper namespace="com.workhub.z.servicechat.dao.group.ZzGroupDao">
 
     <resultMap type="com.workhub.z.servicechat.entity.group.ZzGroup" id="ZzGroupMap">
         <result property="groupId" column="GROUP_ID" jdbcType="VARCHAR"/>
@@ -243,9 +243,7 @@
     <!--逻辑删除群-->
     <update id="deleteGroupLogic">
         update ZZ_GROUP
-           set ISDELETE = #{delFlg},
-           update_time = sysdate,
-           updator = #{userId}
+           set ISDELETE = #{delFlg}
         where GROUP_ID = #{groupId}
     </update>
 

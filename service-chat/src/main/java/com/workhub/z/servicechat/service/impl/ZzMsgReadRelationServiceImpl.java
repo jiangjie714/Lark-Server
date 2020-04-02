@@ -2,7 +2,7 @@ package com.workhub.z.servicechat.service.impl;
 
 import com.workhub.z.servicechat.VO.NoReadVo;
 import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.ZzMsgReadRelationDao;
+import com.workhub.z.servicechat.dao.message.ZzMsgReadRelationDao;
 import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;
 import com.workhub.z.servicechat.service.ZzMsgReadRelationService;
 import org.slf4j.Logger;

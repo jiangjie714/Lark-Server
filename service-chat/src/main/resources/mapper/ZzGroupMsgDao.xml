@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.group.ZzGroupMsgDao">
+
+    <resultMap type="com.workhub.z.servicechat.entity.group.ZzGroupMsg" id="ZzGroupMsgMap">
+        <result property="msgId" column="MSG_ID" jdbcType="VARCHAR"/>
+        <result property="msgSender" column="MSG_SENDER" jdbcType="VARCHAR"/>
+        <result property="msgReceiver" column="MSG_RECEIVER" jdbcType="VARCHAR"/>
+        <result property="sendTime" column="SEND_TIME" jdbcType="TIMESTAMP"/>
+        <result property="msg" column="MSG" jdbcType="VARCHAR"/>
+        <result property="msgType" column="MSG_TYPE" jdbcType="VARCHAR"/>
+        <result property="msgPath" column="MSG_PATH" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="IS_DELETE" jdbcType="VARCHAR"/>
+        <result property="isImportant" column="IS_IMPORTANT" jdbcType="VARCHAR"/>
+        <result property="levels" column="LEVELS" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="HistoryMessage" type="com.workhub.z.servicechat.model.HistoryMessageDto">
+        <result property="id" column="MSG_ID" jdbcType="VARCHAR"/>
+        <result property="fromId" column="FROMID" jdbcType="TIMESTAMP"/>
+        <result property="toId" column="TOID" jdbcType="VARCHAR"/>
+        <result property="secretLevel" column="SECRETlEVEL" jdbcType="VARCHAR"/>
+        <result property="type" column="TYPE" jdbcType="VARCHAR"/>
+        <result property="content" column="CONTENT" jdbcType="VARCHAR"/>
+        <result property="time" column="TIME" jdbcType="TIMESTAMP"/>
+        <result property="isGroup" column="TABLE_TYPE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZzGroupMsgMap">
+        select
+          MSG_ID, MSG_SENDER, MSG_RECEIVER, SEND_TIME, MSG, MSG_TYPE, MSG_PATH, IS_DELETE, IS_IMPORTANT, LEVELS
+        from ZZ_GROUP_MSG
+        where MSG_ID = #{msgId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZzGroupMsgMap">
+        select
+          MSG_ID, MSG_SENDER, MSG_RECEIVER, SEND_TIME, MSG, MSG_TYPE, MSG_PATH, IS_DELETE, IS_IMPORTANT, LEVELS
+        from ZZ_GROUP_MSG
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZzGroupMsgMap">
+        select
+          MSG_ID, MSG_SENDER, MSG_RECEIVER, SEND_TIME, MSG, MSG_TYPE, MSG_PATH, IS_DELETE, IS_IMPORTANT, LEVELS
+        from ZZ_GROUP_MSG
+        <where>
+            <if test="msgId != null and msgId != ''">
+                and MSG_ID = #{msgId}
+            </if>
+            <if test="msgSender != null and msgSender != ''">
+                and MSG_SENDER = #{msgSender}
+            </if>
+            <if test="msgReceiver != null and msgReceiver != ''">
+                and MSG_RECEIVER = #{msgReceiver}
+            </if>
+            <if test="sendTime != null">
+                and SEND_TIME = #{sendTime}
+            </if>
+            <if test="msg != null and msg != ''">
+                and MSG = #{msg}
+            </if>
+            <if test="msgType != null and msgType != ''">
+                and MSG_TYPE = #{msgType}
+            </if>
+            <if test="msgPath != null and msgPath != ''">
+                and MSG_PATH = #{msgPath}
+            </if>
+            <if test="isDelete != null and isDelete != ''">
+                and IS_DELETE = #{isDelete}
+            </if>
+            <if test="isImportant != null and isImportant != ''">
+                and IS_IMPORTANT = #{isImportant}
+            </if>
+            <if test="levels != null and levels != ''">
+                and LEVELS = #{levels}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+
+    <insert id="insert" keyProperty="msgId" >
+        insert into ZZ_GROUP_MSG(MSG_ID,MSG_SENDER, MSG_RECEIVER, SEND_TIME, MSG, MSG_TYPE, MSG_PATH, IS_DELETE, IS_IMPORTANT, LEVELS)
+        values (#{msgId},#{msgSender}, #{msgReceiver}, sysdate, #{msg}, #{msgType}, #{msgPath}, #{isDelete}, #{isImportant}, #{levels})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update ZZ_GROUP_MSG
+        <set>
+            <if test="msgSender != null and msgSender != ''">
+                MSG_SENDER = #{msgSender},
+            </if>
+            <if test="msgReceiver != null and msgReceiver != ''">
+                MSG_RECEIVER = #{msgReceiver},
+            </if>
+            <if test="sendTime != null">
+                SEND_TIME = #{sendTime},
+            </if>
+            <if test="msg != null and msg != ''">
+                MSG = #{msg},
+            </if>
+            <if test="msgType != null and msgType != ''">
+                MSG_TYPE = #{msgType},
+            </if>
+            <if test="msgPath != null and msgPath != ''">
+                MSG_PATH = #{msgPath},
+            </if>
+            <if test="isDelete != null and isDelete != ''">
+                IS_DELETE = #{isDelete},
+            </if>
+            <if test="isImportant != null and isImportant != ''">
+                IS_IMPORTANT = #{isImportant},
+            </if>
+            <if test="levels != null and levels != ''">
+                LEVELS = #{levels},
+            </if>
+        </set>
+        where MSG_ID = #{msgId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from ZZ_GROUP_MSG where MSG_ID = #{msgId}
+    </delete>
+    <!--最近消息记录-->
+    <select id="queryMsgRecent" parameterType="Map" resultMap="ZzGroupMsgMap">
+        select
+        MSG_ID, MSG_SENDER, MSG_RECEIVER, SEND_TIME, MSG, MSG_TYPE, MSG_PATH, IS_DELETE, IS_IMPORTANT, LEVELS
+        from ZZ_GROUP_MSG
+        where 1=1
+        <if test="sender != null and sender != ''">
+            and MSG_SENDER  = #{sender}
+        </if>
+        <if test="receiver != null and receiver != ''">
+            and MSG_RECEIVER  = #{receiver}
+        </if>
+        <if test="begin_time != null and begin_time != ''">
+            and to_char(SEND_TIME,'yyyy-mm-dd') &gt;= #{begin_time}
+        </if>
+        <if test="end_time != null and end_time != ''">
+            and to_char(SEND_TIME,'yyyy-mm-dd') &lt;= #{end_time}
+        </if>
+        order by SEND_TIME desc
+    </select>
+    <!--历史消息记录-->
+    <select id="queryMsgHis" parameterType="Map"  resultMap="ZzGroupMsgMap">
+        select
+        MSG_ID, MSG_SENDER, MSG_RECEIVER, SEND_TIME, MSG, MSG_TYPE, MSG_PATH, IS_DELETE, IS_IMPORTANT, LEVELS
+        from ZZ_GROUP_MSG_HIS
+        where 1=1
+        <if test="sender != null and sender != ''">
+            and MSG_SENDER  = #{sender}
+        </if>
+        <if test="receiver != null and receiver != ''">
+            and MSG_RECEIVER  = #{receiver}
+        </if>
+        <if test="begin_time != null and begin_time != ''">
+            and to_char(SEND_TIME,'yyyy-mm-dd') &gt;= #{begin_time}
+        </if>
+        <if test="end_time != null and end_time != ''">
+            and to_char(SEND_TIME,'yyyy-mm-dd') &lt;= #{end_time}
+        </if>
+        order by SEND_TIME desc
+    </select>
+    <!--最近与历史消息记录合集-->
+    <select id="queryMsgCurrentAndHis" parameterType="Map"  resultMap="ZzGroupMsgMap">
+        select msg_id,
+               msg_sender,
+               msg_receiver,
+               send_time,
+               msg,
+               msg_type,
+               msg_path,
+               is_delete,
+               is_important,
+               levels
+          from (select msg_id,
+                       msg_sender,
+                       msg_receiver,
+                       send_time,
+                       msg,
+                       msg_type,
+                       msg_path,
+                       is_delete,
+                       is_important,
+                       levels
+                  from ZZ_GROUP_MSG
+                    where 1=1
+                    <if test="sender != null and sender != ''">
+                        and MSG_SENDER  = #{sender}
+                    </if>
+                    <if test="receiver != null and receiver != ''">
+                        and MSG_RECEIVER  = #{receiver}
+                    </if>
+                    <!--
+                    <if test="begin_time != null and begin_time != ''">
+                        and to_char(SEND_TIME,'yyyy-mm-dd') &gt;= #{begin_time}
+                    </if>
+                    -->
+                    <if test="end_time != null and end_time != ''">
+                        and to_char(SEND_TIME,'yyyy-mm-dd') &lt;= #{end_time}
+                    </if>
+                union
+                select msg_id,
+                       msg_sender,
+                       msg_receiver,
+                       send_time,
+                       msg,
+                       msg_type,
+                       msg_path,
+                       is_delete,
+                       is_important,
+                       levels
+                  from ZZ_GROUP_MSG_HIS
+                    where 1=1
+                    <if test="sender != null and sender != ''">
+                        and MSG_SENDER  = #{sender}
+                    </if>
+                    <if test="receiver != null and receiver != ''">
+                        and MSG_RECEIVER  = #{receiver}
+                    </if>
+                    <if test="begin_time != null and begin_time != ''">
+                        and to_char(SEND_TIME,'yyyy-mm-dd') &gt;= #{begin_time}
+                    </if>
+                   <!--
+                    <if test="end_time != null and end_time != ''">
+                        and to_char(SEND_TIME,'yyyy-mm-dd') &lt;= #{end_time}
+                    </if>
+                    -->
+        ) a
+         order by a.send_time desc
+    </select>
+    <!--最近消息记录-->
+    <select id="getReceiversByMsgId" resultType="java.lang.String">
+        select distinct b.user_id
+        from zz_group_msg a, zz_user_group b
+        where a.msg_receiver = b.group_id
+        and a.msg_id = #{msgId}
+        and b.user_id != a.msg_sender
+    </select>
+
+    <!--根据最近联系人查询最近历史消息-->
+    <select id="queryHistoryMessageById" resultMap="HistoryMessage">
+        SELECT * FROM (
+        SELECT * FROM (
+        SELECT ROW_NUMBER() OVER(PARTITION BY FROMID,TYPE ORDER BY TIME DESC) RN ,t.*
+        FROM (
+        SELECT PHPM.MSG_ID AS MSG_ID,
+        'USER' AS TABLE_TYPE,
+        (case
+        when PHPM.MSG_SENDER ='OPVhHrPM' then
+        PHPM.MSG_RECEIVER
+        else
+        PHPM.MSG_SENDER
+        end) as FROMID, --最近联系人
+        PHPM.MSG_RECEIVER AS TOID,
+        PHPM.SEND_TIME AS TIME,
+        PHPM.MSG AS CONTENT,
+        PHPM.MSG_TYPE AS TYPE,
+        PHPM.LEVELS AS SECRETlEVEL
+        FROM ZZ_PRIVATE_MSG PHPM
+        WHERE 1 = 1
+        and (PHPM.MSG_RECEIVER ='OPVhHrPM' or
+        PHPM.MSG_SENDER = 'OPVhHrPM')
+
+        UNION ALL
+        SELECT PHGM.MSG_ID AS MSG_ID,
+        'GROUP' AS TABLE_TYPE,
+        PHGM.MSG_RECEIVER AS FROMID,
+        PHGM.MSG_SENDER AS TOID,
+        PHGM.SEND_TIME AS TIME,
+        PHGM.MSG AS CONTENT,
+        PHGM.MSG_TYPE AS type,
+        PHGM.LEVELS AS SECRETlEVEL
+        FROM ZZ_GROUP_MSG PHGM LEFT JOIN ZZ_USER_GROUP ZU ON PHGM.MSG_RECEIVER = ZU.GROUP_ID
+        WHERE ZU.USER_ID ='OPVhHrPM'
+        ) t
+        )
+        ) VO where rn &lt; =100
+        ORDER BY VO.time DESC
+    </select>
+</mapper>

@@ -1,3 +1,16 @@
+#配置中心的地址
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8779/
+      #对应的是配置文件规则中的{application}部分 可以是多个，用逗号隔开 一般用服务名
+      name: lark-chat
+      #对应的是配置文件规则中的{profile}部分。 一般为环境
+      profile: dev
+      discovery:
+        service-id: lark-config
+      #对应的是配置文件规则中的{label}部分  远程分支  这个是本地没用
+      #label: master
 #spring:
 #  cloud:
 #    nacos:
@@ -7,4 +20,4 @@
 #      discovery:
 #        server-addr: 47.99.247.83:8848
 #  application:
-#    name: service-chat
+#    name: lark-admin

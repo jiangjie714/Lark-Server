@@ -20,15 +20,15 @@ public interface ZzAtService {
      * @return 实例对象
      */
     ZzAt queryById(String id);
-//
-//    /**
-//     * 查询多条数据
-//     *
-//     * @param offset 查询起始位置
-//     * @param limit 查询条数
-//     * @return 对象列表
-//     */
-//    List<ZzAt> queryAllByLimit(int offset, int limit);
+
+    /**
+     * 查询多条数据
+     *
+     * @param offset 查询起始位置
+     * @param limit 查询条数
+     * @return 对象列表
+     */
+    List<ZzAt> queryAllByLimit(int offset, int limit);
 
     /**
      * 新增数据
@@ -61,13 +61,4 @@ public interface ZzAtService {
      * @since 2019-06-14
      */
     public TableResultResponse<ZzAt> getList(String receiverId, String groupId, int pageNum, int pageSize) throws Exception;
-
-    /**
-     * at已读消息删除
-     * @param msgId 消息id
-     * @param userId 人员id
-     * @return
-     */
-    int deleteByMsgIdAndUserId(String msgId,String userId);
-
 }

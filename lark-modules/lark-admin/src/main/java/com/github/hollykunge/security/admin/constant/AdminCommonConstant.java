@@ -112,4 +112,6 @@ public class AdminCommonConstant {
      * 卡片操作 car 默认值
      */
     public static final String PORTALORGUSERSTATUS = "1";
+
+    public static final String ENCRYPTION_PASSWORD = "$2a$12$IyWcD6rXNNWAzGPQGTbO.O5azKOm7QPcInF4QcYyml4MA.C5jXkPy";
 }

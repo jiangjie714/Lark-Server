@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.ZzMessageInfoDao">
+<mapper namespace="com.workhub.z.servicechat.dao.message.ZzMessageInfoDao">
 
     <resultMap type="com.workhub.z.servicechat.entity.message.ZzMessageInfo" id="ZzMessageInfoMap">
         <result property="msgId" column="MSG_ID" jdbcType="VARCHAR"/>
@@ -8,12 +8,10 @@
         <result property="receiver" column="RECEIVER" jdbcType="VARCHAR"/>
         <result property="createtime" column="CREATETIME" jdbcType="TIMESTAMP"/>
         <result property="levels" column="LEVELS" jdbcType="VARCHAR"/>
+        <result property="content" column="CONTENT" jdbcType="VARCHAR"/>
         <result property="type" column="TYPE" jdbcType="VARCHAR"/>
         <result property="ip" column="IP" jdbcType="VARCHAR"/>
-        <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
-        <result property="msg" column="msg" jdbcType="VARCHAR"/>
-        <result property="fileId" column="file_id" jdbcType="VARCHAR"/>
-        <result property="frontId" column="FRONT_ID" jdbcType="VARCHAR"/>
+        <result property="senderSN" column="SENDER_SN" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="ContactsMessage" type="com.workhub.z.servicechat.model.ContactsMessageDto">
@@ -21,62 +19,59 @@
         <result property="contactsId" column="CONTACTSID" jdbcType="VARCHAR"/>
         <result property="content" column="CONTENT" jdbcType="VARCHAR"/>
         <result property="type" column="TYPE" jdbcType="VARCHAR"/>
+        <!--<result property="rn" column="RN" jdbcType="VARCHAR"/>-->
     </resultMap>
-    <resultMap id="rawMsgDto" type="com.workhub.z.servicechat.model.RawMessageDto">
-        <result property="msgId" column="msg_id" jdbcType="VARCHAR"/>
-        <result property="type" column="type" jdbcType="VARCHAR"/>
-        <result property="senderid" column="senderid" jdbcType="VARCHAR"/>
-        <result property="sendername" column="sendername" jdbcType="VARCHAR"/>
-        <result property="senderavatar" column="senderavatar" jdbcType="VARCHAR"/>
-        <result property="senderlevels" column="senderlevels" jdbcType="VARCHAR"/>
-        <result property="senderpid" column="senderpid" jdbcType="VARCHAR"/>
-        <result property="receiverid" column="receiverid" jdbcType="VARCHAR"/>
-        <result property="receivername" column="receivername" jdbcType="VARCHAR"/>
-        <result property="receiveravatar" column="receiveravatar" jdbcType="VARCHAR"/>
-        <result property="receivermembernum" column="receivermembernum" jdbcType="VARCHAR"/>
-        <result property="receiverlevels" column="receiverlevels" jdbcType="VARCHAR"/>
-        <result property="receiverpid" column="receiverpid" jdbcType="VARCHAR"/>
-        <result property="fileid" column="fileid" jdbcType="VARCHAR"/>
-        <result property="fileext" column="fileext" jdbcType="VARCHAR"/>
-        <result property="filesize" column="filesize" jdbcType="VARCHAR"/>
-        <result property="levels" column="levels" jdbcType="VARCHAR"/>
-        <result property="frontid" column="frontid" jdbcType="VARCHAR"/>
-        <result property="filetype" column="filetype" jdbcType="VARCHAR"/>
-        <result property="msg" column="msg" jdbcType="VARCHAR"/>
-        <result property="createtime" column="createtime" jdbcType="VARCHAR"/>
-        <result property="contactsid" column="contactsid" jdbcType="VARCHAR"/>
-    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZzMessageInfoMap">
+        select
+          MSG_ID, SENDER, RECEIVER, CREATETIME, LEVELS, CONTENT, TYPE, IP, senderSN
+        from WORKHUB_IWORK.ZZ_MESSAGE_INFO
+        where MSG_ID = #{msgId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZzMessageInfoMap">
+        select
+          MSG_ID, SENDER, RECEIVER, CREATETIME, LEVELS, CONTENT, TYPE, IP, senderSN
+        from WORKHUB_IWORK.ZZ_MESSAGE_INFO
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZzMessageInfoMap">
+        select
+          MSG_ID, SENDER, RECEIVER, CREATETIME, LEVELS, CONTENT, TYPE, IP, senderSN
+        from WORKHUB_IWORK.ZZ_MESSAGE_INFO
+        <where>
+            <if test="msgId != null and msgId != ''">
+                and MSG_ID = #{msgId}
+            </if>
+            <if test="sender != null and sender != ''">
+                and SENDER = #{sender}
+            </if>
+            <if test="receiver != null and receiver != ''">
+                and RECEIVER = #{receiver}
+            </if>
+            <if test="createtime != null">
+                and CREATETIME = #{createtime}
+            </if>
+            <if test="levels != null and levels != ''">
+                and LEVELS = #{levels}
+            </if>
+            <if test="content != null and content != ''">
+                and CONTENT = #{content}
+            </if>
+            <if test="type != null and type != ''">
+                and TYPE = #{type}
+            </if>
+        </where>
+    </select>
 
     <!--新增所有列-->
     <insert id="insert">
-        insert into WORKHUB_IWORK.ZZ_MESSAGE_INFO(MSG_ID,
-        SENDER,
-        RECEIVER,
-        CREATETIME,
-        LEVELS,
-        TYPE,
-        ISCROSS,
-        IP,
-        FILE_TYPE,
-        MSG,
-        FILE_ID,
-        FRONT_ID,
-        CONTENT
-        )
-        values (#{msgId},
-        #{sender},
-        #{receiver},
-        sysdate,
-        #{levels},
-        #{type},
-        #{iscross},
-        #{ip},
-        #{fileType},
-        #{msg},
-        #{fileId},
-        #{frontId},
-        #{content}
-        )
+        insert into WORKHUB_IWORK.ZZ_MESSAGE_INFO(MSG_ID,SENDER, RECEIVER, CREATETIME, LEVELS, CONTENT, TYPE,ISCROSS,IP,sender_SN,org_code,org_name)
+        values (#{msgId},#{sender}, #{receiver}, sysdate, #{levels}, #{content}, #{type}, #{iscross},#{ip},#{senderSN},#{orgCode},#{orgName})
     </insert>
 
     <!--通过主键修改数据-->
@@ -110,8 +105,9 @@
         delete from WORKHUB_IWORK.ZZ_MESSAGE_INFO where MSG_ID = #{msgId}
     </delete>
 
+
     <!--根据当前登陆人获取最近联系人id-->
-    <select id="queryContactsMessage2" resultMap="ContactsMessage">
+    <select id="queryContactsMessage" resultMap="ContactsMessage">
         SELECT * FROM (
         SELECT * FROM (
         SELECT ROW_NUMBER() OVER(PARTITION BY contactsId ORDER BY createtime DESC) RN ,t.*
@@ -121,7 +117,7 @@
         t.receiver
         else
         t.sender
-        end) as contactsId
+        end) as contactsId --最近联系人
         from zz_message_info t where (t.sender = #{userId} or t.receiver =  #{userId}) and t.type = 'USER'
         UNION ALL
 
@@ -136,88 +132,7 @@
     </select>
     <!--根据最近联系人id和当前登录人获取最近100条消息-->
 
-    <!--根据当前登陆人获取最近联系人id-->
-    <select id="queryContactsMessage" resultMap="rawMsgDto">
-        SELECT * FROM (
-        SELECT * FROM (
-        SELECT ROW_NUMBER() OVER(PARTITION BY contactsId ORDER BY createtime DESC) RN ,t.*
-        FROM (
-        select
-           t.msg_id,
-           T.TYPE,
-           sender.id senderid,
-           sender.name sendername,
-           sender.avartar senderavatar,
-           sender.levels senderlevels,
-           sender.pid senderpid,
-           receiver.id receiverid,
-           receiver.name receivername,
-           receiver.avartar receiveravatar,
-           receiver.member_num receivermembernum,
-           receiver.levels receiverlevels,
-           receiver.group_owner receivergroupowner,
-           receiver.pid receiverpid,
-           f.file_id fileid,
-           f.file_ext fileext,
-           to_char(f.sizes) filesize,
-           t.levels levels,
-           t.front_id frontid,
-           t.file_type filetype,
-           t.msg msg,
-           to_char(t.createtime,'yyyy-mm-dd HH24:MI:SS') createtime,
-            (case
-            when t.sender =#{userId} then
-            t.receiver
-            else
-            t.sender
-            end) as contactsid
-        from  zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
-         where (t.sender = #{userId} or t.receiver =  #{userId})
-         and t.type = 'USER'
-         and t.sender = sender.id
-         and t.receiver = receiver.id
-         and t.file_id = f.file_id(+)
-        UNION ALL
-        select
-           t.msg_id,
-           T.TYPE,
-           sender.id senderid,
-           sender.name sendername,
-           sender.avartar senderavatar,
-           sender.levels senderlevels,
-           sender.pid senderpid,
-           receiver.id receiverid,
-           receiver.name receivername,
-           receiver.avartar receiveravatar,
-           receiver.member_num receivermembernum,
-           receiver.levels receiverlevels,
-           receiver.group_owner receivergroupowner,
-           receiver.pid receiverpid,
-           f.file_id fileid,
-           f.file_ext fileext,
-           to_char(f.sizes) filesize,
-           t.levels levels,
-           t.front_id frontid,
-           t.file_type filetype,
-           t.msg msg,
-           to_char(t.createtime,'yyyy-mm-dd HH24:MI:SS') createtime,
-           t.receiver as contactsid
-        from zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f, ZZ_USER_GROUP UG
-        where t.type = 'GROUP'
-        and UG.GROUP_ID=T.RECEIVER
-        and nvl(t.createtime,to_date('1900-01-01','yyyy-mm-dd')) &gt;= nvl(ug.createtime,to_date('2099-01-01','yyyy-mm-dd'))
-        AND UG.USER_ID =#{userId}
-        and t.sender = sender.id
-         and t.receiver = receiver.id
-         and t.file_id = f.file_id(+)
-        ) t
-        )
-        ) VO where rn &lt; =100
-        ORDER BY VO.createtime ASC
-    </select>
-    <!--根据最近联系人id和当前登录人获取最近100条消息-->
-
-    <select id="queryHistoryMessageForSinglePrivate2" resultType="java.lang.String">
+    <select id="queryHistoryMessageForSinglePrivate" resultType="java.lang.String">
         select content from (
             select content,createtime
               from zz_message_info
@@ -270,115 +185,7 @@
          order by a.createtime desc
     </select>
 
-    <select id="queryHistoryMessageForSinglePrivate" resultMap="rawMsgDto">
-        select
-        msg_id,
-        TYPE,
-        senderid,
-        sendername,
-        senderavatar,
-        senderlevels,
-        senderpid,
-        receiverid,
-        receivername,
-        receiveravatar,
-        receivermembernum,
-        receiverlevels,
-        receivergroupowner,
-        receiverpid,
-        fileid,
-        fileext,
-        filesize,
-        levels,
-        frontid,
-        filetype,
-        msg,
-        to_char(createtime ,'yyyy-mm-dd hh24:mi:ss') createtime
-        from (
-        select
-        t.msg_id,
-        T.TYPE,
-        sender.id senderid,
-        sender.name sendername,
-        sender.avartar senderavatar,
-        sender.levels senderlevels,
-        sender.pid senderpid,
-        receiver.id receiverid,
-        receiver.name receivername,
-        receiver.avartar receiveravatar,
-        receiver.member_num receivermembernum,
-        receiver.levels receiverlevels,
-        receiver.group_owner receivergroupowner,
-        receiver.pid receiverpid,
-        f.file_id fileid,
-        f.file_ext fileext,
-        to_char(f.sizes) filesize,
-        t.levels levels,
-        t.front_id frontid,
-        t.file_type filetype,
-        t.msg msg,
-        t.createtime
-        from zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
-        where 1 = 1
-        and t.sender = sender.id
-        and t.receiver = receiver.id
-        and t.file_id = f.file_id(+)
-        and t.receiver = #{userId}
-        and t.sender = #{contactId}
-        <if test = "query!=null and query != ''">
-            and
-            (
-            sender.name like '%'||#{query}||'%'
-            or
-            t.msg like '%'||#{query}||'%'
-            )
-        </if>
-        and t.type='USER'
-        union
-        select
-        t.msg_id,
-        T.TYPE,
-        sender.id senderid,
-        sender.name sendername,
-        sender.avartar senderavatar,
-        sender.levels senderlevels,
-        sender.pid senderpid,
-        receiver.id receiverid,
-        receiver.name receivername,
-        receiver.avartar receiveravatar,
-        receiver.member_num receivermembernum,
-        receiver.levels receiverlevels,
-        receiver.group_owner receivergroupowner,
-        receiver.pid receiverpid,
-        f.file_id fileid,
-        f.file_ext fileext,
-        to_char(f.sizes) filesize,
-        t.levels levels,
-        t.front_id frontid,
-        t.file_type filetype,
-        t.msg msg,
-        t.createtime
-        from zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
-        where 1 = 1
-        and t.sender = sender.id
-        and t.receiver = receiver.id
-        and t.file_id = f.file_id(+)
-        and t.receiver = #{contactId}
-        and t.sender = #{userId}
-        <if test = "query!=null and query != ''">
-            and
-            (
-            sender.name like '%'||#{query}||'%'
-            or
-            t.msg like '%'||#{query}||'%'
-            )
-        </if>
-        and t.type='USER'
-        ) a
-        order by a.createtime desc
-    </select>
-
-    <select id="queryHistoryMessageForSingleGroup2" resultType="java.lang.String">
+    <select id="queryHistoryMessageForSingleGroup" resultType="java.lang.String">
         select content
         from zz_message_info mes
         where 1 = 1
@@ -410,57 +217,7 @@
                     )
         order by mes.createtime desc
     </select>
-
-    <select id="queryHistoryMessageForSingleGroup" resultMap="rawMsgDto">
-        select
-        t.msg_id,
-        T.TYPE,
-        sender.id senderid,
-        sender.name sendername,
-        sender.avartar senderavatar,
-        sender.levels senderlevels,
-        sender.pid senderpid,
-        receiver.id receiverid,
-        receiver.name receivername,
-        receiver.avartar receiveravatar,
-        receiver.member_num receivermembernum,
-        receiver.levels receiverlevels,
-        receiver.group_owner receivergroupowner,
-        receiver.pid receiverpid,
-        f.file_id fileid,
-        f.file_ext fileext,
-        to_char(f.sizes) filesize,
-        t.levels levels,
-        t.front_id frontid,
-        t.file_type filetype,
-        t.msg msg,
-        to_char(t.createtime,'yyyy-mm-dd HH24:MI:SS') createtime
-        from  zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
-        where 1 = 1
-        and t.sender = sender.id
-        and t.receiver = receiver.id
-        and t.file_id = f.file_id(+)
-        and t.receiver = #{contactId}
-        <if test = "query!=null and query != ''">
-            and
-            (
-            sender.name like '%'||#{query}||'%'
-            or
-            t.msg like '%'||#{query}||'%'
-            )
-        </if>
-        and t.type = 'GROUP'
-        and exists (select 1
-        from zz_user_group c
-        where 1 = 1
-        and c.user_id = #{userId}
-        and c.group_id = #{contactId}
-        and c.createtime &lt;= t.createtime
-        )
-        order by t.createtime desc
-    </select>
-
-    <select id="queryHistoryMessageForSingleMeet2" resultType="java.lang.String">
+    <select id="queryHistoryMessageForSingleMeet" resultType="java.lang.String">
         select content
         from zz_message_info mes
         where 1 = 1
@@ -492,58 +249,8 @@
         )
         order by mes.createtime desc
     </select>
-
-    <select id="queryHistoryMessageForSingleMeet"  resultMap="rawMsgDto">
-        select
-        t.msg_id,
-        T.TYPE,
-        sender.id senderid,
-        sender.name sendername,
-        sender.avartar senderavatar,
-        sender.levels senderlevels,
-        sender.pid senderpid,
-        receiver.id receiverid,
-        receiver.name receivername,
-        receiver.avartar receiveravatar,
-        receiver.member_num receivermembernum,
-        receiver.levels receiverlevels,
-        receiver.group_owner receivergroupowner,
-        receiver.pid receiverpid,
-        f.file_id fileid,
-        f.file_ext fileext,
-        to_char(f.sizes) filesize,
-        t.levels levels,
-        t.front_id frontid,
-        t.file_type filetype,
-        t.msg msg,
-        to_char(t.createtime,'yyyy-mm-dd HH24:MI:SS') createtime
-        from  zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
-        where 1 = 1
-        and t.sender = sender.id
-        and t.receiver = receiver.id
-        and t.file_id = f.file_id(+)
-        and t.receiver = #{contactId}
-        <if test = "query!=null and query != ''">
-            and
-            (
-            sender.name like '%'||#{query}||'%'
-            or
-            t.msg like '%'||#{query}||'%'
-            )
-        </if>
-        and t.type = 'MEET'
-        and exists (select 1
-        from zz_meeting_user c
-        where 1 = 1
-        and c.user_id = #{userId}
-        and c.meeting_id = #{contactId}
-        and c.crt_time &lt;= t.createtime
-        )
-        order by t.createtime desc
-    </select>
-
     <!--查询会议或者群消息列表-->
-    <select id="queryMessageList2" resultMap="ContactsMessage">
+    <select id="queryMessageList" resultMap="ContactsMessage">
         select  t.type,t.content,t.createtime,
         t.receiver as contactsId from ZZ_MESSAGE_INFO t
         <!-- 私聊 -->
@@ -580,74 +287,8 @@
         </if>
         ORDER BY t.createtime ASC
     </select>
-    <!--查询会议或者群消息列表-->
-    <select id="queryMessageList" resultMap="rawMsgDto">
-        select
-        t.msg_id,
-        T.TYPE,
-        sender.id senderid,
-        sender.name sendername,
-        sender.avartar senderavatar,
-        sender.levels senderlevels,
-        sender.pid senderpid,
-        receiver.id receiverid,
-        receiver.name receivername,
-        receiver.avartar receiveravatar,
-        receiver.member_num receivermembernum,
-        receiver.levels receiverlevels,
-        receiver.group_owner receivergroupowner,
-        receiver.pid receiverpid,
-        f.file_id fileid,
-        f.file_ext fileext,
-        to_char(f.sizes) filesize,
-        t.levels levels,
-        t.front_id frontid,
-        t.file_type filetype,
-        t.msg msg,
-        to_char(t.createtime,'yyyy-mm-dd HH24:MI:SS') createtime,
-        t.receiver as contactsId
-        from ZZ_MESSAGE_INFO t,
-        zz_contact_inf sender,
-        zz_contact_inf receiver,
-        zz_group_file f
-        <!-- 私聊 -->
-        <if test="type == 'USER'">
 
-        </if>
-        <!-- 群 -->
-        <if test="type == 'GROUP'">
-            ,ZZ_GROUP g
-        </if>
-        <!-- 会议 -->
-        <if test="type == 'MEET'">
-            ,ZZ_MEETING g
-        </if>
-        where t.type = #{type}
-        and t.sender = sender.id
-        and t.receiver = receiver.id
-        and t.file_id = f.file_id(+)
-        <!-- 私聊 -->
-        <if test="type == 'USER'">
-            and ((t.receiver = #{receiver} and t.sender = #{userId})
-            or
-            (t.sender = #{receiver} and t.receiver = #{userId})
-            )
-        </if>
-        <!-- 群 -->
-        <if test="type == 'GROUP'">
-            and t.receiver = g.group_id
-            and t.receiver = #{receiver}
-            and exists ( select 1 from  ZZ_USER_GROUP u where u.user_id  = #{userId} and u.group_id = #{receiver} and u.createtime &lt;= t.createtime)
-        </if>
-        <!-- 会议 -->
-        <if test="type == 'MEET'">
-            and t.receiver = g.id
-            and t.receiver = #{receiver}
-            and exists ( select 1 from  ZZ_MEETING_USER u where u.user_id  = #{userId} and u.meeting_id = #{receiver} and u.crt_time &lt;= t.createtime)
-        </if>
-        ORDER BY t.createtime ASC
-    </select>
-    <select id="queryAllMessagePrivate2" resultType="java.util.Map">
+    <select id="queryAllMessagePrivate" resultType="java.util.Map">
         select msg_id id,content,to_char(createtime, 'yyyy-mm-dd HH24:MI:SS') sendtime ,ip, sender_sn
         from zz_message_info
         where 1 = 1
@@ -695,60 +336,7 @@
         order by createtime desc
     </select>
 
-    <select id="queryAllMessageMonitor"  resultMap="rawMsgDto">
-        select
-        t.msg_id,
-        T.TYPE,
-        sender.id senderid,
-        sender.name sendername,
-        sender.avartar senderavatar,
-        sender.levels senderlevels,
-        sender.pid senderpid,
-        receiver.id receiverid,
-        receiver.name receivername,
-        receiver.avartar receiveravatar,
-        receiver.member_num receivermembernum,
-        receiver.levels receiverlevels,
-        receiver.group_owner receivergroupowner,
-        receiver.pid receiverpid,
-        f.file_id fileid,
-        f.file_ext fileext,
-        to_char(f.sizes) filesize,
-        t.levels levels,
-        t.front_id frontid,
-        t.file_type filetype,
-        t.msg msg,
-        to_char(t.createtime,'yyyy-mm-dd HH24:MI:SS') createtime,
-        t.ip
-        from  zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
-        where 1 = 1
-        and t.sender = sender.id
-        and t.receiver = receiver.id
-        and t.file_id = f.file_id(+)
-        and t.type = #{params.teamType}
-        and t.file_type = '1'
-        <if test="params.timeEnd != null and params.timeEnd != ''">
-            and to_char(t.createtime, 'yyyy-mm-dd') &lt;= #{params.timeEnd}
-        </if>
-        <if test="params.timeBegin != null and params.timeBegin != ''">
-            and to_char(t.createtime, 'yyyy-mm-dd') &gt;= #{params.timeBegin}
-        </if>
-        <if test="params.senderName != null and params.senderName != ''">
-            and sender.name like '%'|| #{params.senderName} || '%'
-        </if>
-        <if test="params.receiverName != null and params.receiverName != ''">
-            and receiver.name like '%'||  #{params.receiverName} || '%'
-        </if>
-        <if test="params.messageLevel != null and params.messageLevel != ''">
-            and t.levels =  #{params.messageLevel}
-        </if>
-        <if test="params.messageContent != null and params.messageContent != ''">
-            and t.msg like '%'||  #{params.messageContent} || '%'
-        </if>
-        order by t.createtime desc
-    </select>
-
-    <select id="queryAllMessageGroup2" resultType="java.util.Map">
+    <select id="queryAllMessageGroup" resultType="java.util.Map">
         select msg_id  id,content,to_char(createtime, 'yyyy-mm-dd HH24:MI:SS') sendtime,ip, sender_sn
         from zz_message_info
         where 1 = 1
