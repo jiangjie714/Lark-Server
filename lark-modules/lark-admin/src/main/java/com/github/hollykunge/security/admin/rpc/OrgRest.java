@@ -71,7 +71,7 @@ public class OrgRest {
      */
     @RequestMapping(value = "stateTree", method = RequestMethod.POST)
     @ResponseBody
-    public ListRestResponse tree(@RequestBody Integer[] orgLevels){
+    public ListRestResponse tree(@RequestBody(required = false) Integer[] orgLevels){
         List<Org> orgs = getOrgs(orgLevels);
         List<StatesOrgVo> statesOrgVos = JSONArray.parseArray(JSONObject.toJSONString(orgs), StatesOrgVo.class);
         return new ListRestResponse("",statesOrgVos.size(),statesOrgVos);
@@ -82,7 +82,10 @@ public class OrgRest {
             throw new BaseException("组织层级不能为空...");
         }
         Example orgEx = new Example(Org.class);
-        orgEx.createCriteria().andIn("orgLevel", Arrays.asList(orgLevels));
+        Example.Criteria  criteria= orgEx.createCriteria();
+        criteria.andIn("orgLevel", Arrays.asList(orgLevels));
+        criteria.andEqualTo("deleted","0");
+        criteria.andIsNotNull("orgCode");
         return orgBiz.selectByExample(orgEx);
     }
 }

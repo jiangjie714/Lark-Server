@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -45,6 +46,7 @@ public class NoticeController extends BaseController<NoticeService, Notice>{
         List<Notice> notices = baseBiz.selectNoticList(orgCode);
         List<Notice> noticeList= baseBiz.selectNotic(orgCode,userSecretLevel);
         notices.addAll(noticeList);
+        notices = notices.stream().sorted(Comparator.comparing(Notice::getSendTime).reversed()).collect(Collectors.toList());
         return new ListRestResponse<>("查询成功！",notices.size(),notices);
     }
     /**
