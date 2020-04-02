@@ -2,6 +2,7 @@ package com.workhub.z.servicechat.controller.statistics;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.StatisticsChartDataVo;
+import com.workhub.z.servicechat.VO.StatisticsGroupOrgVo;
 import com.workhub.z.servicechat.VO.StatisticsGroupUserVo;
 import com.workhub.z.servicechat.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,16 @@ public class StatisticsController {
     @GetMapping("groupUserStatistics")
     public ObjectRestResponse groupUserStatistics(@RequestParam(name = "groupId",required = false)String groupId){
         List<StatisticsGroupUserVo> dataList = this.statisticsService.groupUserStatistics(groupId);
+        return new ObjectRestResponse<>().rel(true).msg("200").data(dataList);
+    }
+    /**
+     * 群org统计
+     * groupId 群id
+     * @return
+     */
+    @GetMapping("groupOrgStatistics")
+    public ObjectRestResponse groupOrgStatistics(@RequestParam(name = "groupId",required = false)String groupId){
+        List<StatisticsGroupOrgVo> dataList = this.statisticsService.groupOrgStatistics(groupId);
         return new ObjectRestResponse<>().rel(true).msg("200").data(dataList);
     }
 }

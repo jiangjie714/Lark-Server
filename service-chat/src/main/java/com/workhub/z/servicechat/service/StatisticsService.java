@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.workhub.z.servicechat.VO.StatisticsChartDataVo;
+import com.workhub.z.servicechat.VO.StatisticsGroupOrgVo;
 import com.workhub.z.servicechat.VO.StatisticsGroupUserVo;
 
 import java.util.List;
@@ -17,14 +18,14 @@ public interface StatisticsService {
      * @return
      */
     List<StatisticsChartDataVo> groupInfStatistics(String dateType, String orgCode) ;
-     //TableResultResponse<StatisticsGroupVo> groupStatistics(int page,int size,String groupName, String isCross) ;
+    //TableResultResponse<StatisticsGroupVo> groupStatistics(int page,int size,String groupName, String isCross) ;
 
     /**
      * 消息统计
      * @return
      */
     List<StatisticsChartDataVo> msgStatistics(String dateType, String orgCode) ;
-     //StatisticsMsgVo msgStatistics(String dateType) ;
+    //StatisticsMsgVo msgStatistics(String dateType) ;
     /**
      * 附件统计
      * @return
@@ -36,4 +37,9 @@ public interface StatisticsService {
      * @return
      */
     List<StatisticsGroupUserVo> groupUserStatistics(String groupId);
+    /**
+     * 群org统计
+     * @return
+     */
+    List<StatisticsGroupOrgVo> groupOrgStatistics(String groupId);
 }
