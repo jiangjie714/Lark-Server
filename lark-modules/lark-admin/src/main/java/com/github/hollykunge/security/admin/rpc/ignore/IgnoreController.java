@@ -42,13 +42,11 @@ public class IgnoreController {
     private IgnoreService ignoreService;
     /**
      * 用于门户统计页面数据初始化
-     * @param request
      * @return
      */
-    @Cache(key = "ignore:statisticsAll",expire = 60000)
     @RequestMapping(value = "/statistics/all",method = RequestMethod.GET)
     @ResponseBody
-    public ObjectRestResponse<PortalStatistics> statisticsAll(HttpServletRequest request) throws Exception{
+    public ObjectRestResponse<PortalStatistics> statisticsAll() throws Exception{
           PortalStatistics portalStatistics = new PortalStatistics();
         //获取总访问量 所有请求之和
         int totalAccess = gateLogBiz.getTotalAccess();
