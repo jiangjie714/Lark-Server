@@ -291,7 +291,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      */
     public List<AccessNum> findLogCountByOrgCode(List<Org> orgList,String type){
         List<AccessNum> accessNums = new ArrayList<>();
-        //select * from admin_user where org_code like '%0010%';
         for(Org o:orgList){
             AccessNum accessNum = new AccessNum();
             accessNum.setX(o.getOrgName());
@@ -355,7 +354,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         double min = 0.0;
         Example example = new Example(GateLog.class);
         int max = gateLogMapper.selectCountByExample(example);
-        //587   480/
         double normalize = ((num-min)/(max-min))*100;
         return normalize;
     }
@@ -364,8 +362,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * 获取总访问量 所有请求之和
      * @return
      */
-    @Cache(key = "ignore:getTotalAccess",expire = 60)
-    //@CacheClear(key = "ignore:getTotalAccess")
+    @Cache(key = "ignore:getTotalAccess",expire = 1440)
     public int getTotalAccess(){
         Example example = new Example(GateLog.class);
         return gateLogMapper.selectCountByExample(example);
@@ -377,7 +374,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @throws Exception
      */
     @Cache(key = "#type",expire = 1440)
-    //@CacheClear(key = "#type")
     public int getAccess(String type) throws Exception{
         int access = gateLogMapper.getAccess(type);
         return access;
@@ -389,7 +385,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @return
      */
     @Cache(key="accessNums",generator = StatisticsKeyGenerator.class,expire = 1440)
-    //@CacheClear(key="accessNums",generator = StatisticsKeyGenerator.class)
     public List<AccessNum> accessNums(String orgCode,String date) throws Exception{
         List<Org>orgList = getOrg(orgCode);
         if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
@@ -422,7 +417,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @throws Exception
      */
     @Cache(key="messageNums",generator = StatisticsKeyGenerator.class,expire = 1440)
-    //@CacheClear(key="messageNums",generator = StatisticsKeyGenerator.class)
     public List<MessageNums> messageNums(String orgCode, String date) throws Exception{
         ObjectRestResponse msgStatistics = ignoreService.msgStatistics(orgCode,date);
         Object msg = msgStatistics.getResult();
@@ -439,7 +433,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @throws Exception
      */
     @Cache(key="fileNums",generator = StatisticsKeyGenerator.class,expire = 1440)
-    //@CacheClear(key="fileNums",generator = StatisticsKeyGenerator.class)
     public List<FileNum> fileNums(String orgCode, String date) throws Exception{
         ObjectRestResponse fileStatistics = ignoreService.fileStatistics(orgCode,date);
         Object msgFile = fileStatistics.getResult();
@@ -456,7 +449,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @throws Exception
      */
     @Cache(key="groupNums",generator = StatisticsKeyGenerator.class,expire = 1440)
-    //@CacheClear(key="groupNums",generator = StatisticsKeyGenerator.class)
     public List<GroupNum> groupNums(String orgCode,String date) throws Exception{
         ObjectRestResponse groupStatistics = ignoreService.groupStatistics(orgCode,date);
         Object msgGroup = groupStatistics.getResult();
@@ -470,7 +462,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @return
      */
     @Cache(key="getSourceOrg",generator = StatisticsKeyGenerator.class,expire = 1440)
-    //@CacheClear(key="getSourceOrg",generator = StatisticsKeyGenerator.class)
     public List<SourceOrg> getSourceOrg(String orgCode,String date) throws Exception{
         List<Org>orgList = getOrg(orgCode);
         if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
@@ -500,7 +491,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @return
      */
     @Cache(key="getNodes",expire = 1440)
-    //@CacheClear(key="getNodes")
     public List<Node> getNodes() throws Exception{
         Example example = new Example(Org.class);
         Example.Criteria criteria = example.createCriteria();
@@ -519,7 +509,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @throws Exception
      */
     @Cache(key="getLinks",expire = 1440)
-    //@CacheClear(key="getLinks")
     public List<Link> getLinks() throws Exception{
         List<Link> links = new ArrayList<>();
         ObjectRestResponse groupUser = ignoreService.groupUserStatistics(null);
