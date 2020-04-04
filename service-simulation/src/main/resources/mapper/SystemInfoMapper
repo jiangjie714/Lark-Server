@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.hollykunge.security.simulation.mapper.SimuSystemMapper">
-    <resultMap id="BaseResultMap" type="com.github.hollykunge.security.simulation.entity.SimuSystem">
+<mapper namespace="com.github.hollykunge.security.simulation.mapper.SystemInfoMapper">
+    <resultMap id="BaseResultMap" type="com.github.hollykunge.security.simulation.entity.SystemInfo">
         <id column="ID" property="id" jdbcType="VARCHAR"/>
 
         <result column="CREATOR_PID" property="creatorPId" jdbcType="VARCHAR"/>

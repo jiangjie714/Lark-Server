@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @Table(name = "SIMU_SYSTEM_INFO")
-public class SimuSystem extends BaseEntity {
+public class SystemInfo extends BaseEntity {
 
 
     /**
@@ -56,7 +56,7 @@ public class SimuSystem extends BaseEntity {
     /**
      * 系统状态
      */
-        @Column(name = "STATE")
+    @Column(name = "STATE")
     private String state;
 
     /**

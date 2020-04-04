@@ -1,18 +1,17 @@
 package com.github.hollykunge.security.simulation.vo;
 
+import com.github.hollykunge.security.simulation.entity.SystemResult;
 import lombok.Data;
 
 @Data
-public class ModelConfigVo {
+public class BothConfigVo {
 
     private String id;
-
-    private String dataType;
-
-    private String interfaceList;
 
     private String modelName;
 
     private String fileName;
+
+    private SystemResult systemResult;
 
 }
