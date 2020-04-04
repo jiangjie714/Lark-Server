@@ -55,4 +55,9 @@ public class ClientInfo implements IJWTInfo {
     public String getSecretLevel() {
         return null;
     }
+
+    @Override
+    public String getOrgPathCode() {
+        return null;
+    }
 }

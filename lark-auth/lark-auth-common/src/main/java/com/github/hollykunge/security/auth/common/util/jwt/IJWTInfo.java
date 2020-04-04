@@ -27,4 +27,6 @@ public interface IJWTInfo {
      * @return
      */
     String getSecretLevel();
+
+    String getOrgPathCode();
 }
