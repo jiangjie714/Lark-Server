@@ -23,5 +23,28 @@
     <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+      <result property="suggestion" column="SUGGESTION" jdbcType="VARCHAR"></result>
   </resultMap>
+
+  <resultMap id="feedBackAnswer" type="com.github.hollykunge.security.dto.FeedBackAnswerDto">
+      <result property="id" column="ID" jdbcType="VARCHAR"></result>
+      <result property="pathName" column="PATH_NAME" jdbcType="VARCHAR"></result>
+    <result property="crtName" column="CRT_NAME" jdbcType="VARCHAR"></result>
+    <result property="title" column="TITLE" jdbcType="VARCHAR"></result>
+    <result property="content" column="CONTENT" jdbcType="VARCHAR"></result>
+    <result property="crtTime" column="CRT_TIME" jdbcType="TIMESTAMP"></result>
+    <result property="suggestion" column="SUGGESTION" jdbcType="VARCHAR"></result>
+  </resultMap>
+  <!--查询反馈-->
+  <select id="queryFeedBackAnswer" resultMap="feedBackAnswer">
+      select
+          T.ID,F.PATH_NAME,T.CRT_NAME,T.TITLE,T.CONTENT,T.CRT_TIME,T.SUGGESTION
+      from PORTAL_FEEDBACK T
+       left join (select U.ID,O.PATH_NAME from LARK_ADMIN.ADMIN_USER U left join LARK_ADMIN.ADMIN_ORG O
+                   on U.ORG_CODE = O.ORG_CODE) F ON T.CRT_USER = F.ID
+      <if test="crtTime!=null and crtTime != ''">
+          where to_char(T.CRT_TIME,'yyyy-MM-dd') &gt;=#{crtTime}
+      </if>
+        order by  T.CRT_TIME desc
+    </select>
 </mapper>
