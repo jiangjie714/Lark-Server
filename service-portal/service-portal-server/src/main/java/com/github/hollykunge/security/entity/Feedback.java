@@ -35,4 +35,10 @@ public class Feedback extends BaseEntity {
      */
     @Column(name = "VISIBLE")
     private String visible;
+
+    /**
+     * 反馈意见
+     */
+    @Column(name = "SUGGESTION")
+    private String suggestion;
 }
