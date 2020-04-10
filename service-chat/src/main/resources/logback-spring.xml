@@ -14,10 +14,6 @@
             </pattern>
         </layout>
         -->
-        <!-- fansq 20-2-19 添加 控制台输出error级别 -->
-<!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
-<!--            <level>error</level>-->
-<!--        </filter>-->
         <!-- 彩色控制台日志 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
@@ -27,7 +23,7 @@
     <!-- 专门用来存放sql语句打印的日志-->
     <appender name="sqlLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>error</level>
+            <level>DEBUG</level>
             <!--
             <onMatch> ACCEPT</onMatch>
             <onMismatch> DENY</onMismatch>
@@ -45,28 +41,25 @@
         </rollingPolicy>
     </appender>
     <!-- 记录info日志-->
-
-    <!-- fansq 20-2-19 注释 日志只输出error级别 -->
-    <!--<appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
-            &lt;!&ndash;
+            <!--
             <onMatch> ACCEPT</onMatch>
             <onMismatch> DENY</onMismatch>
-            &ndash;&gt;
+            -->
         </filter>
         <encoder>
             <pattern>
                 %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
         </encoder>
-        &lt;!&ndash;滚动策略  每天一份&ndash;&gt;
+        <!--滚动策略  每天一份-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            &lt;!&ndash;路径&ndash;&gt;
+            <!--路径-->
             <fileNamePattern>${self-log-path}/service-chat/logs/info/info.%d.log</fileNamePattern>
         </rollingPolicy>
-    </appender>-->
-
+    </appender>
     <!-- 记录error日志 -->
     <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -99,7 +92,7 @@
             </then>
         </if>
         <!--<appender-ref ref="consoleLog" />-->
-        <!--<appender-ref ref="infoLog" />-->
+        <appender-ref ref="infoLog" />
     </logger>
     <!-- root 的日志级别如果改成debug会有很多程序内部日志信息，所以这里写为INFO-->
     <root level="info">
@@ -109,52 +102,52 @@
             </then>
         </if>
         <!--<appender-ref ref="consoleLog" />-->
-        <!--<appender-ref ref="infoLog" />-->
+        <appender-ref ref="infoLog" />
         <appender-ref ref="errorLog" />
     </root>
 
 </configuration>
-<!--<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <property resource="application.properties"/>
+        <!--<?xml version="1.0" encoding="UTF-8"?>
+        <configuration>
+            <include resource="org/springframework/boot/logging/logback/base.xml"/>
+            <property resource="application.properties"/>
 
-    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>service-chat/logs/info/${log.env.module}.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/info/${log.env.module}-%d{yyyy-MM-dd}.%i.log
-            </fileNamePattern>
-            <maxFileSize>5MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>20GB</totalSizeCap>
-        </rollingPolicy>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</Pattern>
-        </layout>
-    </appender>
+            <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>service-chat/logs/info/${log.env.module}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>logs/info/${log.env.module}-%d{yyyy-MM-dd}.%i.log
+                    </fileNamePattern>
+                    <maxFileSize>5MB</maxFileSize>
+                    <maxHistory>30</maxHistory>
+                    <totalSizeCap>20GB</totalSizeCap>
+                </rollingPolicy>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</Pattern>
+                </layout>
+            </appender>
 
-    <appender name="bug_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>service-chat/logs/debug/${log.env.module}.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/debug/${log.env.module}-%d{yyyy-MM-dd}.%i.log
-            </fileNamePattern>
-            <maxFileSize>5MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>20GB</totalSizeCap>
-        </rollingPolicy>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</Pattern>
-        </layout>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
+            <appender name="bug_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>service-chat/logs/debug/${log.env.module}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>logs/debug/${log.env.module}-%d{yyyy-MM-dd}.%i.log
+                    </fileNamePattern>
+                    <maxFileSize>5MB</maxFileSize>
+                    <maxHistory>30</maxHistory>
+                    <totalSizeCap>20GB</totalSizeCap>
+                </rollingPolicy>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</Pattern>
+                </layout>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>DEBUG</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+            </appender>
 
-    <logger name="com.workhub.z.servicechat.dao" level="debug"/>
-    <root level="info">
-        <appender-ref ref="ROLLING"/>
-        <appender-ref ref="bug_log"/>
-    </root>
-</configuration>-->
+            <logger name="com.workhub.z.servicechat.dao" level="debug"/>
+            <root level="info">
+                <appender-ref ref="ROLLING"/>
+                <appender-ref ref="bug_log"/>
+            </root>
+        </configuration>-->

@@ -40,4 +40,77 @@
     FROM
         ADMIN_GATELOG
   </select>
+
+    <select id="getOrgCodeLogNum" resultType="long">
+        select count(*) from admin_gatelog gate right join
+        (select id from admin_user where org_code like '%'|| #{orgCode}||'%') us
+        on gate.crt_user = us.id
+        <where>
+            <if test="menu != null and menu != ''">
+                uri=#{menu,jdbcType=VARCHAR}
+            </if>
+            <!-- 今天 -->
+            <if test = "type == '5' || type == 5">
+                and   TO_CHAR(crt_time, 'yyyy-MM-dd')
+                between
+                to_char(sysdate,'yyyy-MM-dd')
+                AND
+                to_char(sysdate,'yyyy-MM-dd')
+            </if>
+            <!-- 本周 -->
+            <if test = "type == '6' || type == 6">
+                and   TO_CHAR(crt_time, 'yyyy-MM-dd')
+                between
+                to_char((select trunc(sysdate, 'd') + 1 from dual),'yyyy-mm-dd')
+                and
+                to_char(sysdate,'yyyy-mm-dd')
+            </if>
+            <!-- 本月 -->
+            <if test = "type == '7' || type == 7">
+                and   TO_CHAR(crt_time, 'yyyy-MM-dd')
+                between
+                to_char((select trunc(sysdate, 'mm') from dual),'yyyy-mm-dd')
+                and
+                to_char(sysdate,'yyyy-mm-dd')
+            </if>
+        </where>
+    </select>
+
+    <select id="getCountLog" resultType="long">
+        select count(gate.id) from admin_gatelog gate right join
+        (select id from admin_user where org_code like '%'|| #{orgCode}||'%') us
+        on gate.crt_user = us.id
+    </select>
+
+    <select id="getAccess" resultType="java.lang.Integer">
+        select count(*) from admin_gatelog
+        <!-- 昨天 -->
+        <if test = "type=='1'|| type==1">
+        where
+        crt_time
+        between to_date(to_char((select TRUNC(SYSDATE - 1) from dual),'yyyy-MM-dd'),'yyyy-MM-dd')
+        and to_date(to_char(SYSDATE,'yyyy-MM-dd'),'yyyy-MM-dd')
+        </if>
+        <!-- 今年 -->
+        <if test = "type=='2'|| type==2">
+            where
+            crt_time
+            between to_date(to_char((select trunc(sysdate, 'yy') from dual),'yyyy-MM-dd'),'yyyy-MM-dd')
+            and to_date(to_char(SYSDATE,'yyyy-MM-dd'),'yyyy-MM-dd')
+        </if>
+        <!-- 去年 -->
+        <if test = "type=='3'|| type==3">
+            where
+            crt_time
+            between to_date(to_char((select TRUNC(SYSDATE,'YYYY')-INTERVAL '1' YEAR from dual),'yyyy-MM-dd'),'yyyy-MM-dd')
+            and to_date(to_char((select trunc(sysdate -1, 'yyyy') from dual),'yyyy-MM-dd'),'yyyy-MM-dd')
+        </if>
+        <!-- 前天 -->
+        <if test = "type=='4'|| type==4">
+            where
+            crt_time
+            between to_date(to_char((select TRUNC(SYSDATE - 2) from dual),'yyyy-MM-dd'),'yyyy-MM-dd')
+            and to_date(to_char((select TRUNC(SYSDATE - 1) from dual),'yyyy-MM-dd'),'yyyy-MM-dd')
+        </if>
+    </select>
 </mapper>

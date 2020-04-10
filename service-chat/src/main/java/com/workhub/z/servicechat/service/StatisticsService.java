@@ -1,8 +1,10 @@
 package com.workhub.z.servicechat.service;
 
-import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.VO.StatisticsGroupVo;
-import com.workhub.z.servicechat.VO.StatisticsMsgVo;
+import com.workhub.z.servicechat.VO.StatisticsChartDataVo;
+import com.workhub.z.servicechat.VO.StatisticsGroupOrgVo;
+import com.workhub.z.servicechat.VO.StatisticsGroupUserVo;
+
+import java.util.List;
 
 /**
  * @auther: zhuqz
@@ -13,15 +15,31 @@ import com.workhub.z.servicechat.VO.StatisticsMsgVo;
 public interface StatisticsService {
     /**
      * 群统计
-     * @param groupName 群名称
-     * @param isCross 跨场所
      * @return
      */
-     TableResultResponse<StatisticsGroupVo> groupStatistics(int page, int size, String groupName, String isCross) ;
+    List<StatisticsChartDataVo> groupInfStatistics(String dateType, String orgCode) ;
+    //TableResultResponse<StatisticsGroupVo> groupStatistics(int page,int size,String groupName, String isCross) ;
 
     /**
      * 消息统计
      * @return
      */
-     StatisticsMsgVo msgStatistics() ;
+    List<StatisticsChartDataVo> msgStatistics(String dateType, String orgCode) ;
+    //StatisticsMsgVo msgStatistics(String dateType) ;
+    /**
+     * 附件统计
+     * @return
+     */
+    List<StatisticsChartDataVo> fileStatistics(String dateType, String orgCode) ;
+    //StatisticsFileVo fileStatistics(String dateType) ;
+    /**
+     * 群成员统计
+     * @return
+     */
+    List<StatisticsGroupUserVo> groupUserStatistics(String groupId);
+    /**
+     * 群org统计
+     * @return
+     */
+    List<StatisticsGroupOrgVo> groupOrgStatistics(String groupId);
 }

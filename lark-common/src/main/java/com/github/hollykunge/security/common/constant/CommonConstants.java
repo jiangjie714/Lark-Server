@@ -38,7 +38,7 @@ public class CommonConstants {
      */
     public static final int EX_OTHER_CODE = 500;
     /**
-     * 拒绝执行当前请求
+     * 成功
      */
     public static final int HTTP_SUCCESS = 200;
 
@@ -127,7 +127,9 @@ public class CommonConstants {
     public static final Long DURATION_1 = Time.MINUTE_1 * 5;
     public static final Long[] IPSTAT_DURATIONS = new Long[]{DURATION_1};
 
-    //密级判断
+    /**
+     * 不符合密级约束条件
+     */
     public static final Integer EX_LEVELS = 40000;
 
     public static final String WEB_USERHOST = "userHost";
@@ -180,5 +182,23 @@ public class CommonConstants {
     public static final String GET_GATE_LOG_REQUEST_EXPORT = "export";
     public static final String GET_GATE_LOG_REQUEST_FEIGN = "/front/info";
     public static final String AUTH_JWT_TOKEN = "/auth/jwt/token";
+
+    /**
+     * fansq 统计功能 时间
+     */
+    public static final String JIN_RI="jinri";
+    public static final String BEN_ZHOU="benzhou";
+    public static final String BEN_YUE="benyue";
+    public static final String QUAN_BU="quanbu";
+
+    public static final String JIN_RI_TYPE="5";
+    public static final String BEN_ZHOU_TYPE="6";
+    public static final String BEN_YUE_TYPE="7";
+    public static final String QUAN_BU_TYPE="8";
+
+    public static final String YESTERDAY="1";
+    public static final String THIS_YEAR="2";
+    public static final String LAST_YEAR="3";
+    public static final String BEFOR_YESTERDAY ="4";
 
 }

@@ -233,4 +233,13 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
             return objectRestResponse;
     }
 
+    /**
+     *
+     * @param orgCode
+     * @param orgLevel
+     * @return
+     */
+    public List<Org> findOrgByLevelAndParentId(String orgCode, Integer orgLevel) {
+        return orgMapper.findOrgByLevelAndParentId(orgCode,orgLevel);
+    }
 }

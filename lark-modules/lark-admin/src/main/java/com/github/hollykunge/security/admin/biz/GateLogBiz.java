@@ -1,17 +1,21 @@
 package com.github.hollykunge.security.admin.biz;
 
+import com.ace.cache.annotation.Cache;
+import com.ace.cache.annotation.CacheClear;
 import com.alibaba.fastjson.JSONArray;
+import com.github.hollykunge.security.admin.api.authority.*;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.admin.entity.GateLog;
-import com.github.hollykunge.security.admin.entity.Role;
-import com.github.hollykunge.security.admin.entity.RoleUserMap;
-import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.GateLogMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
+import com.github.hollykunge.security.admin.redisKey.StatisticsKeyGenerator;
+import com.github.hollykunge.security.admin.rpc.ignore.service.IgnoreService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
 import com.github.hollykunge.security.admin.util.ListUtil;
 import com.github.hollykunge.security.common.biz.BaseBiz;
+import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
@@ -25,8 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * ${DESCRIPTION}
@@ -45,6 +54,8 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     private RoleUserMapMapper roleUserMapMapper;
     @Autowired
     private UserBiz userBiz;
+    @Autowired
+    private GateLogMapper gateLogMapper;
     @Value("${role.code.system}")
     private String sysRoleCode;
     @Value("${role.code.log}")
@@ -52,6 +63,11 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     @Value("${role.code.security}")
     private String securityRoleCode;
 
+    @Autowired
+    private OrgBiz orgBiz;
+
+    @Autowired
+    private IgnoreService ignoreService;
     public List<GateLog> gateLogExport() {
         return mapper.gateLogExport();
     }
@@ -267,4 +283,341 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         }
         return false;
     }
+
+    /**
+     * 统计功能 获取登录量计数
+     *
+     * @return
+     */
+    public List<AccessNum> findLogCountByOrgCode(List<Org> orgList,String type){
+        List<AccessNum> accessNums = new ArrayList<>();
+        for(Org o:orgList){
+            AccessNum accessNum = new AccessNum();
+            accessNum.setX(o.getOrgName());
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"/api/admin/user/front/info");
+            accessNum.setY(num);
+            accessNums.add(accessNum);
+        }
+        accessNums = accessNums.stream().sorted(Comparator.comparing(AccessNum::getY).
+                reversed()).collect(Collectors.toList());
+        return accessNums;
+    }
+
+    public Long findLogCountByOrgCodeAll(String orgCode,String type){
+            Long num = gateLogMapper.getOrgCodeLogNum(orgCode,type,"");
+            return num;
+    }
+    public List<SourceOrg> findLogCountByOrgCodeAll(String orgCode,List<Org> orgList,String type){
+        //总活动量
+        Long numAll = findLogCountByOrgCodeAll(orgCode,type);
+        List<SourceOrg> sourceOrgs = new ArrayList<>();
+        for(Org o:orgList){
+            SourceOrg sourceOrg = new SourceOrg();
+            sourceOrg.setItem(o.getOrgName());
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"");
+            if(numAll==0||num==0){
+                sourceOrg.setCount(0.0);
+            }else{
+                double numAllD = new Double(numAll).doubleValue();
+                double  numD = new Double(num).doubleValue();
+                String n = new DecimalFormat("0.0").format(numD/numAllD);
+                sourceOrg.setCount(Double.parseDouble(n));
+            }
+            sourceOrgs.add(sourceOrg);
+        }
+        sourceOrgs = sourceOrgs.stream().sorted(Comparator.comparing(SourceOrg::getCount).
+                reversed()).collect(Collectors.toList());
+        return sourceOrgs;
+    }
+
+    /**
+     * 获取散点图点的大小
+     * @param orgList
+     * @return
+     */
+    public List<Node> findNodeLink(List<Org> orgList){
+        List<Node> nodes = new ArrayList<>();
+        for(Org o:orgList){
+            Node node = new Node();
+            Long num = gateLogMapper.getCountLog(o.getId());
+            node.setId(o.getOrgCode());
+            node.setName(o.getOrgName());
+            node.setParnetId(o.getParentId());
+            node.setLevel(o.getOrgLevel());
+            node.setSymbolSize(getNormalizeDistance(num));
+            nodes.add(node);
+        }
+        return nodes;
+    }
+
+    public Double getNormalizeDistance(long num){
+        double min = 0.0;
+        Example example = new Example(GateLog.class);
+        int max = gateLogMapper.selectCountByExample(example);
+        double normalize = ((num-min)/(max-min))*100;
+        return normalize;
+    }
+
+    /**
+     * 获取总访问量 所有请求之和
+     * @return
+     */
+    @Cache(key = "ignore:getTotalAccess",expire = 1440)
+    public int getTotalAccess(){
+        Example example = new Example(GateLog.class);
+        return gateLogMapper.selectCountByExample(example);
+    }
+
+    /**
+     * 获取访问量
+     * @return
+     * @throws Exception
+     */
+    @Cache(key = "#type",expire = 1440)
+    public int getAccess(String type) throws Exception{
+        int access = gateLogMapper.getAccess(type);
+        return access;
+    }
+
+    /**
+     *获取柱状图数据
+     * @param orgCode
+     * @return
+     */
+    @Cache(key="accessNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    public List<AccessNum> accessNums(String orgCode,String date) throws Exception{
+        List<Org>orgList = getOrg(orgCode);
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
+            List<AccessNum> accessNums =
+                    findLogCountByOrgCode(orgList,CommonConstants.JIN_RI_TYPE);
+            return accessNums;
+        }
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_ZHOU,date)){
+            List<AccessNum> accessNums =
+                    findLogCountByOrgCode(orgList,CommonConstants.BEN_ZHOU_TYPE);
+            return accessNums;
+        }
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_YUE,date)){
+            List<AccessNum> accessNums =
+                    findLogCountByOrgCode(orgList,CommonConstants.BEN_YUE_TYPE);
+            return accessNums;
+        }
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.QUAN_BU,date)) {
+            List<AccessNum> accessNums = findLogCountByOrgCode(orgList, CommonConstants.QUAN_BU_TYPE);
+            return accessNums;
+        }
+        return null;
+    }
+
+    /**
+     * 获取柱状图消息量排行
+     * @param orgCode
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    @Cache(key="messageNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    public List<MessageNums> messageNums(String orgCode, String date) throws Exception{
+        ObjectRestResponse msgStatistics = ignoreService.msgStatistics(orgCode,date);
+        Object msg = msgStatistics.getResult();
+        String msgJson = JSONArray.toJSONString(msg);
+        List<MessageNums> messageNums= JSONArray.parseArray(msgJson, MessageNums.class);
+        return messageNums;
+    }
+
+    /**
+     * 获取柱状图文件量排行
+     * @param orgCode
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    @Cache(key="fileNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    public List<FileNum> fileNums(String orgCode, String date) throws Exception{
+        ObjectRestResponse fileStatistics = ignoreService.fileStatistics(orgCode,date);
+        Object msgFile = fileStatistics.getResult();
+        String msgJsonFile = JSONArray.toJSONString(msgFile);
+        List<FileNum> fileNums= JSONArray.parseArray(msgJsonFile, FileNum.class);
+        return fileNums;
+    }
+
+    /**
+     * 获取柱状图群组量排行
+     * @param orgCode
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    @Cache(key="groupNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    public List<GroupNum> groupNums(String orgCode,String date) throws Exception{
+        ObjectRestResponse groupStatistics = ignoreService.groupStatistics(orgCode,date);
+        Object msgGroup = groupStatistics.getResult();
+        String msgJsonGroup = JSONArray.toJSONString(msgGroup);
+        List<GroupNum> groupNums= JSONArray.parseArray(msgJsonGroup, GroupNum.class);
+        return groupNums;
+    }
+
+    /**
+     * 获取饼图数据
+     * @return
+     */
+    @Cache(key="getSourceOrg",generator = StatisticsKeyGenerator.class,expire = 1440)
+    public List<SourceOrg> getSourceOrg(String orgCode,String date) throws Exception{
+        List<Org>orgList = getOrg(orgCode);
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
+            List<SourceOrg> sourceOrgs =
+                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.JIN_RI_TYPE);
+            return sourceOrgs;
+        }
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_ZHOU,date)){
+            List<SourceOrg> sourceOrgs =
+                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.BEN_ZHOU_TYPE);
+            return sourceOrgs;
+        }
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_YUE,date)){
+            List<SourceOrg> sourceOrgs =
+                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.BEN_YUE_TYPE);
+            return sourceOrgs;
+        }
+        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.QUAN_BU,date)) {
+            List<SourceOrg> sourceOrgs = findLogCountByOrgCodeAll(orgCode,orgList, CommonConstants.QUAN_BU_TYPE);
+            return sourceOrgs;
+        }
+        return null;
+    }
+
+    /**
+     * 获取散点关系图数据 点的大小
+     * @return
+     */
+    @Cache(key="getNodes",expire = 1440)
+    public List<Node> getNodes() throws Exception{
+        Example example = new Example(Org.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andNotEqualTo("id","99999");
+        criteria.andNotEqualTo("id","0010");
+        criteria.andIsNotNull("orgCode");
+        criteria.andEqualTo("deleted","0");
+        List<Org> org = orgBiz.selectByExample(example);
+        List<Node> nodes = findNodeLink(org);
+        return nodes;
+    }
+
+    /**
+     * 获取散点关系图数据 link线
+     * @return
+     * @throws Exception
+     */
+    @Cache(key="getLinks",expire = 1440)
+    public List<Link> getLinks() throws Exception{
+        List<Link> links = new ArrayList<>();
+        ObjectRestResponse groupUser = ignoreService.groupUserStatistics(null);
+        Object groupUserResult = groupUser.getResult();
+        String msgJson = JSONArray.toJSONString(groupUserResult);
+        List<StatisticsGroupOrgVo> statisticsGroupUserVos= JSONArray.parseArray(msgJson, StatisticsGroupOrgVo.class);
+        for (int i = 0; i <statisticsGroupUserVos.size(); i++) {
+            List<StatisticsGroupOrgDetailVo> detailVos = statisticsGroupUserVos.get(i).getOrgList();
+            Link linkS = new Link();
+            Link linkT = new Link();
+            Link linkP = new Link();
+            Link link = new Link();
+            StatisticsGroupOrgDetailVo last = detailVos.get(detailVos.size()-1);
+            StatisticsGroupOrgDetailVo first = detailVos.get(0);
+            linkS.setSource(first.getOrgCode());
+            linkS.setTarget(last.getOrgCode());
+            links.add(linkS);
+            linkT.setSource(last.getOrgCode());
+            linkT.setTarget(first.getOrgCode());
+            links.add(linkT);
+            linkP.setSource(first.getParentId());
+            linkP.setTarget(last.getParentId());
+            links.add(linkP);
+            link.setSource(last.getParentId());
+            link.setTarget(first.getParentId());
+            links.add(link);
+            for (int j = 0; j <detailVos.size()-1; j++) {
+                Link linkSource = new Link();
+                Link linkTarget = new Link();
+                Link linkParent = new Link();
+                Link linkParentT = new Link();
+                linkSource.setSource(detailVos.get(j).getOrgCode());
+                linkSource.setTarget(detailVos.get(j+1).getOrgCode());
+                linkTarget.setSource(detailVos.get(j+1).getOrgCode());
+                linkTarget.setTarget(detailVos.get(j).getOrgCode());
+                links.add(linkSource);
+                links.add(linkTarget);
+                linkParent.setSource(detailVos.get(j).getParentId());
+                linkParent.setTarget(detailVos.get(j+1).getParentId());
+                links.add(linkParent);
+                linkParentT.setSource(detailVos.get(j+1).getParentId());
+                linkParentT.setTarget(detailVos.get(j).getParentId());
+                links.add(linkParentT);
+            }
+        }
+        List<Link> linkList = setLink();
+        links = links.stream().collect(
+                collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getSource()+";"+o.getTarget()))),
+                        ArrayList::new));
+        links.addAll(linkList);
+        return links;
+    }
+
+    /**
+     * 部门连接线
+     * @return
+     */
+    public List<Link> setLink(){
+        Example example = new Example(Org.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgLevel","3");
+        criteria.andIsNotNull("orgCode");
+        criteria.andEqualTo("deleted","0");
+        List<Org> orgList = orgBiz.selectByExample(example);
+        Example exampl = new Example(Org.class);
+        Example.Criteria criteri = exampl.createCriteria();
+        criteri.andNotEqualTo("orgLevel",1);
+        criteri.andNotEqualTo("orgLevel",2);
+        criteri.andNotEqualTo("orgLevel",3);
+        criteria.andIsNotNull("orgCode");
+        criteria.andEqualTo("deleted","0");
+        List<Org> orgs = orgBiz.selectByExample(exampl);
+        List<Link> linkList = new ArrayList<>();
+        for (Org org:orgList){
+            treeMenuList(orgs,org.getId(),linkList);
+        }
+        return linkList;
+    }
+
+    public List<Link> treeMenuList(List<Org> orgList, String  pid,List<Link> linkList){
+        for(Org mu: orgList){
+            //遍历出父id等于参数的id，add进子节点集合
+            if(org.apache.commons.lang3.StringUtils.equals(pid,mu.getParentId())){
+                //递归遍历下一级
+                Link link = new Link();
+                link.setSource(pid);
+                link.setTarget(mu.getOrgCode());
+                linkList.add(link);
+                treeMenuList(orgList,mu.getId(),linkList);
+            }
+        }
+        return linkList;
+    }
+
+    /**
+     * 获取部门
+     * @param orgCode
+     * @return
+     */
+    public List<Org> getOrg(String orgCode){
+        Example example = new Example(Org.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("id",orgCode);
+        criteria.andEqualTo("deleted","0");
+        Org org = orgBiz.selectByExample(example).get(0);
+        Integer orgLevel = org.getOrgLevel();
+        List<Org> orgList = orgBiz.findOrgByLevelAndParentId(orgCode,orgLevel+1);
+        return orgList;
+    }
+
+
 }

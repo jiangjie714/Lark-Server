@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.workhub.z.servicechat.dao.StatisticsDao">
 
-    <resultMap type="com.workhub.z.servicechat.VO.StatisticsMsgVo" id="statisticsMsgVo">
+    <!--<resultMap type="com.workhub.z.servicechat.VO.StatisticsMsgVo" id="statisticsMsgVo">
         <result property="msgCount" column="msg_count" jdbcType="VARCHAR"/>
         <result property="pirivateMsgCount" column="pirivate_msg_count" jdbcType="VARCHAR"/>
         <result property="groupMsgCount" column="group_msg_count" jdbcType="VARCHAR"/>
@@ -19,9 +19,85 @@
         <result property="isCross" column="is_cross" jdbcType="VARCHAR"/>
         <result property="msgCount" column="msg_count" jdbcType="VARCHAR"/>
     </resultMap>
-
+    <resultMap type="com.workhub.z.servicechat.VO.StatisticsFileVo" id="statisticsFileVo">
+        <result property="fileCount" column="file_count" jdbcType="VARCHAR"/>
+        <result property="pirivateFileCount" column="pirivate_file_count" jdbcType="VARCHAR"/>
+        <result property="groupFileCount" column="group_file_count" jdbcType="VARCHAR"/>
+        <result property="meetFileCount" column="meet_file_count" jdbcType="VARCHAR"/>
+        <result property="textFileCount" column="text_file_count" jdbcType="VARCHAR"/>
+        <result property="picFileCount" column="pic_file_count" jdbcType="VARCHAR"/>
+        <result property="zipFileCount" column="zip_file_count" jdbcType="VARCHAR"/>
+        <result property="otherFileCount" column="other_file_count" jdbcType="VARCHAR"/>
+    </resultMap>-->
+    <resultMap type="com.workhub.z.servicechat.model.StatisticsChartDto" id="statisticsXLabelVo">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="orgName" column="org_name" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap type="com.workhub.z.servicechat.model.StatisticsGroupUserDto" id="statisticsGroupUserDto">
+        <result property="groupId" column="group_id" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="path" column="path_name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap type="com.workhub.z.servicechat.model.StatisticsGroupOrgDto" id="statisticsGroupOrgDto">
+        <result property="groupId" column="group_id" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="path" column="path_name" jdbcType="VARCHAR"/>
+        <result property="pid" column="pid" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--获取横坐标-->
+    <select id="getXLabel" resultMap="statisticsXLabelVo">
+            select o.org_name, o.org_code,o.id
+              from lark_admin.admin_org o
+             where o.deleted != '1'
+               and o.parent_id in
+                   (select id from lark_admin.admin_org o2 where o2.org_code = #{orgCode} and o2.deleted != '1')
+             order by o.order_id
+    </select>
     <!--消息统计-->
-    <select id="msgStatistics" resultMap="statisticsMsgVo">
+    <select id="msgStatistics" resultType="string">
+       select to_char(nvl(sum(data.msgcnt),'0')) msgcnt
+          from (select sum(a.msgcnt) msgcnt, b.org_code
+                  from (select count(1) as msgcnt, m.sender
+                          from zz_message_info m
+                         where 1 = 1
+                        <if test = "dateType=='0'|| dateType==0">
+                            <!--全部-->
+                        </if>
+                        <if test = "dateType=='1'|| dateType==1">
+                            <!--今天-->
+                            and to_char(CREATETIME,'yyyy-mm-dd') between to_char(sysdate,'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+                        </if>
+                        <if test = "dateType=='2'|| dateType==2">
+                            <!--本周-->
+                            <!--and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'd') + 1 from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')-->
+                            and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select TRUNC(SYSDATE - 7)   from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+                        </if>
+                        <if test = "dateType=='3'|| dateType==3">
+                            <!--本月-->
+                           <!-- and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'mm') from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')-->
+                            and to_char(CREATETIME,'yyyy-mm-dd') between to_char((select TRUNC(SYSDATE - 30)   from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+                        </if>
+                        group by m.sender) a,
+                       (select org_name, org_code, id
+                          from lark_admin.admin_user
+                         where deleted != '1') b
+                 where a.sender = b.id
+                 group by org_code) data
+         where data.org_code in
+              --递归每个横坐标子集
+               (select org_code
+                  from lark_admin.admin_org o
+                 where o.org_code is not null
+                   and o.deleted != '1'
+                 start with id = #{xId}
+                connect by prior id = parent_id)
+
+    </select>
+    <!--<select id="msgStatistics" resultMap="statisticsMsgVo">
        select to_char(msg_count) msg_count,
        to_char(text_msg_count) text_msg_count,
        to_char(pic_msg_count) pic_msg_count,
@@ -30,37 +106,37 @@
        to_char(group_msg_count) group_msg_count,
        to_char(meet_msg_count) meet_msg_count
           from (
-                ---发消息条数
+                -&#45;&#45;发消息条数
                 select 'msg_count' as title, count(1) as msgcount
                   from zz_message_info msg
                  where 1 = 1
                 union
-                ---文字消息条数
+                -&#45;&#45;文字消息条数
                 select 'text_msg_count' as title, count(1) as msgcount
                   from zz_message_info msg
                  where FILE_TYPE = '1'
                 union
-                --图片个数
+                &#45;&#45;图片个数
                 select 'pic_msg_count' as title, count(1) as msgcount
                   from zz_message_info msg
                  where FILE_TYPE = '2'
                 union
-                --附件个数
+                &#45;&#45;附件个数
                 select 'file_msg_count' as title, count(1) as msgcount
                   from zz_message_info msg
                  where FILE_TYPE = '3'
                 union
-                --私聊消息个数
+                &#45;&#45;私聊消息个数
                 select 'pirivate_msg_count' as title, count(1) as msgcount
                   from zz_message_info msg
                  where TYPE = 'USER'
                 union
-                --群消息个数
+                &#45;&#45;群消息个数
                 select 'group_msg_count' as title, count(1) as msgcount
                   from zz_message_info msg
                  where TYPE = 'GROUP'
                 union
-                --会议消息个数
+                &#45;&#45;会议消息个数
                 select 'meet_msg_count' as title, count(1) as msgcount
                   from zz_message_info msg
                  where TYPE = 'MEET')
@@ -73,10 +149,50 @@
                         'group_msg_count' as group_msg_count,
                         'meet_msg_count' as meet_msg_count))
          where 1 = 1
-    </select>
+    </select>-->
 
     <!--通过实体作为筛选条件查询-->
-    <select id="groupStatistics" resultMap="statisticsGroupVo">
+    <select id="groupInfStatistics"  resultType="string">
+        select to_char(nvl(sum(data.msgcnt),'0')) msgcnt
+        from (select sum(a.msgcnt) msgcnt, b.org_code
+        from (select count(1) as msgcnt, m.creator
+        from zz_group m
+        where 1 = 1
+        and m.isdelete = '0'
+        and m.isclose = '0'
+        <if test = "dateType=='0'|| dateType==0">
+            <!--全部-->
+        </if>
+        <if test = "dateType=='1'|| dateType==1">
+            <!--今天-->
+            and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char(sysdate,'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        <if test = "dateType=='2'|| dateType==2">
+            <!--本周-->
+            <!-- and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'd') + 1 from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd') -->
+            and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char((select TRUNC(SYSDATE - 7)   from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+
+        </if>
+        <if test = "dateType=='3'|| dateType==3">
+            <!--本月-->
+            and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char((select TRUNC(SYSDATE - 30)   from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        group by m.creator) a,
+        (select org_name, org_code, id
+        from lark_admin.admin_user
+        where deleted != '1') b
+        where a.creator = b.id
+        group by org_code) data
+        where data.org_code in
+        --递归每个横坐标子集
+        (select org_code
+        from lark_admin.admin_org o
+        where o.org_code is not null
+        and o.deleted != '1'
+        start with id = #{xId}
+        connect by prior id = parent_id)
+    </select>
+    <!--<select id="groupStatistics" resultMap="statisticsGroupVo">
         select org.path_name,
                 yyy.group_name,
                 yyy.crt_name,
@@ -105,5 +221,132 @@
                 and is_cross = #{isCross}
             </if>
 
+    </select>-->
+    <select id="fileStatistics"  resultType="string">
+        select to_char(nvl(sum(data.msgcnt),'0')) msgcnt
+        from (select sum(a.msgcnt) msgcnt, b.org_code
+        from (select count(1) as msgcnt, m.creator
+        from zz_group_file m
+        where 1 = 1
+        <if test = "dateType=='0'|| dateType==0">
+            <!--全部-->
+        </if>
+        <if test = "dateType=='1'|| dateType==1">
+            <!--今天-->
+            and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char(sysdate,'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        <if test = "dateType=='2'|| dateType==2">
+            <!--本周-->
+            <!--and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'd') + 1 from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')-->
+            and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char((select TRUNC(SYSDATE - 7)   from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        <if test = "dateType=='3'|| dateType==3">
+            <!--本月-->
+            <!--and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char((select trunc(sysdate, 'mm') from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')-->
+            and to_char(CREATE_TIME,'yyyy-mm-dd') between to_char((select TRUNC(SYSDATE - 30)   from dual),'yyyy-mm-dd') and to_char(sysdate,'yyyy-mm-dd')
+        </if>
+        group by m.creator) a,
+        (select org_name, org_code, id
+        from lark_admin.admin_user
+        where deleted != '1') b
+        where a.creator = b.id
+        group by org_code) data
+        where data.org_code in
+        --递归每个横坐标子集
+        (select org_code
+        from lark_admin.admin_org o
+        where o.org_code is not null
+        and o.deleted != '1'
+        start with id = #{xId}
+        connect by prior id = parent_id)
     </select>
+    <!--附件统计-->
+    <!--<select id="fileStatistics" resultMap="statisticsFileVo">
+           select to_char(file_count) file_count,
+            to_char(pirivate_file_count) pirivate_file_count,
+            to_char(group_file_count) group_file_count,
+            to_char(meet_file_count) meet_file_count,
+            to_char(text_file_count) text_file_count,
+            to_char(zip_file_count) zip_file_count,
+            to_char(pic_file_count) pic_file_count,
+            to_char(other_file_count) other_file_count
+
+       from (select 'file_count' as title, count(1) as file_count
+               from zz_group_file
+              where 1 = 1
+             union
+             select 'pirivate_file_count' as title, count(1) as file_count
+               from zz_group_file
+              where is_group = '0'
+             union
+             select 'group_file_count' as title, count(1) as file_count
+               from zz_group_file
+              where is_group = '1'
+             union
+             select 'meet_file_count' as title, count(1) as file_count
+               from zz_group_file
+              where is_group = '905'
+             union
+             select 'text_file_count' as title, count(1) as file_count
+               from zz_group_file
+              where (file_type = 'text' or file_type = 'doc')
+             union
+             select 'zip_file_count' as title, count(1) as file_count
+               from zz_group_file
+              where file_type = 'zip'
+             union
+             select 'pic_file_count' as title, count(1) as file_count
+               from zz_group_file
+              where file_type = 'img'
+             union
+             select 'other_file_count' as title, count(1) as file_count
+               from zz_group_file
+              where file_type = 'other') a
+     pivot(max(file_count)
+        for title in('file_count' as file_count,
+                     'pirivate_file_count' as pirivate_file_count,
+                     'group_file_count' as group_file_count,
+                     'meet_file_count' as meet_file_count,
+                     'text_file_count' as text_file_count,
+                     'zip_file_count' as zip_file_count,
+                     'pic_file_count' as pic_file_count,
+                     'other_file_count' as other_file_count)
+
+     )
+      where 1 = 1
+
+    </select>-->
+    <select id="groupUserStatistics" resultMap="statisticsGroupUserDto">
+        select g.group_id,g.group_name,u.name,o.org_code,o.path_name
+        from
+        zz_group g,zz_user_group gu,lark_admin.admin_user u,lark_admin.admin_org o
+        where g.group_id = gu.group_id
+        and gu.user_id = u.id
+        and u.org_code = o.org_code
+        and u.deleted != '1'
+        and o.deleted != '1'
+        and g.isdelete != '1'
+        and g.isclose != '1'
+        <if test = "groupId != null and groupId != ''">
+            and g.group_id = #{groupId}
+        </if>
+        order by g.create_time desc,gu.createtime desc,o.order_id,u.order_id
+    </select>
+    <select id="groupOrgStatistics" resultMap="statisticsGroupOrgDto">
+        select distinct g.group_id,g.group_name,o.org_code,o.path_name,o.parent_id pid
+        from
+        zz_group g,zz_user_group gu,lark_admin.admin_user u,lark_admin.admin_org o
+        where g.group_id = gu.group_id
+        and gu.user_id = u.id
+        and u.org_code = o.org_code
+        and u.deleted != '1'
+        and o.deleted != '1'
+        and g.isdelete != '1'
+        and g.isclose != '1'
+        <if test = "groupId != null and groupId != ''">
+            and g.group_id = #{groupId}
+        </if>
+        order by g.group_id
+    </select>
+
 </mapper>

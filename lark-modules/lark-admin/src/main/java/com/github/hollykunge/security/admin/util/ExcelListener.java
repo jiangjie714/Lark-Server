@@ -147,6 +147,9 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if(StringUtils.isEmpty(org.getOrgName())){
 			throw new BaseException("第"+rowIndex+"行，组织名称不可为空！");
 		}
+		if (org.getOrgName().length()>10) {
+			throw new BaseException("第"+rowIndex+"行，组织名称不可超过10个字符!");
+		}
 		if(org.getOrderId()==null){
 			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
 		}
