@@ -6,7 +6,7 @@ import com.sun.jna.Native;
 public interface DllInvoker extends Library {
 
     DllInvoker instance = (DllInvoker) Native.loadLibrary(
-            "C:\\Users\\jihang\\Desktop\\spliceForEngine\\spliceForEngine\\x64\\Release\\spliceForEngine.dll", DllInvoker.class);
+            "D:\\WorkSpace\\OpenSplice\\OSPL\\spliceForEngine.dll", DllInvoker.class);
 
     String dllSystemPrepare(String systemName, double startTime, double step, String users);
 

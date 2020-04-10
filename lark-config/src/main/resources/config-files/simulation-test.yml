@@ -31,6 +31,10 @@ spring:
       test-on-return: false
       max-open-prepared-statements: 20
       filter: stat,wall,log4j
+  data:
+    mongodb:
+      uri: mongodb://jihang:123456@10.11.24.199:27017/test
+
 #eruka注册中心
 eureka:
   client:
