@@ -13,6 +13,7 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.service.ServiceHandleException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenForbiddenResponse;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class AdminAccessFilter extends ZuulFilter {
+
     @Autowired
     @Lazy
     private AdminUserServiceFeignClient userService;
@@ -56,6 +58,7 @@ public class AdminAccessFilter extends ZuulFilter {
 
     @Value("${zuul.prefix}")
     private String zuulPrefix;
+
     @Autowired
     private UserAuthUtil userAuthUtil;
 
@@ -91,8 +94,8 @@ public class AdminAccessFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         final String requestUri = request.getRequestURI().substring(zuulPrefix.length());
 
-        if(requestUri==null){
-            throw new ClientInvalidException("Invalid customer request");
+        if (requestUri == null) {
+            throw new ClientInvalidException("ERROR LARK: Invalid customer request, class=AdminAccessFilter.");
         }
         BaseContextHandler.setToken(null);
 
@@ -105,33 +108,33 @@ public class AdminAccessFilter extends ZuulFilter {
             ctx.addZuulRequestHeader(CommonConstants.CLIENT_IP_ARG, clientIp);
         }
         String body = null;
-        if (!ctx.isChunkedRequestBody()&&StringUtils.equals(requestUri,CommonConstants.AUTH_JWT_TOKEN)) {
+        if (!ctx.isChunkedRequestBody() && StringUtils.equals(requestUri, CommonConstants.AUTH_JWT_TOKEN)) {
             try {
                 ServletInputStream inp = ctx.getRequest().getInputStream();
                 if (inp != null) {
                     body = IOUtils.toString(inp);
-                    if(!StringUtils.isEmpty(body)) {
+                    if (!StringUtils.isEmpty(body)) {
                         JSONObject jsonObject = new JSONObject(body);
                         String username = jsonObject.get("username").toString();
-                        if(!StringUtils.isEmpty(username)&&
-                                Objects.equals(username,sysAuthConfig.getSysUsername())){
-                            ctx.addZuulRequestHeader(CommonConstants.PERSON_ID_ARG,"");
-                            return authorization(requestUri,ctx,request);
+                        if (!StringUtils.isEmpty(username) &&
+                                Objects.equals(username, sysAuthConfig.getSysUsername())) {
+                            ctx.addZuulRequestHeader(CommonConstants.PERSON_ID_ARG, "");
+                            return authorization(requestUri, ctx, request);
                         }
                     }
                 }
             } catch (Exception e) {
-                throw new ClientInvalidException("身份信息编码转化错误...");
+                throw new ServiceHandleException("ERROR LARK: userInfo transfer error, class=AdminAccessFilter.");
             }
         }
         //正常用户名密码登录
         if (StringUtils.isEmpty(dnname)) {
-           return authorization(requestUri,ctx,request);
+            return authorization(requestUri, ctx, request);
         }
         try {
             dnname = new String(dnname.getBytes(CommonConstants.PERSON_CHAR_SET));
         } catch (UnsupportedEncodingException e) {
-            throw new ClientInvalidException("身份信息编码转化错误...");
+            throw new ClientInvalidException("ERROR LARK: dnname transfer error, class=AdminAccessFilter.");
         }
         String[] userObjects = dnname.trim().split(",", 0);
         String PId = null;
@@ -146,22 +149,23 @@ public class AdminAccessFilter extends ZuulFilter {
         //将dnname设置为身份证信息
         ctx.addZuulRequestHeader(CommonConstants.PERSON_ID_ARG, PId.toLowerCase());
         //秘钥登录
-        return authorization(requestUri,ctx,request);
+        return authorization(requestUri, ctx, request);
     }
 
     /**
      * 认证过程
+     *
      * @param requestUri
      * @param ctx
      * @param request
      * @return
      */
-    private Object authorization(String requestUri,RequestContext ctx,HttpServletRequest request){
+    private Object authorization(String requestUri, RequestContext ctx, HttpServletRequest request) {
         /**
          * 正常用户名密码登录
          */
         if (isStartWith(requestUri)) {
-            if(request.getHeader(userAuthConfig.getTokenHeader()) != null){
+            if (request.getHeader(userAuthConfig.getTokenHeader()) != null) {
                 ctx.addZuulRequestHeader("token",
                         request.getHeader(userAuthConfig.getTokenHeader()));
             }
@@ -174,9 +178,9 @@ public class AdminAccessFilter extends ZuulFilter {
             setFailedRequest(JSON.toJSONString(new TokenErrorResponse(e.getMessage())), CommonConstants.HTTP_SUCCESS);
             return null;
         }
-        //如果为超级管理员，则干直接通过
-        if(Objects.equals(user.getUniqueName(),sysAuthConfig.getSysUsername())){
-            this.setCurrentUserInfoAndLog(ctx,user,null);
+        //如果为超级管理员，则直接通过
+        if (Objects.equals(user.getUniqueName(), sysAuthConfig.getSysUsername())) {
+            this.setCurrentUserInfoAndLog(ctx, user, null);
             return null;
         }
         //根据用户id获取资源列表，包括菜单和菜单功能
@@ -267,7 +271,7 @@ public class AdminAccessFilter extends ZuulFilter {
      */
     private void checkUserPermission(String requestUri, List<FrontPermission> permissionInfos, RequestContext ctx, IJWTInfo user) {
         if (StringUtils.isEmpty(requestUri)) {
-            throw new ClientInvalidException("requestUri Parameter exception...");
+            throw new ClientInvalidException("ERROR LARK: requestUri Parameter exception, class=AdminAccessFilter.");
         }
         permissionInfos = permissionInfos.stream()
                 .filter(new Predicate<FrontPermission>() {
@@ -281,7 +285,7 @@ public class AdminAccessFilter extends ZuulFilter {
                 }).collect(Collectors.toList());
 
         if (permissionInfos.size() == 0) {
-            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("请求接口没有权限...");
+            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("资源请求失败，没有请求该资源的权限");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_NOT_PERMISSION);
             setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }
@@ -300,7 +304,7 @@ public class AdminAccessFilter extends ZuulFilter {
             FrontPermission max = Collections.max(permissionInfos);
             setCurrentUserInfoAndLog(ctx, user, max);
         } else {
-            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("请求接口操作没有权限...");
+            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("资源请求失败，没有操作该资源的权限");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_METHOD_NOT_PERMISSION);
             setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }
