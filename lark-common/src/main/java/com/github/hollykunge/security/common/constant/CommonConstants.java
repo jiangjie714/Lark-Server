@@ -14,29 +14,41 @@ public class CommonConstants {
     public final static String RESOURCE_TYPE_MENU = "menu";
     public final static String RESOURCE_TYPE_BTN = "button";
     /**
+     * 用户名或密码异常
+     */
+    public final static int EX_USER_PASS_INVALID_CODE = 40001;
+    /**
      * 用户身份认证失败
      */
-    public static final int EX_USER_INVALID_CODE = 40101;
+    public static final int EX_USER_INVALID_CODE = 40002;
     /**
      * 无效的客户端请求
      */
-    public static final int EX_CLIENT_INVALID_CODE = 40301;
+    public static final int EX_CLIENT_INVALID_CODE = 40003;
     /**
      * 拒绝执行当前的客户端请求
      */
-    public static final int EX_CLIENT_FORBIDDEN_CODE = 40331;
+    public static final int EX_CLIENT_FORBIDDEN_CODE = 40004;
     /**
      * 没有请求该资源的权限
      */
-    public static final int URL_NOT_PERMISSION = 40304;
+    public static final int URL_NOT_PERMISSION = 40005;
     /**
      * 没有请求该资源操作方法的权限
      */
-    public static final int URL_METHOD_NOT_PERMISSION = 40305;
+    public static final int URL_METHOD_NOT_PERMISSION = 40006;
     /**
-     * 拒绝执行当前请求
+     * 服务端处理异常
      */
-    public static final int EX_OTHER_CODE = 500;
+    public static final int EX_SERVICE_INVALID_CODE = 50001;
+    /**
+     * 其它未知异常
+     */
+    public static final int EX_OTHER_CODE = 50099;
+    /**
+     * 不符合密级约束条件
+     */
+    public static final Integer EX_LEVELS = 50010;
     /**
      * 成功
      */
@@ -126,11 +138,6 @@ public class CommonConstants {
     /** tio用ip数据监控统计，时间段*/
     public static final Long DURATION_1 = Time.MINUTE_1 * 5;
     public static final Long[] IPSTAT_DURATIONS = new Long[]{DURATION_1};
-
-    /**
-     * 不符合密级约束条件
-     */
-    public static final Integer EX_LEVELS = 40000;
 
     public static final String WEB_USERHOST = "userHost";
     public static final String WEB_USERNAME = "userName";
