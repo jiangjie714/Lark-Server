@@ -8,11 +8,15 @@ import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtTokenUtil;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+/**
+ * @author LARK
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -29,9 +33,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(String pid, String password) throws Exception {
-        //fansq 20-2-24 添加异常抛出 UserTokenException 40101
         if(StringUtils.isEmpty(pid)||StringUtils.isEmpty(password)){
-            throw  new UserTokenException("User name or password is empty");
+            throw new UserInvalidException("用户名和密码为空");
         }
         AdminUser info = userService.validate(pid,password);
         String token = "";
@@ -47,19 +50,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public IJWTInfo tokenValidate(String token) throws Exception {
-        return jwtTokenUtil.getInfoFromToken(token);
-    }
-
-    @Override
-    public Boolean invalid(String token) {
-        // TODO: 2017/9/11 注销token
-        return null;
-    }
-
-    @Override
-    public String refresh(String oldToken) {
-        // TODO: 2017/9/11 刷新token
-        return null;
+    public String refresh(String oldToken) throws Exception {
+        return jwtTokenUtil.generateToken(jwtTokenUtil.getInfoFromToken(oldToken));
     }
 }

@@ -32,6 +32,7 @@ import java.util.Objects;
 @Component
 @Slf4j
 public class ClearFilter extends ZuulFilter {
+
     @Autowired
     @Lazy
     private ILarkSearchFeign larkSearchFeign;
