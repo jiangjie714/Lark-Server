@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +38,10 @@ public class MongoResultBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
 
     @Autowired
     public MongoTemplate mongoTemplate;
+
+    @Autowired
+    private AssembleResultBiz assembleResultBiz;
+
     @Resource
     private SystemUserMapMapper systemUserMapMapper;
 
@@ -139,13 +142,20 @@ public class MongoResultBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
         return SUCCESS;
     }
 
-    public void getConfig(BothConfigVo entity) {
+    public org.jdom2.Document getConfig(BothConfigVo entity) {
         Query query = new Query();
         query.addCriteria(Criteria.where("SYSTEM_ID").is(entity.getId()));
         SystemResult systemResult = mongoTemplate.findOne(query, SystemResult.class);
         entity.setSystemResult(systemResult);
-        // TODO
-        System.out.println("从mongo请求" + entity.getFileName());
+
+        org.jdom2.Document rootDocument = null;
+        try {
+            rootDocument = new org.jdom2.Document();
+            assembleResultBiz.generateDocument(rootDocument, entity);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+        }
+        return rootDocument;
     }
 
 }

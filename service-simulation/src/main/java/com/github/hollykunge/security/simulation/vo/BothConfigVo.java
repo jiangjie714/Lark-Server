@@ -8,6 +8,8 @@ public class BothConfigVo {
 
     private String id;
 
+    private String systemName;
+
     private String modelName;
 
     private String fileName;

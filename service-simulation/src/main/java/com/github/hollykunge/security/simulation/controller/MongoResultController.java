@@ -2,11 +2,17 @@ package com.github.hollykunge.security.simulation.controller;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.simulation.biz.AssembleResultBiz;
 import com.github.hollykunge.security.simulation.biz.MongoResultBiz;
 import com.github.hollykunge.security.simulation.entity.SystemInfo;
 import com.github.hollykunge.security.simulation.vo.BothConfigVo;
 import com.github.hollykunge.security.simulation.vo.MongoResultVo;
+import org.jdom2.output.XMLOutputter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import static com.github.hollykunge.security.simulation.config.Constant.NAME_REGULATION_WRONG;
 
@@ -17,6 +23,9 @@ import static com.github.hollykunge.security.simulation.config.Constant.NAME_REG
 @RestController
 @RequestMapping("/mongoResult")
 public class MongoResultController extends BaseController<MongoResultBiz, SystemInfo> {
+
+    @Autowired
+    private AssembleResultBiz assembleResultBiz;
 
     /**
      * 增加
@@ -63,8 +72,12 @@ public class MongoResultController extends BaseController<MongoResultBiz, System
      */
     @RequestMapping(value = "/getConfig", method = RequestMethod.POST)
     @ResponseBody
-    public ObjectRestResponse getConfig(@RequestBody BothConfigVo entity) {
-        baseBiz.getConfig(entity);
-        return new ObjectRestResponse().rel(true).msg("");
+    public void getConfig(@RequestBody BothConfigVo entity, HttpServletResponse response) {
+        try {
+            org.jdom2.Document rootDocument = baseBiz.getConfig(entity);
+            XMLOutputter XMLOut = new XMLOutputter(assembleResultBiz.FormatXML());
+            XMLOut.output(rootDocument, response.getOutputStream());
+        } catch (IOException ignored) {
+        }
     }
 }
