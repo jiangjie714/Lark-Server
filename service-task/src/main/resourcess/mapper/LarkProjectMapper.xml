@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.security.task.mapper.LarkProjectMapper" >
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.task.entity.LarkProject" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="COVER" property="cover" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="ACCESS_CONTROL_TYPE" property="accessControlType" jdbcType="VARCHAR" />
+    <result column="WHITE_LIST" property="whiteList" jdbcType="VARCHAR" />
+    <result column="PROJECT_ORDER" property="projectOrder" jdbcType="DECIMAL" />
+    <result column="DELETED" property="deleted" jdbcType="DECIMAL" />
+    <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR" />
+    <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
+    <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
+    <result column="PRIVATED" property="privated" jdbcType="DECIMAL" />
+    <result column="PREFIX" property="prefix" jdbcType="VARCHAR" />
+    <result column="OPEN_PREFIX" property="openPrefix" jdbcType="DECIMAL" />
+    <result column="ARCHIVE" property="archive" jdbcType="DECIMAL" />
+    <result column="ARCHIVE_TIME" property="archiveTime" jdbcType="VARCHAR" />
+    <result column="OPEN_BEGIN_TIME" property="openBeginTime" jdbcType="VARCHAR" />
+    <result column="OPEN_TASK_PRIVATED" property="openTaskPrivated" jdbcType="DECIMAL" />
+    <result column="TASK_BOARD_THEME" property="taskBoardTheme" jdbcType="VARCHAR" />
+    <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
+    <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="AUTO_UPDATE_SCHEDULE" property="autoUpdateSchedule" jdbcType="DECIMAL" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+    <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>
