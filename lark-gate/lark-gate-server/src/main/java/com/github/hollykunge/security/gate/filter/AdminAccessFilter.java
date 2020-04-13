@@ -10,6 +10,7 @@ import com.github.hollykunge.security.auth.client.jwt.ServiceAuthUtil;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
 import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.constant.CommonConstants;
+import com.github.hollykunge.security.common.constant.RequestHeaderConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
@@ -107,6 +108,8 @@ public class AdminAccessFilter extends ZuulFilter {
         //将院网关ip携带给云雀服务，供其他服务使用
         if (!StringUtils.isEmpty(clientIp)) {
             ctx.addZuulRequestHeader(this.clientIp, clientIp);
+            //将config中的变量信息，传递给服务
+            ctx.addZuulRequestHeader(RequestHeaderConstants.CLIENT_IP,this.clientIp);
         }
         String body = null;
         if (!ctx.isChunkedRequestBody()&&StringUtils.equals(requestUri,CommonConstants.AUTH_JWT_TOKEN)) {
@@ -149,6 +152,7 @@ public class AdminAccessFilter extends ZuulFilter {
 
         //将dnname设置为身份证信息
         ctx.addZuulRequestHeader(this.dnName, PId.toLowerCase());
+        ctx.addZuulRequestHeader(RequestHeaderConstants.DN_NAME,this.dnName);
         //秘钥登录
         return authorization(requestUri,ctx,request);
     }
