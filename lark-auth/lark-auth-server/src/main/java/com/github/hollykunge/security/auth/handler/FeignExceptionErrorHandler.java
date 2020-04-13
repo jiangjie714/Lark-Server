@@ -28,7 +28,7 @@ public class FeignExceptionErrorHandler implements ErrorDecoder {
             log.error(exception.getMessage());
             return new InternalException(exception.getMessage());
         }
-        return new InternalException("系统异常,请联系管理员");
+        return new InternalException("ERROR LARK: FeignExceptionErrorHandler is error");
     }
 
     public class InternalException extends RuntimeException {

@@ -16,6 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient(value = "lark-admin",configuration = FeignConfiguration.class)
 public interface IUserService {
+  /**
+   * 验证用户
+   * @param pid
+   * @param password
+   * @return
+   */
   @RequestMapping(value = "/api/user/validate", method = RequestMethod.POST)
   AdminUser validate(@RequestParam("pid") String pid, @RequestParam("password") String password);
 }
