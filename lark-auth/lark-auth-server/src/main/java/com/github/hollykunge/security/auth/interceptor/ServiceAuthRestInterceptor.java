@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by 协同设计小组 on 2017/9/12.
+ *
+ * @author 协同设计小组
+ * @date 2017/9/12
  */
 @SuppressWarnings("ALL")
 public class ServiceAuthRestInterceptor extends HandlerInterceptorAdapter {
@@ -38,6 +40,6 @@ public class ServiceAuthRestInterceptor extends HandlerInterceptorAdapter {
                 return super.preHandle(request, response, handler);
             }
         }
-        throw new ClientForbiddenException("Client is Forbidden!");
+        throw new ClientForbiddenException("ERROR LARK: Client is Forbidden, class=ServiceAuthRestInterceptor.");
     }
 }
