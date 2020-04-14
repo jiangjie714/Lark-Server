@@ -93,9 +93,9 @@ public class IgnoreController {
         portalStatistics.setGroupNums(gateLogBiz.groupNums("0010",CommonConstants.BEN_YUE));
         //饼图
         portalStatistics.setSourceOrg(gateLogBiz.getSourceOrg("0010",CommonConstants.BEN_YUE));
-        //散点图
-        portalStatistics.setNodes(gateLogBiz.getNodes());
-        portalStatistics.setLinks(gateLogBiz.getLinks());
+        //散点图  todo 暂时不需要了
+        //portalStatistics.setNodes(gateLogBiz.getNodes());
+        //portalStatistics.setLinks(gateLogBiz.getLinks());
         return new ObjectRestResponse<>().data(portalStatistics).msg("查询成功！");
     }
 
