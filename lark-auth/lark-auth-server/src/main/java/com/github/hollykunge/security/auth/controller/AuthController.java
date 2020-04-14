@@ -5,6 +5,8 @@ import com.github.hollykunge.security.auth.util.user.JwtAuthenticationRequest;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationResponse;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.util.IntranetRequestHeaderUtils;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("jwt")
 @Slf4j
 public class AuthController {
+
     @Value("${jwt.token-header}")
     private String tokenHeader;
 
@@ -33,50 +36,31 @@ public class AuthController {
     @Value("${auth.user.defaultPassword}")
     private String defaultPassword;
 
-    /**
-     * todo:使用
-     * @param authenticationRequest
-     * @param request
-     * @return
-     * @throws Exception
-     */
     @RequestMapping(value = "token", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<?> createAuthenticationToken(
-            @RequestBody JwtAuthenticationRequest authenticationRequest,HttpServletRequest request) throws Exception {
+            @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletRequest request) throws Exception {
         final String token;
         String pid = IntranetRequestHeaderUtils.getDnName(request);
         if (pid==""||pid==null){
             token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        }else {
+        } else {
             token = authService.login(pid, defaultPassword);
         }
 
         return new ObjectRestResponse().data(new JwtAuthenticationResponse(token)).msg("获取token成功");
     }
 
-    /**
-     * 在用户注销时清除token
-     * @param request
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "logout", method = RequestMethod.GET)
-    @ResponseBody
-    public ObjectRestResponse<?> removeAuthenticationToken(HttpServletRequest request) throws Exception {
-        return new ObjectRestResponse().data("").msg("注销成功").rel(true);
-    }
-
     @RequestMapping(value = "refresh", method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<?> refreshAndGetAuthenticationToken(
-            HttpServletRequest request) {
+            HttpServletRequest request) throws Exception {
         String token = request.getHeader(tokenHeader);
         String refreshedToken = authService.refresh(token);
-        if(refreshedToken == null) {
-            return new ObjectRestResponse().data(null).msg("刷新token失败...");
+        if (refreshedToken == null) {
+            throw new UserTokenException("用户token刷新失败");
         } else {
-            return new ObjectRestResponse().data(new JwtAuthenticationResponse(refreshedToken)).msg("刷新token成功...");
+            return new ObjectRestResponse().data(new JwtAuthenticationResponse(refreshedToken)).msg("刷新token成功");
         }
     }
 
@@ -85,12 +69,5 @@ public class AuthController {
     public ObjectRestResponse<?> verify(String token) throws Exception {
         authService.validate(token);
         return new ObjectRestResponse<>().rel(true);
-    }
-
-    @RequestMapping(value = "invalid", method = RequestMethod.POST)
-    @ResponseBody
-    public ObjectRestResponse<?> invalid(String token){
-        authService.invalid(token);
-        return new ObjectRestResponse().rel(true);
     }
 }
