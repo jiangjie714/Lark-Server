@@ -3,8 +3,9 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author  fansq
@@ -19,7 +20,7 @@ public class LarkTaskMember extends BaseEntity {
     private String taskCode;
 
     @Column(name = "IS_EXECUTOR")
-    private Short isExecutor;
+    private String isExecutor;
 
     @Column(name = "MEMEBER_CODE")
     private String memeberCode;
@@ -28,6 +29,6 @@ public class LarkTaskMember extends BaseEntity {
     private Date joinTime;
 
     @Column(name = "IS_OWNER")
-    private Short isOwner;
+    private Integer isOwner;
 
 }

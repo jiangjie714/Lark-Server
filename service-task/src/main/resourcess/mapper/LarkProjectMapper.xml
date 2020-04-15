@@ -12,8 +12,8 @@
     <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
     <result column="ACCESS_CONTROL_TYPE" property="accessControlType" jdbcType="VARCHAR" />
     <result column="WHITE_LIST" property="whiteList" jdbcType="VARCHAR" />
-    <result column="PROJECT_ORDER" property="projectOrder" jdbcType="DECIMAL" />
-    <result column="DELETED" property="deleted" jdbcType="DECIMAL" />
+    <result column="PROJECT_ORDER" property="projectOrder" jdbcType="INTEGER" />
+    <result column="DELETED" property="deleted" jdbcType="INTEGER" />
     <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR" />
     <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
@@ -21,15 +21,15 @@
     <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
     <result column="PRIVATED" property="privated" jdbcType="DECIMAL" />
     <result column="PREFIX" property="prefix" jdbcType="VARCHAR" />
-    <result column="OPEN_PREFIX" property="openPrefix" jdbcType="DECIMAL" />
-    <result column="ARCHIVE" property="archive" jdbcType="DECIMAL" />
+    <result column="OPEN_PREFIX" property="openPrefix" jdbcType="INTEGER" />
+    <result column="ARCHIVE" property="archive" jdbcType="INTEGER" />
     <result column="ARCHIVE_TIME" property="archiveTime" jdbcType="VARCHAR" />
     <result column="OPEN_BEGIN_TIME" property="openBeginTime" jdbcType="VARCHAR" />
-    <result column="OPEN_TASK_PRIVATED" property="openTaskPrivated" jdbcType="DECIMAL" />
+    <result column="OPEN_TASK_PRIVATED" property="openTaskPrivated" jdbcType="INTEGER" />
     <result column="TASK_BOARD_THEME" property="taskBoardTheme" jdbcType="VARCHAR" />
     <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
     <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
-    <result column="AUTO_UPDATE_SCHEDULE" property="autoUpdateSchedule" jdbcType="DECIMAL" />
+    <result column="AUTO_UPDATE_SCHEDULE" property="autoUpdateSchedule" jdbcType="INTEGER" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
     <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
@@ -42,4 +42,25 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+  <select id="getProjectPageListByUserId" resultMap="BaseResultMap">
+    SELECT
+    pro.ID,pro.COVER,pro.NAME,pro.CODE,pro.DESCRIPTION,pro.ACCESS_CONTROL_TYPE,pro.WHITE_LIST,pro.PROJECT_ORDER,pro.DELETED,
+    pro.TEMPLATE_CODE,pro.SCHEDULE,pro.CRT_TIME,pro.ORGANIZATION_CODE,pro.DELETED_TIME,pro.PRIVATED,pro.PREFIX,pro.OPEN_PREFIX,
+    pro.ARCHIVE,pro.ARCHIVE_TIME,pro.OPEN_BEGIN_TIME,pro.OPEN_TASK_PRIVATED,pro.TASK_BOARD_THEME,pro.BEGIN_TIME,
+    pro.END_TIME,pro.AUTO_UPDATE_SCHEDULE,pro.CRT_USER,pro.CRT_NAME,pro.CRT_HOST,pro.UPD_TIME,pro.UPD_USER,pro.UPD_NAME,pro.UPD_HOST,
+    pro.ATTR1,pro.ATTR2,pro.ATTR3,pro.ATTR4
+    FROM
+    lark_project pro
+    join
+    lark_project_member  mem
+    on
+    pro.id=mem.project_code
+    where
+    mem.member_code=#{userId}
+    and
+    pro.deleted=0
+    order by pro.crt_time;
+
+  </select>
 </mapper>

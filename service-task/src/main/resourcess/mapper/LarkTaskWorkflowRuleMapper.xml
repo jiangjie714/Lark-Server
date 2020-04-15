@@ -7,13 +7,13 @@
     -->
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
-    <result column="TYPE" property="type" jdbcType="DECIMAL" />
+    <result column="TYPE" property="type" jdbcType="INTEGER" />
     <result column="OBJECT_CODE" property="objectCode" jdbcType="VARCHAR" />
-    <result column="ACTION" property="action" jdbcType="DECIMAL" />
+    <result column="ACTION" property="action" jdbcType="INTEGER" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
     <result column="WORKFLOW_CODE" property="workflowCode" jdbcType="VARCHAR" />
-    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
     <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />

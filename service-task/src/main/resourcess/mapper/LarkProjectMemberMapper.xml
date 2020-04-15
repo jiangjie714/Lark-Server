@@ -9,7 +9,7 @@
     <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
     <result column="MEMBER_CODE" property="memberCode" jdbcType="VARCHAR" />
     <result column="JOIN_TIME" property="joinTime" jdbcType="TIMESTAMP" />
-    <result column="IS_OWNER" property="isOwner" jdbcType="DECIMAL" />
+    <result column="IS_OWNER" property="isOwner" jdbcType="INTEGER" />
     <result column="AUTHORIZE" property="authorize" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />

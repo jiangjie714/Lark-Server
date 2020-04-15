@@ -9,28 +9,28 @@
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
     <result column="NAME" property="name" jdbcType="VARCHAR" />
-    <result column="PRI" property="pri" jdbcType="DECIMAL" />
+    <result column="PRI" property="pri" jdbcType="INTEGER" />
     <result column="EXECUTE_STATUS" property="executeStatus" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="DONE_USER" property="doneUser" jdbcType="VARCHAR" />
     <result column="DONE_TIME" property="doneTime" jdbcType="TIMESTAMP" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="ASSIGN_TO" property="assignTo" jdbcType="VARCHAR" />
-    <result column="DELETED" property="deleted" jdbcType="DECIMAL" />
+    <result column="DELETED" property="deleted" jdbcType="INTEGER" />
     <result column="STAG_CODE" property="stagCode" jdbcType="VARCHAR" />
     <result column="TASK_TAG" property="taskTag" jdbcType="VARCHAR" />
-    <result column="DONE" property="done" jdbcType="DECIMAL" />
+    <result column="DONE" property="done" jdbcType="INTEGER" />
     <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
     <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
     <result column="REMIND_TIME" property="remindTime" jdbcType="TIMESTAMP" />
     <result column="PCODE" property="pcode" jdbcType="VARCHAR" />
-    <result column="SORT" property="sort" jdbcType="DECIMAL" />
-    <result column="TASK_LIKE" property="taskLike" jdbcType="DECIMAL" />
-    <result column="STAR" property="star" jdbcType="DECIMAL" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+    <result column="TASK_LIKE" property="taskLike" jdbcType="INTEGER" />
+    <result column="STAR" property="star" jdbcType="INTEGER" />
     <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
-    <result column="TASK_PRIVATE" property="taskPrivate" jdbcType="DECIMAL" />
-    <result column="ID_NUM" property="idNum" jdbcType="DECIMAL" />
-    <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL" />
+    <result column="TASK_PRIVATE" property="taskPrivate" jdbcType="INTEGER" />
+    <result column="ID_NUM" property="idNum" jdbcType="VARCHAR" />
+    <result column="SCHEDULE" property="schedule" jdbcType="INTEGER" />
     <result column="VERSION_CODE" property="versionCode" jdbcType="VARCHAR" />
     <result column="FEATURES_CODE" property="featuresCode" jdbcType="VARCHAR" />
     <result column="WORK_TIME" property="workTime" jdbcType="DECIMAL" />

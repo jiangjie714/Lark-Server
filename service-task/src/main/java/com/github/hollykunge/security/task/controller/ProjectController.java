@@ -4,10 +4,16 @@ import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.task.service.ProjectService;
+import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.task.biz.LarkProjectBiz;
+import com.github.hollykunge.security.task.entity.LarkProject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  * @author fansq
@@ -16,32 +22,28 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(value = "/project")
-public class ProjectController {
+public class ProjectController extends BaseController<LarkProjectBiz, LarkProject> {
 
     @Autowired
-    private ProjectService projectService;
+    private LarkProjectBiz larkProjectBiz;
 
     /**
      * fansq
      * 创建项目
      * @param project
-     * @return
-     *
-     *      * 保存/编辑
-     *      * @param {*} data
-     *      *   export function doData(data) {
-     *      *       let url = 'project/project/save';
-     *      *       if (data.projectCode) {
-     *      *           url = 'project/project/edit';
-     *      *       }
-     *      *       return $http.post(url, data);
-     *      *   }
-     *
+     *   export function doData(data) {
+     *      let url = 'project/project/save';
+     *      if (data.projectCode) {
+     *         url = 'project/project/edit';
+     *      }
+     *      return $http.post(url, data);
+     *   }
      */
     @RequestMapping(value = "/save",method = RequestMethod.POST)
-    public ObjectRestResponse<Object> createProject(@RequestBody Object project){
-
-        return new ObjectRestResponse<>().data(project).msg("项目新建成功！");
+    public ObjectRestResponse<LarkProject> createProject(@RequestBody LarkProject project){
+        project.setId(UUIDUtils.generateShortUuid());
+        larkProjectBiz.insertSelective(project);
+        return new ObjectRestResponse<>().data(project).msg("项目新建成功！").rel(true);
     }
 
     /**
@@ -52,12 +54,11 @@ public class ProjectController {
      *  }
      */
     @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
-    public BaseResponse delete(@RequestParam("projectCode") String projectCode){
+    public ObjectRestResponse<LarkProject> delete(@RequestParam("projectCode") String projectCode){
         if(StringUtils.isEmpty(projectCode)){
            throw  new BaseException("项目编码不可为空！");
         }
-        projectService.delete(projectCode);
-        return new BaseResponse(200,"项目已删除！");
+        return larkProjectBiz.deleteProject(projectCode);
     }
 
     /**
@@ -72,21 +73,12 @@ public class ProjectController {
      *   }
      */
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
-    public ObjectRestResponse<Object> edit(@RequestBody Object data){
-
+    public ObjectRestResponse<LarkProject> edit(@RequestBody LarkProject project){
+        if(StringUtils.isEmpty(project.getId())){
+            throw new BaseException("更新项目id不可为空！");
+        }
+        larkProjectBiz.updateSelectiveById(project);
         return new ObjectRestResponse().msg("修改成功！");
-    }
-
-    /**
-     * 项目列表
-     * @param {*} data
-     *   export function list(data) {
-     *       return $http.get('project/project', data);
-     *   }
-     */
-    @RequestMapping(value = "/",method = RequestMethod.GET)
-    public TableResultResponse<Object> list(@RequestBody Object data){
-        return new TableResultResponse<>();
     }
 
     /**
@@ -95,23 +87,13 @@ public class ProjectController {
      *   export function selfList(data) {
      *       return $http.get('project/project/selfList', data);
      *   }
+     * todo 接口重复 项目列表
      */
     @RequestMapping(value = "/selfList",method = RequestMethod.GET)
     public TableResultResponse<Object> selfList(@RequestBody Object data){
         return new TableResultResponse<>();
     }
 
-    /**
-     * 退出项目
-     * @param {} code
-     *    export function quit(code) {
-     *       return $http.post('project/project/quit', {projectCode: code});
-     *   }
-     */
-    @RequestMapping(value = "/quit",method = RequestMethod.POST)
-    public BaseResponse quit(@RequestParam("projectCode") String projectCode){
-        return new BaseResponse(200,"项目已退出！");
-    }
 
     /**
      * 回收项目
@@ -122,6 +104,14 @@ public class ProjectController {
      */
     @RequestMapping(value = "/recycle",method = RequestMethod.POST)
     public BaseResponse recycle(@RequestParam("projectCode") String projectCode){
+        if(StringUtils.isEmpty(projectCode)){
+            throw new BaseException("项目id不可为空！");
+        }
+        LarkProject larkProject = new LarkProject();
+        larkProject.setId(projectCode);
+        larkProject.setDeleted(1);
+        larkProject.setDeletedTime(new Date());
+        larkProjectBiz.updateSelectiveById(larkProject);
         return new BaseResponse(200,"项目已回收！");
     }
 
@@ -134,6 +124,14 @@ public class ProjectController {
      */
     @RequestMapping(value = "/recovery",method = RequestMethod.POST)
     public BaseResponse recovery(@RequestParam("projectCode") String projectCode){
+        if(StringUtils.isEmpty(projectCode)){
+            throw new BaseException("项目id不可为空！");
+        }
+        LarkProject larkProject = new LarkProject();
+        larkProject.setId(projectCode);
+        larkProject.setDeleted(0);
+        larkProject.setDeletedTime(new Date());
+        larkProjectBiz.updateSelectiveById(larkProject);
         return new BaseResponse(200,"项目已还原！");
     }
 
@@ -168,10 +166,12 @@ public class ProjectController {
      *   export function read(code) {
      *       return $http.get('project/project/read', {projectCode: code});
      *   }
+     *   todo 暂未完成
      */
     @RequestMapping(value = "/read",method = RequestMethod.GET)
     public ObjectRestResponse read(@RequestParam("projectCode") String projectCode){
-        return new ObjectRestResponse().msg("").data("项目具体内容");
+        LarkProject larkProject = baseBiz.selectById(projectCode);
+        return new ObjectRestResponse().msg("查询成功！").data(larkProject).rel(true);
     }
 
     /**

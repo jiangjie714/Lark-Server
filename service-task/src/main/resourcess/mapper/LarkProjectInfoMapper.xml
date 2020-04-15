@@ -13,7 +13,7 @@
     <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
     <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
     <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
-    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
