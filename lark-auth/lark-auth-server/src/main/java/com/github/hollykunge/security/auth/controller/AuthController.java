@@ -41,10 +41,19 @@ public class AuthController {
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletRequest request) throws Exception {
         final String token;
         String pid = request.getHeader("pid");
-        if (pid == "" || pid == null) {
+        //如果用户名和密码存在的话，使用用户名和密码登录
+        if (authenticationRequest != null &&
+                !StringUtils.isEmpty(authenticationRequest.getUsername()) &&
+                !StringUtils.isEmpty(authenticationRequest.getPassword())) {
             token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        } else {
+        }
+        //内网使用密匙登录
+        else if(!StringUtils.isEmpty(pid)){
             token = authService.login(pid, defaultPassword);
+        }
+        //无效登录
+        else{
+            throw new BaseException("无效的登录方式...");
         }
 
         return new ObjectRestResponse().data(new JwtAuthenticationResponse(token)).msg("获取token成功");
