@@ -19,6 +19,8 @@ import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.common.vo.mq.AdminUserVO;
+import com.github.hollykunge.security.mq.constants.RabbitMqQueConstant;
+import com.github.hollykunge.security.mq.constants.RabbitMqRoutingKeyConstant;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -69,7 +71,7 @@ public class UserConsumer {
     private PlatformTransactionManager txManager;
 
     @RabbitHandler
-    @RabbitListener(queues = CommonConstants.ADMINUSER_QUEUE_NAME, containerFactory = "rabbitListenerContainerFactory")
+    @RabbitListener(queues = RabbitMqQueConstant.ADMINUSER_QUEUE_NAME, containerFactory = "rabbitListenerContainerFactory")
     public void handleMessage(Message message, @Headers Map<String, Object> headers, Channel channel) throws Exception {
 
         String msg = new String(message.getBody());
@@ -172,7 +174,7 @@ public class UserConsumer {
                     .setContentType(MessageProperties.CONTENT_TYPE_JSON)
 //                    .setContentEncoding("utf-8")
                     .setMessageId(UUID.randomUUID() + "").build();
-            produceSenderConfig.adminUserOrOrgSend(noticeMessage, CommonConstants.ADMIN_UNACK_USER_KEY);
+            produceSenderConfig.adminUserOrOrgSend(noticeMessage, RabbitMqRoutingKeyConstant.ADMIN_UNACK_USER_KEY);
         }
         //手动ack
         long deliveryTag = (long) headers.get(AmqpHeaders.DELIVERY_TAG);

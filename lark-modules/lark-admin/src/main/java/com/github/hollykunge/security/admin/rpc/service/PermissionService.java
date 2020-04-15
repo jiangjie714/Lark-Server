@@ -5,10 +5,7 @@ import com.github.hollykunge.security.admin.api.authority.FrontPermission;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.*;
 import com.github.hollykunge.security.admin.config.mq.ProduceSenderConfig;
-import com.github.hollykunge.security.admin.entity.Element;
-import com.github.hollykunge.security.admin.entity.Menu;
-import com.github.hollykunge.security.admin.entity.Role;
-import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
@@ -26,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -63,6 +61,8 @@ public class PermissionService {
     private ProduceSenderConfig produceSenderConfig;
     @Autowired
     private SysAuthConfig sysAuthConfig;
+    @Autowired
+    private OrgBiz orgBiz;
 
     /**
      * 获取用户信息
@@ -106,6 +106,12 @@ public class PermissionService {
         }
         BeanUtils.copyProperties(user, info);
         info.setId(user.getId());
+        if(!StringUtils.isEmpty(user.getOrgCode())){
+            Org org = orgBiz.selectById(user.getOrgCode());
+            if(org != null){
+                info.setPathCode(org.getPathCode());
+            }
+        }
         return info;
     }
 

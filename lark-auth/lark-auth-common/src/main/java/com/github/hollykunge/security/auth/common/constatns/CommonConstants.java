@@ -20,5 +20,6 @@ public class CommonConstants {
     public static final String JWT_KEY_USER_ID = "userId";
     public static final String JWT_KEY_NAME = "name";
     public static final String JWT_KEY_SECRETLEVEL = "secretLevel";
+    public static final String JWT_KEY_PATHCODE = "pathCode";
 
 }

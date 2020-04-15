@@ -1,7 +1,13 @@
 package com.github.hollykunge.security.gate.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.admin.api.log.LogInfo;
 import com.github.hollykunge.security.admin.api.service.AdminLogServiceFeignClient;
+import com.github.hollykunge.security.gate.constants.GateConstants;
+import com.github.hollykunge.security.gate.dto.LogInfoDto;
+import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
+import com.github.hollykunge.security.search.dto.MessageDto;
+import com.github.hollykunge.security.search.dto.TopicDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -18,20 +24,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Slf4j
 public class DBLog extends Thread {
     private static DBLog dblog = null;
-    private static BlockingQueue<LogInfo> logInfoQueue = new LinkedBlockingQueue<LogInfo>(1024);
+    private static BlockingQueue<LogInfoDto> logInfoQueue = new LinkedBlockingQueue<LogInfoDto>(1024);
 
-    public AdminLogServiceFeignClient getLogService() {
-        return logService;
+    public ILarkSearchFeign getLogService() {
+        return searchFeign;
     }
 
-    public DBLog setLogService(AdminLogServiceFeignClient logService) {
-        if(this.logService==null) {
-            this.logService = logService;
+    public DBLog setLogService(ILarkSearchFeign searchFeign) {
+        if(this.searchFeign==null) {
+            this.searchFeign = searchFeign;
         }
         return this;
     }
 
-    private AdminLogServiceFeignClient logService;
+//    private AdminLogServiceFeignClient logService;
+    private ILarkSearchFeign searchFeign;
     public static synchronized DBLog getInstance() {
         if (dblog == null) {
             dblog = new DBLog();
@@ -43,7 +50,7 @@ public class DBLog extends Thread {
         super("CLogOracleWriterThread");
     }
 
-    public void offerQueue(LogInfo logInfo) {
+    public void offerQueue(LogInfoDto logInfo) {
         try {
             logInfoQueue.offer(logInfo);
         } catch (Exception e) {
@@ -53,15 +60,23 @@ public class DBLog extends Thread {
 
     @Override
     public void run() {
-        List<LogInfo> bufferedLogList = new ArrayList<LogInfo>(); // 缓冲队列
+        List<LogInfoDto> bufferedLogList = new ArrayList<LogInfoDto>(); // 缓冲队列
         while (true) {
             try {
                 bufferedLogList.add(logInfoQueue.take());
                 logInfoQueue.drainTo(bufferedLogList);
                 if (bufferedLogList != null && bufferedLogList.size() > 0) {
                     // 写入日志
-                    for(LogInfo log:bufferedLogList){
-                        logService.saveLog(log);
+                    for(LogInfoDto log:bufferedLogList){
+                        //发送kafka消息，同步到es中
+                        if(log != null){
+                            TopicDto topicDto = new TopicDto();
+                            topicDto.setTopicName(GateConstants.GATE_LOG_TOPIC);
+                            MessageDto messageDto = new MessageDto();
+                            messageDto.setMessage(JSONObject.toJSONString(log));
+                            topicDto.setMessage(messageDto);
+                            searchFeign.sendKafka(topicDto);
+                        }
                     }
                 }
             } catch (Exception e) {

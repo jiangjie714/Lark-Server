@@ -45,7 +45,8 @@ public class JWTHelper {
         builder.setSubject(jwtInfo.getUniqueName())
                 .claim(CommonConstants.JWT_KEY_USER_ID, jwtInfo.getId())
                 .claim(CommonConstants.JWT_KEY_NAME, jwtInfo.getName())
-                .claim(CommonConstants.JWT_KEY_SECRETLEVEL,jwtInfo.getSecretLevel());
+                .claim(CommonConstants.JWT_KEY_SECRETLEVEL,jwtInfo.getSecretLevel())
+                .claim(CommonConstants.JWT_KEY_PATHCODE,jwtInfo.getOrgPathCode());
         if(expire == 0){
             builder.setExpiration(null);
         }else{
@@ -91,7 +92,8 @@ public class JWTHelper {
         Claims body = claimsJws.getBody();
         return new JWTInfo(body.getSubject(), StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_USER_ID)),
                 StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_NAME)),
-                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)));
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)),
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_PATHCODE)));
     }
     /**
      * 获取token中的用户信息
@@ -106,6 +108,7 @@ public class JWTHelper {
         Claims body = claimsJws.getBody();
         return new JWTInfo(body.getSubject(), StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_USER_ID)),
                 StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_NAME)),
-                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)));
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_SECRETLEVEL)),
+                StringHelper.getObjectValue(body.get(CommonConstants.JWT_KEY_PATHCODE)));
     }
 }

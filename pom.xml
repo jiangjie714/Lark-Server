@@ -34,9 +34,12 @@
         <module>service-webservice</module>
         <module>service-dfsfile</module>
         <module>lark-config</module>
+        <module>lark-common-mq-core</module>
         <!--<module>service-cron</module>-->
         <!--<module>service-unitproject</module>-->
         <!--   <module>service-tools</module>-->
+        <module>lark-search</module>
+        <module>service-task</module>
         <!--<module>service-task</module>-->
     </modules>
     <packaging>pom</packaging>

@@ -9,6 +9,7 @@ import com.github.hollykunge.security.common.exception.auth.UserInvalidException
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
+import com.github.hollykunge.security.common.util.IntranetRequestHeaderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,8 +41,8 @@ public class AuthController {
     public ObjectRestResponse<?> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletRequest request) throws Exception {
         final String token;
-        String pid = request.getHeader("dnname");
-        if (pid == "" || pid == null) {
+        String pid = IntranetRequestHeaderUtils.getDnName(request);
+        if (pid==""||pid==null){
             token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         } else {
             token = authService.login(pid, defaultPassword);

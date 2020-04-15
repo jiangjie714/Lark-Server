@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.security.task.mapper.LarkTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.task.entity.LarkTask" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="PRI" property="pri" jdbcType="DECIMAL" />
+    <result column="EXECUTE_STATUS" property="executeStatus" jdbcType="VARCHAR" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="DONE_USER" property="doneUser" jdbcType="VARCHAR" />
+    <result column="DONE_TIME" property="doneTime" jdbcType="TIMESTAMP" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="ASSIGN_TO" property="assignTo" jdbcType="VARCHAR" />
+    <result column="DELETED" property="deleted" jdbcType="DECIMAL" />
+    <result column="STAG_CODE" property="stagCode" jdbcType="VARCHAR" />
+    <result column="TASK_TAG" property="taskTag" jdbcType="VARCHAR" />
+    <result column="DONE" property="done" jdbcType="DECIMAL" />
+    <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
+    <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="REMIND_TIME" property="remindTime" jdbcType="TIMESTAMP" />
+    <result column="PCODE" property="pcode" jdbcType="VARCHAR" />
+    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="TASK_LIKE" property="taskLike" jdbcType="DECIMAL" />
+    <result column="STAR" property="star" jdbcType="DECIMAL" />
+    <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
+    <result column="TASK_PRIVATE" property="taskPrivate" jdbcType="DECIMAL" />
+    <result column="ID_NUM" property="idNum" jdbcType="DECIMAL" />
+    <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL" />
+    <result column="VERSION_CODE" property="versionCode" jdbcType="VARCHAR" />
+    <result column="FEATURES_CODE" property="featuresCode" jdbcType="VARCHAR" />
+    <result column="WORK_TIME" property="workTime" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+    <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="CLOB" />
+    <result column="PATH" property="path" jdbcType="CLOB" />
+  </resultMap>
+</mapper>
