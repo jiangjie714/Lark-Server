@@ -362,12 +362,13 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             if(zzGroupNow == null){
                 return -1;
             }
-            //秘密限制100以内，机密限制50以内
-            if((userListDtos.size()>100 && zzGroupNow.getLevels().equals(MessageType.NORMAL_SECRECT_LEVEL)) ||
-                    (userListDtos.size()>50 && zzGroupNow.getLevels().equals(MessageType.HIGH_SECRECT_LEVEL))
-            ){
-                return 0;
-            }
+            //秘密限制100以内，机密限制50以内/取消人数限制
+
+//            if((userListDtos.size()>100 && zzGroupNow.getLevels().equals(MessageType.NORMAL_SECRECT_LEVEL)) ||
+//                    (userListDtos.size()>50 && zzGroupNow.getLevels().equals(MessageType.HIGH_SECRECT_LEVEL))
+//            ){
+//                return 0;
+//            }
             //新增了人员设置参数
             GroupEditVO addVo = new GroupEditVO();
             addVo.setCode(GROUP_EDIT);//消息类型群编辑
