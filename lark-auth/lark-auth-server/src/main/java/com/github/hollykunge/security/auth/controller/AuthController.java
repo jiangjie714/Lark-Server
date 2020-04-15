@@ -40,10 +40,7 @@ public class AuthController {
     public ObjectRestResponse<?> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletRequest request) throws Exception {
         final String token;
-        String pid = request.getHeader("dnname");
-
-
-        //可能和之前的分支会有冲突，此处多预留了几行，方便合并冲突
+        String pid = request.getHeader("pid");
         //如果用户名和密码存在的话，使用用户名和密码登录
         if (authenticationRequest != null &&
                 !StringUtils.isEmpty(authenticationRequest.getUsername()) &&
