@@ -111,29 +111,30 @@ public class AdminAccessFilter extends ZuulFilter {
         if (!StringUtils.isEmpty(clientIp)) {
             ctx.addZuulRequestHeader(this.clientIp, clientIp);
         }
-        String body = null;
-        if (!ctx.isChunkedRequestBody() && StringUtils.equals(requestUri, CommonConstants.AUTH_JWT_TOKEN)) {
-            try {
-                ServletInputStream inp = ctx.getRequest().getInputStream();
-                if (inp != null) {
-                    body = IOUtils.toString(inp);
-                    if (!StringUtils.isEmpty(body)) {
-                        JSONObject jsonObject = new JSONObject(body);
-                        String username = jsonObject.get("username").toString();
-                        if(!StringUtils.isEmpty(username)&&
-                                Objects.equals(username,sysAuthConfig.getSysUsername())){
-                            ctx.addZuulRequestHeader(this.dnName,"");
-                            return authorization(requestUri,ctx,request);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                throw new ServiceHandleException("ERROR LARK: userInfo transfer error, class=AdminAccessFilter.");
-            }
-        }
+//        String body = null;
+//        if (!ctx.isChunkedRequestBody() && StringUtils.equals(requestUri, CommonConstants.AUTH_JWT_TOKEN)) {
+//            try {
+//                ServletInputStream inp = ctx.getRequest().getInputStream();
+//                if (inp != null) {
+//                    body = IOUtils.toString(inp);
+//                    if (!StringUtils.isEmpty(body)) {
+//                        JSONObject jsonObject = new JSONObject(body);
+//                        String username = jsonObject.get("username").toString();
+//                        if(!StringUtils.isEmpty(username)&&
+//                                Objects.equals(username,sysAuthConfig.getSysUsername())){
+//                            ctx.addZuulRequestHeader(this.dnName,"");
+//                            return authorization(requestUri,ctx,request);
+//                        }
+//                    }
+//                }
+//            } catch (Exception e) {
+//                throw new ServiceHandleException("ERROR LARK: userInfo transfer error, class=AdminAccessFilter.");
+//            }
+//        }
         //正常用户名密码登录
         if (StringUtils.isEmpty(dnname)) {
-            return authorization(requestUri, ctx, request);
+            //此处使用null，正常用户名密码登录时，pid使用登录时的用户名
+            return authorization(requestUri, ctx, request,null);
         }
         try {
             dnname = new String(dnname.getBytes(CommonConstants.PERSON_CHAR_SET));
@@ -150,10 +151,8 @@ public class AdminAccessFilter extends ZuulFilter {
             }
         }
 
-        //将dnname设置为身份证信息
-        ctx.addZuulRequestHeader(this.dnName, PId.toLowerCase());
         //秘钥登录
-        return authorization(requestUri, ctx, request);
+        return authorization(requestUri, ctx, request,PId.toLowerCase());
     }
 
     /**
@@ -164,7 +163,7 @@ public class AdminAccessFilter extends ZuulFilter {
      * @param request
      * @return
      */
-    private Object authorization(String requestUri, RequestContext ctx, HttpServletRequest request) {
+    private Object authorization(String requestUri, RequestContext ctx, HttpServletRequest request,String pid) {
         /**
          * 正常用户名密码登录
          */
@@ -194,6 +193,12 @@ public class AdminAccessFilter extends ZuulFilter {
         }
         // 申请客户端密钥头，加到header里传递到下方服务
         ctx.addZuulRequestHeader(serviceAuthConfig.getTokenHeader(), serviceAuthUtil.getClientToken());
+        //将pid放在请求头中
+        if(StringUtils.isEmpty(pid)){
+            pid = user.getUniqueName();
+        }
+        //将pid放置在请求头中
+        ctx.addZuulRequestHeader("pid",pid);
         return null;
     }
 
