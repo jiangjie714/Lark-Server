@@ -217,7 +217,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         if (query.entrySet().size() > 0) {
 
             for (Map.Entry<String, Object> entry : query.entrySet()) {
-                //如果orgCode为航天二院组织编码，则返回的数据为空
+                // 如果orgCode为航天二院组织编码，则返回的数据为空
                 if (AdminCommonConstant.NO_DATA_ORG_CODE.equals(entry.getValue().toString())) {
                     return new TableResultResponse<User>(query.getPageSize(), query.getPageNo(), 0, 0, new ArrayList<>());
                 }

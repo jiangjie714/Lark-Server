@@ -43,25 +43,10 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
     @ResponseBody
     @Override
     public TableResultResponse<GateLog> page(@RequestParam Map<String, Object> params) {
-        String pid = null;
-
-        pid = request.getHeader("dnname");
+        String pid = request.getHeader("dnname");
         if (StringUtils.isEmpty(pid)) {
             pid = BaseContextHandler.getUsername();
         }
-
-//        List<String> userPidlist = new ArrayList();
-//        userPidlist.add("2");
-//        userPidlist.add("3");
-//
-//        if (pid.equals("3")) {
-//            params.put("pid", userPidlist);
-//            return baseBiz.selectByQueryM(new Query(params), "log");
-//        } else if (pid.equals("4")) {
-//            params.put("pid", userPidlist);
-//            return baseBiz.selectByQueryM(new Query(params), "Security");
-//        }
-//        return baseBiz.selectByQuery(new Query(params));
         return baseBiz.pageByRole(new Query(params),pid);
     }
 

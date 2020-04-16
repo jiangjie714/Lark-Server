@@ -1,11 +1,10 @@
 package com.github.hollykunge.security.common.exception.auth;
 
-
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 
 /**
- * 用户token异常
+ * 负责用户身份验证的异常
  * @author 协同设计小组
  * @date 2017/9/8
  */
