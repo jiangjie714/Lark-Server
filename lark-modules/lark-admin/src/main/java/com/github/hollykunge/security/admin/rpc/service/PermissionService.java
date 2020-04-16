@@ -17,6 +17,7 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.util.StringHelper;
 
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -88,7 +89,7 @@ public class PermissionService {
         //判断是否为系统超级管理员
         if(Objects.equals(userPid,sysAuthConfig.getSysUsername())){
             if(!Objects.equals(password,sysAuthConfig.getSysPassword())){
-                throw new BaseException("超级管理员密码错误...");
+                throw new UserTokenException("超级管理员密码错误");
             }
             info.setId(sysAuthConfig.getSysUsername());
             info.setPId(sysAuthConfig.getSysUsername());
@@ -99,10 +100,10 @@ public class PermissionService {
         }
         User user = userBiz.getUserByUserPid(userPid);
         if(user==null){
-            throw new BaseException("没有该用户...");
+            throw new UserTokenException("没有该用户");
         }
         if (!encoder.matches(password, user.getPassword())) {
-            throw new BaseException("密码错误...");
+            throw new UserTokenException("密码错误");
         }
         BeanUtils.copyProperties(user, info);
         info.setId(user.getId());

@@ -126,8 +126,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
                     }
                     continue;
                 }
-                boolean exitTime = this.setCreTimeCondition(criteria, entry);
-                if (exitTime) {
+                if (this.setCreTimeCondition(criteria, entry)) {
                     continue;
                 }
                 if (entry.getValue().toString() != null || !"".equals(entry.getValue().toString())) {

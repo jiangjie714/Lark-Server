@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author LARK
  */
-@FeignClient(value = "lark-admin",fallback = AdminUserServiceFallback.class)
+@FeignClient(value = "lark-admin")
 public interface AdminUserServiceFeignClient {
   /**
    * 根据userId获取用户权限列表

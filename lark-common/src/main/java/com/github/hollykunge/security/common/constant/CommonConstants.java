@@ -48,7 +48,7 @@ public class CommonConstants {
     /**
      * 不符合密级约束条件
      */
-    public static final Integer EX_LEVELS = 50010;
+    public static final Integer EX_SECRET_LEVELS = 50010;
     /**
      * 成功
      */
