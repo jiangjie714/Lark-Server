@@ -105,7 +105,7 @@ public class ZzMeetingController {
         res.data("操作成功");
         String userId = common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo = common.nulToEmptyString(request.getHeader("pid"));
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
         try {
             zzMeeting.setUpdHost(userIp);
@@ -148,7 +148,7 @@ public class ZzMeetingController {
         String userId=common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
-        String userNo=common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo=common.nulToEmptyString(request.getHeader("pid"));
         //会议id
         String groupId = RandomId.getUUID();
         JSONObject jsonObject = JSONObject.parseObject(meetingJson);
@@ -213,7 +213,7 @@ public class ZzMeetingController {
     public ObjectRestResponse changeMeetAgenda(@RequestBody Map params) throws UnsupportedEncodingException {
         params.put("userId",common.nulToEmptyString(request.getHeader("userId")));
         params.put("userName",URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8"));
-        params.put("userNo",common.nulToEmptyString(request.getHeader("dnname")));
+        params.put("userNo",common.nulToEmptyString(request.getHeader("pid")));
         params.put("userIp",common.nulToEmptyString(request.getHeader("userHost")));
         ObjectRestResponse objectRestResponse = this.zzMeetingService.changeMeetAgenda(params);
         return objectRestResponse;
