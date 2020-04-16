@@ -14,6 +14,7 @@ import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
@@ -273,7 +274,11 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     @Override
     public User selectById(String id) {
         User user = super.selectById(id);
-        Org org = orgBiz.selectById(user.getOrgCode());
+        String orgCode = user.getOrgCode();
+        if(StringUtils.isEmpty(orgCode)||"".equals(orgCode)){
+            throw new UserInvalidException("当前用户没有组织编码。");
+        }
+        Org org = orgBiz.selectById(orgCode);
         user.setOrgName(org.getPathName());
         return user;
     }
