@@ -3,7 +3,6 @@ package com.github.hollykunge.security.rpc;
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.constants.Constants;
@@ -13,17 +12,14 @@ import com.github.hollykunge.security.entity.UserCommonTools;
 import com.github.hollykunge.security.mapper.UserCommonToolsMapper;
 import com.github.hollykunge.security.service.CommonToolsService;
 import com.github.hollykunge.security.service.UserCommonToolsService;
-import com.github.hollykunge.security.utils.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 对外提供常用工具增删改接口

@@ -5,7 +5,6 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.dto.FeedBackAnswerDto;
 import com.github.hollykunge.security.dto.FeedBackDto;
-import com.github.hollykunge.security.entity.Feedback;
 import com.github.hollykunge.security.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

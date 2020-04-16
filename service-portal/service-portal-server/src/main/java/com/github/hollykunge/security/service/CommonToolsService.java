@@ -2,7 +2,6 @@ package com.github.hollykunge.security.service;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.constants.Constants;
 import com.github.hollykunge.security.entity.CommonTools;
 import com.github.hollykunge.security.entity.UserCommonTools;
