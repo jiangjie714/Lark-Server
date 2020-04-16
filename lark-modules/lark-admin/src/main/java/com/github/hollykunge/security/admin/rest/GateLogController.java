@@ -36,6 +36,7 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
     /**
      * todo:使用
      * 分页获取数据
+     *
      * @param params
      * @return
      */
@@ -49,12 +50,13 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
         if (StringUtils.isEmpty(pid)) {
             pid = BaseContextHandler.getUsername();
         }
-        return baseBiz.pageByRole(new Query(params),pid);
+        return baseBiz.pageByRole(new Query(params), pid);
     }
 
     /**
      * todo:使用
      * 导出日志
+     *
      * @param response
      * @throws Exception
      */
@@ -68,7 +70,6 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("日志文件.xls", "UTF-8"));
         ServletOutputStream outputStream = response.getOutputStream();
-//        List<GateLog> gateLogs = baseBiz.selectListAll();
         List<GateLog> gateLogs = baseBiz.gateLogExport();
         List<GateLog> gateLogsTemp = new ArrayList<>();
 

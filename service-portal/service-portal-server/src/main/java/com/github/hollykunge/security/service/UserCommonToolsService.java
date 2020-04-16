@@ -2,6 +2,7 @@ package com.github.hollykunge.security.service;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -109,7 +110,7 @@ public class UserCommonToolsService extends BaseBiz<UserCommonToolsMapper, UserC
             }
         }
         if(StringUtils.isEmpty(orgCode)||"".equals(orgCode)){
-            throw new BaseException("不包含orgCode...");
+            throw new UserInvalidException("当前用户没有组织编码，无法获取常用链接。");
         }
         //查询status为启用的数据
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
