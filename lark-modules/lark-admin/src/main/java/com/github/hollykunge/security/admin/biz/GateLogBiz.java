@@ -330,38 +330,10 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     }
 
     /**
-     * 获取散点图点的大小
-     * @param orgList
-     * @return
-     */
-    public List<Node> findNodeLink(List<Org> orgList){
-        List<Node> nodes = new ArrayList<>();
-        for(Org o:orgList){
-            Node node = new Node();
-            Long num = gateLogMapper.getCountLog(o.getId());
-            node.setId(o.getOrgCode());
-            node.setName(o.getOrgName());
-            node.setParnetId(o.getParentId());
-            node.setLevel(o.getOrgLevel());
-            node.setSymbolSize(getNormalizeDistance(num));
-            nodes.add(node);
-        }
-        return nodes;
-    }
-
-    public Double getNormalizeDistance(long num){
-        double min = 0.0;
-        Example example = new Example(GateLog.class);
-        int max = gateLogMapper.selectCountByExample(example);
-        double normalize = ((num-min)/(max-min))*100;
-        return normalize;
-    }
-
-    /**
      * 获取总访问量 所有请求之和
      * @return
      */
-    @Cache(key = "ignore:getTotalAccess",expire = 1440)
+    @Cache(key = "ignore:getTotalAccess",expire = 60)
     public int getTotalAccess(){
         Example example = new Example(GateLog.class);
         return gateLogMapper.selectCountByExample(example);
@@ -372,7 +344,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @return
      * @throws Exception
      */
-    @Cache(key = "#type",expire = 1440)
+    @Cache(key = "#type",expire = 60)
     public int getAccess(String type) throws Exception{
         int access = gateLogMapper.getAccess(type);
         return access;
@@ -383,7 +355,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @param orgCode
      * @return
      */
-    @Cache(key="accessNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    @Cache(key="accessNums",generator = StatisticsKeyGenerator.class,expire = 60)
     public List<AccessNum> accessNums(String orgCode,String date) throws Exception{
         List<Org>orgList = getOrg(orgCode);
         if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
@@ -415,7 +387,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @return
      * @throws Exception
      */
-    @Cache(key="messageNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    @Cache(key="messageNums",generator = StatisticsKeyGenerator.class,expire = 60)
     public List<MessageNums> messageNums(String orgCode, String date) throws Exception{
         ObjectRestResponse msgStatistics = ignoreService.msgStatistics(orgCode,date);
         Object msg = msgStatistics.getResult();
@@ -431,7 +403,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @return
      * @throws Exception
      */
-    @Cache(key="fileNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    @Cache(key="fileNums",generator = StatisticsKeyGenerator.class,expire = 60)
     public List<FileNum> fileNums(String orgCode, String date) throws Exception{
         ObjectRestResponse fileStatistics = ignoreService.fileStatistics(orgCode,date);
         Object msgFile = fileStatistics.getResult();
@@ -447,7 +419,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * @return
      * @throws Exception
      */
-    @Cache(key="groupNums",generator = StatisticsKeyGenerator.class,expire = 1440)
+    @Cache(key="groupNums",generator = StatisticsKeyGenerator.class,expire = 60)
     public List<GroupNum> groupNums(String orgCode,String date) throws Exception{
         ObjectRestResponse groupStatistics = ignoreService.groupStatistics(orgCode,date);
         Object msgGroup = groupStatistics.getResult();
@@ -460,7 +432,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      * 获取饼图数据
      * @return
      */
-    @Cache(key="getSourceOrg",generator = StatisticsKeyGenerator.class,expire = 1440)
+    @Cache(key="getSourceOrg",generator = StatisticsKeyGenerator.class,expire = 60)
     public List<SourceOrg> getSourceOrg(String orgCode,String date) throws Exception{
         List<Org>orgList = getOrg(orgCode);
         if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
@@ -483,123 +455,6 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
             return sourceOrgs;
         }
         return null;
-    }
-
-    /**
-     * 获取散点关系图数据 点的大小
-     * @return
-     */
-    @Cache(key="getNodes",expire = 1440)
-    public List<Node> getNodes() throws Exception{
-        Example example = new Example(Org.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andNotEqualTo("id","99999");
-        criteria.andNotEqualTo("id","0010");
-        criteria.andIsNotNull("orgCode");
-        criteria.andEqualTo("deleted","0");
-        List<Org> org = orgBiz.selectByExample(example);
-        List<Node> nodes = findNodeLink(org);
-        return nodes;
-    }
-
-    /**
-     * 获取散点关系图数据 link线
-     * @return
-     * @throws Exception
-     */
-    @Cache(key="getLinks",expire = 1440)
-    public List<Link> getLinks() throws Exception{
-        List<Link> links = new ArrayList<>();
-        ObjectRestResponse groupUser = ignoreService.groupUserStatistics(null);
-        Object groupUserResult = groupUser.getResult();
-        String msgJson = JSONArray.toJSONString(groupUserResult);
-        List<StatisticsGroupOrgVo> statisticsGroupUserVos= JSONArray.parseArray(msgJson, StatisticsGroupOrgVo.class);
-        for (int i = 0; i <statisticsGroupUserVos.size(); i++) {
-            List<StatisticsGroupOrgDetailVo> detailVos = statisticsGroupUserVos.get(i).getOrgList();
-            Link linkS = new Link();
-            Link linkT = new Link();
-            Link linkP = new Link();
-            Link link = new Link();
-            StatisticsGroupOrgDetailVo last = detailVos.get(detailVos.size()-1);
-            StatisticsGroupOrgDetailVo first = detailVos.get(0);
-            linkS.setSource(first.getOrgCode());
-            linkS.setTarget(last.getOrgCode());
-            links.add(linkS);
-            linkT.setSource(last.getOrgCode());
-            linkT.setTarget(first.getOrgCode());
-            links.add(linkT);
-            linkP.setSource(first.getParentId());
-            linkP.setTarget(last.getParentId());
-            links.add(linkP);
-            link.setSource(last.getParentId());
-            link.setTarget(first.getParentId());
-            links.add(link);
-            for (int j = 0; j <detailVos.size()-1; j++) {
-                Link linkSource = new Link();
-                Link linkTarget = new Link();
-                Link linkParent = new Link();
-                Link linkParentT = new Link();
-                linkSource.setSource(detailVos.get(j).getOrgCode());
-                linkSource.setTarget(detailVos.get(j+1).getOrgCode());
-                linkTarget.setSource(detailVos.get(j+1).getOrgCode());
-                linkTarget.setTarget(detailVos.get(j).getOrgCode());
-                links.add(linkSource);
-                links.add(linkTarget);
-                linkParent.setSource(detailVos.get(j).getParentId());
-                linkParent.setTarget(detailVos.get(j+1).getParentId());
-                links.add(linkParent);
-                linkParentT.setSource(detailVos.get(j+1).getParentId());
-                linkParentT.setTarget(detailVos.get(j).getParentId());
-                links.add(linkParentT);
-            }
-        }
-        List<Link> linkList = setLink();
-        links = links.stream().collect(
-                collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getSource()+";"+o.getTarget()))),
-                        ArrayList::new));
-        links.addAll(linkList);
-        return links;
-    }
-
-    /**
-     * 部门连接线
-     * @return
-     */
-    public List<Link> setLink(){
-        Example example = new Example(Org.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgLevel","3");
-        criteria.andIsNotNull("orgCode");
-        criteria.andEqualTo("deleted","0");
-        List<Org> orgList = orgBiz.selectByExample(example);
-        Example exampl = new Example(Org.class);
-        Example.Criteria criteri = exampl.createCriteria();
-        criteri.andNotEqualTo("orgLevel",1);
-        criteri.andNotEqualTo("orgLevel",2);
-        criteri.andNotEqualTo("orgLevel",3);
-        criteria.andIsNotNull("orgCode");
-        criteria.andEqualTo("deleted","0");
-        List<Org> orgs = orgBiz.selectByExample(exampl);
-        List<Link> linkList = new ArrayList<>();
-        for (Org org:orgList){
-            treeMenuList(orgs,org.getId(),linkList);
-        }
-        return linkList;
-    }
-
-    public List<Link> treeMenuList(List<Org> orgList, String  pid,List<Link> linkList){
-        for(Org mu: orgList){
-            //遍历出父id等于参数的id，add进子节点集合
-            if(org.apache.commons.lang3.StringUtils.equals(pid,mu.getParentId())){
-                //递归遍历下一级
-                Link link = new Link();
-                link.setSource(pid);
-                link.setTarget(mu.getOrgCode());
-                linkList.add(link);
-                treeMenuList(orgList,mu.getId(),linkList);
-            }
-        }
-        return linkList;
     }
 
     /**

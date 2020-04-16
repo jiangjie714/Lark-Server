@@ -43,7 +43,9 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
     @ResponseBody
     @Override
     public TableResultResponse<GateLog> page(@RequestParam Map<String, Object> params) {
-        String pid = request.getHeader("dnname");
+
+        String pid = request.getHeader("pid");
+
         if (StringUtils.isEmpty(pid)) {
             pid = BaseContextHandler.getUsername();
         }
@@ -59,7 +61,7 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
     @GetMapping("/export")
     public void download(HttpServletResponse response) throws Exception {
         String pid = null;
-        pid = request.getHeader("dnname");
+        pid = request.getHeader("pid");
         if (StringUtils.isEmpty(pid)) {
             pid = BaseContextHandler.getUsername();
         }

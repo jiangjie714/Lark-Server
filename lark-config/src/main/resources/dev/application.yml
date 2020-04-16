@@ -39,7 +39,7 @@ spring:
 #          username: root
         native:
           #file 如果为相对路径 就是相对于本项目  classpath：为相对路径就是从resource下寻找文件 默认为file
-          search-locations: file:C:/lark-config/config-files
+          search-locations: file:C:/config-file
 #        health:
 #          repositories:
 #            check:
@@ -52,7 +52,7 @@ spring:
       enabled: true
       force: true
   rabbitmq:
-    host: ${RABBIT_MQ_HOST:127.0.0.1}
+    host: ${RABBIT_MQ_HOST:10.11.24.119}
     port: ${RABBIT_MQ_PORT:5672}
-    username: hollykunge
+    username: fansq
     password: 123456
