@@ -10,6 +10,7 @@ import com.github.hollykunge.security.admin.rpc.service.OrgRestService;
 import com.github.hollykunge.security.admin.vo.OrgTree;
 import com.github.hollykunge.security.admin.vo.StatesOrgVo;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -79,7 +80,7 @@ public class OrgRest {
     @FilterByDeletedAndOrderHandler
     public List<Org> getOrgs(Integer[] orgLevels){
         if(orgLevels == null || orgLevels.length == 0){
-            throw new BaseException("组织层级不能为空...");
+            throw new FrontInputException("组织层级为空。");
         }
         Example orgEx = new Example(Org.class);
         Example.Criteria  criteria= orgEx.createCriteria();

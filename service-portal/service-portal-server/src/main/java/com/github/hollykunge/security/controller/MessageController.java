@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.controller;
 
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.entity.Message;
@@ -22,12 +23,12 @@ public class MessageController extends BaseController<MessageService, Message> {
     @RequestMapping(value = "/userMessage", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<Message>> userMessage() {
-        String userID =  request.getHeader("userId");
-        if(StringUtils.isEmpty(userID)){
-            throw new BaseException("request contains no user...");
+        String userId =  request.getHeader("userId");
+        if(StringUtils.isEmpty(userId)){
+            throw new UserTokenException("请求中不包含用户信息。");
         }
         Message message = new Message();
-        message.setUserId(userID);
+        message.setUserId(userId);
         List<Message> messages = baseBiz.selectList(message);
         return new ListRestResponse("",messages.size(),messages);
     }

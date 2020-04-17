@@ -15,6 +15,7 @@ import com.github.hollykunge.security.admin.vo.OrgTreeAll;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -46,8 +47,6 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     @Autowired
     private OrgBiz orgBiz;
 
-    @Autowired
-    private OrgRestService orgRestService;
     /**
      * todo:使用
      * fansq
@@ -107,6 +106,8 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return
      * fansq 添加异常 ClientInvalidException
      */
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
     @Override
     public ObjectRestResponse<Org> remove(@PathVariable String id) {
         User user = new User();
@@ -117,10 +118,10 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         List<User> userList = userBiz.selectList(user);
         List<Org> orgList = orgBiz.selectList(org);
         if(orgList.size() > 0){
-            throw new ClientInvalidException("The organization has sub-organization and cannot be deleted");
+            throw new UserInvalidException("选择组织包含子节点，无法删除。");
         }
         if(userList.size()>0){
-            throw new ClientInvalidException("The organization has users and cannot be deleted");
+            throw new UserInvalidException("选择组织包含用户，无法删除。");
         }
         return super.remove(id);
     }
@@ -136,9 +137,9 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         String orgCode = map.get("orgCode");
         String secretLevels = map.get("secretLevels");
         String PId = map.get("PId");
-        String grouptype = map.get("grouptype");
+        String groupType = map.get("grouptype");
         String userOrgCode = map.get("userOrgCode");
-        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, PId,grouptype,userOrgCode);
+        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, PId,groupType,userOrgCode);
         return new ListRestResponse("", orgUsers.size(), orgUsers);
     }
 
@@ -183,11 +184,9 @@ public class OrgController extends BaseController<OrgBiz, Org> {
 
     private List<OrgTreeAll> getTree(List<Org> orgs, String parentTreeId) {
         List<OrgTreeAll> trees = new ArrayList<>();
-        OrgTreeAll node;
         for (Org org : orgs) {
-            node = new OrgTreeAll();
             String jsonNode = JSON.toJSONString(org);
-            node = JSON.parseObject(jsonNode, OrgTreeAll.class);
+            OrgTreeAll node = JSON.parseObject(jsonNode, OrgTreeAll.class);
             node.setLabel(org.getOrgName());
             node.setOrder(org.getOrderId());
             node.setLevel(org.getOrgLevel());
@@ -195,7 +194,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
             node.setPathName(org.getPathName());
             trees.add(node);
         }
-        Collections.sort(trees, Comparator.comparing(OrgTreeAll::getOrder));
+        trees.sort(Comparator.comparing(OrgTreeAll::getOrder));
         return TreeUtil.bulid(trees, parentTreeId);
     }
 

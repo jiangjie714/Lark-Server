@@ -11,6 +11,7 @@ import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class PositionBiz extends BaseBiz<PositionMapper, Position> {
 
     public List<AdminUser> getPositionUsers(String positionId,String secretLevel,String orgCode){
         if(StringUtils.isEmpty(positionId) || StringUtils.isEmpty(orgCode)){
-            throw new BaseException("岗位id或者组织不能为空...");
+            throw new FrontInputException("岗位id或者组织不能为空。");
         }
         List<AdminUser> usersByPositionId = setUsersByPositionId(positionId,orgCode);
         filterBySecret(usersByPositionId,secretLevel);
@@ -100,15 +101,11 @@ public class PositionBiz extends BaseBiz<PositionMapper, Position> {
     public void modifyPositionUsers(String positionId, String users) {
         PositionUserMap positionUser = new PositionUserMap();
         positionUser.setPositionId(positionId);
-        int deleteCount = positionUserMapMapper.delete(positionUser);
-        if (deleteCount < 0) {
-            throw new BaseException("系统异常错误...");
-        }
-        PositionUserMap positionUserMapDo;
+        positionUserMapMapper.delete(positionUser);
         if (!StringUtils.isEmpty(users)) {
             String[] mem = users.split(",");
             for (String m : mem) {
-                positionUserMapDo = new PositionUserMap();
+                PositionUserMap positionUserMapDo = new PositionUserMap();
                 positionUserMapDo.setPositionId(positionId);
                 positionUserMapDo.setUserId(m);
                 //给基类赋值
@@ -128,7 +125,7 @@ public class PositionBiz extends BaseBiz<PositionMapper, Position> {
     public void insertUserPosition(String positionsIds,String userId){
         PositionUserMap positionUser = new PositionUserMap();
         positionUser.setUserId(userId);
-        int deleteCount = positionUserMapMapper.delete(positionUser);
+        positionUserMapMapper.delete(positionUser);
         PositionUserMap positionUserMapDo;
         if (!StringUtils.isEmpty(positionsIds)) {
             String[] poiArr = positionsIds.split(",");
@@ -158,9 +155,4 @@ public class PositionBiz extends BaseBiz<PositionMapper, Position> {
     protected String getPageName() {
         return null;
     }
-
-
 }
-
-
-

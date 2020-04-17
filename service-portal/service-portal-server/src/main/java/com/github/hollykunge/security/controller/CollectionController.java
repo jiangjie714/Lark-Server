@@ -14,15 +14,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("collection")
 public class CollectionController extends BaseController<CollectionService, Collection> {
-
-    /**
-     * 获取最后5条数据
-     * @param id 用户id
-     * @return
-     */
-//    @GetMapping("/{id}")
-//    public ListRestResponse<Collection> getUserCollections(@PathVariable String id){
-//        List<Collection> collectionList = baseBiz.selectLastFive(id);
-//        return new ListRestResponse("", collectionList.size(), collectionList);
-//    }
 }

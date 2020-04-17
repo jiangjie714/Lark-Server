@@ -2,6 +2,7 @@ package com.github.hollykunge.security.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -28,8 +29,6 @@ import java.util.Set;
 @RestController
 @RequestMapping("card")
 public class UserCardController extends BaseController<UserCardService, UserCard> {
-    @Autowired
-    private IUserService userService;
 
     @Autowired
     private CardService cardService;
@@ -43,15 +42,16 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @RequestMapping(value = "/collection", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<UserCard> add(@RequestBody UserCard userCard) {
-        String userID = request.getHeader("userId");
-        if(StringUtils.isEmpty(userID)){
-            throw new BaseException("request contains no user...");
+        String userId = request.getHeader("userId");
+        if(StringUtils.isEmpty(userId)){
+            throw new UserTokenException("请求中不包含用户信息。");
         }
-        userCard.setUserId(userID);
+        userCard.setUserId(userId);
+        // 非幂等问题不用加多余判断
        if(baseBiz.selectCount(userCard) > 0){
-           return new ObjectRestResponse<>().rel(false).msg("设置卡片失败，已经添加过了...");
+           return new ObjectRestResponse<>().rel(false).msg("设置卡片失败，已经添加过了。");
        }
-        return super.add(userCard).rel(true).msg("设置成功...");
+        return super.add(userCard).rel(true).msg("设置成功。");
     }
 
     /**

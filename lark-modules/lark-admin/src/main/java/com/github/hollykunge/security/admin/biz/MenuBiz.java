@@ -1,7 +1,5 @@
 package com.github.hollykunge.security.admin.biz;
 
-import com.ace.cache.annotation.Cache;
-import com.ace.cache.annotation.CacheClear;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.Menu;
 import com.github.hollykunge.security.admin.mapper.MenuMapper;
