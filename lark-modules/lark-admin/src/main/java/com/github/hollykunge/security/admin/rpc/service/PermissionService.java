@@ -9,6 +9,7 @@ import com.github.hollykunge.security.admin.entity.Element;
 import com.github.hollykunge.security.admin.entity.Menu;
 import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.util.PassWordUtils;
 import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
@@ -102,7 +103,11 @@ public class PermissionService {
         if(user==null){
             throw new UserTokenException("没有该用户");
         }
-        if (!encoder.matches(password, user.getPassword())) {
+//        if (!encoder.matches(password, user.getPassword())) {
+//            throw new UserTokenException("密码错误");
+//        }
+        //使用md5加密密码
+        if(!Objects.equals(PassWordUtils.md5(password),user.getPassword())){
             throw new UserTokenException("密码错误");
         }
         BeanUtils.copyProperties(user, info);
