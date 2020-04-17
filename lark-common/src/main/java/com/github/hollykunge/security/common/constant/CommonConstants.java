@@ -22,33 +22,38 @@ public class CommonConstants {
      */
     public static final int EX_USER_INVALID_CODE = 40002;
     /**
-     * 无效的客户端请求
+     * 不符合密级约束条件
      */
-    public static final int EX_CLIENT_INVALID_CODE = 40003;
-    /**
-     * 拒绝执行当前的客户端请求
-     */
-    public static final int EX_CLIENT_FORBIDDEN_CODE = 40004;
+    public static final int EX_SECRET_LEVELS = 40003;
     /**
      * 没有请求该资源的权限
      */
-    public static final int URL_NOT_PERMISSION = 40005;
+    public static final int URL_NOT_PERMISSION = 40004;
+    /**
+     * 前端输入型异常
+     */
+    public static final int EX_FRONT_INVALID_CODE = 40006;
     /**
      * 没有请求该资源操作方法的权限
      */
-    public static final int URL_METHOD_NOT_PERMISSION = 40006;
+    public static final int URL_METHOD_NOT_PERMISSION = 40005;
+    /**
+     * 无效的客户端请求
+     */
+    public static final int EX_CLIENT_INVALID_CODE = 50001;
+    /**
+     * 拒绝执行当前的客户端请求
+     */
+    public static final int EX_CLIENT_FORBIDDEN_CODE = 50002;
     /**
      * 服务端处理异常
      */
-    public static final int EX_SERVICE_INVALID_CODE = 50001;
+    public static final int EX_SERVICE_INVALID_CODE = 50003;
     /**
      * 其它未知异常
      */
     public static final int EX_OTHER_CODE = 50099;
-    /**
-     * 不符合密级约束条件
-     */
-    public static final Integer EX_SECRET_LEVELS = 50010;
+
     /**
      * 成功
      */

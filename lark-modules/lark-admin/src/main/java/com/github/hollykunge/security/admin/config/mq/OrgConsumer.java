@@ -103,7 +103,6 @@ public class OrgConsumer {
             String jsonStr = JSONObject.toJSONString(setMqOrgVO);
             Message noticeMessage = MessageBuilder.withBody(jsonStr.getBytes())
                     .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-//                    .setContentEncoding("utf-8")
                     .setMessageId(UUID.randomUUID() + "").build();
             produceSenderConfig.adminUserOrOrgSend(noticeMessage, CommonConstants.ADMIN_UNACK_ORG_KEY);
         }

@@ -111,26 +111,6 @@ public class AdminAccessFilter extends ZuulFilter {
         if (!StringUtils.isEmpty(clientIp)) {
             ctx.addZuulRequestHeader(this.clientIp, clientIp);
         }
-//        String body = null;
-//        if (!ctx.isChunkedRequestBody() && StringUtils.equals(requestUri, CommonConstants.AUTH_JWT_TOKEN)) {
-//            try {
-//                ServletInputStream inp = ctx.getRequest().getInputStream();
-//                if (inp != null) {
-//                    body = IOUtils.toString(inp);
-//                    if (!StringUtils.isEmpty(body)) {
-//                        JSONObject jsonObject = new JSONObject(body);
-//                        String username = jsonObject.get("username").toString();
-//                        if(!StringUtils.isEmpty(username)&&
-//                                Objects.equals(username,sysAuthConfig.getSysUsername())){
-//                            ctx.addZuulRequestHeader(this.dnName,"");
-//                            return authorization(requestUri,ctx,request);
-//                        }
-//                    }
-//                }
-//            } catch (Exception e) {
-//                throw new ServiceHandleException("ERROR LARK: userInfo transfer error, class=AdminAccessFilter.");
-//            }
-//        }
         //正常用户名密码登录
         if (StringUtils.isEmpty(dnname)) {
             //此处使用null，正常用户名密码登录时，pid使用登录时的用户名
@@ -294,7 +274,7 @@ public class AdminAccessFilter extends ZuulFilter {
                 }).collect(Collectors.toList());
 
         if (permissionInfos.size() == 0) {
-            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("资源请求失败，没有请求该资源的权限");
+            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("资源请求失败，没有请求该资源的权限。");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_NOT_PERMISSION);
             setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }
@@ -313,7 +293,7 @@ public class AdminAccessFilter extends ZuulFilter {
             FrontPermission max = Collections.max(permissionInfos);
             setCurrentUserInfoAndLog(ctx, user, max);
         } else {
-            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("资源请求失败，没有操作该资源的权限");
+            BaseResponse tokenForbiddenResponse = new TokenForbiddenResponse("资源请求失败，没有操作该资源的权限。");
             tokenForbiddenResponse.setStatus(CommonConstants.URL_METHOD_NOT_PERMISSION);
             setFailedRequest(JSON.toJSONString(tokenForbiddenResponse), CommonConstants.HTTP_SUCCESS);
         }

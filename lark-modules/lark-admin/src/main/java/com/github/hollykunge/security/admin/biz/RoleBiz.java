@@ -14,6 +14,7 @@ import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,14 +65,10 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
         return resultData;
     }
 
-    //    @CacheClear(pre = "permission")
     public void modifyRoleUsers(String roleId, String users) {
         RoleUserMap roleParams = new RoleUserMap();
         roleParams.setRoleId(roleId);
-        int deleteCount = roleUserMapMapper.delete(roleParams);
-        if (deleteCount < 0) {
-            throw new BaseException("系统异常错误...");
-        }
+        roleUserMapMapper.delete(roleParams);
         RoleUserMap roleUserMapDo;
         if (!StringUtils.isEmpty(users)) {
             String[] mem = users.split(",");
@@ -100,10 +97,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
         //用roleId删除所有与角色相关的资源
         Example resourceRoleExample = new Example(ResourceRoleMap.class);
         resourceRoleExample.createCriteria().andEqualTo("roleId", roleId);
-        int deleteCount = resourceRoleMapMapper.deleteByExample(resourceRoleExample);
-        if (deleteCount < 0) {
-            throw new BaseException("系统异常错误...");
-        }
+        resourceRoleMapMapper.deleteByExample(resourceRoleExample);
         //删除完成后，重新插入menu到资源表中
         List<Menu> menuList = menuMapper.selectAll();
         Map<String, String> map = new HashMap<String, String>(256);
@@ -149,7 +143,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
     private List<String> getPermissionMenu(List<AdminPermission> permissionList) {
         List<String> listResult = new ArrayList<>();
         if (permissionList.isEmpty()) {
-            throw new BaseException("参数为空....");
+            throw new FrontInputException("权限列表为空。");
         }
         permissionList.stream().filter(permissionEntity -> permissionEntity.getActionEntitySetList().stream()
                 .anyMatch(actionEntitySet -> actionEntitySet.getDefaultCheck() == true))
@@ -346,27 +340,5 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
         }
 
     }
-
-//    @Override
-//    public TableResultResponse<Role> selectByQuery(Query query) {
-//        Example example = new Example(Role.class);
-//        Example.Criteria criteria = example.createCriteria();
-//        if (query.entrySet().size() > 0) {
-//            for (Map.Entry<String, Object> entry : query.entrySet()) {
-//                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%").andNotEqualTo("code", "系统管理员")
-//                        .andNotEqualTo("code", "安全管理员")
-//                        .andNotEqualTo("code", "日志审计员");
-//            }
-//        }else {
-//            criteria.andNotEqualTo("code", "系统管理员")
-//                    .andNotEqualTo("code", "安全管理员")
-//                    .andNotEqualTo("code", "日志审计员");
-//        }
-//        criteria.andNotEqualTo("id",AdminCommonConstant.SUPER_SYSTEM_ID);
-//        example.setOrderByClause("CRT_TIME DESC");
-//        Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
-//        List<Role> list = mapper.selectByExample(example);
-//        return new TableResultResponse<Role>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), list);
-//    }
 }
 

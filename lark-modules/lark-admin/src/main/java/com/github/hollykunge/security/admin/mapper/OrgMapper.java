@@ -9,6 +9,9 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
+/**
+ * @author LARK
+ */
 public interface OrgMapper extends Mapper<Org> {
 
     public List<OrgDTO> findOrg(@Param("id") String id);
