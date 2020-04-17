@@ -2,6 +2,7 @@ package com.github.hollykunge.security.service;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;
@@ -49,7 +50,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
         Notice notice = new Notice();
         notice.setOrgCode(orgCode);
         if (StringUtils.isEmpty(orgCode)) {
-            throw new BaseException("当前登录人没有组织编码...");
+            throw new UserInvalidException("当前登录人员无组织编码。");
         }
         Example example = new Example(Notice.class);
         example.setOrderByClause("SEND_TIME DESC");

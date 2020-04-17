@@ -30,7 +30,6 @@ import java.util.*;
 
 import cn.hutool.core.util.XmlUtil;
 import org.dom4j.Document;
-import org.xmlunit.XMLUnitException;
 
 import javax.xml.rpc.ServiceException;
 
