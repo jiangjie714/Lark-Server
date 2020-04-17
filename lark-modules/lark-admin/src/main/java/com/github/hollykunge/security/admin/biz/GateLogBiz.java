@@ -15,6 +15,7 @@ import com.github.hollykunge.security.admin.util.ListUtil;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
@@ -68,6 +69,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
 
     @Autowired
     private IgnoreService ignoreService;
+
     public List<GateLog> gateLogExport() {
         return mapper.gateLogExport();
     }
@@ -152,34 +154,34 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         Example.Criteria criteria = null;
         //先判断该用户的角色是否为三员
         if (StringUtils.isEmpty(pid)) {
-            throw new BaseException("pid不能为空或null...");
+            throw new UserInvalidException("pid不能为空或null。");
         }
         //查询pid所对应的角色
         String userInfo = userRestService.getUserInfo(pid, null);
-        List<AdminUser> adminUsers = JSONArray.parseArray(userInfo,AdminUser.class);
+        List<AdminUser> adminUsers = JSONArray.parseArray(userInfo, AdminUser.class);
         if (adminUsers == null || adminUsers.size() == 0) {
-            throw new BaseException("没有查询到该用户的角色...");
+            throw new UserInvalidException("没有查询到该用户的角色。");
         }
         Role role = roleBiz.selectById(adminUsers.get(0).getRoleId());
-        List<String> pids = getSanyuan(role.getCode(),adminUsers.get(0).getOrgCode());
+        List<String> pids = getSanyuan(role.getCode(), adminUsers.get(0).getOrgCode());
         //证明是三员中的一位
         if (pids != null) {
             criteria = example.createCriteria();
             //防止数据过高，将pids拆分成500个
             List<List<String>> lists = ListUtil.splitList(pids, 500);
             if (Objects.equals(role.getCode(), logRoleCode)) {
-                for(List<String> pidList : lists){
-                    criteria.andNotIn("pid",pidList);
+                for (List<String> pidList : lists) {
+                    criteria.andNotIn("pid", pidList);
                 }
             }
             if (Objects.equals(role.getCode(), securityRoleCode)) {
-                for(List<String> pidList : lists){
-                    criteria.andIn("pid",pidList);
+                for (List<String> pidList : lists) {
+                    criteria.andIn("pid", pidList);
                 }
             }
         }
         if (query.entrySet().size() > 0) {
-            if(criteria == null){
+            if (criteria == null) {
                 criteria = example.createCriteria();
             }
             for (Map.Entry<String, Object> entry : query.entrySet()) {
@@ -194,7 +196,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         return new TableResultResponse<GateLog>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), list);
     }
 
-    private List<String> getSanyuan(String roleCode,String orgCode) {
+    private List<String> getSanyuan(String roleCode, String orgCode) {
         //日志管理员,安全管理员
         if (Objects.equals(roleCode, logRoleCode) ||
                 Objects.equals(roleCode, securityRoleCode) ||
@@ -210,7 +212,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      *
      * @return
      */
-    private List<String> getlogAndsysPids(String sysRoleCode, String logRoleCode,String orgCode) {
+    private List<String> getlogAndsysPids(String sysRoleCode, String logRoleCode, String orgCode) {
         List<String> result = new ArrayList<>();
         if (StringUtils.isEmpty(sysRoleCode) || StringUtils.isEmpty(logRoleCode)) {
             return result;
@@ -222,35 +224,35 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         criteria.andIn("code", Arrays.asList(strings));
         List<Role> roles = roleBiz.selectByExample(roleExample);
         //可能产生配置错了的情况
-        if(roles ==null || roles.size() == 0){
+        if (roles == null || roles.size() == 0) {
             return null;
         }
         Example roleUserExample = new Example(RoleUserMap.class);
         Example.Criteria roleUsercriteria = null;
-        if(roles != null && roles.size() != 0){
+        if (roles != null && roles.size() != 0) {
             roleUsercriteria = roleUserExample.createCriteria();
-            for(Role role : roles){
-                roleUsercriteria.orEqualTo("roleId",role.getId());
+            for (Role role : roles) {
+                roleUsercriteria.orEqualTo("roleId", role.getId());
             }
         }
         List<RoleUserMap> roleUserMaps = roleUserMapMapper.selectByExample(roleUserExample);
         //证明没有配置所对应的人员，返回空
-        if(roleUserMaps == null || roleUserMaps.size() == 0){
+        if (roleUserMaps == null || roleUserMaps.size() == 0) {
             return null;
         }
         //此处不做人员是否删除过滤，日志查看是可以看到删除人员操作的日志
         roleUserMaps.forEach(roleUserMap -> result.add(roleUserMap.getUserId()));
         Example userExcample = new Example(User.class);
         Example.Criteria userCriteria = userExcample.createCriteria();
-        if(!StringUtils.isEmpty(orgCode)){
-            userCriteria.andLike("orgCode",orgCode+"%");
+        if (!StringUtils.isEmpty(orgCode)) {
+            userCriteria.andLike("orgCode", orgCode + "%");
         }
         roleUserMaps.forEach(roleUserMap -> {
-            userCriteria.orEqualTo("id",roleUserMap.getUserId());
+            userCriteria.orEqualTo("id", roleUserMap.getUserId());
         });
         List<User> users = userBiz.selectByExample(userExcample);
         //不可能出现，一个userid对应一个pid
-        if(users == null || users.size() == 0){
+        if (users == null || users.size() == 0) {
             return null;
         }
         users.forEach(user -> result.add(user.getPId()));
@@ -270,7 +272,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     private boolean setCreTimeCondition(Example.Criteria criteria, Map.Entry<String, Object> entry) {
         if ("crtTime".equals(entry.getKey())) {
             if (StringUtils.isEmpty(entry.getValue())) {
-                throw new BaseException("输入时间不能为空...");
+                throw new UserInvalidException("输入时间不能为空。");
             }
             String[] dateSplits = entry.getValue().toString().trim().split(",");
             if (dateSplits.length != 0) {
@@ -288,12 +290,12 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
      *
      * @return
      */
-    public List<AccessNum> findLogCountByOrgCode(List<Org> orgList,String type){
+    public List<AccessNum> findLogCountByOrgCode(List<Org> orgList, String type) {
         List<AccessNum> accessNums = new ArrayList<>();
-        for(Org o:orgList){
+        for (Org o : orgList) {
             AccessNum accessNum = new AccessNum();
             accessNum.setX(o.getOrgName());
-            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"/api/admin/user/front/info");
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(), type, "/api/admin/user/front/info");
             accessNum.setY(num);
             accessNums.add(accessNum);
         }
@@ -302,24 +304,25 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         return accessNums;
     }
 
-    public Long findLogCountByOrgCodeAll(String orgCode,String type){
-            Long num = gateLogMapper.getOrgCodeLogNum(orgCode,type,"");
-            return num;
+    public Long findLogCountByOrgCodeAll(String orgCode, String type) {
+        Long num = gateLogMapper.getOrgCodeLogNum(orgCode, type, "");
+        return num;
     }
-    public List<SourceOrg> findLogCountByOrgCodeAll(String orgCode,List<Org> orgList,String type){
+
+    public List<SourceOrg> findLogCountByOrgCodeAll(String orgCode, List<Org> orgList, String type) {
         //总活动量
-        Long numAll = findLogCountByOrgCodeAll(orgCode,type);
+        Long numAll = findLogCountByOrgCodeAll(orgCode, type);
         List<SourceOrg> sourceOrgs = new ArrayList<>();
-        for(Org o:orgList){
+        for (Org o : orgList) {
             SourceOrg sourceOrg = new SourceOrg();
             sourceOrg.setItem(o.getOrgName());
-            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(),type,"");
-            if(numAll==0||num==0){
+            Long num = gateLogMapper.getOrgCodeLogNum(o.getId(), type, "");
+            if (numAll == 0 || num == 0) {
                 sourceOrg.setCount(0.0);
-            }else{
+            } else {
                 double numAllD = new Double(numAll).doubleValue();
-                double  numD = new Double(num).doubleValue();
-                String n = new DecimalFormat("0.0").format(numD/numAllD);
+                double numD = new Double(num).doubleValue();
+                String n = new DecimalFormat("0.0").format(numD / numAllD);
                 sourceOrg.setCount(Double.parseDouble(n));
             }
             sourceOrgs.add(sourceOrg);
@@ -331,49 +334,52 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
 
     /**
      * 获取总访问量 所有请求之和
+     *
      * @return
      */
-    @Cache(key = "ignore:getTotalAccess",expire = 60)
-    public int getTotalAccess(){
+    @Cache(key = "ignore:getTotalAccess", expire = 60)
+    public int getTotalAccess() {
         Example example = new Example(GateLog.class);
         return gateLogMapper.selectCountByExample(example);
     }
 
     /**
      * 获取访问量
+     *
      * @return
      * @throws Exception
      */
-    @Cache(key = "#type",expire = 60)
-    public int getAccess(String type) throws Exception{
+    @Cache(key = "#type", expire = 60)
+    public int getAccess(String type) throws Exception {
         int access = gateLogMapper.getAccess(type);
         return access;
     }
 
     /**
-     *获取柱状图数据
+     * 获取柱状图数据
+     *
      * @param orgCode
      * @return
      */
-    @Cache(key="accessNums",generator = StatisticsKeyGenerator.class,expire = 60)
-    public List<AccessNum> accessNums(String orgCode,String date) throws Exception{
-        List<Org>orgList = getOrg(orgCode);
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
+    @Cache(key = "accessNums", generator = StatisticsKeyGenerator.class, expire = 60)
+    public List<AccessNum> accessNums(String orgCode, String date) throws Exception {
+        List<Org> orgList = getOrg(orgCode);
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI, date)) {
             List<AccessNum> accessNums =
-                    findLogCountByOrgCode(orgList,CommonConstants.JIN_RI_TYPE);
+                    findLogCountByOrgCode(orgList, CommonConstants.JIN_RI_TYPE);
             return accessNums;
         }
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_ZHOU,date)){
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_ZHOU, date)) {
             List<AccessNum> accessNums =
-                    findLogCountByOrgCode(orgList,CommonConstants.BEN_ZHOU_TYPE);
+                    findLogCountByOrgCode(orgList, CommonConstants.BEN_ZHOU_TYPE);
             return accessNums;
         }
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_YUE,date)){
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_YUE, date)) {
             List<AccessNum> accessNums =
-                    findLogCountByOrgCode(orgList,CommonConstants.BEN_YUE_TYPE);
+                    findLogCountByOrgCode(orgList, CommonConstants.BEN_YUE_TYPE);
             return accessNums;
         }
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.QUAN_BU,date)) {
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.QUAN_BU, date)) {
             List<AccessNum> accessNums = findLogCountByOrgCode(orgList, CommonConstants.QUAN_BU_TYPE);
             return accessNums;
         }
@@ -382,76 +388,80 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
 
     /**
      * 获取柱状图消息量排行
+     *
      * @param orgCode
      * @param date
      * @return
      * @throws Exception
      */
-    @Cache(key="messageNums",generator = StatisticsKeyGenerator.class,expire = 60)
-    public List<MessageNums> messageNums(String orgCode, String date) throws Exception{
-        ObjectRestResponse msgStatistics = ignoreService.msgStatistics(orgCode,date);
+    @Cache(key = "messageNums", generator = StatisticsKeyGenerator.class, expire = 60)
+    public List<MessageNums> messageNums(String orgCode, String date) throws Exception {
+        ObjectRestResponse msgStatistics = ignoreService.msgStatistics(orgCode, date);
         Object msg = msgStatistics.getResult();
         String msgJson = JSONArray.toJSONString(msg);
-        List<MessageNums> messageNums= JSONArray.parseArray(msgJson, MessageNums.class);
+        List<MessageNums> messageNums = JSONArray.parseArray(msgJson, MessageNums.class);
         return messageNums;
     }
 
     /**
      * 获取柱状图文件量排行
+     *
      * @param orgCode
      * @param date
      * @return
      * @throws Exception
      */
-    @Cache(key="fileNums",generator = StatisticsKeyGenerator.class,expire = 60)
-    public List<FileNum> fileNums(String orgCode, String date) throws Exception{
-        ObjectRestResponse fileStatistics = ignoreService.fileStatistics(orgCode,date);
+    @Cache(key = "fileNums", generator = StatisticsKeyGenerator.class, expire = 60)
+    public List<FileNum> fileNums(String orgCode, String date) throws Exception {
+        ObjectRestResponse fileStatistics = ignoreService.fileStatistics(orgCode, date);
         Object msgFile = fileStatistics.getResult();
         String msgJsonFile = JSONArray.toJSONString(msgFile);
-        List<FileNum> fileNums= JSONArray.parseArray(msgJsonFile, FileNum.class);
+        List<FileNum> fileNums = JSONArray.parseArray(msgJsonFile, FileNum.class);
         return fileNums;
     }
 
     /**
      * 获取柱状图群组量排行
+     *
      * @param orgCode
      * @param date
      * @return
      * @throws Exception
      */
-    @Cache(key="groupNums",generator = StatisticsKeyGenerator.class,expire = 60)
-    public List<GroupNum> groupNums(String orgCode,String date) throws Exception{
-        ObjectRestResponse groupStatistics = ignoreService.groupStatistics(orgCode,date);
+    @Cache(key = "groupNums", generator = StatisticsKeyGenerator.class, expire = 60)
+    public List<GroupNum> groupNums(String orgCode, String date) throws Exception {
+        ObjectRestResponse groupStatistics = ignoreService.groupStatistics(orgCode, date);
         Object msgGroup = groupStatistics.getResult();
         String msgJsonGroup = JSONArray.toJSONString(msgGroup);
-        List<GroupNum> groupNums= JSONArray.parseArray(msgJsonGroup, GroupNum.class);
+        List<GroupNum> groupNums = JSONArray.parseArray(msgJsonGroup, GroupNum.class);
         return groupNums;
     }
 
     /**
      * 获取饼图数据
+     *
      * @return
      */
-    @Cache(key="getSourceOrg",generator = StatisticsKeyGenerator.class,expire = 60)
-    public List<SourceOrg> getSourceOrg(String orgCode,String date) throws Exception{
-        List<Org>orgList = getOrg(orgCode);
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI,date)){
+    @Cache(key = "getSourceOrg", generator = StatisticsKeyGenerator.class, expire = 60)
+    public List<SourceOrg> getSourceOrg(String orgCode, String date) throws Exception {
+        List<Org> orgList = getOrg(orgCode);
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.JIN_RI, date)) {
             List<SourceOrg> sourceOrgs =
-                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.JIN_RI_TYPE);
+                    findLogCountByOrgCodeAll(orgCode, orgList, CommonConstants.JIN_RI_TYPE);
             return sourceOrgs;
         }
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_ZHOU,date)){
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_ZHOU, date)) {
             List<SourceOrg> sourceOrgs =
-                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.BEN_ZHOU_TYPE);
+                    findLogCountByOrgCodeAll(orgCode, orgList, CommonConstants.BEN_ZHOU_TYPE);
             return sourceOrgs;
         }
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_YUE,date)){
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.BEN_YUE, date)) {
             List<SourceOrg> sourceOrgs =
-                    findLogCountByOrgCodeAll(orgCode,orgList,CommonConstants.BEN_YUE_TYPE);
+                    findLogCountByOrgCodeAll(orgCode, orgList, CommonConstants.BEN_YUE_TYPE);
             return sourceOrgs;
         }
-        if(org.apache.commons.lang3.StringUtils.equals(CommonConstants.QUAN_BU,date)) {
-            List<SourceOrg> sourceOrgs = findLogCountByOrgCodeAll(orgCode,orgList, CommonConstants.QUAN_BU_TYPE);
+        if (org.apache.commons.lang3.StringUtils.equals(CommonConstants.QUAN_BU, date)) {
+            List<SourceOrg> sourceOrgs = findLogCountByOrgCodeAll(orgCode, orgList, CommonConstants.QUAN_BU_TYPE);
             return sourceOrgs;
         }
         return null;
@@ -459,17 +469,18 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
 
     /**
      * 获取部门
+     *
      * @param orgCode
      * @return
      */
-    public List<Org> getOrg(String orgCode){
+    public List<Org> getOrg(String orgCode) {
         Example example = new Example(Org.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("id",orgCode);
-        criteria.andEqualTo("deleted","0");
+        criteria.andEqualTo("id", orgCode);
+        criteria.andEqualTo("deleted", "0");
         Org org = orgBiz.selectByExample(example).get(0);
         Integer orgLevel = org.getOrgLevel();
-        List<Org> orgList = orgBiz.findOrgByLevelAndParentId(orgCode,orgLevel+1);
+        List<Org> orgList = orgBiz.findOrgByLevelAndParentId(orgCode, orgLevel + 1);
         return orgList;
     }
 

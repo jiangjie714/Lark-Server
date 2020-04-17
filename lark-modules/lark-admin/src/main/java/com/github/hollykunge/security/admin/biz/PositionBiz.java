@@ -33,14 +33,6 @@ public class PositionBiz extends BaseBiz<PositionMapper, Position> {
     private OrgMapper orgMapper;
 
     public List<AdminUser> getPositionUsers(String positionId) {
-//        List<AdminUser> resultData = new ArrayList<>();
-//        List<User> usersByPositionId = userMapper.selectUsersByPositionId(positionId);
-//        usersByPositionId.stream().forEach(user -> {
-//            AdminUser frontUser = new AdminUser();
-//            BeanUtils.copyProperties(user, frontUser);
-//            resultData.add(frontUser);
-//        });
-//        return resultData;
         return userMapper.selectUsersByPositionIdAndOrgCode(positionId,null);
     }
 

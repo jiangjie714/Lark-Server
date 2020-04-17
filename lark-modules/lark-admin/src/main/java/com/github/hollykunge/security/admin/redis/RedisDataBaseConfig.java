@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 /**
  * 读取研讨服务的redis缓存配置
+ * @author hollykunge
  */
 @Configuration
 public class RedisDataBaseConfig {

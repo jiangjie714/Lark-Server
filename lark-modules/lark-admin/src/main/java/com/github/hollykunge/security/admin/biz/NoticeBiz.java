@@ -7,10 +7,9 @@ import com.github.hollykunge.security.admin.mapper.NoticeMapper;
 
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -34,7 +33,7 @@ import java.util.Map;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
+public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
     @Autowired
     private ProduceSenderConfig produceSenderConfig;
 
@@ -49,6 +48,7 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
         return orgUser.get(0).getOrgCode();
 
     }
+
     @Override
     protected String getPageName() {
         return null;
@@ -62,57 +62,59 @@ public class NoticeBiz extends BaseBiz<NoticeMapper,Notice>{
 
     /**
      * 发布消息
+     *
      * @param entity
      */
-    public void sentNotice(Notice entity){
-        if(StringUtils.isEmpty(entity.getId())){
-            throw new BaseException("ERROR LARK MQ:notice id is null...it's not required..");
+    public void sentNotice(Notice entity) {
+        if (StringUtils.isEmpty(entity.getId())) {
+            throw new FrontInputException("ERROR LARK: notice id is null.");
         }
         entity.setIsSend("1");
         mapper.updateByPrimaryKeySelective(entity);
         //保存完成后向mq发送一条消息
         NoticeVO mqNoticeEntity = new NoticeVO();
-        BeanUtils.copyProperties(entity,mqNoticeEntity);
+        BeanUtils.copyProperties(entity, mqNoticeEntity);
         //发布时间取当前时间
         mqNoticeEntity.setSendTime(new Date());
         mqNoticeEntity.setFromId(entity.getId());
-        produceSenderConfig.send(mqNoticeEntity.getId(),mqNoticeEntity);
+        produceSenderConfig.send(mqNoticeEntity.getId(), mqNoticeEntity);
     }
 
     /**
      * fansq
      * 20-2-18
      * 取消发布公告
+     *
      * @param id 主键id
      */
-    public void sentCancelNotice(String id){
+    public void sentCancelNotice(String id) {
         Notice entity = new Notice();
-        if(StringUtils.isEmpty(id)){
-            throw new BaseException("ERROR LARK MQ:notice id is null...it's not required..");
+        if (StringUtils.isEmpty(id)) {
+            throw new FrontInputException("ERROR LARK MQ:notice id is null.");
         }
         entity.setId(id);
         entity.setIsSend("0");
         mapper.updateByPrimaryKeySelective(entity);
         //保存完成后向mq发送一条消息
         NoticeVO mqNoticeEntity = new NoticeVO();
-        BeanUtils.copyProperties(entity,mqNoticeEntity);
+        BeanUtils.copyProperties(entity, mqNoticeEntity);
         mqNoticeEntity.setFromId(entity.getId());
-        produceSenderConfig.sendCancelPortal(mqNoticeEntity.getId(),mqNoticeEntity);
+        produceSenderConfig.sendCancelPortal(mqNoticeEntity.getId(), mqNoticeEntity);
     }
 
-    public TableResultResponse<Notice> pageList(Query query,String userId) {
+    public TableResultResponse<Notice> pageList(Query query, String userId) {
         Class<Notice> clazz = (Class<Notice>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
         Example.Criteria criteria = example.createCriteria();
-        if(query.entrySet().size()>0) {
+        if (query.entrySet().size() > 0) {
             for (Map.Entry<String, Object> entry : query.entrySet()) {
                 criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
             }
         }
-        criteria.andEqualTo("crtUser",userId);
+        criteria.andEqualTo("crtUser", userId);
         example.setOrderByClause("CRT_TIME DESC");
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<Notice> list = mapper.selectByExample(example);
-        return new TableResultResponse<Notice>(result.getPageSize(), result.getPageNum() ,result.getPages(), result.getTotal(), list);
+        return new TableResultResponse<Notice>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), list);
     }
 }

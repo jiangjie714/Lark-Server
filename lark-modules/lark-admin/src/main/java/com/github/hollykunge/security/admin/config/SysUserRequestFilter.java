@@ -37,15 +37,14 @@ public class SysUserRequestFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)request;
-        IJWTInfo infoFromToken = null;
         try {
-            infoFromToken = userAuthUtil.getInfoFromToken(req.getHeader("token"));
+            IJWTInfo infoFromToken = userAuthUtil.getInfoFromToken(req.getHeader("token"));
             if(infoFromToken != null &&
                     !Objects.equals(infoFromToken.getId(),sysAuthConfig.getSysUsername())){
                 filterChain.doFilter(request, response);
                 return;
             }
-            Map parameter = new HashMap(16);
+            Map<String, Object> parameter = new HashMap(16);
             parameter.put("userOrgCode", sysAuthConfig.getSysOrgCode());
             ParameterRequestWrapper wrapper = new ParameterRequestWrapper(req, parameter);
             filterChain.doFilter(wrapper, response);

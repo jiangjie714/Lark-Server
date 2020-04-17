@@ -14,6 +14,7 @@ import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -68,14 +69,15 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     private UserMapper userMapper;
 
     public User addUser(User entity) {
+        // 这个判断应该交给前端做
         if (SpecialStrUtils.check(entity.getName())) {
-            throw new BaseException("姓名中不能包含特殊字符...");
+            throw new FrontInputException("姓名中不能包含特殊字符。");
         }
         //校验身份证是否在数据库中存在
         User user = new User();
         user.setPId(entity.getPId());
         if (mapper.selectCount(user) > 0) {
-            throw new BaseException("身份证已存在...");
+            throw new FrontInputException("身份证号已存在。");
         }
         entity.setPId(entity.getPId().toLowerCase());
         String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(defaultPassword);
@@ -104,16 +106,15 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     @CacheClear(pre = AdminCommonConstant.CACHE_KEY_RPC_USER+"{1.id}")
     public void updateSelectiveById(User entity) {
         if (SpecialStrUtils.check(entity.getName())) {
-            throw new BaseException("姓名中不能包含特殊字符...");
+            throw new FrontInputException("姓名中不能包含特殊字符。");
         }
         super.updateSelectiveById(entity);
     }
 
-    @Override
-//    @CacheClear(keys = {"user","userByPid"})
     /**
      * 用户删除  根据用户id同步删除角色 和 权限 两张关联表的数据
      */
+    @Override
     public void deleteById(String id) {
         RoleUserMap roleUserMap = new RoleUserMap();
         roleUserMap.setUserId(id);
@@ -142,7 +143,6 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      * @param pid
      * @return
      */
-//    @Cache(key = "userByPid{1}")
     public User getUserByUserPid(String pid) {
         User user = new User();
         //用户登录时通过身份证号当做用户名登录
@@ -150,7 +150,6 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         return mapper.selectOne(user);
     }
 
-    //    @Cache(key = "user")
     public List<User> getUsers() {
         return mapper.selectAll();
     }
@@ -168,7 +167,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      */
     public void modifyRoles(String userId, String roles) {
         if (StringUtils.isEmpty(userId)) {
-            throw new BaseException("userId参数为null...");
+            throw new FrontInputException("用户id为空。");
         }
         RoleUserMap roleUserMap = new RoleUserMap();
         roleUserMap.setUserId(userId);
@@ -194,12 +193,11 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     public void insertUserPosition(String positionsIds,String userId){
         PositionUserMap positionUser = new PositionUserMap();
         positionUser.setUserId(userId);
-        int deleteCount = positionUserMapMapper.delete(positionUser);
-        PositionUserMap positionUserMapDo;
+        positionUserMapMapper.delete(positionUser);
         if (!StringUtils.isEmpty(positionsIds)) {
             String[] poiArr = positionsIds.split(",");
             for (String poi : poiArr) {
-                positionUserMapDo = new PositionUserMap();
+                PositionUserMap positionUserMapDo = new PositionUserMap();
                 positionUserMapDo.setPositionId(poi);
                 positionUserMapDo.setUserId(userId);
                 //给基类赋值
@@ -208,7 +206,6 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
             }
         }
     }
-
 
     @Override
     public TableResultResponse<User> selectByQuery(Query query) {
@@ -225,7 +222,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
                 if (SpecialStrUtils.check(entry.getValue().toString())) {
                     throw new BaseException("查询条件不能包含特殊字符...");
                 }
-                if (entry.getKey().equals("name")) {
+                if ("name".equals(entry.getKey())) {
                     criteria.andCondition("(REFA || REFB || NAME) like " + "'%'||'" + entry.getValue().toString() + "'||'%'")
                             .orCondition("(upper(REFA) || upper(REFB) || NAME) like " + "'%'||'" + entry.getValue().toString() + "'||'%'")
                             .orCondition("(REFA || REFB || upper(NAME)) like " + "'%'||'" + entry.getValue().toString().toUpperCase() + "'||'%'")
@@ -245,7 +242,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         }
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<User> pageUsers = ((UserBiz) AopContext.currentProxy()).getPageUsers(example);
-        pageUsers.stream().forEach((User user) ->{
+        pageUsers.forEach((User user) ->{
             String orgCode = user.getOrgCode();
             if(!StringUtils.isEmpty(orgCode)){
                 Org org = orgBiz.selectById(orgCode);
@@ -336,7 +333,6 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
                 criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
             }
         }
-        List<User> userEasyExcelList = userMapper.selectByExample(example);
-        return userEasyExcelList;
+        return userMapper.selectByExample(example);
     }
 }

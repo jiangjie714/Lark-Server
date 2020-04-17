@@ -181,9 +181,6 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
         if(users != null){
             orgUserList = JSONArray.parseArray(JSONObject.toJSONString(users),com.github.hollykunge.security.admin.api.dto.OrgUser.class);
             setUserOrOrgFlag(orgUserList,AdminCommonConstant.CONTACT_FLAG_USERNODE);
-            //先以在线状态降序，再以orderId升序
-//            orgUserList.sort(Comparator.comparing(com.github.hollykunge.security.admin.api.dto.OrgUser::getOnline)
-//                    .reversed().thenComparing(com.github.hollykunge.security.admin.api.dto.OrgUser::getOrderId));
         }
         return orgUserList;
     }

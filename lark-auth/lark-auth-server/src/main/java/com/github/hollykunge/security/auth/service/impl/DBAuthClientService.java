@@ -47,7 +47,7 @@ public class DBAuthClientService implements AuthClientService {
         client.setCode(clientId);
         client = clientMapper.selectOne(client);
         if(client==null||!client.getSecret().equals(secret)){
-            throw new ClientInvalidException("Client not found or Client secret is error!");
+            throw new ClientInvalidException("ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.");
         }
         return client;
     }
@@ -58,7 +58,7 @@ public class DBAuthClientService implements AuthClientService {
         client.setCode(clientId);
         client = clientMapper.selectOne(client);
         if(client==null||!client.getSecret().equals(secret)){
-            throw new ClientInvalidException("Client not found or Client secret is error!");
+            throw new ClientInvalidException("ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.");
         }
     }
 
