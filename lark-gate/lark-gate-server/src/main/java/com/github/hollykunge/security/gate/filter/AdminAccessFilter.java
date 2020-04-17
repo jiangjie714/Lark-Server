@@ -53,10 +53,6 @@ public class AdminAccessFilter extends ZuulFilter {
 
     @Value("${gate.ignore.startWith}")
     private String startWith;
-    @Value("${intranet.header.dnname}")
-    private String dnName;
-    @Value("${intranet.header.clientip}")
-    private String clientIp;
 
     @Value("${zuul.prefix}")
     private String zuulPrefix;
@@ -100,13 +96,13 @@ public class AdminAccessFilter extends ZuulFilter {
         }
         BaseContextHandler.setToken(null);
 
-        String dnname = request.getHeader(this.dnName);
+        String dnname = request.getHeader(CommonConstants.PERSON_ID_ARG);
         //获取内网网关地址
-        String clientIp = request.getHeader(this.clientIp);
+        String clientIp = request.getHeader(CommonConstants.CLIENT_IP_ARG);
         BaseContextHandler.set(CommonConstants.CLIENT_IP_ARG, clientIp);
         //将院网关ip携带给云雀服务，供其他服务使用
         if (!StringUtils.isEmpty(clientIp)) {
-            ctx.addZuulRequestHeader(this.clientIp, clientIp);
+            ctx.addZuulRequestHeader(CommonConstants.CLIENT_IP_ARG, clientIp);
         }
         String body = null;
         if (!ctx.isChunkedRequestBody()&&StringUtils.equals(requestUri,CommonConstants.AUTH_JWT_TOKEN)) {
@@ -119,7 +115,7 @@ public class AdminAccessFilter extends ZuulFilter {
                         String username = jsonObject.get("username").toString();
                         if(!StringUtils.isEmpty(username)&&
                                 Objects.equals(username,sysAuthConfig.getSysUsername())){
-                            ctx.addZuulRequestHeader(this.dnName,"");
+                            ctx.addZuulRequestHeader(CommonConstants.PERSON_ID_ARG,"");
                             return authorization(requestUri,ctx,request);
                         }
                     }
@@ -148,7 +144,7 @@ public class AdminAccessFilter extends ZuulFilter {
         }
 
         //将dnname设置为身份证信息
-        ctx.addZuulRequestHeader(this.dnName, PId.toLowerCase());
+        ctx.addZuulRequestHeader(CommonConstants.PERSON_ID_ARG, PId.toLowerCase());
         //秘钥登录
         return authorization(requestUri,ctx,request);
     }

@@ -84,8 +84,8 @@ public class MongoResultBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
         Nodes bus = new Nodes();
         bus.setShape("bus");
         bus.setType("bus");
-        bus.setX(450);
-        bus.setY(210);
+        bus.setX(377.5);
+        bus.setY(245.5);
         bus.setId("2efd998c");
         bus.setIndex(0);
 

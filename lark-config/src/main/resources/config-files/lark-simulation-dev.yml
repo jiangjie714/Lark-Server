@@ -1,5 +1,5 @@
 server:
-  port: 8777
+  port: 8899
   profiles:
     active: dev
 spring:
@@ -33,7 +33,7 @@ spring:
       filter: stat,wall,log4j
   data:
     mongodb:
-      uri: mongodb://jihang:123456@10.11.24.199:27017/test
+        uri: mongodb://jihang:123456@10.11.24.199:27017/test
 
 #eruka注册中心
 eureka:

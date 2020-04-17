@@ -78,12 +78,18 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
             if (systemId == null || systemId.equals("")) {
                 return new ObjectRestResponse().rel(false).msg("传入后台参数错误，请结束仿真");
             }
+            System.setProperty("jna.encoding", "GBK");
             String curState = baseBiz.queryState(systemId);
-            if (!PREPARING.equals(curState)) {
+            String ret = null;
+            if(PREPARING.equals(curState)) {
+                ret = DllInvoker.instance.dllSystemStart(systemId);
+            }
+            else if(PAUSING.equals(curState)) {
+                ret = DllInvoker.instance.dllSystemPause(systemId);
+            }
+            else {
                 return new ObjectRestResponse().rel(false).msg("后台状态错误，请结束仿真");
             }
-            System.setProperty("jna.encoding", "GBK");
-            String ret = DllInvoker.instance.dllSystemStart(systemId);
             return getObjectRestResponse(systemId, ret, RUNNING);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -102,16 +108,12 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
                 return new ObjectRestResponse().rel(false).msg("传入后台参数错误，请结束仿真");
             }
             String curState = baseBiz.queryState(systemId);
-            if (UNREADY.equals(curState) || PREPARING.equals(curState)) {
+            if (!RUNNING.equals(curState)) {
                 return new ObjectRestResponse().rel(false).msg("后台状态错误，请结束仿真");
             }
             System.setProperty("jna.encoding", "GBK");
             String ret = DllInvoker.instance.dllSystemPause(systemId);
-            if (RUNNING.equals(curState)) {
-                return getObjectRestResponse(systemId, ret, PAUSING);
-            } else {
-                return getObjectRestResponse(systemId, ret, RUNNING);
-            }
+            return getObjectRestResponse(systemId, ret, PAUSING);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ObjectRestResponse().rel(false).msg("系统后台错误，请结束仿真");

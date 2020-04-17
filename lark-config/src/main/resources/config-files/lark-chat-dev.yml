@@ -41,7 +41,7 @@ spring:
         max-active: 300
         max-idle: 100
         max-wait: 5000ms
-    host: 10.11.24.160
+    host: 10.11.24.199
     port: 6379
     password: 123456
     database: 3
