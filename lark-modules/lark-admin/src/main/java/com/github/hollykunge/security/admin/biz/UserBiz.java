@@ -14,9 +14,11 @@ import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.util.EasyExcelUtil;
 import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.util.PassWordEncoderUtil;
+import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
+import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
+import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
@@ -36,14 +38,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author 协同设计小组
@@ -72,6 +75,10 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     private UserMapper userMapper;
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private SysAuthConfig sysAuthConfig;
+    @Autowired
+    private UserAuthUtil userAuthUtil;
 
     public User addUser(User entity) {
         // 这个判断应该交给前端做
@@ -345,7 +352,13 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      * 修改用户密码业务
      * @param changeUserPwdDto
      */
-    public void changeUserPwd(ChangeUserPwdDto changeUserPwdDto){
+    public void changeUserPwd(ChangeUserPwdDto changeUserPwdDto, HttpServletRequest request) throws Exception {
+        String token = request.getHeader("token");
+        //解析token
+        IJWTInfo tokenUser = userAuthUtil.getInfoFromToken(token);
+        if(Objects.equals(tokenUser.getUniqueName(),sysAuthConfig.getSysUsername())){
+            throw new FrontInputException("超级管理员不能修改密码...");
+        }
         if(StringUtils.isEmpty(changeUserPwdDto.getUsername())){
             throw new FrontInputException("用户名不能为空...");
         }
