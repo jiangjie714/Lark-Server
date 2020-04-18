@@ -43,10 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author 协同设计小组
@@ -373,6 +370,9 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         User tempUser = new User();
         tempUser.setId(user.getId());
         tempUser.setPassword(PassWordEncoderUtil.ENCODER.encode(changeUserPwdDto.getNewPassword()));
-        updateSelectiveById(tempUser);
+        tempUser.setUpdTime(new Date());
+        tempUser.setUpdUser(tokenUser.getId());
+        tempUser.setUpdName(tokenUser.getName());
+        userMapper.updateByPrimaryKeySelective(tempUser);
     }
 }
