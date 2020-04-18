@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.admin.rest;
 
-import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
@@ -9,17 +8,11 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.entity.Position;
 import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
-import com.github.hollykunge.security.admin.mapper.OrgMapper;
-import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
-import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
-import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
-import com.github.hollykunge.security.admin.util.EasyExcelUtil;
-import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.FrontUser;
-import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -31,11 +24,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -229,7 +220,7 @@ public class UserController extends BaseController<UserBiz, User> {
     public ListRestResponse<List<AdminUser>> getUserByNameLike(@RequestParam("nameLike") String nameLike) {
         List<AdminUser> adminUsers = new ArrayList<>();
         if (StringUtils.isEmpty(nameLike)) {
-            throw new ClientInvalidException("Name is empty");
+            throw new UserInvalidException("用户名为空。");
         } else {
             List<User> users = baseBiz.selectUserByNameLike(nameLike);
             users.stream().forEach(user -> {
@@ -253,8 +244,7 @@ public class UserController extends BaseController<UserBiz, User> {
     @ResponseBody
     public TableResultResponse<User> findUsers(@RequestParam Map<String, Object> params) {
         if (StringUtils.isEmpty(params.get("name"))) {
-            //return new TableResultResponse<>();
-            throw new ClientInvalidException("params is empty");
+            throw new FrontInputException("用户名为空。");
         }
         return baseBiz.selectByQuery(new Query(params));
     }

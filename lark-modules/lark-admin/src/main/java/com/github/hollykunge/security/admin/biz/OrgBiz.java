@@ -125,7 +125,6 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
         return userList;
     }
 
-    //    @CacheClear(pre = "permission")
     public void modifyOrgUsers(String orgId, String users) {
         OrgUserMap orgUserMap = new OrgUserMap();
         orgUserMap.setOrgId(orgId);

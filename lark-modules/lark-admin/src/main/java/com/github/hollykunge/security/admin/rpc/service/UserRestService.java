@@ -7,6 +7,7 @@ import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.redisKey.IAdminRpcUserKey;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ public class UserRestService {
     @Cache(generator = IAdminRpcUserKey.class,key = AdminCommonConstant.CACHE_KEY_RPC_USER,expire = 525600)
     public String getUserInfo(String pid, String userId) {
         if (StringUtils.isEmpty(pid) && StringUtils.isEmpty(userId)) {
-            throw new BaseException("pid或者userId不能都为空...");
+            throw new UserInvalidException("pid或者userId为空。");
         }
         List<AdminUser> userInfo = userMapper.findByUserIdOrPid(userId, pid);
         return JSONObject.toJSONString(userInfo);

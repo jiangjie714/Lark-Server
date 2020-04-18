@@ -120,8 +120,8 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
             resourceRoleMapMapper.insertSelective(authority);
         }
         //并行添加element到resourceRoleMap中
-        permissionList.stream().forEach(adminPermission -> {
-            adminPermission.getActionEntitySetList().stream().forEach(element -> {
+        permissionList.forEach(adminPermission -> {
+            adminPermission.getActionEntitySetList().forEach(element -> {
                 if (element.getDefaultCheck()) {
                     ResourceRoleMap resourceRoleMap = new ResourceRoleMap();
                     resourceRoleMap.setResourceId(element.getId());
@@ -143,7 +143,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
     private List<String> getPermissionMenu(List<AdminPermission> permissionList) {
         List<String> listResult = new ArrayList<>();
         if (permissionList.isEmpty()) {
-            throw new FrontInputException("权限列表为空。");
+            throw new FrontInputException("传入的权限列表为空。");
         }
         permissionList.stream().filter(permissionEntity -> permissionEntity.getActionEntitySetList().stream()
                 .anyMatch(actionEntitySet -> actionEntitySet.getDefaultCheck() == true))
@@ -156,7 +156,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
 
     private void findParentID(Map<String, String> map, Set<String> relationMenus, String id) {
         String parentId = map.get(id);
-        if (String.valueOf(AdminCommonConstant.ROOT).equals(id)) {
+        if ((AdminCommonConstant.ROOT).equals(id)) {
             return;
         }
         relationMenus.add(parentId);
@@ -259,7 +259,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
         //定义固定返回参数
         List<FrontPermission> resultPermission = new ArrayList<>();
         //获取权限下的menu
-        List<Menu> menus = null;
+        List<Menu> menus = new ArrayList<>();
         //判断是否是系统的超级管理员
         if(Objects.equals(roleId,sysAuthConfig.getSysUsername())){
             menus = menuMapper.selectAll();
@@ -267,8 +267,9 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
         if(!Objects.equals(roleId,sysAuthConfig.getSysUsername())){
             menus = menuMapper.selectMenuByRoleId(roleId);
         }
+
         for (Menu menu : menus) {
-            List<Element> elementList = null;
+            List<Element> elementList = new ArrayList<>();
             if(!Objects.equals(roleId,sysAuthConfig.getSysUsername())){
                 // roleId下的element
                 elementList = elementMapper.getAuthorityMenuElement(roleId, menu.getId(), AdminCommonConstant.RESOURCE_TYPE_BTN);
@@ -324,7 +325,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
             menu.setCode(menuCode);
             menu = menuMapper.selectOne(menu);
             if (menu == null) {
-                throw new BaseException("系统中菜单信息集中不匹配code");
+                throw new FrontInputException("找不到与{"+menuCode+"}匹配的菜单项。");
             }
             Element element = new Element();
             element.setMenuId(menu.getId());

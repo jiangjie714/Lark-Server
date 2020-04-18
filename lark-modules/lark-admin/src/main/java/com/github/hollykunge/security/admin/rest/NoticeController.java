@@ -66,9 +66,7 @@ public class NoticeController extends BaseController<NoticeBiz,Notice> {
         //查询列表数据
         Query query = new Query(params);
         String userID = request.getHeader("userId");
-        if(StringUtils.isEmpty(userID)){
-            throw new BaseException("request contains no user...");
-        }
+
         return baseBiz.pageList(query,userID);
     }
 }

@@ -101,9 +101,8 @@ public class RoleController extends BaseController<RoleBiz, Role> {
 
     private List<RoleTree> getTree(List<Role> roles, String root) {
         List<RoleTree> trees = new ArrayList<>();
-        RoleTree node = null;
         for (Role role : roles) {
-            node = new RoleTree();
+            RoleTree node = new RoleTree();
             node.setLabel(role.getName());
             String jsonNode = JSON.toJSONString(role);
             node = JSON.parseObject(jsonNode,RoleTree.class);

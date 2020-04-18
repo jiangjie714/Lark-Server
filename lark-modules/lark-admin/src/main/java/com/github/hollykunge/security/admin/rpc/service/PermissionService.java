@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 /**
  * 初始化用户权限服务
+ *
  * @author 协同设计小组
  * @date 2017/9/12
  */
@@ -58,7 +59,7 @@ public class PermissionService {
     @Autowired
     private PositionBiz positionBiz;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT);
 
     @Autowired
     private ProduceSenderConfig produceSenderConfig;
@@ -67,6 +68,7 @@ public class PermissionService {
 
     /**
      * 获取用户信息
+     *
      * @param userId
      * @return
      */
@@ -80,15 +82,16 @@ public class PermissionService {
 
     /**
      * 验证用户
+     *
      * @param userPid
      * @param password
      * @return
      */
-    public AdminUser validate(String userPid, String password){
+    public AdminUser validate(String userPid, String password) {
         AdminUser info = new AdminUser();
         //判断是否为系统超级管理员
-        if(Objects.equals(userPid,sysAuthConfig.getSysUsername())){
-            if(!Objects.equals(password,sysAuthConfig.getSysPassword())){
+        if (Objects.equals(userPid, sysAuthConfig.getSysUsername())) {
+            if (!Objects.equals(password, sysAuthConfig.getSysPassword())) {
                 throw new UserTokenException("超级管理员密码错误");
             }
             info.setId(sysAuthConfig.getSysUsername());
@@ -99,7 +102,7 @@ public class PermissionService {
             return info;
         }
         User user = userBiz.getUserByUserPid(userPid);
-        if(user==null){
+        if (user == null) {
             throw new UserTokenException("没有该用户");
         }
         if (!encoder.matches(password, user.getPassword())) {
@@ -112,6 +115,7 @@ public class PermissionService {
 
     /**
      * 获取所有的资源权限，包括菜单和按钮
+     *
      * @return
      */
     public List<FrontPermission> getAllPermission() {
@@ -126,6 +130,7 @@ public class PermissionService {
 
     /**
      * 菜单权限
+     *
      * @param menus
      * @param result
      */
@@ -143,34 +148,33 @@ public class PermissionService {
 
     /**
      * 根据userId获取角色所属菜单功能
-     * @param userId
-     * @return
      *
-     * 20-2-21 fansq 修改异常类型 baseException ->ClientInvalidException
+     * @param userId
+     * @return 20-2-21 fansq 修改异常类型 baseException ->ClientInvalidException
      */
     public List<FrontPermission> getPermissionByUserId(String userId) {
-        String roleId = null;
-        if(Objects.equals(userId,sysAuthConfig.getSysUsername())) {
+        String roleId = "";
+        if (Objects.equals(userId, sysAuthConfig.getSysUsername())) {
             roleId = userId;
-        }else{
+        } else {
             List<Role> roleByUserId = roleBiz.getRoleByUserId(userId);
-            if(roleByUserId.size()==0){
-                throw new ClientInvalidException("No permission to request the resource ");
+            if (roleByUserId.size() == 0) {
+                throw new ClientInvalidException("用户"+userId+"无角色信息。");
             }
             roleId = roleByUserId.get(0).getId();
         }
-        List<FrontPermission> authorityMenu = roleBiz.frontAuthorityMenu(roleId);
-        return authorityMenu;
+        return roleBiz.frontAuthorityMenu(roleId);
     }
 
     /**
      * 元素权限
+     *
      * @param result
      * @param elements
      */
     private void element2permission(List<FrontPermission> result, List<Element> elements) {
 
-        for(FrontPermission frontPermission : result){
+        for (FrontPermission frontPermission : result) {
 
             List<Element> tempElement = elements.stream()
                     .filter((Element e) -> frontPermission.getMenuId().contains(e.getMenuId()))
@@ -196,6 +200,7 @@ public class PermissionService {
 
     /**
      * 获取前端用户信息
+     *
      * @param token
      * @return
      * @throws Exception
@@ -204,18 +209,18 @@ public class PermissionService {
         String userId = userAuthUtil.getInfoFromToken(token).getId();
         if (userId == null) {
             //20-2-21 fansq添加异常返回类型
-            throw new ClientInvalidException("Token parsing user ID exception");
+            throw new UserTokenException("解析token异常。");
         }
-         FrontUser frontUser = new FrontUser();
+        FrontUser frontUser = new FrontUser();
         //如果是超级管理员，则显示所有的菜单和操作
-        if(Objects.equals(sysAuthConfig.getSysUsername(),userId)){
+        if (Objects.equals(sysAuthConfig.getSysUsername(), userId)) {
             frontUser.setId(userAuthUtil.getInfoFromToken(token).getId());
             frontUser.setName(userAuthUtil.getInfoFromToken(token).getName());
             frontUser.setPId(userAuthUtil.getInfoFromToken(token).getUniqueName());
             frontUser.setSecretLevel(userAuthUtil.getInfoFromToken(token).getSecretLevel());
             frontUser.setPositions(userAuthUtil.getInfoFromToken(token).getId());
         }
-        if(!Objects.equals(sysAuthConfig.getSysUsername(),userId)){
+        if (!Objects.equals(sysAuthConfig.getSysUsername(), userId)) {
             User user = userBiz.getUserByUserId(userId);
             BeanUtils.copyProperties(user, frontUser);
             frontUser.setId(user.getId());
@@ -230,19 +235,20 @@ public class PermissionService {
         ChronoZonedDateTime<LocalDate> zonedDateTime = LocalDate.now().atStartOfDay(zoneId);
         Date nowDate = Date.from(zonedDateTime.toInstant());
         hotMapVO.setMapDate(nowDate);
-        produceSenderConfig.sendAndNoConfirm(UUIDUtils.generateShortUuid(),hotMapVO);
+        produceSenderConfig.sendAndNoConfirm(UUIDUtils.generateShortUuid(), hotMapVO);
         return frontUser;
     }
 
     /**
      * 获取用户角色信息
+     *
      * @param userId
      * @return
      */
     public UserRole getUserRoleByUserId(String userId) {
         UserRole userRole = new UserRole();
         //如果是超级管理员
-        if(Objects.equals(userId,sysAuthConfig.getSysUsername())){
+        if (Objects.equals(userId, sysAuthConfig.getSysUsername())) {
             List<FrontPermission> frontPermissionList = this.getPermissionByUserId(userId);
             userRole.setFrontPermissionList(frontPermissionList);
             userRole.setId("system");

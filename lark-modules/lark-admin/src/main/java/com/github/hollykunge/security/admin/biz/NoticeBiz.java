@@ -7,6 +7,7 @@ import com.github.hollykunge.security.admin.mapper.NoticeMapper;
 
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.common.biz.BaseBiz;
+import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
@@ -67,7 +68,7 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
      */
     public void sentNotice(Notice entity) {
         if (StringUtils.isEmpty(entity.getId())) {
-            throw new FrontInputException("ERROR LARK: notice id is null.");
+            throw new FrontInputException("该通知已不存在。");
         }
         entity.setIsSend("1");
         mapper.updateByPrimaryKeySelective(entity);
@@ -90,7 +91,7 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
     public void sentCancelNotice(String id) {
         Notice entity = new Notice();
         if (StringUtils.isEmpty(id)) {
-            throw new FrontInputException("ERROR LARK MQ:notice id is null.");
+            throw new FrontInputException("该通知已不存在。");
         }
         entity.setId(id);
         entity.setIsSend("0");
@@ -103,6 +104,9 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
     }
 
     public TableResultResponse<Notice> pageList(Query query, String userId) {
+        if(StringUtils.isEmpty(userId)){
+            throw new FrontInputException("没有当前用户。");
+        }
         Class<Notice> clazz = (Class<Notice>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
         Example.Criteria criteria = example.createCriteria();
