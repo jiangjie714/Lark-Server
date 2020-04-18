@@ -2,7 +2,9 @@ package com.github.hollykunge.security.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.ServiceHandleException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -23,6 +25,7 @@ import java.util.Set;
 
 /**
  * 用户卡片接口
+ *
  * @author zhhongyu
  * @since 2019-06-11
  */
@@ -32,9 +35,11 @@ public class UserCardController extends BaseController<UserCardService, UserCard
 
     @Autowired
     private CardService cardService;
+
     /**
      * todo:使用
      * 给用户设置卡片接口
+     *
      * @param userCard 卡片实体类
      * @return
      */
@@ -43,34 +48,35 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @ResponseBody
     public ObjectRestResponse<UserCard> add(@RequestBody UserCard userCard) {
         String userId = request.getHeader("userId");
-        if(StringUtils.isEmpty(userId)){
+        if (StringUtils.isEmpty(userId)) {
             throw new UserTokenException("请求中不包含用户信息。");
         }
         userCard.setUserId(userId);
         // 非幂等问题不用加多余判断
-       if(baseBiz.selectCount(userCard) > 0){
-           return new ObjectRestResponse<>().rel(false).msg("设置卡片失败，已经添加过了。");
-       }
+        if (baseBiz.selectCount(userCard) > 0) {
+            return new ObjectRestResponse<>().rel(false).msg("设置卡片失败，已经添加过了。");
+        }
         return super.add(userCard).rel(true).msg("设置成功。");
     }
 
     /**
      * todo:使用
      * 用户删除显示卡片
+     *
      * @param cardId 卡片id
      * @return
      */
     @RequestMapping(value = "/myself", method = RequestMethod.DELETE)
     @ResponseBody
     public ObjectRestResponse<CardInfo> removeUserCard(@RequestParam String cardId) {
-        String userID =  request.getHeader("userId");
-        if(StringUtils.isEmpty(userID)){
-            throw new BaseException("request contains no user...");
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)) {
+            throw new BaseException("");
         }
         UserCard userCard = new UserCard();
-        userCard.setUserId(userID);
+        userCard.setUserId(userId);
         userCard.setCardId(cardId);
-        if(baseBiz.selectCount(userCard) == 0){
+        if (baseBiz.selectCount(userCard) == 0) {
             return new ObjectRestResponse<>().msg("用户不显示该卡片,不需要移除...");
         }
         CardInfo cardInfo = cardService.selectById(cardId);
@@ -81,17 +87,18 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     /**
      * todo:使用
      * 获取用户要展示的卡片
+     *
      * @return
      */
     @RequestMapping(value = "/myself", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<UserCardVO>> userCards(HttpServletRequest request) {
-        String userID =  request.getHeader("userId");
-        if(StringUtils.isEmpty(userID)){
-            throw new BaseException("request contains no user...");
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)) {
+            throw new UserTokenException("请求token中没有用户信息。");
         }
-        List<UserCardVO> userCardVOS = baseBiz.userCards(userID);
-        return new ListRestResponse("",userCardVOS.size(),userCardVOS);
+        List<UserCardVO> userCardVOList = baseBiz.userCards(userId);
+        return new ListRestResponse("", userCardVOList.size(), userCardVOList);
     }
 
     /**
@@ -99,50 +106,53 @@ public class UserCardController extends BaseController<UserCardService, UserCard
      * 用户改变卡片的位置
      * fansq -20-1-9
      * 修改map类型 因为id变化
+     *
      * @return
      */
     @RequestMapping(value = "/myself/move", method = RequestMethod.PUT)
     @ResponseBody
-    public ObjectRestResponse modifyUserCards(@RequestParam String data,HttpServletRequest request) {
-        if(StringUtils.isEmpty(data)){
-            throw new BaseException("参数为null...");
+    public ObjectRestResponse modifyUserCards(@RequestParam String data, HttpServletRequest request) {
+        if (StringUtils.isEmpty(data)) {
+            throw new FrontInputException("输入参数为空。");
         }
         String[] datas = data.split(",");
-        for (String param: datas) {
-            param = "{"+param+"}";
-            Map<Object,Integer> map = JSONObject.parseObject(param,Map.class);
-            if(map == null){
-                throw new BaseException("接口参数不能被转为map...");
+        for (String param : datas) {
+            param = "{" + param + "}";
+            Map<Object, Integer> map = JSONObject.parseObject(param, Map.class);
+            if (map == null) {
+                throw new ServiceHandleException("ERROR LARK: param cannot be transfer to Map. { class=UserCardController" + ",param=" + param + "}");
             }
-            String userID =  request.getHeader("userId");
-            if(StringUtils.isEmpty(userID)){
-                throw new BaseException("request contains no user...");
+            String userId = request.getHeader("userId");
+            if (StringUtils.isEmpty(userId)) {
+                throw new UserTokenException("请求token中没有用户信息。");
             }
             Set<Object> sets = map.keySet();
             for (Object temp : sets) {
                 UserCard userCard = new UserCard();
-                userCard.setUserId(userID);
-                userCard.setCardId(temp+"");
-                userCard.setI(map.get(temp)+"");
+                userCard.setUserId(userId);
+                userCard.setCardId(temp + "");
+                userCard.setI(map.get(temp) + "");
                 baseBiz.modifyUserCards(userCard);
             }
         }
         return new ObjectRestResponse().data(true).rel(true);
     }
+
     /**
      * todo:使用
      * 获取卡片集，如果用户点击展示该卡片，
      * 该实体类defaultChecked字段为true
+     *
      * @return
      */
     @RequestMapping(value = "/collection", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<UserCardVO>> allCard() {
-        String userID =  request.getHeader("userId");
-        if(StringUtils.isEmpty(userID)){
-            throw new BaseException("request contains no user...");
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)) {
+            throw new UserTokenException("请求token中没有用户信息。");
         }
-        List<UserCardVO> list = baseBiz.allCard(userID);
-        return new ListRestResponse("",list.size(),list);
+        List<UserCardVO> list = baseBiz.allCard(userId);
+        return new ListRestResponse("", list.size(), list);
     }
 }

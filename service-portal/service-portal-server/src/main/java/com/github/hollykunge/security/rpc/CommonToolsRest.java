@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.rpc;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
@@ -51,7 +52,7 @@ public class CommonToolsRest{
         String uuid = UUIDUtils.generateShortUuid();
         tools.setId(uuid);
         if(commonToolsService.selectCount(tools)>0){
-            return new ObjectRestResponse<>().rel(false).msg("error,this commonTool is exist");
+            throw new UserInvalidException("请误重复添加当前链接。");
         };
         commonToolsService.insertSelective(tools);
         if(Constants.PORTALORGUSERSTATUSONE.equals(tools.getPortalOrgUserStatus())){
@@ -91,14 +92,6 @@ public class CommonToolsRest{
                 userCommonTools.setId(UUIDUtils.generateShortUuid());
                 userCommonToolsList.add(userCommonTools);
             }
-//            //在插入数据之前先查询数据库中是否存在 指定人员对应的常用链接
-//            List<UserCommonTools> userCommonTools = userCommonToolsService.selectUserCommonTools(tools.getId(),userCommonToolsList);
-//            if(userCommonTools.size()>0){
-//                List<UserCommonTools> cs = userCommonToolsList.stream().filter(uct -> userCommonTools.stream()
-//                        .noneMatch(ucts -> uct.getUserId().equals(ucts.getUserId()))
-//                ).collect(Collectors.toList());
-//                userCommonToolsService.insertCommonTools(cs);
-//            }
             userCommonToolsService.deleteCommonTools(tools.getId(),userCommonToolsList);
             userCommonToolsService.insertCommonTools(userCommonToolsList);
         }
