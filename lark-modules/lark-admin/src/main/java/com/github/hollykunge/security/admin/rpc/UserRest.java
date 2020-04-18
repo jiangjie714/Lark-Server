@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.api.authority.FrontPermission;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.api.dto.ChangeUserPwdDto;
 import com.github.hollykunge.security.admin.api.dto.OrgUser;
 import com.github.hollykunge.security.admin.api.service.AdminUserServiceFeignClient;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
@@ -14,6 +15,7 @@ import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -148,5 +150,16 @@ public class UserRest implements AdminUserServiceFeignClient {
         }
         List<OrgUser> orgUsers = orgBiz.getChildOrgUser(orgCode);
         return new ListRestResponse("", orgUsers.size(), orgUsers);
+    }
+
+    /**
+     * 用户修改密码接口
+     * @param changeUserPwdDto
+     * @return
+     */
+    @RequestMapping(value = "/user/pwd",method = RequestMethod.PUT)
+    public ObjectRestResponse<Boolean> changeUserPwd(@RequestBody ChangeUserPwdDto changeUserPwdDto){
+        userBiz.changeUserPwd(changeUserPwdDto);
+        return new ObjectRestResponse<>().data(true).rel(true);
     }
 }

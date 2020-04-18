@@ -9,13 +9,11 @@ import com.github.hollykunge.security.admin.entity.Element;
 import com.github.hollykunge.security.admin.entity.Menu;
 import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
+import com.github.hollykunge.security.admin.util.PassWordEncoderUtil;
 import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
 
-import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.constant.UserConstant;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.util.StringHelper;
@@ -24,7 +22,6 @@ import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.mq.HotMapVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,8 +55,6 @@ public class PermissionService {
     private UserAuthUtil userAuthUtil;
     @Autowired
     private PositionBiz positionBiz;
-
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT);
 
     @Autowired
     private ProduceSenderConfig produceSenderConfig;
@@ -105,7 +100,7 @@ public class PermissionService {
         if (user == null) {
             throw new UserTokenException("没有该用户");
         }
-        if (!encoder.matches(password, user.getPassword())) {
+        if (!PassWordEncoderUtil.ENCODER.matches(password, user.getPassword())) {
             throw new UserTokenException("密码错误");
         }
         BeanUtils.copyProperties(user, info);
