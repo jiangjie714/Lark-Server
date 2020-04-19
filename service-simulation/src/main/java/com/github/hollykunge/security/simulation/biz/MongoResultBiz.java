@@ -158,4 +158,17 @@ public class MongoResultBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
         return rootDocument;
     }
 
+    public boolean isStruct(String systemId, String topic) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("SYSTEM_ID").is(systemId));
+        SystemResult systemResult = mongoTemplate.findOne(query, SystemResult.class);
+        assert systemResult != null;
+        List<ActiveDataTypes> types = systemResult.getActiveDataTypes();
+        for(ActiveDataTypes one : types) {
+            if(one.getName().equals(topic)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
