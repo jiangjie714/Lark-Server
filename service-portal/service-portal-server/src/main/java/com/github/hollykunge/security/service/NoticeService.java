@@ -3,6 +3,7 @@ package com.github.hollykunge.security.service;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;
@@ -43,10 +44,11 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
      * fansq
      * 20-2-17
      * 查询所有系统公告
+     *
      * @param orgCode
      * @return
      */
-    public List<Notice> selectNoticList(String orgCode){
+    public List<Notice> selectNoticList(String orgCode) {
         Notice notice = new Notice();
         notice.setOrgCode(orgCode);
         if (StringUtils.isEmpty(orgCode)) {
@@ -62,7 +64,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
                 if (StringUtils.isEmpty(notice.getOrgCode())) {
                     return false;
                 }
-                if(org.apache.commons.lang3.StringUtils.equals(notice.getType(),"system")){
+                if (org.apache.commons.lang3.StringUtils.equals(notice.getType(), "system")) {
                     return true;
                 }
                 return false;
@@ -76,20 +78,21 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
      * fansq
      * 20-2-17
      * 查询除去系统公告  属于本部门的密级小于当前登录人的公告
+     *
      * @param orgCode
      * @param userSecretLevel
      * @return
      */
-    public List<Notice> selectNotic(String orgCode,String userSecretLevel){
+    public List<Notice> selectNotic(String orgCode, String userSecretLevel) {
         Notice entity = new Notice();
         entity.setOrgCode(orgCode);
         if (StringUtils.isEmpty(orgCode)) {
-            throw new BaseException("当前登录人没有组织编码...");
+            throw new UserTokenException("当前登录人没有组织编码。");
         }
         Example example = new Example(Notice.class);
         example.setOrderByClause("SEND_TIME DESC");
         Example.Criteria criteria = example.createCriteria();
-        criteria.andNotEqualTo("type","system");
+        criteria.andNotEqualTo("type", "system");
         List<Notice> notices = mapper.selectByExample(example);
         notices = notices.stream().filter(new Predicate<Notice>() {
             @Override
@@ -100,7 +103,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
                 }
                 if (entity.getOrgCode().contains(notice.getOrgCode())) {
                     //密级小于当前人的密级显示
-                    if (isShow(userSecretLevel,notice.getSecretLevel())) {
+                    if (isShow(userSecretLevel, notice.getSecretLevel())) {
                         return true;
                     }
                     return false;
@@ -114,7 +117,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
 
     public List<Notice> selectList(Notice entity, String userSecretLevel) {
         if (StringUtils.isEmpty(entity.getOrgCode())) {
-            throw new BaseException("当前登录人没有组织编码...");
+            throw new UserTokenException("当前登录人没有组织编码。");
         }
         Example example = new Example(Notice.class);
         example.setOrderByClause("SEND_TIME DESC");
@@ -128,7 +131,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
                 }
                 if (entity.getOrgCode().contains(notice.getOrgCode())) {
                     //密级小于当前人的密级显示
-                    if (isShow(userSecretLevel,notice.getSecretLevel())) {
+                    if (isShow(userSecretLevel, notice.getSecretLevel())) {
                         return true;
                     }
                     return false;
@@ -152,9 +155,9 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
         return false;
     }
 
-    public TableResultResponse<Notice> page(Query query,String userSecretLevel,String orgCode) {
+    public TableResultResponse<Notice> page(Query query, String userSecretLevel, String orgCode) {
         Example example = new Example(Notice.class);
-        if(query.entrySet().size()>0) {
+        if (query.entrySet().size() > 0) {
             Example.Criteria criteria = example.createCriteria();
             for (Map.Entry<String, Object> entry : query.entrySet()) {
                 criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
@@ -172,7 +175,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
                 }
                 if (orgCode.contains(notice.getOrgCode())) {
                     //密级小于当前人的密级显示
-                    if (isShow(userSecretLevel,notice.getSecretLevel())) {
+                    if (isShow(userSecretLevel, notice.getSecretLevel())) {
                         return true;
                     }
                     return false;
@@ -180,22 +183,23 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
                 return false;
             }
         }).collect(Collectors.toList());
-        return new TableResultResponse<Notice>(result.getPageSize(), result.getPageNum() ,result.getPages(), result.getTotal(), list);
+        return new TableResultResponse<Notice>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), list);
     }
 
     /**
      * fansq
      * 20-2-19
      * 删除指定公告
+     *
      * @param noticeVO 参数公告实体
      * @return count
      */
-    public int deleteNoticByFromId(NoticeVO noticeVO){
+    public int deleteNoticByFromId(NoticeVO noticeVO) {
         Notice notice = new Notice();
-        BeanUtils.copyProperties(noticeVO,notice);
+        BeanUtils.copyProperties(noticeVO, notice);
         Example example = new Example(Notice.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("fromId",notice.getFromId());
+        criteria.andEqualTo("fromId", notice.getFromId());
         return noticeMapper.deleteByExample(example);
     }
 

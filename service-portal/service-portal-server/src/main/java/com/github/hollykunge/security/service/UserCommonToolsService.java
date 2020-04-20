@@ -2,6 +2,7 @@ package com.github.hollykunge.security.service;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
@@ -137,11 +138,11 @@ public class UserCommonToolsService extends BaseBiz<UserCommonToolsMapper, UserC
 
     private List<UserCommonToolsVO> setDefaultChecked(List<CommonTools> commonTools,List<UserCommonTools> userCommonToolsList){
         List<UserCommonToolsVO> result = new ArrayList<>();
-        commonTools.stream().forEach(commonTool -> {
+        commonTools.forEach(commonTool -> {
             UserCommonToolsVO userCommonToolsVO = new UserCommonToolsVO();
             BeanUtils.copyProperties(commonTool,userCommonToolsVO);
             if(StringUtils.isEmpty(commonTool.getId())){
-                throw new BaseException("datasource contains error data...");
+                throw new FrontInputException("常用链接id异常。");
             }
             boolean isContains = userCommonToolsList.parallelStream().
                     anyMatch(userCommonTool -> commonTool.getId().equals(userCommonTool.getToolId()));
@@ -165,20 +166,18 @@ public class UserCommonToolsService extends BaseBiz<UserCommonToolsMapper, UserC
         UserCommonTools userCommonTool = new UserCommonTools();
         userCommonTool.setUserId(userId);
         List<UserCommonTools> userCommonTools = mapper.select(userCommonTool);
-        userCommonTools.stream().forEach(userTool ->{
+        userCommonTools.forEach(userTool ->{
             UserCommonToolsVO userCommonToolsVO = new UserCommonToolsVO();
             if(StringUtils.isEmpty(userTool.getToolId())){
-                throw new BaseException("datasource contains error data...");
+                throw new FrontInputException("常用链接信息异常。");
             }
             CommonTools commonTools = commonToolsMapper.selectByPrimaryKey(userTool.getToolId());
             BeanUtils.copyProperties(commonTools,userCommonToolsVO);
-            if(commonTools != null){
-                userCommonToolsVO.setTitle(commonTools.getTitle());
-                userCommonToolsVO.setUri(commonTools.getUri());
-                userCommonToolsVO.setId(commonTools.getId());
-                userCommonToolsVO.setDefaultChecked(true);
+            userCommonToolsVO.setTitle(commonTools.getTitle());
+            userCommonToolsVO.setUri(commonTools.getUri());
+            userCommonToolsVO.setId(commonTools.getId());
+            userCommonToolsVO.setDefaultChecked(true);
 
-            }
             result.add(userCommonToolsVO);
         });
         return result;
