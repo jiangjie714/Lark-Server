@@ -49,7 +49,7 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     public ObjectRestResponse<UserCard> add(@RequestBody UserCard userCard) {
         String userId = request.getHeader("userId");
         if (StringUtils.isEmpty(userId)) {
-            throw new UserTokenException("请求中不包含用户信息。");
+            throw new FrontInputException("请求中不包含用户信息。");
         }
         userCard.setUserId(userId);
         // 非幂等问题不用加多余判断
@@ -95,7 +95,7 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     public ListRestResponse<List<UserCardVO>> userCards(HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isEmpty(userId)) {
-            throw new UserTokenException("请求token中没有用户信息。");
+            throw new FrontInputException("请求token中没有用户信息。");
         }
         List<UserCardVO> userCardVOList = baseBiz.userCards(userId);
         return new ListRestResponse("", userCardVOList.size(), userCardVOList);
@@ -124,7 +124,7 @@ public class UserCardController extends BaseController<UserCardService, UserCard
             }
             String userId = request.getHeader("userId");
             if (StringUtils.isEmpty(userId)) {
-                throw new UserTokenException("请求token中没有用户信息。");
+                throw new FrontInputException("请求token中没有用户信息。");
             }
             Set<Object> sets = map.keySet();
             for (Object temp : sets) {
@@ -150,7 +150,7 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     public ListRestResponse<List<UserCardVO>> allCard() {
         String userId = request.getHeader("userId");
         if (StringUtils.isEmpty(userId)) {
-            throw new UserTokenException("请求token中没有用户信息。");
+            throw new FrontInputException("请求token中没有用户信息。");
         }
         List<UserCardVO> list = baseBiz.allCard(userId);
         return new ListRestResponse("", list.size(), list);
