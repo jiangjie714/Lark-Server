@@ -22,6 +22,7 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
@@ -76,6 +77,8 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     private SysAuthConfig sysAuthConfig;
     @Autowired
     private UserAuthUtil userAuthUtil;
+    @Autowired
+    private UserBiz userBiz;
 
     public User addUser(User entity) {
         // 这个判断应该交给前端做
@@ -366,9 +369,15 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
             throw new FrontInputException("原始密码不能为空...");
         }
         //校验原始的用户名和密码是否正确
-        AdminUser user = permissionService.validate(changeUserPwdDto.getUsername(), changeUserPwdDto.getOldPassword());
+        User dataUser = userBiz.getUserByUserPid(changeUserPwdDto.getUsername());
+        if(dataUser == null){
+            throw new FrontInputException("用户不存在...");
+        }
+        if (!PassWordEncoderUtil.ENCODER.matches(changeUserPwdDto.getOldPassword(), dataUser.getPassword())) {
+            throw new FrontInputException("密码错误...");
+        }
         User tempUser = new User();
-        tempUser.setId(user.getId());
+        tempUser.setId(dataUser.getId());
         tempUser.setPassword(PassWordEncoderUtil.ENCODER.encode(changeUserPwdDto.getNewPassword()));
         tempUser.setUpdTime(new Date());
         tempUser.setUpdUser(tokenUser.getId());
