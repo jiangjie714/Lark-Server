@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.controller;
 
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -41,7 +42,7 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     public ListRestResponse<List<Notice>> findUserNotice(@RequestParam("orgCode") String orgCode) {
         String userSecretLevel = request.getHeader("userSecretLevel");
         if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new UserTokenException("该用户无密级。");
+            throw new FrontInputException("该用户无密级。");
         }
         List<Notice> notices = baseBiz.selectNoticList(orgCode);
         List<Notice> noticeList = baseBiz.selectNotic(orgCode, userSecretLevel);
@@ -61,7 +62,7 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     public ListRestResponse<List<Notice>> orgNotices(@RequestParam String orgCode) {
         String userSecretLevel = request.getHeader("userSecretLevel");
         if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new UserTokenException("该用户无密级。");
+            throw new FrontInputException("该用户无密级。");
         }
         Notice notice = new Notice();
         notice.setOrgCode(orgCode);
@@ -81,11 +82,11 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     public TableResultResponse<Notice> page(@RequestParam Map<String, Object> params) {
         String orgCode = (String) params.get("orgCode");
         if (StringUtils.isEmpty(orgCode)) {
-            throw new UserTokenException("该用户无组织。");
+            throw new FrontInputException("该用户无组织。");
         }
         String userSecretLevel = request.getHeader("userSecretLevel");
         if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new UserTokenException("该用户无密级。");
+            throw new FrontInputException("该用户无密级。");
         }
         Query query = new Query(params);
         return baseBiz.page(query, userSecretLevel, orgCode);

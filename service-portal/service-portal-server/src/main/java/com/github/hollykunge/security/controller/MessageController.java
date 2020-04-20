@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.controller;
 
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -25,7 +26,7 @@ public class MessageController extends BaseController<MessageService, Message> {
     public ListRestResponse<List<Message>> userMessage() {
         String userId =  request.getHeader("userId");
         if(StringUtils.isEmpty(userId)){
-            throw new UserTokenException("请求中不包含用户信息。");
+            throw new FrontInputException("请求中不包含用户信息。");
         }
         Message message = new Message();
         message.setUserId(userId);
