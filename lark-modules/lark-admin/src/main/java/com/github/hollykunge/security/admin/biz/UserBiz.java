@@ -2,17 +2,23 @@ package com.github.hollykunge.security.admin.biz;
 
 import com.ace.cache.annotation.CacheClear;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.api.dto.ChangeUserPwdDto;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
+import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.util.EasyExcelUtil;
 import com.github.hollykunge.security.admin.util.ExcelListener;
+import com.github.hollykunge.security.admin.util.PassWordEncoderUtil;
+import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
+import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
+import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
@@ -27,20 +33,17 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 协同设计小组
@@ -67,6 +70,12 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PermissionService permissionService;
+    @Autowired
+    private SysAuthConfig sysAuthConfig;
+    @Autowired
+    private UserAuthUtil userAuthUtil;
 
     public User addUser(User entity) {
         // 这个判断应该交给前端做
@@ -80,7 +89,8 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
             throw new FrontInputException("身份证号已存在。");
         }
         entity.setPId(entity.getPId().toLowerCase());
-        String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(defaultPassword);
+        //统一使用密码工具类
+        String password = PassWordEncoderUtil.ENCODER.encode(defaultPassword);
         entity.setPassword(password);
         EntityUtils.setCreatAndUpdatInfo(entity);
         //用户新增添加默认字段
@@ -334,5 +344,35 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
             }
         }
         return userMapper.selectByExample(example);
+    }
+    /**
+     * 修改用户密码业务
+     * @param changeUserPwdDto
+     */
+    public void changeUserPwd(ChangeUserPwdDto changeUserPwdDto, HttpServletRequest request) throws Exception {
+        String token = request.getHeader("token");
+        //解析token
+        IJWTInfo tokenUser = userAuthUtil.getInfoFromToken(token);
+        if(Objects.equals(tokenUser.getUniqueName(),sysAuthConfig.getSysUsername())){
+            throw new FrontInputException("超级管理员不能修改密码...");
+        }
+        if(StringUtils.isEmpty(changeUserPwdDto.getUsername())){
+            throw new FrontInputException("用户名不能为空...");
+        }
+        if(StringUtils.isEmpty(changeUserPwdDto.getNewPassword())){
+            throw new FrontInputException("新密码不能为空...");
+        }
+        if(StringUtils.isEmpty(changeUserPwdDto.getOldPassword())){
+            throw new FrontInputException("原始密码不能为空...");
+        }
+        //校验原始的用户名和密码是否正确
+        AdminUser user = permissionService.validate(changeUserPwdDto.getUsername(), changeUserPwdDto.getOldPassword());
+        User tempUser = new User();
+        tempUser.setId(user.getId());
+        tempUser.setPassword(PassWordEncoderUtil.ENCODER.encode(changeUserPwdDto.getNewPassword()));
+        tempUser.setUpdTime(new Date());
+        tempUser.setUpdUser(tokenUser.getId());
+        tempUser.setUpdName(tokenUser.getName());
+        userMapper.updateByPrimaryKeySelective(tempUser);
     }
 }
