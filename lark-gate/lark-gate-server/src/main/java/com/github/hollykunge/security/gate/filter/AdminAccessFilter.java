@@ -148,17 +148,23 @@ public class AdminAccessFilter extends ZuulFilter {
          * 正常用户名密码登录
          */
         if (isStartWith(requestUri)) {
+            if(!StringUtils.isEmpty(pid)){
+                ctx.addZuulRequestHeader("pid",pid);
+            }
             if (request.getHeader(userAuthConfig.getTokenHeader()) != null) {
+                //有token的也要校验一下token后再进行分发，否则不进行权限校验的，接口随便使用了
+                getJWTUserAndsetPidHeader(request,ctx,pid);
                 ctx.addZuulRequestHeader("token",
                         request.getHeader(userAuthConfig.getTokenHeader()));
             }
             return null;
         }
-        IJWTInfo user = null;
-        try {
-            user = getJWTUser(request, ctx);
-        } catch (Exception e) {
-            setFailedRequest(JSON.toJSONString(new TokenErrorResponse(e.getMessage())), CommonConstants.HTTP_SUCCESS);
+        /**
+         * 校验权限的接口实现
+         */
+        IJWTInfo user = getJWTUserAndsetPidHeader(request,ctx,pid);
+        //证明并未解析到user，token有问题，不能继续了，驳回请求
+        if(user == null) {
             return null;
         }
         //如果为超级管理员，则直接通过
@@ -173,13 +179,15 @@ public class AdminAccessFilter extends ZuulFilter {
         }
         // 申请客户端密钥头，加到header里传递到下方服务
         ctx.addZuulRequestHeader(serviceAuthConfig.getTokenHeader(), serviceAuthUtil.getClientToken());
+        return null;
+    }
+    private void setZuulHeaderPid(RequestContext ctx,String pid,String userName){
         //将pid放在请求头中
         if(StringUtils.isEmpty(pid)){
-            pid = user.getUniqueName();
+            pid = userName;
         }
         //将pid放置在请求头中
         ctx.addZuulRequestHeader("pid",pid);
-        return null;
     }
 
     /**
@@ -209,14 +217,22 @@ public class AdminAccessFilter extends ZuulFilter {
      * @param ctx
      * @return
      */
-    private IJWTInfo getJWTUser(HttpServletRequest request, RequestContext ctx) throws Exception {
+    private IJWTInfo getJWTUserAndsetPidHeader(HttpServletRequest request, RequestContext ctx,String pid) {
         String authToken = request.getHeader(userAuthConfig.getTokenHeader());
         if (StringUtils.isBlank(authToken)) {
             authToken = request.getParameter("token");
         }
         ctx.addZuulRequestHeader(userAuthConfig.getTokenHeader(), authToken);
         BaseContextHandler.setToken(authToken);
-        return userAuthUtil.getInfoFromToken(authToken);
+        try {
+            IJWTInfo user = userAuthUtil.getInfoFromToken(authToken);
+            //设置网关请求头pid
+            setZuulHeaderPid(ctx,pid,user.getUniqueName());
+            return user;
+        } catch (Exception e) {
+            setFailedRequest(JSON.toJSONString(new TokenErrorResponse(e.getMessage())), CommonConstants.HTTP_SUCCESS);
+        }
+        return null;
     }
 
 
