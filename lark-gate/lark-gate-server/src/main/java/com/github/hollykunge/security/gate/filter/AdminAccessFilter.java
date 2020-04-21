@@ -134,6 +134,7 @@ public class AdminAccessFilter extends ZuulFilter {
         if(!StringUtils.isEmpty(errorMessage)){
             setFailedRequest(errorMessage, CommonConstants.HTTP_SUCCESS);
         }
+        //无业务逻辑和异常逻辑，只是网关返回null，意为该过滤器已经执行完毕
         return null;
     }
 
