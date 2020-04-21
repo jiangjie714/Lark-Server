@@ -23,4 +23,13 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+
+  <select id="getProjectUserId" resultType="String">
+        select MEMBER_CODE from LARK_PROJECT_MEMBER
+        where PROJECT_CODE=#{projectCode}
+        order by JOIN_TIME desc
+  </select>
+
+
 </mapper>

@@ -1,11 +1,17 @@
 package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.task.biz.LarkTaskMemberbiz;
+import com.github.hollykunge.security.task.entity.LarkTaskMember;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author fansq
@@ -14,8 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/task_member")
-public class TaskMemberController {
+public class TaskMemberController extends BaseController<LarkTaskMemberbiz, LarkTaskMember> {
 
+    @Autowired
+    private LarkTaskMemberbiz larkTaskMemberbiz;
+
+    /**
+     * 重写add 新增任务执行人
+     * @param larkTaskMember
+     * @return
+     */
+    @Override
+    public ObjectRestResponse<LarkTaskMember> add(LarkTaskMember larkTaskMember) {
+        larkTaskMember.setId(UUIDUtils.generateShortUuid());
+        larkTaskMember.setJoinTime(new Date());
+        return super.add(larkTaskMember);
+    }
 
     /**
      * 任务成员列表
@@ -39,6 +59,20 @@ public class TaskMemberController {
     @RequestMapping(value = "/inviteMemberBatch",method = RequestMethod.POST)
     public BaseResponse inviteMemberBatch(@RequestBody Object data){
         return new BaseResponse(200,"已批量邀请成员！");
+    }
+
+    /**
+     * 设置本列所有任务执行者
+     * @param larkTaskMembers
+     * @return
+     */
+    @RequestMapping(value = "/updateTasksAssignTo",method = RequestMethod.POST)
+    @ResponseBody
+    public BaseResponse updateTasksAssignTo(@RequestBody List<LarkTaskMember> larkTaskMembers){
+        for(LarkTaskMember larkTaskMember:larkTaskMembers){
+            baseBiz.updateSelectiveById(larkTaskMember);
+        }
+        return new BaseResponse(200,"任务已指派！");
     }
 
 }

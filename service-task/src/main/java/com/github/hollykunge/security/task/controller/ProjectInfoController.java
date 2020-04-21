@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author fansq
  * @since 20-3-2
- * @deprecation 对应ProjectInfo.js
+ * @deprecated 对应ProjectInfo.js
+ * todo 项目信息重复
  */
 @RestController
 @RequestMapping(value = "/project_info")

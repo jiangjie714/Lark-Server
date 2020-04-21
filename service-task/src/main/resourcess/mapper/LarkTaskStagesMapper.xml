@@ -25,4 +25,111 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+  <resultMap id="GetTaskBaseResultMap" type="com.github.hollykunge.security.task.dto.LarkTaskStagesDto" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+    <result column="DESCRPTION" property="descrption" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="DELETED" property="deleted" jdbcType="INTEGER" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+    <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+    <collection property="larkTasks" ofType="com.github.hollykunge.security.task.dto.LarkTaskDto">
+      <id column="TASK_ID" property="id" jdbcType="VARCHAR" />
+      <result column="TASK_NAME" property="name" jdbcType="VARCHAR" />
+      <result column="TASK_PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
+      <result column="TASK_CODE" property="code" jdbcType="VARCHAR" />
+      <result column="TASK_PRI" property="pri" jdbcType="INTEGER" />
+      <result column="TASK_EXECUTE_STATUS" property="executeStatus" jdbcType="VARCHAR" />
+      <result column="TASK_CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+      <result column="TASK_DONE_USER" property="doneUser" jdbcType="VARCHAR" />
+      <result column="TASK_DONE_TIME" property="doneTime" jdbcType="TIMESTAMP" />
+      <result column="TASK_CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+      <result column="TASK_ASSIGN_TO" property="assignTo" jdbcType="VARCHAR" />
+      <result column="TASK_DELETED" property="deleted" jdbcType="INTEGER" />
+      <result column="TASK_STAG_CODE" property="stagCode" jdbcType="VARCHAR" />
+      <result column="TASK_TASK_TAG" property="taskTag" jdbcType="VARCHAR" />
+      <result column="TASK_DONE" property="done" jdbcType="INTEGER" />
+      <result column="TASK_BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
+      <result column="TASK_END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+      <result column="TASK_REMIND_TIME" property="remindTime" jdbcType="TIMESTAMP" />
+      <result column="TASK_PCODE" property="pcode" jdbcType="VARCHAR" />
+      <result column="TASK_SORT" property="sort" jdbcType="INTEGER" />
+      <result column="TASK_TASK_LIKE" property="taskLike" jdbcType="INTEGER" />
+      <result column="TASK_STAR" property="star" jdbcType="INTEGER" />
+      <result column="TASK_DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
+      <result column="TASK_TASK_PRIVATE" property="taskPrivate" jdbcType="INTEGER" />
+      <result column="TASK_ID_NUM" property="idNum" jdbcType="VARCHAR" />
+      <result column="TASK_SCHEDULE" property="schedule" jdbcType="INTEGER" />
+      <result column="TASK_VERSION_CODE" property="versionCode" jdbcType="VARCHAR" />
+      <result column="TASK_FEATURES_CODE" property="featuresCode" jdbcType="VARCHAR" />
+      <result column="TASK_WORK_TIME" property="workTime" jdbcType="DECIMAL" />
+      <result column="TASK_STATUS" property="status" jdbcType="VARCHAR" />
+      <result column="TASK_CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+      <result column="TASK_CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+      <result column="TASK_UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+      <result column="TASK_UPD_USER" property="updUser" jdbcType="VARCHAR" />
+      <result column="TASK_UPD_NAME" property="updName" jdbcType="VARCHAR" />
+      <result column="TASK_UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+      <result column="TASK_ATTR1" property="attr1" jdbcType="VARCHAR" />
+      <result column="TASK_ATTR2" property="attr2" jdbcType="VARCHAR" />
+      <result column="TASK_ATTR3" property="attr3" jdbcType="VARCHAR" />
+      <result column="TASK_ATTR4" property="attr4" jdbcType="VARCHAR" />
+      <result column="TASK_DESCRIPTION" property="description" jdbcType="CLOB" />
+      <result column="TASK_PATH" property="path" jdbcType="CLOB" />
+      <collection property="larkTaskTagList" ofType="com.github.hollykunge.security.task.dto.LarkTaskTagDto">
+        <id column="TAG_ID" property="id" jdbcType="VARCHAR" />
+        <result column="TAG_NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="TAG_COLOR" property="color" jdbcType="VARCHAR"/>
+      </collection>
+    </collection>
+  </resultMap>
+  <select id="getTasksByProjectId" resultMap="GetTaskBaseResultMap">
+       select * ,ltt.ID TAG_ID,ltt.NAME TAG_NAME,ltt.COLOR TAG_COLOR from
+       (select lts.*,
+          lt.ID TASK_ID,lt.CODE TASK_CODE,lt.PROJECT_CODE TASK_PROJECT_CODE,lt.NAME TASK_NAME,lt.PRI TASK_PRI,
+          lt.EXECUTE_STATUS TASK_EXECUTE_STATUS,lt.CRT_USER TASK_CRT_USER,lt.DONE_USER TASK_DONE_USER,
+          lt.DONE_TIME TASK_DONE_TIME, lt.CRT_TIME TASK_CRT_TIME,lt.ASSIGN_TO TASK_ASSIGN_TO,
+          lt.DELETED TASK_DELETED,lt.STAG_CODE TASK_STAG_CODE,lt.TASK_TAG TASK_TASK_TAG,lt.DONE TASK_DONE,
+          lt.BEGIN_TIME TASK_BEGIN_TIME, lt.END_TIME TASK_END_TIME,lt.REMIND_TIME TASK_REMIND_TIME,lt.PCODE TASK_PCODE,
+          lt.SORT TASK_SORT,lt.TASK_LIKE TASK_TASK_LIKE,lt.STAR TASK_STAR,lt.DELETED_TIME TASK_DELETED_TIME,
+          lt.TASK_PRIVATE TASK_TASK_PRIVATE,lt.ID_NUM TASK_ID_NUM,lt.SCHEDULE TASK_SCHEDULE,lt.VERSION_CODE TASK_VERSION_CODE,
+          lt.FEATURES_CODE TASK_FEATURES_CODE,lt.WORK_TIME TASK_WORK_TIME,
+          lt.STATUS TASK_STATUS,lt.CRT_NAME TASK_CRT_NAME,lt.CRT_HOST TASK_CRT_HOST,
+          lt.UPD_TIME TASK_UPD_TIME,lt.UPD_USER TASK_UPD_USER,lt.UPD_NAME TASK_UPD_NAME,
+          lt.UPD_HOST TASK_UPD_HOST,lt.ATTR1 TASK_ATTR1,lt.ATTR2 TASK_ATTR2, lt.ATTR3 TASK_ATTR3,lt.ATTR4 TASK_ATTR4,
+          lt.DESCRIPTION TASK_DESCRIPTION,lt.PATH TASK_PATH
+        from
+        LARK_TASK_STAGES lts
+        inner join
+        LARK_TASK lt
+        on
+        lts.ID = lt.STAGE_CODE
+        where
+        lts.PROJECT_CODE=#{projectCode}
+        order by lt.STAG_CODE,lt.sort asc
+        )ltlts
+        inner join
+        lark_task_to_tag lttt
+        on
+        ltlts.id = lttt.task_code
+        inner join
+        lark_task_tag ltt
+        on
+        lttt.tag_code = ltt.id
+  </select>
+
+
 </mapper>

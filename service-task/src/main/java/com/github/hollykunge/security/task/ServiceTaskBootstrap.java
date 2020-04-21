@@ -16,7 +16,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @EnableEurekaClient
 @EnableFeignClients
-@MapperScan(basePackages = "com.github.hollykunge.security.mapper")
+@MapperScan(basePackages = "com.github.hollykunge.security.task.mapper")
 public class ServiceTaskBootstrap {
     public static void main(String[] args) {
         SpringApplication.run(ServiceTaskBootstrap.class, args);

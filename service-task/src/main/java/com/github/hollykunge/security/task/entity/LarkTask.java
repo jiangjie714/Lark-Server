@@ -75,7 +75,7 @@ public class LarkTask extends BaseEntity {
     private Integer star;
 
     @Column(name = "DELETED_TIME")
-    private String deletedTime;
+    private Date deletedTime;
 
     @Column(name = "TASK_PRIVATE")
     private Integer taskPrivate;

@@ -5,6 +5,45 @@
     <!--
       WARNING - @mbg.generated
     -->
+    <id column="ID" property="id" jdbcType="VARCHAR"/>
+    <result column="COVER" property="cover" jdbcType="VARCHAR"/>
+    <result column="NAME" property="name" jdbcType="VARCHAR"/>
+    <result column="CODE" property="code" jdbcType="VARCHAR"/>
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+    <result column="ACCESS_CONTROL_TYPE" property="accessControlType" jdbcType="VARCHAR"/>
+    <result column="WHITE_LIST" property="whiteList" jdbcType="VARCHAR"/>
+    <result column="PROJECT_ORDER" property="projectOrder" jdbcType="INTEGER"/>
+    <result column="DELETED" property="deleted" jdbcType="INTEGER"/>
+    <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR"/>
+    <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL"/>
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP"/>
+    <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR"/>
+    <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR"/>
+    <result column="PRIVATED" property="privated" jdbcType="DECIMAL"/>
+    <result column="PREFIX" property="prefix" jdbcType="VARCHAR"/>
+    <result column="OPEN_PREFIX" property="openPrefix" jdbcType="INTEGER"/>
+    <result column="ARCHIVE" property="archive" jdbcType="INTEGER"/>
+    <result column="ARCHIVE_TIME" property="archiveTime" jdbcType="TIMESTAMP"/>
+    <result column="OPEN_BEGIN_TIME" property="openBeginTime" jdbcType="VARCHAR"/>
+    <result column="OPEN_TASK_PRIVATED" property="openTaskPrivated" jdbcType="INTEGER"/>
+    <result column="TASK_BOARD_THEME" property="taskBoardTheme" jdbcType="VARCHAR"/>
+    <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
+    <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="AUTO_UPDATE_SCHEDULE" property="autoUpdateSchedule" jdbcType="INTEGER" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+    <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
+    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="LarkProjectDtoMap" type="com.github.hollykunge.security.task.dto.LarkProjectDto" >
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="COVER" property="cover" jdbcType="VARCHAR" />
     <result column="NAME" property="name" jdbcType="VARCHAR" />
@@ -23,7 +62,7 @@
     <result column="PREFIX" property="prefix" jdbcType="VARCHAR" />
     <result column="OPEN_PREFIX" property="openPrefix" jdbcType="INTEGER" />
     <result column="ARCHIVE" property="archive" jdbcType="INTEGER" />
-    <result column="ARCHIVE_TIME" property="archiveTime" jdbcType="VARCHAR" />
+    <result column="ARCHIVE_TIME" property="archiveTime" jdbcType="TIMESTAMP" />
     <result column="OPEN_BEGIN_TIME" property="openBeginTime" jdbcType="VARCHAR" />
     <result column="OPEN_TASK_PRIVATED" property="openTaskPrivated" jdbcType="INTEGER" />
     <result column="TASK_BOARD_THEME" property="taskBoardTheme" jdbcType="VARCHAR" />
@@ -41,9 +80,16 @@
     <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+    <result column="IS_OWNER" property="isOwner" jdbcType="INTEGER" />
+    <result column="MEMBER_CODE" property="projectUserId" jdbcType="VARCHAR" />
+    <result column="AU_NAME" property="projectUserName" jdbcType="VARCHAR" />
+    <result column="P_ID" property="projectUserPid" jdbcType="VARCHAR" />
+    <result column="ORG_CODE" property="projectUserOrgCode" jdbcType="VARCHAR" />
+    <result column="ORG_NAME" property="projectUserOrgCodeName" jdbcType="VARCHAR" />
+    <result column="O_EMAIL" property="oEmail" jdbcType="VARCHAR" />
   </resultMap>
 
-  <select id="getProjectPageListByUserId" resultMap="BaseResultMap">
+  <select id="getProjectByUserId" resultMap="BaseResultMap">
     SELECT
     pro.ID,pro.COVER,pro.NAME,pro.CODE,pro.DESCRIPTION,pro.ACCESS_CONTROL_TYPE,pro.WHITE_LIST,pro.PROJECT_ORDER,pro.DELETED,
     pro.TEMPLATE_CODE,pro.SCHEDULE,pro.CRT_TIME,pro.ORGANIZATION_CODE,pro.DELETED_TIME,pro.PRIVATED,pro.PREFIX,pro.OPEN_PREFIX,
@@ -52,7 +98,7 @@
     pro.ATTR1,pro.ATTR2,pro.ATTR3,pro.ATTR4
     FROM
     lark_project pro
-    join
+    inner join
     lark_project_member  mem
     on
     pro.id=mem.project_code
@@ -60,7 +106,36 @@
     mem.member_code=#{userId}
     and
     pro.deleted=0
-    order by pro.crt_time;
+    order by pro.crt_time
+  </select>
 
+  <select id="getProjectOwner" resultMap="LarkProjectDtoMap">
+    select p.*,au.name AU_NAME,
+    au.P_ID,au.ORG_CODE,au.ORG_NAME,au.O_EMAIL from (
+      select pm.*,me.MEMBER_CODE
+      from (
+        select pro.*
+        from
+        lark_project pro
+        inner join
+        lark_project_member  mem
+        on
+        pro.id=mem.project_code
+        where
+        mem.member_code=#{userId}
+        and
+        pro.deleted=0
+        ) pm
+      inner join
+      lark_project_member me
+      on
+      pm.id=me.project_code
+      where
+      me.IS_OWNER=0
+      ) p
+      inner join
+      lark_admin.ADMIN_USER au
+      on
+      p.MEMBER_CODE=au.id
   </select>
 </mapper>

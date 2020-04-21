@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.task.mapper;
 
+import com.github.hollykunge.security.task.dto.LarkProjectDto;
 import com.github.hollykunge.security.task.entity.LarkProject;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
@@ -14,10 +15,16 @@ import java.util.List;
 public interface LarkProjectMapper extends Mapper<LarkProject> {
 
     /**
+     *
+     * @param userId
+     * @return
+     */
+    List<LarkProjectDto> getProjectOwner(@Param("userId") String userId);
+
+    /**
      * 根据用户id查询 project
      * @param userId
      * @return
      */
-    public List<LarkProject> getProjectPageListByUserId(@Param("userId") String userId);
-
+    List<LarkProject> getProjectByUserId(@Param("userId") String userId);
 }

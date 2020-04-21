@@ -1,89 +1,102 @@
-package com.github.hollykunge.security.task.entity;
+package com.github.hollykunge.security.task.dto;
 
 import com.github.hollykunge.security.common.entity.BaseEntity;
+import com.github.hollykunge.security.task.entity.LarkProject;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * @author  fansq
- * @since 20-4-13
+ * @since 20-4-15
+ * 用于给前端返回 项目具体信息
+ * 增加项目拥有者 信息
  * @deprecation
  */
 @Data
-@Table(name = "LARK_PROJECT")
-public class LarkProject extends BaseEntity {
+public class LarkProjectDto implements Serializable {
 
-    @Column(name = "COVER")
     private String cover;
 
-    @Column(name = "NAME")
     private String name;
 
-    @Column(name = "CODE")
     private String code;
 
-    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "ACCESS_CONTROL_TYPE")
     private String accessControlType;
 
-    @Column(name = "WHITE_LIST")
     private String whiteList;
 
-    @Column(name = "PROJECT_ORDER")
     private Integer projectOrder;
 
-    @Column(name = "DELETED")
     private Integer deleted;
 
-    @Column(name = "TEMPLATE_CODE")
     private String templateCode;
 
-    @Column(name = "SCHEDULE")
     private BigDecimal schedule;
 
-    @Column(name = "ORGANIZATION_CODE")
     private String organizationCode;
 
-    @Column(name = "DELETED_TIME")
     private Date deletedTime;
 
-    @Column(name = "PRIVATED")
     private Integer privated;
 
-    @Column(name = "PREFIX")
     private String prefix;
 
-    @Column(name = "OPEN_PREFIX")
     private Integer openPrefix;
 
-    @Column(name = "ARCHIVE")
     private Integer archive;
 
-    @Column(name = "ARCHIVE_TIME")
     private Date archiveTime;
 
-    @Column(name = "OPEN_BEGIN_TIME")
     private String openBeginTime;
 
-    @Column(name = "OPEN_TASK_PRIVATED")
     private Integer openTaskPrivated;
 
-    @Column(name = "TASK_BOARD_THEME")
     private String taskBoardTheme;
 
-    @Column(name = "BEGIN_TIME")
     private Date beginTime;
 
-    @Column(name = "END_TIME")
     private Date endTime;
 
-    @Column(name = "AUTO_UPDATE_SCHEDULE")
     private Integer autoUpdateSchedule;
 
+    private String id;
+
+    private Date crtTime;
+
+    private String crtUser;
+
+    private String crtName;
+
+    private String crtHost;
+
+    private Date updTime;
+
+    private String updUser;
+
+    private String updName;
+
+    private String updHost;
+
+    private String attr1;
+
+    private String attr2;
+
+    private String attr3;
+
+    private String attr4;
+
+    private String projectUserId;
+    private String projectUserName;
+    private String projectUserOrgCode;
+    private String projectUserPid;
+    private String projectUserOrgCodeName;
+    private String oEmail;
+    private Integer isOwner;
 }

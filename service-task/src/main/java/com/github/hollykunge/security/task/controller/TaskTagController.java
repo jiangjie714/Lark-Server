@@ -3,6 +3,10 @@ package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.task.biz.LarkTaskTagbiz;
+import com.github.hollykunge.security.task.entity.LarkTaskTag;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -11,22 +15,9 @@ import org.springframework.web.bind.annotation.*;
  * @deprecation 对应taskTag.js
  */
 @RestController
-@RequestMapping(value = "/task_tag")
-public class TaskTagController {
+@RequestMapping(value = "/taskTag")
+public class TaskTagController extends BaseController<LarkTaskTagbiz,LarkTaskTag> {
 
-
-    /**
-     * 任务标签
-     * @param {*} data
-     *   export function list(data) {
-     *       return $http.get('project/task_tag', data);
-     *   }
-     */
-    @RequestMapping(value = "/",method = RequestMethod.GET)
-    public TableResultResponse list(@RequestBody Object data){
-        // todo 暂时返回空 任务标签 列表
-        return new TableResultResponse();
-    }
 
     /**
      * 新增
@@ -36,31 +27,11 @@ public class TaskTagController {
      *   }
      */
     @RequestMapping(value = "/save",method = RequestMethod.POST)
-    public BaseResponse save(@RequestBody Object data){
+    public BaseResponse save(@RequestBody LarkTaskTag larkTaskTag){
+        larkTaskTag.setId(UUIDUtils.generateShortUuid());
+        baseBiz.insertSelective(larkTaskTag);
         return new BaseResponse(200,"新增成功！");
     }
 
-    /**
-     * 编辑
-     * @param {*} data
-     *   export function edit(data) {
-     *       return $http.post('project/task_tag/edit', data);
-     *   }
-     */
-    @RequestMapping(value = "/edit",method = RequestMethod.POST)
-    public BaseResponse edit(@RequestBody Object data){
-        return new BaseResponse(200,"修改成功！");
-    }
 
-    /**
-     * 删除
-     * @param {*} code
-     *   export function del(code) {
-     *       return $http.delete('project/task_tag/delete', {tagCode: code});
-     *   }
-     */
-    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
-    public BaseResponse delete(@RequestParam("tagCode") String tagCode){
-        return new BaseResponse(200,"删除成功！");
-    }
 }

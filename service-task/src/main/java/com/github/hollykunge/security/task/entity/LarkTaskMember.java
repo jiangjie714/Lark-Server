@@ -20,7 +20,7 @@ public class LarkTaskMember extends BaseEntity {
     private String taskCode;
 
     @Column(name = "IS_EXECUTOR")
-    private String isExecutor;
+    private Integer isExecutor;
 
     @Column(name = "MEMEBER_CODE")
     private String memeberCode;

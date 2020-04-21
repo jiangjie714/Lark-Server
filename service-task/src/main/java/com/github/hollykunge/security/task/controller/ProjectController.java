@@ -5,15 +5,27 @@ import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.task.biz.LarkProjectBiz;
+import com.github.hollykunge.security.task.biz.LarkProjectMemberbiz;
+import com.github.hollykunge.security.task.biz.LarkTaskStagesbiz;
+import com.github.hollykunge.security.task.dto.LarkProjectDto;
 import com.github.hollykunge.security.task.entity.LarkProject;
+import com.github.hollykunge.security.task.entity.LarkProjectMember;
+import com.github.hollykunge.security.task.entity.LarkTask;
+import com.github.hollykunge.security.task.entity.LarkTaskStages;
+import com.sun.org.apache.bcel.internal.generic.LADD;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author fansq
@@ -27,8 +39,12 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     @Autowired
     private LarkProjectBiz larkProjectBiz;
 
+    @Autowired
+    private LarkTaskStagesbiz larkTaskStagesbiz;
+
+    @Autowired
+    private LarkProjectMemberbiz larkProjectMemberbiz;
     /**
-     * fansq
      * 创建项目
      * @param project
      *   export function doData(data) {
@@ -40,10 +56,8 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *   }
      */
     @RequestMapping(value = "/save",method = RequestMethod.POST)
-    public ObjectRestResponse<LarkProject> createProject(@RequestBody LarkProject project){
-        project.setId(UUIDUtils.generateShortUuid());
-        larkProjectBiz.insertSelective(project);
-        return new ObjectRestResponse<>().data(project).msg("项目新建成功！").rel(true);
+    public ObjectRestResponse<LarkProject> createProject(@RequestBody LarkProject project, HttpServletRequest request){
+       return larkProjectBiz.createProject(project,request);
     }
 
     /**
@@ -87,11 +101,24 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *   export function selfList(data) {
      *       return $http.get('project/project/selfList', data);
      *   }
-     * todo 接口重复 项目列表
      */
     @RequestMapping(value = "/selfList",method = RequestMethod.GET)
-    public TableResultResponse<Object> selfList(@RequestBody Object data){
-        return new TableResultResponse<>();
+    public TableResultResponse<LarkProjectDto> selfList(@RequestParam Map<String, Object> params){
+        Query query = new Query(params);
+        return larkProjectBiz.selectByQueryUserInfo(query);
+    }
+
+
+    /**
+     * 查看项目
+     * @param {*} code
+     *   export function read(code) {
+     *       return $http.get('project/project/read', {projectCode: code});
+     *   }
+     */
+    @RequestMapping(value = "/read",method = RequestMethod.GET)
+    public ObjectRestResponse read(@RequestParam("projectCode") String projectCode){
+        return larkProjectBiz.getProjectUser(projectCode);
     }
 
 
@@ -144,8 +171,12 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *   }
      */
     @RequestMapping(value = "/archive",method = RequestMethod.POST)
-    public BaseResponse archive(@RequestParam("projectCode") String projectCode){
-        return new BaseResponse(200,"项目已归档！");
+    public ObjectRestResponse<LarkProject> archive(@RequestParam("projectCode") String projectCode){
+        LarkProject larkProject = new LarkProject();
+        larkProject.setArchive(1);
+        larkProject.setArchiveTime(new Date());
+        baseBiz.updateSelectiveById(larkProject);
+        return new ObjectRestResponse<>().msg("项目已归档！").rel(true);
     }
 
     /**
@@ -157,21 +188,10 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      */
     @RequestMapping(value = "/recoveryArchive",method = RequestMethod.POST)
     public BaseResponse recoveryArchive(@RequestParam("projectCode") String projectCode){
+        LarkProject larkProject = new LarkProject();
+        larkProject.setArchive(0);
+        baseBiz.updateSelectiveById(larkProject);
         return new BaseResponse(200,"项目已还原归档！");
-    }
-
-    /**
-     * 查看项目
-     * @param {*} code
-     *   export function read(code) {
-     *       return $http.get('project/project/read', {projectCode: code});
-     *   }
-     *   todo 暂未完成
-     */
-    @RequestMapping(value = "/read",method = RequestMethod.GET)
-    public ObjectRestResponse read(@RequestParam("projectCode") String projectCode){
-        LarkProject larkProject = baseBiz.selectById(projectCode);
-        return new ObjectRestResponse().msg("查询成功！").data(larkProject).rel(true);
     }
 
     /**
@@ -185,6 +205,8 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     public ObjectRestResponse analysis(@RequestBody Object data){
         return new ObjectRestResponse();
     }
+
+
 
 
 }

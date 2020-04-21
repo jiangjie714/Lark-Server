@@ -4,6 +4,8 @@ import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.task.biz.LarkProjectMemberbiz;
 import com.github.hollykunge.security.task.entity.LarkProjectMember;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * @author fansq
  * @since 20-3-2
@@ -20,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/project_member")
-public class ProjectMemberController {
+public class ProjectMemberController extends BaseController<LarkProjectMemberbiz,LarkProjectMember> {
 
     @Autowired
     private LarkProjectMemberbiz larkProjectMemberbiz;
@@ -120,11 +124,11 @@ public class ProjectMemberController {
      *   export function list(data) {
      *       return $http.get('project/project_member/index', data);
      *   }
-     *   todo 调用BaseController
      */
     @RequestMapping(value = "/index",method = RequestMethod.GET)
-    public TableResultResponse index(@RequestParam("projectCode") String projectCode){
-        return new TableResultResponse();
+    public TableResultResponse index(@RequestParam Map<String, Object> params){
+        Query query = new Query(params);
+        return  larkProjectMemberbiz.selectByQueryUserInfo(query);
     }
 
 }

@@ -20,7 +20,7 @@ public class RabbitmqConfig {
 
     @Bean
     @Qualifier("taskRabbitTemplate")
-    public RabbitTemplate adminRabbitTemplate(){
+    public RabbitTemplate taskRabbitTemplate(){
         return  new RabbitTemplate(connectionFactory);
     }
 }
