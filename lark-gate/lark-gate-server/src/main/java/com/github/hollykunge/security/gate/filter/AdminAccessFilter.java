@@ -22,6 +22,7 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -70,6 +71,7 @@ public class AdminAccessFilter extends ZuulFilter {
     private ServiceAuthUtil serviceAuthUtil;
     @Autowired
     private SysAuthConfig sysAuthConfig;
+    private final String GATEWAY_ERROR = "网关发生异常";
 
     @Override
     public String filterType() {
@@ -115,7 +117,7 @@ public class AdminAccessFilter extends ZuulFilter {
             return authorization(requestUri, ctx, request, pId.toLowerCase());
         } catch (ClientInvalidException clientInvalidEx) {
             //client无效异常
-            errorMessage =JSON.toJSONString(new BaseResponse(CommonConstants.EX_CLIENT_INVALID_CODE,clientInvalidEx.getMessage()));
+            errorMessage =JSON.toJSONString(new BaseResponse(CommonConstants.EX_CLIENT_INVALID_CODE,GATEWAY_ERROR+clientInvalidEx.getMessage()));
         } catch (UserTokenException tokenEx) {
             //纯token异常
             errorMessage = JSON.toJSONString(new TokenErrorResponse(tokenEx.getMessage()));
@@ -126,7 +128,7 @@ public class AdminAccessFilter extends ZuulFilter {
             errorMessage = JSON.toJSONString(tokenForbiddenResponse);
         } catch (Exception ex){
             //其他未知异常
-            errorMessage =JSON.toJSONString(new BaseResponse(CommonConstants.EX_OTHER_CODE,ex.getCause().getMessage()));
+            errorMessage =JSON.toJSONString(new BaseResponse(CommonConstants.EX_OTHER_CODE,GATEWAY_ERROR+ExceptionUtils.getMessage(ex)));
         }
         //异常信息返回前端
         if(!StringUtils.isEmpty(errorMessage)){
