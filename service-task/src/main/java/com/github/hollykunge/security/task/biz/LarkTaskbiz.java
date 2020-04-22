@@ -110,8 +110,8 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
      * @param stagesCode
      * @return
      */
-    public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(String stagesCode){
-        List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getLarkTaskList(stagesCode,"0");
+    public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(String stagesCode,String userId){
+        List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getLarkTaskList(stagesCode,"0",userId);
         return new ObjectRestResponse<>().data(larkTaskDtos).rel(true);
     }
 }

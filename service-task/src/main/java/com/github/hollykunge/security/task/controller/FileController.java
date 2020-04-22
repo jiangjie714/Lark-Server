@@ -2,12 +2,18 @@ package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
+import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.Query;
+import com.github.hollykunge.security.task.biz.LarkTaskFilebiz;
+import com.github.hollykunge.security.task.entity.LarkFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
-//import com.github.hollykunge.security.task.service.impl.FileService;
 
 /**
  * @author fansq
@@ -16,10 +22,34 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping(value = "/file")
-public class FileController {
+public class FileController extends BaseController<LarkTaskFilebiz, LarkFile> {
 
     @Autowired
-    //private FileService fileService;
+    private LarkTaskFilebiz larkTaskFilebiz;
+
+    /**
+     * 上传task任务关联文件
+     * @return
+     */
+    @RequestMapping(value = "/taskFileUpload",method = RequestMethod.POST)
+    @ResponseBody
+    public ObjectRestResponse<LarkFile> taskFileUpload(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("taskCode") String taskCode,
+            @RequestParam("projectCode") String projectCode){
+        String userId = request.getHeader("userId");
+       return  larkTaskFilebiz.taskFileUpload(file,taskCode,projectCode,userId);
+    }
+
+    /**
+     * 下载task关联文件
+     * @return
+     */
+    @RequestMapping(value = "taskFileDownload",method = RequestMethod.GET)
+    public void taskFileDownload(@RequestBody LarkFile larkFile){
+        larkTaskFilebiz.taskFileDownload(larkFile);
+    }
+
     /**
      * 文件列表
      * @param {}} data
@@ -27,12 +57,11 @@ public class FileController {
      *    return $http.get('project/file', data);
      *  }
      */
-//    @RequestMapping(value = "/",method = RequestMethod.GET)
-//    public TableResultResponse list(@Qualifier("") @RequestBody  Object data){
-//        //new TableResultResponse(); 文件列表分页
-//        // todo 暂时返回空
-//        return new TableResultResponse();
-//    }
+    @RequestMapping(value = "/taskFileList",method = RequestMethod.GET)
+    public TableResultResponse taskFileList(@RequestParam Map<String, Object> params){
+        Query query = new Query(params);
+        return larkTaskFilebiz.taskFileList(query);
+    }
 
     /**
      * 文件预览

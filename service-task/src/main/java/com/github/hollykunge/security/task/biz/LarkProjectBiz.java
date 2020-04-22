@@ -136,7 +136,7 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
         Example example = new Example(LarkProjectMember.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("projectCode",projectCode);
-        criteria.andEqualTo("isOwner",1);
+        criteria.andEqualTo("isOwner",0);
         LarkProjectMember larkProjectMember = larkProjectMemberMapper.selectByExample(example).get(0);
         List<String> strings = new ArrayList<>();
         strings.add(larkProjectMember.getMemberCode());

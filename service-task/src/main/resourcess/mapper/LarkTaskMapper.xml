@@ -124,6 +124,7 @@
   <resultMap id="TaskListBaseResultMap" type="com.github.hollykunge.security.task.dto.LarkTaskDto" extends="BaseResultMap">
     <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
     <result column="AVATAR" property="avatar" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
     <collection property="larkTaskTagList" ofType="com.github.hollykunge.security.task.dto.LarkTaskTagDto"
                 javaType="java.util.ArrayList">
         <id column="TAG_ID" property="id" jdbcType="VARCHAR" />
@@ -136,13 +137,14 @@
     </collection>
     <collection property="larkTaskList" ofType="com.github.hollykunge.security.task.dto.LarkTaskDto"
                 javaType="java.util.ArrayList"
-                column="{stagesCode=stag_code,pCode=id}"
+                column="{stagesCode=stag_code,pCode=id,userId=USER_ID}"
                 select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getLarkTaskList">
     </collection>
   </resultMap>
 
   <select id="getLarkTaskList" resultMap="TaskListBaseResultMap">
-    select lt.* ,au.name USER_NAME,au.avatar AVATAR,ltt.name TAG_NAME,ltt.color TAG_COLOR,ltt.id TAG_ID
+ select s.*,ltm.memeber_code from(
+    select lt.* ,au.id USER_ID,au.name USER_NAME,au.avatar AVATAR,ltt.name TAG_NAME,ltt.color TAG_COLOR,ltt.id TAG_ID
     from
     lark_task lt
     LEFT join
@@ -161,7 +163,18 @@
     lt.stag_code=#{stagesCode}
     and
     lt.pcode = #{pCode}
+    and
+    lt.deleted=0
     order by lt.crt_time desc
+    ) s
+    inner join
+    lark_task_member ltm
+    on
+    s.id = ltm.task_code
+    where
+    ltm.memeber_code=#{userId}
+    or
+    s.task_private='0'
   </select>
 
   <select id="getTotalAndComoleted" resultType="com.github.hollykunge.security.task.dto.TaskNum">

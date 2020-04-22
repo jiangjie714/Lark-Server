@@ -1,14 +1,11 @@
 package com.github.hollykunge.security.task.controller;
 
-import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.task.biz.LarkProjectTemplatebiz;
 import com.github.hollykunge.security.task.entity.LarkProjectTemplate;
-import com.github.hollykunge.security.task.feign.LarkProjectTemplateFeign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

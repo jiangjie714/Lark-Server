@@ -109,9 +109,17 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
     @RequestMapping(value = "/getLarkTaskList",method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(@RequestParam("stagesCode") String stagesCode){
-        return larkTaskbiz.getLarkTaskList(stagesCode);
+        String userId = request.getHeader("userId");
+        //todo 暂时使用写死的userId
+        return larkTaskbiz.getLarkTaskList(stagesCode,"68yHX85Z");
     }
 
+    /**
+     * 给任务设置标签
+     * @param tagCode
+     * @param taskCode
+     * @return
+     */
     @RequestMapping(value = "/setTagToTask",method = RequestMethod.POST)
     @ResponseBody
     public BaseResponse setTagToTask(@RequestParam("tagCode") String tagCode,@RequestParam("taskCode") String taskCode){

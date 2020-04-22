@@ -1,23 +1,18 @@
 package com.github.hollykunge.security.task.biz;
 
-import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
-import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.entity.LarkProjectTemplate;
-import com.github.hollykunge.security.task.feign.LarkProjectTemplateFeign;
+import com.github.hollykunge.security.task.feign.LarkProjectFileFeign;
 import com.github.hollykunge.security.task.mapper.LarkProjectTemplateMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -35,7 +30,7 @@ public class LarkProjectTemplatebiz extends BaseBiz<LarkProjectTemplateMapper, L
     private LarkProjectTemplateMapper larkProjectTemplateMapper;
 
     @Autowired
-    private LarkProjectTemplateFeign larkProjectTemplateFeign;
+    private LarkProjectFileFeign larkProjectTemplateFeign;
 
     /**
      * 封面存储

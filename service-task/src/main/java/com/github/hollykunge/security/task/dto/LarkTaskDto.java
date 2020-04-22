@@ -103,6 +103,8 @@ public class LarkTaskDto implements Serializable {
 
     private String userName;
 
+    private String userId;
+
     private String avatar;
 
     private TaskNum taskNum;

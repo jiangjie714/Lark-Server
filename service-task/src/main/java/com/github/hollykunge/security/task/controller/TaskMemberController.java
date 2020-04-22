@@ -9,6 +9,7 @@ import com.github.hollykunge.security.task.biz.LarkTaskMemberbiz;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -38,16 +39,21 @@ public class TaskMemberController extends BaseController<LarkTaskMemberbiz, Lark
     }
 
     /**
-     * 任务成员列表
+     * 拆分请求第三步 getTasksByProjectId
+     * 获取任务成员列表
      * @param {*} data
      *   export function list(data) {
      *       return $http.get('project/task_member', data);
      *   }
      */
-    @RequestMapping(value = "/",method = RequestMethod.GET)
-    public TableResultResponse list(@RequestBody Object data){
-        // todo 暂时返回空 任务成员列表
-        return new TableResultResponse();
+    @RequestMapping(value = "/getTaskMemberList",method = RequestMethod.GET)
+    @ResponseBody
+    public ObjectRestResponse<List<LarkTaskMember>> getTaskMemberList(@RequestParam("taskCode") String taskCode){
+        Example example = new Example(LarkTaskMember.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("taskCode",taskCode);
+        List<LarkTaskMember> larkTaskMembers = baseBiz.selectByExample(example);
+        return new ObjectRestResponse<>().data(larkTaskMembers).rel(true);
     }
     /**
      * 批量邀请成员

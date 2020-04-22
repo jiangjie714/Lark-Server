@@ -15,13 +15,28 @@ import org.springframework.web.multipart.MultipartFile;
  * @deprecation taskProject 调用 文件服务
  */
 @FeignClient("service-dfsfile")
-public interface LarkProjectTemplateFeign {
+public interface LarkProjectFileFeign {
 
     /**
-     *
+     * 模板图片上传
      * @param file
      * @return
      */
     @RequestMapping(value = "/fdfs/file/upload",method = RequestMethod.POST)
     ObjectRestResponse<FileInfoVO> projectTemplateCover(@RequestParam("file") MultipartFile file);
+
+    /**
+     * task关联文件上传
+     * @param file
+     * @return
+     */
+    @RequestMapping(value = "/fdfs/file/sensitiveUpload2",method = RequestMethod.POST)
+    ObjectRestResponse<FileInfoVO> taskFileUpload(@RequestParam("file") MultipartFile file);
+
+    /**
+     * task关联文件下载
+     * @param fileId
+     */
+    @RequestMapping(value ="/fdfs/file/sensitiveDownload2",method = RequestMethod.GET)
+    void taskFileDownload(@RequestParam String fileId);
 }

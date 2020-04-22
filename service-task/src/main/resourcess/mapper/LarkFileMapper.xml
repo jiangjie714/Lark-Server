@@ -35,4 +35,17 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+  <select id="getTaskFileList" resultMap="BaseResultMap">
+        select * from
+        lark_file
+    　<trim prefix="WHERE" prefixOverrides ="AND |OR">
+    　　　　<if test="projectCode != null and projectCode != ''">
+                AND project_code=#{projectCode}
+           </if>
+    　　　　<if test="taskCode != null and taskCode != ''">
+               AND task_code=#{taskCode}
+           </if>
+    　　</trim>
+  </select>
 </mapper>
