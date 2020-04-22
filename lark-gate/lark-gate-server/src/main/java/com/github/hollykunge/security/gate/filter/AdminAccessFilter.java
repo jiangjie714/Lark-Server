@@ -13,6 +13,7 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.exception.service.ServiceHandleException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
@@ -98,9 +99,6 @@ public class AdminAccessFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         final String requestUri = request.getRequestURI().substring(zuulPrefix.length());
 
-        if (requestUri == null) {
-            throw new ClientInvalidException("ERROR LARK: Invalid customer request, class=AdminAccessFilter.");
-        }
         BaseContextHandler.setToken(null);
 
         String dnname = request.getHeader(this.dnName);
@@ -122,17 +120,20 @@ public class AdminAccessFilter extends ZuulFilter {
             throw new ClientInvalidException("ERROR LARK: dnname transfer error, class=AdminAccessFilter.");
         }
         String[] userObjects = dnname.trim().split(",", 0);
-        String PId = null;
+        String pId = null;
         for (String val :
                 userObjects) {
             val = val.trim();
-            if (val.indexOf("t=") > -1 || val.indexOf("T=") > -1) {
-                PId = val.substring(2, val.length());
+            if (val.contains("t=") || val.contains("T=")) {
+                pId = val.substring(2, val.length());
             }
         }
 
         //秘钥登录
-        return authorization(requestUri, ctx, request,PId.toLowerCase());
+        if (pId == null){
+            return new UserTokenException("未找到用户身份信息。");
+        }
+        return authorization(requestUri, ctx, request,pId.toLowerCase());
     }
 
     /**
