@@ -57,8 +57,6 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Org> add(@RequestBody Org org) {
-        //添加空字段默认值 以及pathcode  pathname  值
-        String id = UUIDUtils.generateShortUuid();
         org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
         org.setPathCode(org.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
         org.setPathName(org.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
@@ -136,10 +134,10 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     public ListRestResponse<List<AdminUser>> getUsers(@RequestParam Map<String,String> map, HttpServletRequest request) {
         String orgCode = map.get("orgCode");
         String secretLevels = map.get("secretLevels");
-        String PId = map.get("PId");
+        String pId = map.get("PId");
         String groupType = map.get("grouptype");
         String userOrgCode = map.get("userOrgCode");
-        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, PId,groupType,userOrgCode);
+        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, pId,groupType,userOrgCode);
         return new ListRestResponse("", orgUsers.size(), orgUsers);
     }
 
