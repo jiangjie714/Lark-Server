@@ -16,5 +16,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("element")
 public class ElementController extends BaseController<ElementBiz, Element> {
-    PageInfo
+
 }
