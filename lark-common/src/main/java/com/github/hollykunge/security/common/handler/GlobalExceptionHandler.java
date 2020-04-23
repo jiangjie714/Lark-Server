@@ -24,6 +24,13 @@ import javax.servlet.http.HttpServletResponse;
 @ResponseBody
 public class GlobalExceptionHandler {
     private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    /**
+     * 基础异常
+     * @param response
+     * @param ex
+     * @return
+     */
     @ExceptionHandler(BaseException.class)
     public BaseResponse baseExceptionHandler(HttpServletResponse response, BaseException ex) {
         logger.error(ex.getMessage(),ex);
@@ -31,13 +38,25 @@ public class GlobalExceptionHandler {
         return new BaseResponse(ex.getStatus(), ex.getMessage());
     }
 
+    /**
+     * 其它未知异常
+     * @param response
+     * @param ex
+     * @return
+     */
     @ExceptionHandler(Exception.class)
     public BaseResponse otherExceptionHandler(HttpServletResponse response, Exception ex) {
-        response.setStatus(500);
+        response.setStatus(577);
         logger.error(ex.getMessage(),ex);
         return new BaseResponse(CommonConstants.EX_OTHER_CODE, ex.getMessage());
     }
 
+    /**
+     * 客户端token异常，token过期/token无效/token为空
+     * @param response
+     * @param ex
+     * @return
+     */
     @ExceptionHandler(ClientTokenException.class)
     public BaseResponse clientTokenExceptionHandler(HttpServletResponse response, ClientTokenException ex) {
         response.setStatus(403);
@@ -45,6 +64,12 @@ public class GlobalExceptionHandler {
         return new BaseResponse(ex.getStatus(), ex.getMessage());
     }
 
+    /**
+     * 用户token异常
+     * @param response
+     * @param ex
+     * @return
+     */
     @ExceptionHandler(UserTokenException.class)
     public BaseResponse userTokenExceptionHandler(HttpServletResponse response, UserTokenException ex) {
         response.setStatus(401);
