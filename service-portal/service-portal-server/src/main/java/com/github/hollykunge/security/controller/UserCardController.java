@@ -120,7 +120,7 @@ public class UserCardController extends BaseController<UserCardService, UserCard
             param = "{" + param + "}";
             Map<Object, Integer> map = JSONObject.parseObject(param, Map.class);
             if (map == null) {
-                throw new ServiceHandleException("ERROR LARK: param cannot be transfer to Map. { class=UserCardController" + ",param=" + param + "}");
+                throw new ServiceHandleException("UserCardController", "ERROR LARK: param cannot be transfer to Map. { class=UserCardController" + ",param=" + param + "}");
             }
             String userId = request.getHeader("userId");
             if (StringUtils.isEmpty(userId)) {
