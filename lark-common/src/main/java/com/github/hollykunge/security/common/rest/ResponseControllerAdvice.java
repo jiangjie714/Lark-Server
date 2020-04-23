@@ -7,7 +7,7 @@ import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.sun.xml.internal.ws.developer.ServerSideException;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -16,16 +16,13 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @program: Lark-Server
  * @description: 全局响应数据处理
  * @author: Mr.Do
  * @create: 2020-04-22 13:07
  */
-@ControllerAdvice(basePackages = "com.github.hollykunge.security.*.rest")
+//@ControllerAdvice(basePackages = "com.github.hollykunge.security.*.rest")
 public class ResponseControllerAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> aClass) {

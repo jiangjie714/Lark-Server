@@ -273,7 +273,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     private boolean setCreTimeCondition(Example.Criteria criteria, Map.Entry<String, Object> entry) {
         if ("crtTime".equals(entry.getKey())) {
             if (StringUtils.isEmpty(entry.getValue())) {
-                throw new FrontInputException("输入时间不能为空。");
+                throw new FrontInputException("crtTime为空");
             }
             String[] dateSplits = entry.getValue().toString().trim().split(",");
             if (dateSplits.length != 0) {
