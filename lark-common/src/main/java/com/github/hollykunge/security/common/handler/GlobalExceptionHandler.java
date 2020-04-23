@@ -7,6 +7,8 @@ import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,5 +50,19 @@ public class GlobalExceptionHandler {
         response.setStatus(401);
         logger.error(ex.getMessage(),ex);
         return new BaseResponse(ex.getStatus(), ex.getMessage());
+    }
+
+    /**
+     * 全局统一捕获业务校验参数的异常
+     * @param response 响应
+     * @param argumentValidEx 异常封装的实体
+     * @return
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public BaseResponse methodArgumentNotValidExceptionHandler(HttpServletResponse response,MethodArgumentNotValidException argumentValidEx) {
+        // 从异常对象中拿到ObjectError对象
+        ObjectError objectError = argumentValidEx.getBindingResult().getAllErrors().get(0);
+        response.setStatus(500);
+        return new BaseResponse(CommonConstants.EX_FRONT_INVALID_CODE,objectError.getDefaultMessage());
     }
 }
