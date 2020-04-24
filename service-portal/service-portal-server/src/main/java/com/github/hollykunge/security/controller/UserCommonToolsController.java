@@ -4,6 +4,8 @@ import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -20,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -61,15 +64,12 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
     @Override
     @RequestMapping(value = "/myself", method = RequestMethod.POST)
     @ResponseBody
-    public ObjectRestResponse<UserCommonTools> add(@RequestBody UserCommonTools userCommonTools) {
-        if (StringUtils.isEmpty(userCommonTools.getToolId())) {
-            throw new FrontInputException("无常用连接id。");
-        }
+    public ObjectRestResponse<UserCommonTools> add(@RequestBody @Valid UserCommonTools userCommonTools) {
         String userId = request.getHeader("userId");
         userCommonTools.setUserId(userId);
         // 应该在最开始这个判断
         if (baseBiz.selectCount(userCommonTools) > 0) {
-            throw new UserInvalidException("请误重复添加当前链接。");
+            throw new DatabaseDataException("请误重复添加当前链接。");
         }
         return super.add(userCommonTools).rel(true).msg("success").rel(true);
     }
@@ -85,14 +85,14 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
     @ResponseBody
     public ObjectRestResponse<CommonTools> removeCommonTools(@RequestParam String commonToolId) {
         if (StringUtils.isEmpty(commonToolId)) {
-            throw new FrontInputException("无常用链接id。");
+            throw new ClientParameterInvalid("无常用链接id。");
         }
         String userId = request.getHeader("userId");
         UserCommonTools userCommonTools = new UserCommonTools();
         userCommonTools.setUserId(userId);
         userCommonTools.setToolId(commonToolId);
         if (baseBiz.selectCount(userCommonTools) == 0) {
-            throw new UserInvalidException("无法移除当前工具。");
+            throw new DatabaseDataException("无法移除当前工具。");
         }
         CommonTools commonTools = commonToolsService.selectById(commonToolId);
         baseBiz.delete(userCommonTools);
@@ -125,7 +125,7 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
     @ResponseBody
     public BaseResponse findCommonTools(@RequestParam String commonToolsId) {
         if (StringUtils.isEmpty(commonToolsId)) {
-            throw new FrontInputException("无常用链接id。");
+            throw new ClientParameterInvalid("无常用链接id。");
         }
         String userId = request.getHeader("userId");
         UserCommonTools userCommonTools = new UserCommonTools();
