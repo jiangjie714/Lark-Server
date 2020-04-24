@@ -3,10 +3,9 @@ package com.github.hollykunge.security.auth.controller;
 import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationRequest;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationResponse;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.ClientForbiddenException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ public class AuthController {
         }
         //无效登录
         else{
-            throw new UserInvalidException("无效的登录请求，请检查用户身份信息是否正确。");
+            throw new ClientParameterInvalid("无效的登录请求，请检查用户身份信息是否正确。");
         }
 
         return new ObjectRestResponse().data(new JwtAuthenticationResponse(token)).msg("获取token成功");
