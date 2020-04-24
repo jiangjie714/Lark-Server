@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.rpc;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
