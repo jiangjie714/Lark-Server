@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class NoticeController extends BaseController<NoticeBiz,Notice> {
      */
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     @ResponseBody
-    public ObjectRestResponse<Boolean> sendNotice(@RequestBody Notice notice){
+    public ObjectRestResponse<Boolean> sendNotice(@RequestBody @Valid Notice notice){
         baseBiz.sentNotice(notice);
         return new ObjectRestResponse().data(true);
     }

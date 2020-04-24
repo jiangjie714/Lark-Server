@@ -17,6 +17,8 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.service.ClientleadBizException;
+import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
@@ -153,15 +155,16 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     public TableResultResponse<GateLog> pageByRole(Query query, String pid) {
         Example example = new Example(GateLog.class);
         Example.Criteria criteria = null;
+        //不会为空
         //先判断该用户的角色是否为三员
-        if (StringUtils.isEmpty(pid)) {
-            throw new UserInvalidException("pid不能为空或null。");
-        }
+//        if (StringUtils.isEmpty(pid)) {
+//            throw new UserInvalidException("pid不能为空或null。");
+//        }
         //查询pid所对应的角色
         String userInfo = userRestService.getUserInfo(pid, null);
         List<AdminUser> adminUsers = JSONArray.parseArray(userInfo, AdminUser.class);
         if (adminUsers == null || adminUsers.size() == 0) {
-            throw new UserInvalidException("没有查询到该用户的角色。");
+            throw new ServerLeadBizException("没有查询到该用户的角色。");
         }
         Role role = roleBiz.selectById(adminUsers.get(0).getRoleId());
         List<String> pids = getSanyuan(role.getCode(), adminUsers.get(0).getOrgCode());
@@ -273,7 +276,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     private boolean setCreTimeCondition(Example.Criteria criteria, Map.Entry<String, Object> entry) {
         if ("crtTime".equals(entry.getKey())) {
             if (StringUtils.isEmpty(entry.getValue())) {
-                throw new FrontInputException("输入时间不能为空。");
+                throw new ClientleadBizException("输入时间不能为空。");
             }
             String[] dateSplits = entry.getValue().toString().trim().split(",");
             if (dateSplits.length != 0) {

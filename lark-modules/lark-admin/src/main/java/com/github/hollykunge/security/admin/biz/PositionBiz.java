@@ -62,9 +62,10 @@ public class PositionBiz extends BaseBiz<PositionMapper, Position> {
     }
 
     public List<AdminUser> getPositionUsers(String positionId,String secretLevel,String orgCode){
-        if(StringUtils.isEmpty(positionId) || StringUtils.isEmpty(orgCode)){
-            throw new FrontInputException("岗位id或者组织不能为空。");
-        }
+//PathVariable不可能为空
+        //        if(StringUtils.isEmpty(positionId) || StringUtils.isEmpty(orgCode)){
+//            throw new FrontInputException("岗位id或者组织不能为空。");
+//        }
         List<AdminUser> usersByPositionId = setUsersByPositionId(positionId,orgCode);
         filterBySecret(usersByPositionId,secretLevel);
         return usersByPositionId;

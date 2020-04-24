@@ -67,9 +67,6 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
      * @param entity
      */
     public void sentNotice(Notice entity) {
-        if (StringUtils.isEmpty(entity.getId())) {
-            throw new FrontInputException("该通知已不存在。");
-        }
         entity.setIsSend("1");
         mapper.updateByPrimaryKeySelective(entity);
         //保存完成后向mq发送一条消息
@@ -90,9 +87,10 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
      */
     public void sentCancelNotice(String id) {
         Notice entity = new Notice();
-        if (StringUtils.isEmpty(id)) {
-            throw new FrontInputException("该通知已不存在。");
-        }
+        //PathVariable不会发生空
+//        if (StringUtils.isEmpty(id)) {
+//            throw new FrontInputException("该通知已不存在。");
+//        }
         entity.setId(id);
         entity.setIsSend("0");
         mapper.updateByPrimaryKeySelective(entity);
@@ -104,9 +102,10 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
     }
 
     public TableResultResponse<Notice> pageList(Query query, String userId) {
-        if(StringUtils.isEmpty(userId)){
-            throw new FrontInputException("没有当前用户。");
-        }
+        //请求头中不会没用userid
+//        if(StringUtils.isEmpty(userId)){
+//            throw new FrontInputException("没有当前用户。");
+//        }
         Class<Notice> clazz = (Class<Notice>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
         Example.Criteria criteria = example.createCriteria();

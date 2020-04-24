@@ -23,6 +23,8 @@ import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.ClientleadBizException;
+import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
@@ -83,13 +85,13 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     public User addUser(User entity) {
         // 这个判断应该交给前端做
         if (SpecialStrUtils.check(entity.getName())) {
-            throw new FrontInputException("姓名中不能包含特殊字符。");
+            throw new ClientleadBizException("姓名中不能包含特殊字符。");
         }
         //校验身份证是否在数据库中存在
         User user = new User();
         user.setPId(entity.getPId());
         if (mapper.selectCount(user) > 0) {
-            throw new FrontInputException("身份证号已存在。");
+            throw new ClientleadBizException("身份证号已存在。");
         }
         entity.setPId(entity.getPId().toLowerCase());
         //统一使用密码工具类
@@ -119,7 +121,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     @CacheClear(pre = AdminCommonConstant.CACHE_KEY_RPC_USER+"{1.id}")
     public void updateSelectiveById(User entity) {
         if (SpecialStrUtils.check(entity.getName())) {
-            throw new FrontInputException("姓名中不能包含特殊字符。");
+            throw new ClientleadBizException("姓名中不能包含特殊字符。");
         }
         super.updateSelectiveById(entity);
     }
@@ -180,7 +182,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      */
     public void modifyRoles(String userId, String roles) {
         if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("用户id为空。");
+            throw new ClientleadBizException("用户id为空。");
         }
         RoleUserMap roleUserMap = new RoleUserMap();
         roleUserMap.setUserId(userId);
@@ -233,7 +235,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
                     return new TableResultResponse<User>(query.getPageSize(), query.getPageNo(), 0, 0, new ArrayList<>());
                 }
                 if (SpecialStrUtils.check(entry.getValue().toString())) {
-                    throw new BaseException("查询条件不能包含特殊字符...");
+                    throw new ClientleadBizException("查询条件不能包含特殊字符...");
                 }
                 if ("name".equals(entry.getKey())) {
                     criteria.andCondition("(REFA || REFB || NAME) like " + "'%'||'" + entry.getValue().toString() + "'||'%'")
@@ -277,6 +279,9 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      * @return
      */
     public List<User> selectUserByNameLike(String nameLike){
+        if(StringUtils.isEmpty(nameLike)){
+            throw new ClientleadBizException("用户名为空。");
+        }
         List<User> users = mapper.selectUserByNameLike(nameLike);
         return users;
     }
@@ -286,7 +291,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         User user = super.selectById(id);
         String orgCode = user.getOrgCode();
         if(StringUtils.isEmpty(orgCode)||"".equals(orgCode)){
-            throw new UserInvalidException("当前用户没有组织编码。");
+            throw new ServerLeadBizException("当前用户没有组织编码。");
         }
         Org org = orgBiz.selectById(orgCode);
         user.setOrgName(org.getPathName());
@@ -357,24 +362,15 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         //解析token
         IJWTInfo tokenUser = userAuthUtil.getInfoFromToken(token);
         if(Objects.equals(tokenUser.getUniqueName(),sysAuthConfig.getSysUsername())){
-            throw new FrontInputException("超级管理员不能修改密码...");
-        }
-        if(StringUtils.isEmpty(changeUserPwdDto.getUsername())){
-            throw new FrontInputException("用户名不能为空...");
-        }
-        if(StringUtils.isEmpty(changeUserPwdDto.getNewPassword())){
-            throw new FrontInputException("新密码不能为空...");
-        }
-        if(StringUtils.isEmpty(changeUserPwdDto.getOldPassword())){
-            throw new FrontInputException("原始密码不能为空...");
+            throw new ServerLeadBizException("超级管理员不能修改密码");
         }
         //校验原始的用户名和密码是否正确
         User dataUser = userBiz.getUserByUserPid(changeUserPwdDto.getUsername());
         if(dataUser == null){
-            throw new FrontInputException("用户不存在...");
+            throw new ClientleadBizException("用户不存在...");
         }
         if (!PassWordEncoderUtil.ENCODER.matches(changeUserPwdDto.getOldPassword(), dataUser.getPassword())) {
-            throw new FrontInputException("密码错误...");
+            throw new ClientleadBizException("密码错误...");
         }
         User tempUser = new User();
         tempUser.setId(dataUser.getId());

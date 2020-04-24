@@ -16,6 +16,7 @@ import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -116,10 +117,10 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         List<User> userList = userBiz.selectList(user);
         List<Org> orgList = orgBiz.selectList(org);
         if(orgList.size() > 0){
-            throw new UserInvalidException("选择组织包含子节点，无法删除。");
+            throw new ServerLeadBizException("选择组织包含子节点，无法删除。");
         }
         if(userList.size()>0){
-            throw new UserInvalidException("选择组织包含用户，无法删除。");
+            throw new ServerLeadBizException("选择组织包含用户，无法删除。");
         }
         return super.remove(id);
     }
