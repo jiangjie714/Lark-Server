@@ -163,12 +163,15 @@ public class MongoResultBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
         query.addCriteria(Criteria.where("SYSTEM_ID").is(systemId));
         SystemResult systemResult = mongoTemplate.findOne(query, SystemResult.class);
         assert systemResult != null;
-        List<ActiveDataTypes> types = systemResult.getActiveDataTypes();
-        for(ActiveDataTypes one : types) {
-            if(one.getName().equals(topic)) {
-                return true;
+        List<InterfaceList> lists = systemResult.getInterfaceList();
+        InterfaceList one = new InterfaceList();
+        for (InterfaceList i : lists) {
+            if (i.getName().equals(topic)) {
+                one = i;
+                break;
             }
         }
-        return false;
+        String type = one.getType();
+        return !type.equals("double") && !type.equals("int32_t") && !type.equals("string");
     }
 }

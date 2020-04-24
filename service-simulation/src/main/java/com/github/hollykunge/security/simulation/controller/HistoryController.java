@@ -6,9 +6,12 @@ import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.simulation.biz.HistoryBiz;
 import com.github.hollykunge.security.simulation.entity.SystemInfo;
 import com.github.hollykunge.security.simulation.vo.HistoryInfoVo;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,11 +43,25 @@ public class HistoryController extends BaseController<HistoryBiz, SystemInfo> {
         return new ObjectRestResponse().rel(true).data(hi);
     }
 
+    @RequestMapping(value = "/deleteOneHistory", method = RequestMethod.POST)
+    @ResponseBody
+    public ObjectRestResponse deleteOneHistory(@RequestParam("historyName") String historyName) {
+        boolean ret = baseBiz.deleteOneHistory(historyName);
+        return new ObjectRestResponse().rel(ret).msg("");
+    }
+
     @RequestMapping(value = "/downloadTopicData", method = RequestMethod.POST)
     @ResponseBody
-    public void downloadTopicData(@RequestBody HistoryInfoVo entity, HttpServletResponse response) {
-        System.out.println(entity.getName());
-        System.out.println(entity.getTopic());
-        System.out.println(entity.getFileName());
+    public void downloadTopicData(
+            @RequestBody HistoryInfoVo entity,
+            HttpServletResponse response) throws Exception {
+
+        byte[] content = baseBiz.downloadTopicData(
+                entity.getName(), entity.getTopic(), entity.getIsStruct());
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-disposition",
+                "attachment;filename=" + URLEncoder.encode(entity.getFileName(), "UTF-8"));
+        ServletOutputStream outputStream = response.getOutputStream();
+        IOUtils.write(content, outputStream);
     }
 }
