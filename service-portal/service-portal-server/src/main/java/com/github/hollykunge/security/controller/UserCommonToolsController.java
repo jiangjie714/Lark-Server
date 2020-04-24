@@ -46,9 +46,6 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
     @ResponseBody
     public TableResultResponse<UserCommonToolsVO> allCommonTools(@RequestParam Map<String, Object> params) {
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求token中没有用户信息。");
-        }
         //查询列表数据
         Query query = new Query(params);
         return baseBiz.userCommonToolsTable(query, userId);
@@ -69,9 +66,6 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
             throw new FrontInputException("无常用连接id。");
         }
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求token中没有用户信息。");
-        }
         userCommonTools.setUserId(userId);
         // 应该在最开始这个判断
         if (baseBiz.selectCount(userCommonTools) > 0) {
@@ -94,9 +88,6 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
             throw new FrontInputException("无常用链接id。");
         }
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求token中没有用户信息。");
-        }
         UserCommonTools userCommonTools = new UserCommonTools();
         userCommonTools.setUserId(userId);
         userCommonTools.setToolId(commonToolId);
@@ -119,9 +110,6 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
     @ResponseBody
     public ListRestResponse<List<UserCommonToolsVO>> userCards(HttpServletRequest request) {
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求token中没有用户信息。");
-        }
         List<UserCommonToolsVO> userCardVOS = baseBiz.userCommonTools(userId);
         return new ListRestResponse("", userCardVOS.size(), userCardVOS);
     }
@@ -140,9 +128,6 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
             throw new FrontInputException("无常用链接id。");
         }
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求token中没有用户信息。");
-        }
         UserCommonTools userCommonTools = new UserCommonTools();
         userCommonTools.setUserId(userId);
         userCommonTools.setToolId(commonToolsId);

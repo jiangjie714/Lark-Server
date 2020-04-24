@@ -41,9 +41,6 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     @RequestMapping(value = "/orgNotice", method = RequestMethod.GET)
     public ListRestResponse<List<Notice>> findUserNotice(@RequestParam("orgCode") String orgCode) {
         String userSecretLevel = request.getHeader("userSecretLevel");
-        if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new FrontInputException("该用户无密级。");
-        }
         List<Notice> notices = baseBiz.selectNoticList(orgCode);
         List<Notice> noticeList = baseBiz.selectNotic(orgCode, userSecretLevel);
         notices.addAll(noticeList);
@@ -61,9 +58,6 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     @ResponseBody
     public ListRestResponse<List<Notice>> orgNotices(@RequestParam String orgCode) {
         String userSecretLevel = request.getHeader("userSecretLevel");
-        if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new FrontInputException("该用户无密级。");
-        }
         Notice notice = new Notice();
         notice.setOrgCode(orgCode);
         List<Notice> notices = baseBiz.selectList(notice, userSecretLevel);

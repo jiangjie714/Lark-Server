@@ -25,9 +25,6 @@ public class MessageController extends BaseController<MessageService, Message> {
     @ResponseBody
     public ListRestResponse<List<Message>> userMessage() {
         String userId =  request.getHeader("userId");
-        if(StringUtils.isEmpty(userId)){
-            throw new FrontInputException("请求中不包含用户信息。");
-        }
         Message message = new Message();
         message.setUserId(userId);
         List<Message> messages = baseBiz.selectList(message);

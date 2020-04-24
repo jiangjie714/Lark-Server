@@ -35,9 +35,6 @@ public class HeatMapController extends BaseController<HeatMapService, HeatMap> {
     @ResponseBody
     public ListRestResponse<List<HeatMapVO>> allData() {
         String userID = request.getHeader("userId");
-        if (StringUtils.isEmpty(userID)) {
-            throw new BaseException("request contains no user...");
-        }
         HeatMap heatMap = new HeatMap();
         heatMap.setUserId(userID);
         List<HeatMap> heatMaps = baseBiz.selectList(heatMap);
