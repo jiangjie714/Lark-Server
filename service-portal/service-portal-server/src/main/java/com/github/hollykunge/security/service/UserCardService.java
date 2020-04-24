@@ -3,6 +3,8 @@ package com.github.hollykunge.security.service;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.entity.CardInfo;
 import com.github.hollykunge.security.entity.User;
@@ -135,7 +137,7 @@ public class UserCardService extends BaseBiz<UserCardMapper, UserCard> {
         userCards.forEach(userCardEntity ->{
             UserCardVO userCardVO = new UserCardVO();
             if(StringUtils.isEmpty(userCardEntity.getCardId())){
-                throw new FrontInputException("卡片id信息异常。");
+                throw new DatabaseDataException("卡片id信息异常。");
             }
             CardInfo card = cardService.selectById(userCardEntity.getCardId());
             BeanUtils.copyProperties(userCardEntity,userCardVO);
@@ -169,7 +171,7 @@ public class UserCardService extends BaseBiz<UserCardMapper, UserCard> {
             UserCardVO userCardVO = new UserCardVO();
             BeanUtils.copyProperties(cardInfo,userCardVO);
             if(StringUtils.isEmpty(cardInfo.getId())){
-                throw new FrontInputException("卡片信息异常。");
+                throw new DatabaseDataException("卡片信息异常。");
             }
             boolean isContains = userCards.stream().
                     anyMatch(userCard -> cardInfo.getId().equals(userCard.getCardId()));
@@ -185,14 +187,14 @@ public class UserCardService extends BaseBiz<UserCardMapper, UserCard> {
 
     public void modifyUserCards(UserCard userCard){
         if(StringUtils.isEmpty(userCard.getCardId())){
-            throw new FrontInputException("要修改的卡片id为空。");
+            throw new ClientParameterInvalid("要修改的卡片id为空。");
         }
         UserCard param = new UserCard();
         BeanUtils.copyProperties(userCard,param);
         param.setI(null);
         param = mapper.selectOne(param);
         if(param == null){
-            throw new FrontInputException("没有找到对应的用户卡片，可能被删除了。");
+            throw new DatabaseDataException("没有找到对应的用户卡片，可能被删除了。");
         }
         userCard.setId(param.getId());
         mapper.updateByPrimaryKeySelective(userCard);

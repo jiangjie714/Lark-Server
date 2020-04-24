@@ -3,6 +3,7 @@ package com.github.hollykunge.security.service;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.constants.Constants;
 import com.github.hollykunge.security.entity.CommonTools;
 import com.github.hollykunge.security.entity.UserCommonTools;
@@ -31,7 +32,7 @@ public class CommonToolsService extends BaseBiz<CommonToolsMapper, CommonTools> 
     @Override
     public void insertSelective(CommonTools entity) {
         if(StringUtils.isEmpty(entity.getOrgCode())){
-            throw new FrontInputException("组织代码不能为空。");
+            throw new ClientParameterInvalid("组织代码不能为空。");
         }
         entity.setStatus("1");
         mapper.insertSelective(entity);
@@ -44,9 +45,6 @@ public class CommonToolsService extends BaseBiz<CommonToolsMapper, CommonTools> 
      */
     @Override
     public void updateSelectiveById(CommonTools entity) {
-        if(StringUtils.isEmpty(entity.getId())){
-            throw new FrontInputException("常用链接id不能为空。");
-        }
         //如果做停用常用工具，需要将用户设置好的用户常用工具删除掉
         if("0".equals(entity.getStatus()) || Constants.PORTALORGUSERSTATUSZERO.equals(entity.getPortalOrgUserStatus())){
             UserCommonTools userCommonTools = new UserCommonTools();

@@ -5,6 +5,7 @@ import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;
@@ -53,7 +54,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
         Notice notice = new Notice();
         notice.setOrgCode(orgCode);
         if (StringUtils.isEmpty(orgCode)) {
-            throw new UserInvalidException("当前登录人员无组织编码。");
+            throw new ClientParameterInvalid("当前登录人员无组织编码。");
         }
         Example example = new Example(Notice.class);
         example.setOrderByClause("SEND_TIME DESC");
@@ -88,7 +89,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
         Notice entity = new Notice();
         entity.setOrgCode(orgCode);
         if (StringUtils.isEmpty(orgCode)) {
-            throw new FrontInputException("当前登录人没有组织编码。");
+            throw new ClientParameterInvalid("当前登录人没有组织编码。");
         }
         Example example = new Example(Notice.class);
         example.setOrderByClause("SEND_TIME DESC");
@@ -118,7 +119,7 @@ public class NoticeService extends BaseBiz<NoticeMapper, Notice> {
 
     public List<Notice> selectList(Notice entity, String userSecretLevel) {
         if (StringUtils.isEmpty(entity.getOrgCode())) {
-            throw new FrontInputException("当前登录人没有组织编码。");
+            throw new ClientParameterInvalid("当前登录人没有组织编码。");
         }
         Example example = new Example(Notice.class);
         example.setOrderByClause("SEND_TIME DESC");

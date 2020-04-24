@@ -105,7 +105,7 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @ResponseBody
     public ObjectRestResponse modifyUserCards(@RequestParam String data, HttpServletRequest request) {
         if (StringUtils.isEmpty(data)) {
-            throw new FrontInputException("输入参数为空。");
+            throw new ClientParameterInvalid("输入参数为空。");
         }
         String[] datas = data.split(",");
         for (String param : datas) {
