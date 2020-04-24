@@ -73,7 +73,7 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
             LarkTaskMember larkTaskMember = new LarkTaskMember();
             larkTaskMember.setId(UUIDUtils.generateShortUuid());
             larkTaskMember.setTaskCode(taskId);
-            larkTaskMember.setMemeberCode(userId);
+            larkTaskMember.setMemeberCode(memberCode);
             larkTaskMember.setIsOwner(0);
             larkTaskMember.setIsExecutor(1);
             larkTaskMember.setJoinTime(new Date());

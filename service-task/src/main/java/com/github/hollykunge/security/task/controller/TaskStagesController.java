@@ -83,7 +83,6 @@ public class TaskStagesController extends BaseController<LarkTaskStagesbiz, Lark
      */
     @RequestMapping(value = "/save",method = RequestMethod.POST)
     public ObjectRestResponse<LarkTaskStages> save(@RequestBody LarkTaskStages larkTaskStages){
-        larkTaskStages.setId(UUIDUtils.generateShortUuid());
         baseBiz.insertSelective(larkTaskStages);
         return new ObjectRestResponse<>().data(larkTaskStages).rel(true).msg("新增成功任务列表");
     }

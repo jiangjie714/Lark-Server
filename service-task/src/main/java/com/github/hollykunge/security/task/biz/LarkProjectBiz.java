@@ -4,6 +4,7 @@ import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.RpcUserInfo;
@@ -11,16 +12,19 @@ import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.dto.LarkProjectDto;
 import com.github.hollykunge.security.task.entity.LarkProjectMember;
 import com.github.hollykunge.security.task.entity.LarkTaskStages;
+import com.github.hollykunge.security.task.entity.LarkTaskStagesTemplate;
 import com.github.hollykunge.security.task.feign.LarkProjectFeign;
 import com.github.hollykunge.security.task.mapper.LarkProjectMapper;
 import com.github.hollykunge.security.task.mapper.LarkProjectMemberMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskStagesMapper;
+import com.github.hollykunge.security.task.mapper.LarkTaskStagesTemplateMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -50,6 +54,9 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
     @Autowired
     private LarkTaskStagesMapper larkTaskStagesMapper;
 
+    @Autowired
+    private LarkTaskStagesTemplateMapper larkTaskStagesTemplateMapper;
+
 
     @Override
     protected String getPageName() {
@@ -58,48 +65,11 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
 
     public ObjectRestResponse<LarkProject> createProject(LarkProject project, HttpServletRequest request){
 
-        String projectId = UUIDUtils.generateShortUuid();
-        project.setCode(projectId);
-        project.setId(projectId);
-        larkProjectMapper.insertSelective(project);
-
-        //待处理
-        LarkTaskStages larkTaskStages = new LarkTaskStages();
-        larkTaskStages.setName("待处理");
-        larkTaskStages.setProjectCode(projectId);
-        larkTaskStages.setDeleted(0);
-        larkTaskStages.setSort(1);
-        larkTaskStages.setDescrption("默认任务列表");
-        larkTaskStages.setId(UUIDUtils.generateShortUuid());
-        larkTaskStagesMapper.insertSelective(larkTaskStages);
-        //进行中
-        LarkTaskStages larkTask = new LarkTaskStages();
-        larkTask.setName("进行中");
-        larkTask.setProjectCode(projectId);
-        larkTask.setDeleted(0);
-        larkTask.setSort(1);
-        larkTask.setDescrption("默认任务列表");
-        larkTask.setId(UUIDUtils.generateShortUuid());
-        larkTaskStagesMapper.insertSelective(larkTask);
-        //已完成
-        LarkTaskStages TaskStages = new LarkTaskStages();
-        TaskStages.setName("已完成");
-        TaskStages.setProjectCode(projectId);
-        TaskStages.setDeleted(0);
-        TaskStages.setSort(1);
-        TaskStages.setDescrption("默认任务列表");
-        TaskStages.setId(UUIDUtils.generateShortUuid());
-        larkTaskStagesMapper.insertSelective(larkTask);
-
-        LarkProjectMember larkProjectMember = new LarkProjectMember();
-        larkProjectMember.setId(UUIDUtils.generateShortUuid());
-        larkProjectMember.setProjectCode(projectId);
-        String userId  = request.getHeader("userId");
-        larkProjectMember.setMemberCode("68yHX85Z");
-        larkProjectMember.setJoinTime(new Date());
-        larkProjectMember.setIsOwner(0);
-        larkProjectMember.setAuthorize("");
-        larkProjectMemberMapper.insertSelective(larkProjectMember);
+        if(StringUtils.isEmpty(project.getTemplateCode())){
+            noTemplate(project,request);
+        }else{
+            usingTemplates(project,request);
+        }
 
         return new ObjectRestResponse<>().data(project).msg("项目新建成功！").rel(true);
     }
@@ -148,6 +118,101 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
         larkProjectDto.setProjectUserPid(rpcUserInfo.getPId());
         larkProjectDto.setProjectUserOrgCodeName(rpcUserInfo.getOrgName());
         larkProjectDto.setOEmail(rpcUserInfo.getOEmail());
+        larkProjectDto.setAvatar(rpcUserInfo.getAvatar());
         return new ObjectRestResponse<>().data(larkProjectDto).rel(true);
+    }
+
+    /**
+     * 不使用模板  默认存在三个任务列表
+     * @param project
+     * @param request
+     */
+    public LarkProject noTemplate(LarkProject project,HttpServletRequest request){
+        //String projectId = UUIDUtils.generateShortUuid();
+        //project.setId(projectId);
+        EntityUtils.setCreatAndUpdatInfo(project);
+        project.setCode(project.getId());
+        larkProjectMapper.insertSelective(project);
+
+        //待处理
+        LarkTaskStages larkTaskStages = new LarkTaskStages();
+        larkTaskStages.setName("待处理");
+        larkTaskStages.setProjectCode(project.getId());
+        larkTaskStages.setDeleted(0);
+        larkTaskStages.setSort(1);
+        larkTaskStages.setDescrption("默认任务列表");
+        //larkTaskStages.setId(UUIDUtils.generateShortUuid());
+        EntityUtils.setCreatAndUpdatInfo(larkTaskStages);
+        larkTaskStagesMapper.insertSelective(larkTaskStages);
+        //进行中
+        LarkTaskStages larkTask = new LarkTaskStages();
+        larkTask.setName("进行中");
+        larkTask.setProjectCode(project.getId());
+        larkTask.setDeleted(0);
+        larkTask.setSort(1);
+        larkTask.setDescrption("默认任务列表");
+        //larkTask.setId(UUIDUtils.generateShortUuid());
+        EntityUtils.setCreatAndUpdatInfo(larkTask);
+        larkTaskStagesMapper.insertSelective(larkTask);
+        //已完成
+        LarkTaskStages TaskStages = new LarkTaskStages();
+        TaskStages.setName("已完成");
+        TaskStages.setProjectCode(project.getId());
+        TaskStages.setDeleted(0);
+        TaskStages.setSort(1);
+        TaskStages.setDescrption("默认任务列表");
+        //TaskStages.setId(UUIDUtils.generateShortUuid());
+        EntityUtils.setCreatAndUpdatInfo(TaskStages);
+        larkTaskStagesMapper.insertSelective(TaskStages);
+
+        LarkProjectMember larkProjectMember = new LarkProjectMember();
+        EntityUtils.setCreatAndUpdatInfo(larkProjectMember);
+        //larkProjectMember.setId(UUIDUtils.generateShortUuid());
+        larkProjectMember.setProjectCode(project.getId());
+        String userId  = request.getHeader("userId");
+        larkProjectMember.setMemberCode("68yHX85Z");
+        larkProjectMember.setJoinTime(new Date());
+        larkProjectMember.setIsOwner(0);
+        larkProjectMember.setAuthorize("");
+        larkProjectMemberMapper.insertSelective(larkProjectMember);
+
+        return project;
+    }
+
+    /**
+     * 使用模板创建项目
+     * @param project
+     * @param request
+     * @return
+     */
+    public LarkProject usingTemplates(LarkProject project,HttpServletRequest request){
+        EntityUtils.setCreatAndUpdatInfo(project);
+        project.setCode(project.getId());
+        larkProjectMapper.insertSelective(project);
+        Example example = new Example(LarkTaskStagesTemplate.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("projectTemplateCode",project.getTemplateCode());
+        List<LarkTaskStagesTemplate> larkTaskStagesTemplates = larkTaskStagesTemplateMapper.selectByExample(example);
+        for (LarkTaskStagesTemplate larkTaskStagesTemplate:larkTaskStagesTemplates){
+            LarkTaskStages larkTaskStages = new LarkTaskStages();
+            larkTaskStages.setProjectCode(project.getId());
+            larkTaskStages.setDeleted(0);
+            larkTaskStages.setDescrption("使用模板创建的任务列");
+            larkTaskStages.setName(larkTaskStagesTemplate.getName());
+            larkTaskStages.setSort(larkTaskStagesTemplate.getSort());
+            EntityUtils.setCreatAndUpdatInfo(larkTaskStages);
+            larkTaskStagesMapper.insert(larkTaskStages);
+        }
+        LarkProjectMember larkProjectMember = new LarkProjectMember();
+        EntityUtils.setCreatAndUpdatInfo(larkProjectMember);
+        //larkProjectMember.setId(UUIDUtils.generateShortUuid());
+        larkProjectMember.setProjectCode(project.getId());
+        String userId  = request.getHeader("userId");
+        larkProjectMember.setMemberCode("68yHX85Z");
+        larkProjectMember.setJoinTime(new Date());
+        larkProjectMember.setIsOwner(0);
+        larkProjectMember.setAuthorize("");
+        larkProjectMemberMapper.insertSelective(larkProjectMember);
+        return project;
     }
 }

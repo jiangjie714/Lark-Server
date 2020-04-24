@@ -99,4 +99,5 @@ public class LarkProjectDto implements Serializable {
     private String projectUserOrgCodeName;
     private String oEmail;
     private Integer isOwner;
+    private String avatar;
 }

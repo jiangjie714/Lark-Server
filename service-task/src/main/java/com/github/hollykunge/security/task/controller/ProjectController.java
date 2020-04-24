@@ -7,6 +7,7 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.task.biz.LarkProjectBiz;
 import com.github.hollykunge.security.task.biz.LarkProjectMemberbiz;
 import com.github.hollykunge.security.task.biz.LarkTaskStagesbiz;
@@ -15,12 +16,14 @@ import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.entity.LarkProjectMember;
 import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskStages;
+import com.github.hollykunge.security.task.feign.LarkProjectFileFeign;
 import com.sun.org.apache.bcel.internal.generic.LADD;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -44,6 +47,9 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
 
     @Autowired
     private LarkProjectMemberbiz larkProjectMemberbiz;
+
+    @Autowired
+    private LarkProjectFileFeign larkProjectTemplateFeign;
     /**
      * 创建项目
      * @param project
@@ -95,6 +101,16 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
         return new ObjectRestResponse().msg("修改成功！");
     }
 
+    /**
+     * 封面存储
+     * @return
+     */
+    @RequestMapping(value = "/editCover",method = RequestMethod.POST)
+    public FileInfoVO projectTemplateCover(@RequestParam("file") MultipartFile file){
+        ObjectRestResponse<FileInfoVO> objectRestResponse= larkProjectTemplateFeign.projectTemplateCover(file);
+        FileInfoVO fileInfoVO = objectRestResponse.getResult();
+        return fileInfoVO;
+    }
     /**
      * 我的项目
      * @param {*} data

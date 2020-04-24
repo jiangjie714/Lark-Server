@@ -5,6 +5,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
+import com.github.hollykunge.security.task.dto.LarkProjectTemplateDto;
 import com.github.hollykunge.security.task.entity.LarkProjectTemplate;
 import com.github.hollykunge.security.task.feign.LarkProjectFileFeign;
 import com.github.hollykunge.security.task.mapper.LarkProjectTemplateMapper;
@@ -46,11 +47,12 @@ public class LarkProjectTemplatebiz extends BaseBiz<LarkProjectTemplateMapper, L
      * @param query
      * @return
      */
-    @Override
-    public TableResultResponse<LarkProjectTemplate> selectByQuery(Query query) {
+
+    public TableResultResponse<LarkProjectTemplateDto> getProjectTemplateList(Query query) {
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
-        List<LarkProjectTemplate> larkProjectTemplates = larkProjectTemplateMapper.selectAll();
-        return new TableResultResponse<LarkProjectTemplate>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), larkProjectTemplates);
+        List<LarkProjectTemplateDto> larkProjectTemplates = larkProjectTemplateMapper.getProjectTemplateList();
+        //获取模板列表 同时 获取模板 任务列表  以及模板创建人的头像等信息
+        return new TableResultResponse<>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), larkProjectTemplates);
     }
 
     @Override

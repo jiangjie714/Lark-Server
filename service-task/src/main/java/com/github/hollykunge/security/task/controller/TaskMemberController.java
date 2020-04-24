@@ -76,7 +76,11 @@ public class TaskMemberController extends BaseController<LarkTaskMemberbiz, Lark
     @ResponseBody
     public BaseResponse updateTasksAssignTo(@RequestBody List<LarkTaskMember> larkTaskMembers){
         for(LarkTaskMember larkTaskMember:larkTaskMembers){
-            baseBiz.updateSelectiveById(larkTaskMember);
+            LarkTaskMember larkTaskMember1 = new LarkTaskMember();
+            larkTaskMember1.setTaskCode(larkTaskMember.getTaskCode());
+            larkTaskMember1.setIsExecutor(0);
+            baseBiz.delete(larkTaskMember1);
+            baseBiz.insertSelective(larkTaskMember);
         }
         return new BaseResponse(200,"任务已指派！");
     }

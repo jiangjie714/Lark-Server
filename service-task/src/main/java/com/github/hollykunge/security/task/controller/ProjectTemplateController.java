@@ -1,14 +1,19 @@
 package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
+import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.task.biz.LarkProjectTemplatebiz;
+import com.github.hollykunge.security.task.dto.LarkProjectTemplateDto;
 import com.github.hollykunge.security.task.entity.LarkProjectTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 /**
  * @author fansq
@@ -23,14 +28,17 @@ public class ProjectTemplateController extends BaseController<LarkProjectTemplat
     private LarkProjectTemplatebiz larkProjectTemplatebiz;
 
     /**
-     * todo BaseController 分页
      * 项目模版列表
      * @param {*} data
      *   export function list(data) {
      *       return $http.get('project/project_template', data);
      *   }
      */
-
+    @RequestMapping(value = "/getProjectTemplateList",method = RequestMethod.GET)
+    public TableResultResponse<LarkProjectTemplateDto> getProjectTemplateList(@RequestParam Map<String,Object> params) {
+        Query query = new Query(params);
+        return larkProjectTemplatebiz.getProjectTemplateList(query);
+    }
 
     /**
      * 保存/

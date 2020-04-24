@@ -173,7 +173,11 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
         //定义固定返回参数
         List<AdminPermission> resultPermission = new ArrayList<>();
         //获取所有的menu和所有的menu下的所有的Element
-        List<Menu> menus = menuMapper.selectAll();
+        //20-4-16 fansq 修改 过滤task 在角色资源修改的时候不显示
+        Example example = new Example(Menu.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andNotEqualTo("type","task");
+        List<Menu> menus = menuMapper.selectByExample(example);
         for (Menu menu : menus) {
             //根据menuid获取所有的Menu下的Element
             Element params = new Element();
@@ -260,7 +264,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
      * @param roleId 角色id(约定：超级管理员的roleId和userid相同)
      * @return
      */
-    @Cache(key = "frontPermission{1}")
+    //@Cache(key = "frontPermission{1}")
     public List<FrontPermission> frontAuthorityMenu(String roleId) {
         //定义固定返回参数
         List<FrontPermission> resultPermission = new ArrayList<>();

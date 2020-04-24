@@ -125,6 +125,8 @@
         mem.member_code=#{userId}
         and
         pro.deleted=0
+        and
+        pro.ARCHIVE=0
         ) pm
       inner join
       lark_project_member me

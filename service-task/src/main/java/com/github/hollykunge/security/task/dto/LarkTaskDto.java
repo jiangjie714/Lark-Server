@@ -109,7 +109,9 @@ public class LarkTaskDto implements Serializable {
 
     private TaskNum taskNum;
 
+    //子任务
     private List<LarkTaskDto> larkTaskList;
-
+    //标签
     private List<LarkTaskTagDto> larkTaskTagList;
+
 }

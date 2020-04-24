@@ -39,6 +39,7 @@ public class LarkTaskStagesbiz extends BaseBiz<LarkTaskStagesMapper, LarkTaskSta
         Condition condition = new Condition(LarkTaskStages.class);
         Example.Criteria criteria = condition.createCriteria();
         criteria.andEqualTo("projectCode",projectCode);
+        criteria.andEqualTo("deleted",0);
         condition.orderBy("crtTime").desc();
         List<LarkTaskStages> larkTaskStages = larkTaskStagesMapper.selectByExample(condition);
         return new ObjectRestResponse<>().data(larkTaskStages).rel(true);
