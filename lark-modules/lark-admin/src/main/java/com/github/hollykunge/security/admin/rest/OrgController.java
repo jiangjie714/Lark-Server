@@ -8,20 +8,12 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.User;
-import com.github.hollykunge.security.admin.rpc.service.OrgRestService;
-import com.github.hollykunge.security.admin.util.EasyExcelUtil;
-import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.OrgTreeAll;
-import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
-import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.TreeUtil;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import io.swagger.annotations.Api;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -117,10 +108,10 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         List<User> userList = userBiz.selectList(user);
         List<Org> orgList = orgBiz.selectList(org);
         if(orgList.size() > 0){
-            throw new ServerLeadBizException("选择组织包含子节点，无法删除。");
+            throw new DatabaseDataException("选择组织包含子节点，无法删除。");
         }
         if(userList.size()>0){
-            throw new ServerLeadBizException("选择组织包含用户，无法删除。");
+            throw new DatabaseDataException("选择组织包含用户，无法删除。");
         }
         return super.remove(id);
     }

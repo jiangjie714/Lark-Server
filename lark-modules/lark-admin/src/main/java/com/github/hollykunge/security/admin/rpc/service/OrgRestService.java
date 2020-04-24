@@ -11,7 +11,7 @@ import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.vo.OrgTree;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
-import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.util.TreeUtil;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
@@ -45,11 +45,11 @@ public class OrgRestService {
         }
         Org org = orgMapper.selectByPrimaryKey(userOrgCode);
         if (org == null) {
-            throw new ServerLeadBizException("当前用户组织为空。");
+            throw new DatabaseDataException("当前用户组织为空。");
         }
         String pathCode = org.getPathCode();
         if (StringUtils.isEmpty(pathCode)) {
-            throw new ServerLeadBizException("当前用户的组织无pathcode。");
+            throw new DatabaseDataException("当前用户的组织无pathcode。");
         }
         String parentPathCode = null;
         //部门内
@@ -68,7 +68,7 @@ public class OrgRestService {
             parentPathCode = getOrgPathCode(userOrgCode, pathCode, OrgLevelEnum.SECOND_DEPARTMENT.getValue());
         }
         if (StringUtils.isEmpty(parentPathCode)) {
-            throw new ServerLeadBizException("没有成功截取到上级pathcode。");
+            throw new DatabaseDataException("没有成功截取到上级pathcode。");
         }
         String codeTemp = parentPathCode.substring(0, parentPathCode.length() - 1);
         String parentCode = parentPathCode.substring(codeTemp.lastIndexOf(Link) + 1, codeTemp.length());

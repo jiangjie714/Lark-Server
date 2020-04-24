@@ -15,7 +15,7 @@ import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
 
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
-import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.util.StringHelper;
 
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -154,7 +154,7 @@ public class PermissionService {
         } else {
             List<Role> roleByUserId = roleBiz.getRoleByUserId(userId);
             if (roleByUserId.size() == 0) {
-                throw new ServerLeadBizException("用户"+userId+"无角色信息。");
+                throw new DatabaseDataException("用户"+userId+"无角色信息。");
             }
             roleId = roleByUserId.get(0).getId();
         }

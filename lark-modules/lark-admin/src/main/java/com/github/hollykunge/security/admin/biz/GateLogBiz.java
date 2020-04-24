@@ -14,7 +14,7 @@ import com.github.hollykunge.security.admin.util.ListUtil;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
-import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
@@ -156,7 +156,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
         String userInfo = userRestService.getUserInfo(pid, null);
         List<AdminUser> adminUsers = JSONArray.parseArray(userInfo, AdminUser.class);
         if (adminUsers == null || adminUsers.size() == 0) {
-            throw new ServerLeadBizException("没有查询到该用户的角色。");
+            throw new DatabaseDataException("没有查询到该用户的角色。");
         }
         Role role = roleBiz.selectById(adminUsers.get(0).getRoleId());
         List<String> pids = getSanyuan(role.getCode(), adminUsers.get(0).getOrgCode());

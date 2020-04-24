@@ -19,7 +19,7 @@ import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
-import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
@@ -286,7 +286,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         User user = super.selectById(id);
         String orgCode = user.getOrgCode();
         if(StringUtils.isEmpty(orgCode)||"".equals(orgCode)){
-            throw new ServerLeadBizException("当前用户没有组织编码。");
+            throw new DatabaseDataException("当前用户没有组织编码。");
         }
         Org org = orgBiz.selectById(orgCode);
         user.setOrgName(org.getPathName());
@@ -357,7 +357,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         //解析token
         IJWTInfo tokenUser = userAuthUtil.getInfoFromToken(token);
         if(Objects.equals(tokenUser.getUniqueName(),sysAuthConfig.getSysUsername())){
-            throw new ServerLeadBizException("超级管理员不能修改密码");
+            throw new ClientParameterInvalid("超级管理员不能修改密码");
         }
         //校验原始的用户名和密码是否正确
         User dataUser = userBiz.getUserByUserPid(changeUserPwdDto.getUsername());
