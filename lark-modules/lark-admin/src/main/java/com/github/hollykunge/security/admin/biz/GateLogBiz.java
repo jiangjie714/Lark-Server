@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.admin.biz;
 
 import com.ace.cache.annotation.Cache;
-import com.ace.cache.annotation.CacheClear;
 import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.admin.api.authority.*;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
@@ -14,14 +13,10 @@ import com.github.hollykunge.security.admin.rpc.service.UserRestService;
 import com.github.hollykunge.security.admin.util.ListUtil;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
-import com.github.hollykunge.security.common.exception.service.ClientleadBizException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.pagehelper.Page;
@@ -37,9 +32,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
 
 /**
  * ${DESCRIPTION}
@@ -276,7 +268,7 @@ public class GateLogBiz extends BaseBiz<GateLogMapper, GateLog> {
     private boolean setCreTimeCondition(Example.Criteria criteria, Map.Entry<String, Object> entry) {
         if ("crtTime".equals(entry.getKey())) {
             if (StringUtils.isEmpty(entry.getValue())) {
-                throw new ClientleadBizException("输入时间不能为空。");
+                throw new ClientParameterInvalid("输入时间不能为空。");
             }
             String[] dateSplits = entry.getValue().toString().trim().split(",");
             if (dateSplits.length != 0) {

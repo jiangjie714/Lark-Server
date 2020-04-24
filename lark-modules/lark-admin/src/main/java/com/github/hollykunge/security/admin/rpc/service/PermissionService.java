@@ -14,9 +14,7 @@ import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
 
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
-import com.github.hollykunge.security.common.exception.service.ClientleadBizException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
 import com.github.hollykunge.security.common.util.StringHelper;
 
@@ -89,7 +87,7 @@ public class PermissionService {
         //判断是否为系统超级管理员
         if (Objects.equals(userPid, sysAuthConfig.getSysUsername())) {
             if (!Objects.equals(password, sysAuthConfig.getSysPassword())) {
-                throw new ClientleadBizException("超级管理员密码错误");
+                throw new ClientParameterInvalid("超级管理员密码错误");
             }
             info.setId(sysAuthConfig.getSysUsername());
             info.setPId(sysAuthConfig.getSysUsername());
@@ -100,10 +98,10 @@ public class PermissionService {
         }
         User user = userBiz.getUserByUserPid(userPid);
         if (user == null) {
-            throw new ClientleadBizException("没有该用户");
+            throw new ClientParameterInvalid("没有该用户");
         }
         if (!PassWordEncoderUtil.ENCODER.matches(password, user.getPassword())) {
-            throw new ClientleadBizException("密码错误");
+            throw new ClientParameterInvalid("密码错误");
         }
         BeanUtils.copyProperties(user, info);
         info.setId(user.getId());

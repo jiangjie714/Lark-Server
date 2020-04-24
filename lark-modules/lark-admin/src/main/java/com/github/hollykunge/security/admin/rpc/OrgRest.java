@@ -9,19 +9,14 @@ import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.rpc.service.OrgRestService;
 import com.github.hollykunge.security.admin.vo.OrgTree;
 import com.github.hollykunge.security.admin.vo.StatesOrgVo;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
-import com.github.hollykunge.security.common.exception.service.ClientleadBizException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: zhhongyu
@@ -81,7 +76,7 @@ public class OrgRest {
     @FilterByDeletedAndOrderHandler
     public List<Org> getOrgs(Integer[] orgLevels){
         if(orgLevels == null || orgLevels.length == 0){
-            throw new ClientleadBizException("组织层级为空。");
+            throw new ClientParameterInvalid("组织层级为空。");
         }
         Example orgEx = new Example(Org.class);
         Example.Criteria  criteria= orgEx.createCriteria();

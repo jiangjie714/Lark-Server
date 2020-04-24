@@ -10,10 +10,7 @@ import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.vo.FrontUser;
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
-import com.github.hollykunge.security.common.exception.service.ClientleadBizException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -243,7 +240,7 @@ public class UserController extends BaseController<UserBiz, User> {
     public TableResultResponse<User> findUsers(@RequestParam Map<String, Object> params) {
         //todo 改异常无法放到业务层，业务方法被很多接口使用
         if (StringUtils.isEmpty(params.get("name"))) {
-            throw new ClientleadBizException("用户名为空。");
+            throw new ClientParameterInvalid("用户名为空。");
         }
         return baseBiz.selectByQuery(new Query(params));
     }

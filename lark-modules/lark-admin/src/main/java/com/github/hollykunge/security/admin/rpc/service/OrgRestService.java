@@ -10,8 +10,7 @@ import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.vo.OrgTree;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
-import com.github.hollykunge.security.common.exception.service.ClientleadBizException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.exception.service.ServerLeadBizException;
 import com.github.hollykunge.security.common.util.TreeUtil;
 import org.springframework.aop.framework.AopContext;
@@ -42,7 +41,7 @@ public class OrgRestService {
 
     public List<OrgTree> getTree(String userOrgCode, String groupType) throws Exception {
         if (StringUtils.isEmpty(userOrgCode) || StringUtils.isEmpty(groupType)) {
-            throw new ClientleadBizException("当前用户的组织id或类型不能为空。");
+            throw new ClientParameterInvalid("当前用户的组织id或类型不能为空。");
         }
         Org org = orgMapper.selectByPrimaryKey(userOrgCode);
         if (org == null) {
@@ -109,7 +108,7 @@ public class OrgRestService {
      */
     private String getOrgPathCode(String userOrgCode, String path, String flag) {
         if (StringUtils.isEmpty(userOrgCode) || StringUtils.isEmpty(path) || StringUtils.isEmpty(flag)) {
-            throw new ClientleadBizException("userOrgCode/path/flag参数为空。");
+            throw new ClientParameterInvalid("userOrgCode/path/flag参数为空。");
         }
         //父级
         if (Objects.equals(flag, OrgLevelEnum.PARENT_DEPARTMENT.getValue())) {
