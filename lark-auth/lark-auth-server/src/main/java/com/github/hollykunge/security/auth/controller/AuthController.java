@@ -3,7 +3,7 @@ package com.github.hollykunge.security.auth.controller;
 import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationRequest;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationResponse;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.auth.ServerInvalidException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -63,7 +63,7 @@ public class AuthController {
         String token = request.getHeader(tokenHeader);
         String refreshedToken = authService.refresh(token);
         if (refreshedToken == null) {
-            throw new UserTokenException("用户token刷新失败。");
+            throw new ServerInvalidException("用户token刷新失败。");
         } else {
             return new ObjectRestResponse().data(new JwtAuthenticationResponse(refreshedToken)).msg("刷新token成功");
         }
