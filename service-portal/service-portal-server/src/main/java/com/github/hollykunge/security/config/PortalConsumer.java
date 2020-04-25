@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.config;
 
 import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.auth.MqBizException;
+import com.github.hollykunge.security.common.exception.server.MqBizException;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.mq.HotMapVO;
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;

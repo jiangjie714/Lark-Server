@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.config;
 
-import com.github.hollykunge.security.common.exception.auth.MqBizException;
+import com.github.hollykunge.security.common.exception.server.MqBizException;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.hollykunge.security.common.vo.rpcvo.MessageContent;
