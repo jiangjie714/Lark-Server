@@ -5,7 +5,7 @@ import com.github.hollykunge.security.common.exception.BizException;
 
 /**
  * @author: zhhongyu
- * @description: 数据库数据查询时异常
+ * @description: 数据库数据查询后运行时异常
  * @since: Create in 10:22 2020/4/24
  */
 public class DatabaseDataException extends BizException {

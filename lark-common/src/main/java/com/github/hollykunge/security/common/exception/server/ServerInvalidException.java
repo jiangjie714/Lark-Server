@@ -1,10 +1,10 @@
-package com.github.hollykunge.security.common.exception.auth;
+package com.github.hollykunge.security.common.exception.server;
 
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 
 /**
- * 负责内部服务调用可用性异常
+ * 服务器处理时异常
  * @author 协同设计小组
  * @date 2017/9/10
  */
