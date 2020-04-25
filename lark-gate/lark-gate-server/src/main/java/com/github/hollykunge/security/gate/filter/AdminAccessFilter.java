@@ -97,9 +97,6 @@ public class AdminAccessFilter extends ZuulFilter {
         String errorMessage = null;
         int responStatus = HttpReponseStatusEnum.OK.value();
         try {
-            if (requestUri == null) {
-                throw new ServerInvalidException("ERROR LARK: Invalid customer request, class=AdminAccessFilter.");
-            }
             BaseContextHandler.setToken(null);
             String dnname = request.getHeader(this.dnName);
             //获取内网网关地址
@@ -161,7 +158,7 @@ public class AdminAccessFilter extends ZuulFilter {
         for (String val :
                 userObjects) {
             val = val.trim();
-            if (val.indexOf("t=") > -1 || val.indexOf("T=") > -1) {
+            if (val.contains("t=") || val.contains("T=")) {
                 pid = val.substring(2, val.length());
             }
         }
@@ -197,9 +194,6 @@ public class AdminAccessFilter extends ZuulFilter {
          */
         IJWTInfo user = getJWTUserAndsetPidHeader(request, ctx, pid);
         //证明并未解析到user，token有问题，不能继续了，驳回请求
-        if (user == null) {
-            return null;
-        }
         //如果为超级管理员，则直接通过
         if (Objects.equals(user.getUniqueName(), sysAuthConfig.getSysUsername())) {
             this.setCurrentUserInfoAndLog(ctx, user, null);
