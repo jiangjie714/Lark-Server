@@ -5,7 +5,7 @@ import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.BizException;
 
 /**
- * 负责用户输入信息验证的异常
+ * 负责用户名或密码异常
  * @author LARK
  */
 public class UserInvalidException extends BizException {

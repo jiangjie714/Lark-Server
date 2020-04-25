@@ -54,6 +54,10 @@ public class CommonConstants {
      */
     public static final int EX_SERVICE_INVALID_CODE = 50020;
     /**
+     * mq消费者运行异常
+     */
+    public static final int EX_MQ_CONSUMER_BIZ = 50021;
+    /**
      * 其它未知异常
      */
     public static final int EX_OTHER_CODE = 50099;
@@ -71,11 +75,11 @@ public class CommonConstants {
     /**
      * 业务异常中的客户端输入参数导致异常
      */
-    public static final int EX_BIZ_CLIENT_PARAMETER = 40021;
+    public static final int EX_BIZ_CLIENT_PARAMETER = 40022;
     /**
      * 业务异常中的客户端输入表单参数导致异常
      */
-    public static final int EX_BIZ_FORM_PARAMETER = 40022;
+    public static final int EX_BIZ_FORM_PARAMETER = 40021;
     /**
      * 用户名或密码异常
      */

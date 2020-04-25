@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.common.util;
 
-import com.github.hollykunge.security.common.exception.BaseException;
-import org.springframework.util.StringUtils;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +12,7 @@ import java.util.regex.Pattern;
 public class SpecialStrUtils {
     public static boolean check(String inputStr){
         if(inputStr == null){
-            throw new BaseException("校验的字符串不能为空...");
+            throw new ClientParameterInvalid("校验的字符串不能为空...");
         }
         String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
         Pattern p=Pattern.compile(regEx);
