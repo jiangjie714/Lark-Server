@@ -12,7 +12,7 @@ import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
-import com.github.hollykunge.security.common.exception.server.ServerInvalidException;
+import com.github.hollykunge.security.common.exception.server.ServerHandlerException;
 import com.github.hollykunge.security.common.exception.service.PermissionException;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
@@ -114,7 +114,7 @@ public class AdminAccessFilter extends ZuulFilter {
             String pId = parsingDnname(dnname);
             //秘钥登录
             return authorization(requestUri, ctx, request, pId.toLowerCase());
-        } catch (ServerInvalidException clientInvalidEx) {
+        } catch (ServerHandlerException clientInvalidEx) {
             responStatus = HttpReponseStatusEnum.SYSTEM_ERROR.value();
             //client无效异常
             errorMessage =JSON.toJSONString(new BaseResponse(clientInvalidEx.getStatus(),GATEWAY_ERROR+clientInvalidEx.getMessage()));
@@ -151,7 +151,7 @@ public class AdminAccessFilter extends ZuulFilter {
         try {
             dnname = new String(dnname.getBytes(CommonConstants.PERSON_CHAR_SET));
         } catch (UnsupportedEncodingException e) {
-            throw new ServerInvalidException("ERROR LARK: dnname transfer error, class=AdminAccessFilter.");
+            throw new ServerHandlerException("ERROR LARK: dnname transfer error, class=AdminAccessFilter.");
         }
         String[] userObjects = dnname.trim().split(",", 0);
         String pid = null;

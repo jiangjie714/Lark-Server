@@ -2,7 +2,7 @@ package com.github.hollykunge.security.common.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hollykunge.security.common.exception.server.ServerInvalidException;
+import com.github.hollykunge.security.common.exception.server.ServerHandlerException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -38,7 +38,7 @@ public class ResponseControllerAdvice implements ResponseBodyAdvice<Object> {
                 // 将数据包装在ResultVO里后，再转换为json字符串响应给前端
                 return objectMapper.writeValueAsString(new ObjectRestResponse<>().data(data).rel(true));
             } catch (JsonProcessingException e) {
-                throw new ServerInvalidException("ERROR LARK: Return type is error.");
+                throw new ServerHandlerException("ERROR LARK: Return type is error.");
             }
         }
         // 将原本的数据包装在ResultVO里
