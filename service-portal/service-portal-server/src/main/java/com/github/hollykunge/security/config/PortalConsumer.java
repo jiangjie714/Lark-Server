@@ -1,20 +1,15 @@
 package com.github.hollykunge.security.config;
 
 import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.MqBizException;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.mq.HotMapVO;
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;
-import com.github.hollykunge.security.common.vo.rpcvo.DiscussVO;
-import com.github.hollykunge.security.common.vo.rpcvo.TaskVO;
-import com.github.hollykunge.security.common.vo.rpcvo.TodoVO;
-import com.github.hollykunge.security.constants.Constants;
 import com.github.hollykunge.security.entity.HeatMap;
 import com.github.hollykunge.security.entity.Notice;
 import com.github.hollykunge.security.mapper.HeatMapMapper;
 import com.github.hollykunge.security.mapper.NoticeMapper;
 import com.rabbitmq.client.Channel;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
@@ -51,7 +46,7 @@ public class PortalConsumer {
         // 处理消息
         HeatMap heatMap = new HeatMap();
         if(StringUtils.isEmpty(message.getUserId())){
-            throw new BaseException("消费工作热力图消息，用户id不能为空...");
+            throw new MqBizException("消费工作热力图消息，用户id不能为空...");
         }
         heatMap.setUserId(message.getUserId());
         heatMap.setMapDate(message.getMapDate());

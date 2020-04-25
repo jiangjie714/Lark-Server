@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.config;
 
-import com.alibaba.fastjson.JSON;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.auth.MqBizException;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.hollykunge.security.common.vo.rpcvo.MessageContent;
@@ -9,13 +8,10 @@ import com.github.hollykunge.security.entity.Message;
 import com.github.hollykunge.security.mapper.MessageMapper;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +62,7 @@ public class MessageConsumer {
         messageEntity.setSendTime(this.stringToDate(contactVO.getFullTime(),"yyyy-MM-dd HH:mm:ss"));
         MessageContent lastMessage = contactVO.getLastMessage();
         if(lastMessage == null){
-            throw new BaseException("消费消息中没有最后一条消息实体类");
+            throw new MqBizException("消费消息中没有最后一条消息实体类");
         }
         messageEntity.setLevels(lastMessage.getSecretLevel()+"");
         messageEntity.setMsg(lastMessage.getTitle());
