@@ -8,8 +8,8 @@ import com.github.hollykunge.security.common.exception.BaseException;
  * @author 协同设计小组
  * @date 2017/9/10
  */
-public class ClientInvalidException extends BaseException {
-    public ClientInvalidException(String message) {
-        super(message, CommonConstants.EX_CLIENT_INVALID_CODE);
+public class ServerInvalidException extends BaseException {
+    public ServerInvalidException(String message) {
+        super(message, CommonConstants.EX_SERVICE_INVALID_CODE);
     }
 }

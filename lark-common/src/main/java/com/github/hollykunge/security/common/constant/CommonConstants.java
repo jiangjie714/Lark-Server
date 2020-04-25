@@ -13,42 +13,46 @@ public class CommonConstants {
      */
     public final static String RESOURCE_TYPE_MENU = "menu";
     public final static String RESOURCE_TYPE_BTN = "button";
+
     /**
-     * 用户名或密码异常
+     * 用户身份认证失败,token过期
      */
-    public final static int EX_USER_PASS_INVALID_CODE = 40001;
+    public static final int EX_USER_TOKEN_EXPIRED = 40001;
     /**
-     * 用户身份认证失败
+     * token签名错误
      */
-    public static final int EX_USER_INVALID_CODE = 40002;
+    public static final int EX_USER_TOKEN_SIGNATURE = 40002;
     /**
-     * 不符合密级约束条件
+     * token为空或空串
+     */
+    public static final int EX_USER_TOKEN_INVALID = 40003;
+    /**
+     * 不符合密级约束条件 todo 密级异常未做处理
      */
     public static final int EX_SECRET_LEVELS = 40003;
+
+
     /**
-     * 没有请求该资源的权限
+     * 客户端token过期
      */
-    public static final int URL_NOT_PERMISSION = 40004;
+    public static final int EX_CLIENT_TOKEN_EXPIRED = 50031;
     /**
-     * 前端输入型异常
+     * 客户端token签名错误
      */
-    public static final int EX_FRONT_INVALID_CODE = 40006;
+    public static final int EX_CLIENT_TOKEN_SIGNATURE = 50032;
     /**
-     * 没有请求该资源操作方法的权限
+     * 客户端token为空或空串
      */
-    public static final int URL_METHOD_NOT_PERMISSION = 40005;
-    /**
-     * 无效的客户端请求
-     */
-    public static final int EX_CLIENT_INVALID_CODE = 50001;
+    public static final int EX_CLIENT_TOKEN_INVALID = 50033;
     /**
      * 拒绝执行当前的客户端请求
+     * 没有配置服务调用表导致的
      */
-    public static final int EX_CLIENT_FORBIDDEN_CODE = 50002;
+    public static final int EX_CLIENT_FORBIDDEN_CODE = 50010;
     /**
      * 服务端处理异常
      */
-    public static final int EX_SERVICE_INVALID_CODE = 50003;
+    public static final int EX_SERVICE_INVALID_CODE = 50020;
     /**
      * 其它未知异常
      */
@@ -58,6 +62,33 @@ public class CommonConstants {
      * 成功
      */
     public static final int HTTP_SUCCESS = 200;
+
+    /**
+     * 业务异常中的数据查询结果运行时导致异常
+     */
+    public static final int EX_BIZ_SERVER_DATABASE = 40011;
+    public static final String EX_BIZ_SERVER_OHTER = "业务拓展异常";
+    /**
+     * 业务异常中的客户端输入参数导致异常
+     */
+    public static final int EX_BIZ_CLIENT_PARAMETER = 40021;
+    /**
+     * 业务异常中的客户端输入表单参数导致异常
+     */
+    public static final int EX_BIZ_FORM_PARAMETER = 40022;
+    /**
+     * 用户名或密码异常
+     */
+    public final static int EX_USER_PASS_INVALID_CODE = 40023;
+    /**
+     * 没有请求该资源的权限
+     */
+    public static final int URL_NOT_PERMISSION = 40031;
+    /**
+     * 没有请求该资源操作方法的权限
+     */
+    public static final int URL_METHOD_NOT_PERMISSION = 40032;
+
 
 
     public static final String CONTEXT_KEY_USER_ID = "currentUserId";

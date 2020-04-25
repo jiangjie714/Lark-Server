@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.*;
 import org.springframework.util.StringUtils;
@@ -38,10 +38,10 @@ public class ExportExcelUtils {
     public static byte[] export(List listt, String columName, String columCode, String sheetName, OutputStream outputStream) throws IOException {
         try {
             if(StringUtils.isEmpty(columName)){
-                throw new BaseException("列头名称不能为空...");
+                throw new ClientParameterInvalid("列头名称不能为空...");
             }
             if(StringUtils.isEmpty(columCode)){
-                throw new BaseException("列头编码不能为空...");
+                throw new ClientParameterInvalid("列头编码不能为空...");
             }
             String[] headers = columName.trim().split(",");
             String[] cList = columCode.trim().split(",");

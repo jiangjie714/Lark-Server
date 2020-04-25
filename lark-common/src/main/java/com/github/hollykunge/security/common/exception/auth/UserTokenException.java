@@ -9,7 +9,7 @@ import com.github.hollykunge.security.common.exception.BaseException;
  * @date 2017/9/8
  */
 public class UserTokenException extends BaseException {
-    public UserTokenException(String message) {
-        super(message, CommonConstants.EX_USER_INVALID_CODE);
+    public UserTokenException(int status,String message) {
+        super(message, status);
     }
 }
