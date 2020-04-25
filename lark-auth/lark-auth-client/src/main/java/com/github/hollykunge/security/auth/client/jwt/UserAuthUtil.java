@@ -3,6 +3,7 @@ package com.github.hollykunge.security.auth.client.jwt;
 import com.github.hollykunge.security.auth.client.config.UserAuthConfig;
 import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.auth.common.util.jwt.JWTHelper;
+import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.auth.UserTokenException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -20,11 +21,11 @@ public class UserAuthUtil {
         try {
             return JWTHelper.getInfoFromToken(token, userAuthConfig.getPubKeyByte());
         }catch (ExpiredJwtException ex){
-            throw new UserTokenException("token过期了!");
+            throw new UserTokenException(CommonConstants.EX_USER_TOKEN_EXPIRED,"token过期了!");
         }catch (SignatureException ex){
-            throw new UserTokenException("token签名错误!");
+            throw new UserTokenException(CommonConstants.EX_USER_TOKEN_SIGNATURE,"token签名错误!");
         }catch (IllegalArgumentException ex){
-            throw new UserTokenException("token为null或者空!");
+            throw new UserTokenException(CommonConstants.EX_USER_TOKEN_INVALID,"token为null或者空!");
         }
     }
 }
