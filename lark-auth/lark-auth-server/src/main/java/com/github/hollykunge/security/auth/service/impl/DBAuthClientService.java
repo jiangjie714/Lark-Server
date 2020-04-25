@@ -5,7 +5,7 @@ import com.github.hollykunge.security.auth.entity.Client;
 import com.github.hollykunge.security.auth.mapper.ClientMapper;
 import com.github.hollykunge.security.auth.service.AuthClientService;
 import com.github.hollykunge.security.auth.util.client.ClientTokenUtil;
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.server.ServerInvalidException;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -47,7 +47,7 @@ public class DBAuthClientService implements AuthClientService {
         client.setCode(clientId);
         client = clientMapper.selectOne(client);
         if(client==null||!client.getSecret().equals(secret)){
-            throw new ClientInvalidException("ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.");
+            throw new ServerInvalidException("ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.");
         }
         return client;
     }
@@ -58,7 +58,7 @@ public class DBAuthClientService implements AuthClientService {
         client.setCode(clientId);
         client = clientMapper.selectOne(client);
         if(client==null||!client.getSecret().equals(secret)){
-            throw new ClientInvalidException("ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.");
+            throw new ServerInvalidException("ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.");
         }
     }
 

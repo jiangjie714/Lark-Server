@@ -2,7 +2,7 @@ package com.github.hollykunge.security.auth.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.InternalException;
+import com.github.hollykunge.security.common.exception.server.InternalException;
 import feign.Response;
 import feign.Util;
 import feign.codec.ErrorDecoder;

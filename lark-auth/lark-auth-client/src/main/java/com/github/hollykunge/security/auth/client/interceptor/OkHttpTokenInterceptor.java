@@ -51,7 +51,7 @@ public class OkHttpTokenInterceptor implements Interceptor {
         }
         Response response = chain.proceed(newRequest);
         if (HttpStatus.FORBIDDEN.value() == response.code()) {
-            if (response.body().string().contains(String.valueOf(CommonConstants.EX_CLIENT_INVALID_CODE))) {
+            if (response.body().string().contains(String.valueOf(CommonConstants.EX_CLIENT_FORBIDDEN_CODE))) {
                 log.info("Client Token Expire,Retry to request...");
                 serviceAuthUtil.refreshClientToken();
                 newRequest = chain.request()
