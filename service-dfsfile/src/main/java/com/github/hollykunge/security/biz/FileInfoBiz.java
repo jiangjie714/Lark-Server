@@ -4,7 +4,8 @@ import com.ace.cache.annotation.Cache;
 import com.ace.cache.api.impl.CacheRedis;
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
@@ -33,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -224,7 +224,7 @@ public class FileInfoBiz extends BaseBiz<FileInfoMapper, FileInfoEntity> {
                                                 FileInfoEntity fileInfo,
                                                 JwtInfoVO jwtInfoVO) throws Exception {
         if (Integer.parseInt(currentNo) > Integer.parseInt(totalSize)) {
-            throw new BaseException("当前块数不能大于总块数...");
+            throw new ClientParameterInvalid("当前块数不能大于总块数...");
         }
         //先从redies中获取相同文件,进行秒传实现
         if (!StringUtils.isEmpty(md5key)) {
@@ -291,13 +291,13 @@ public class FileInfoBiz extends BaseBiz<FileInfoMapper, FileInfoEntity> {
      */
     public void deleteFile(String fileId) {
         if (StringUtils.isEmpty(fileId)) {
-            throw new BaseException("fileId is null...");
+            throw new ClientParameterInvalid("fileId is null...");
         }
         FileInfoEntity fileInfoEntity = new FileInfoEntity();
         fileInfoEntity.setId(fileId);
         fileInfoEntity = mapper.selectByPrimaryKey(fileInfoEntity);
         if (fileInfoEntity == null) {
-            throw new BaseException("没有改文件...");
+            throw new DatabaseDataException("没有改文件...");
         }
         //保留文件历史，只是将数据库中文件信息设置为无效状态
         fileInfoEntity.setStatus(FileComtants.INVALID_FILE);
@@ -313,20 +313,20 @@ public class FileInfoBiz extends BaseBiz<FileInfoMapper, FileInfoEntity> {
      */
     public Map<String, Object> downLoadFile(String fileId, String sensitiveType) throws IOException {
                 if (StringUtils.isEmpty(fileId)) {
-                    throw new BaseException("fileId is null ... ");
+                    throw new ClientParameterInvalid("fileId is null ... ");
                 }
                 FileInfoEntity fileInfoEntity = new FileInfoEntity();
                 fileInfoEntity.setId(fileId);
                 fileInfoEntity = mapper.selectByPrimaryKey(fileInfoEntity);
                 if (fileInfoEntity == null) {
-                    throw new BaseException("没有该文件...");
+                    throw new DatabaseDataException("没有该文件...");
                 }
                 if (StringUtils.isEmpty(fileInfoEntity.getFilePathId())) {
-                    throw new BaseException("该文件没有对应的服务器路径...");
+                    throw new DatabaseDataException("该文件没有对应的服务器路径...");
                 }
                 FileServerPathEntity fileServerPathEntity = fileServerPathBiz.selectById(fileInfoEntity.getFilePathId());
                 if (fileServerPathEntity == null || StringUtils.isEmpty(fileServerPathEntity.getPath())) {
-                    throw new BaseException("文件没有存在在服务器中...");
+                    throw new DatabaseDataException("文件没有存在在服务器中...");
                 }
                 String path = fileServerPathEntity.getPath();
                 //文件名称
@@ -370,7 +370,7 @@ public class FileInfoBiz extends BaseBiz<FileInfoMapper, FileInfoEntity> {
      */
     public void getImg(String fileId, HttpServletResponse response, String sensitiveType) throws IOException {
         if (StringUtils.isEmpty(fileId)) {
-            throw new BaseException("fileId is null ... ");
+            throw new ClientParameterInvalid("fileId is null ... ");
         }
         OutputStream outputStream = null;
         try {
@@ -379,14 +379,14 @@ public class FileInfoBiz extends BaseBiz<FileInfoMapper, FileInfoEntity> {
             fileInfoEntity.setId(fileId);
             fileInfoEntity = mapper.selectByPrimaryKey(fileInfoEntity);
             if (fileInfoEntity == null) {
-                throw new BaseException("查询不到该文件 ... ");
+                throw new DatabaseDataException("查询不到该文件 ... ");
             }
             if (StringUtils.isEmpty(fileInfoEntity.getFilePathId())) {
-                throw new BaseException("该文件没有存储文件路径 ... ");
+                throw new DatabaseDataException("该文件没有存储文件路径 ... ");
             }
             FileServerPathEntity fileServerPathEntity = fileServerPathBiz.selectById(fileInfoEntity.getFilePathId());
             if (fileServerPathEntity == null || StringUtils.isEmpty(fileServerPathEntity.getPath())) {
-                throw new BaseException("文件没有在文件服务中 ... ");
+                throw new DatabaseDataException("文件没有在文件服务中 ... ");
             }
             String path = fileServerPathEntity.getPath();
             byte[] data = null;
@@ -484,7 +484,7 @@ public class FileInfoBiz extends BaseBiz<FileInfoMapper, FileInfoEntity> {
     private void fileToEntity(MultipartFile file, FileInfoEntity fileInforEntity,
                               FileServerPathEntity fileServerPathEntity) throws Exception {
         if (file == null) {
-            throw new BaseException("上传文件不能为空...");
+            throw new ClientParameterInvalid("上传文件不能为空...");
         }
         if (fileInforEntity != null) {
             String fileName = file.getOriginalFilename();

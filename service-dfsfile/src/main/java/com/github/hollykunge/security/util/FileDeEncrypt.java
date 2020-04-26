@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.util;
 
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.comtants.FileComtants;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,7 +66,7 @@ public class FileDeEncrypt {
 
     private byte[] fileTranfer(byte[] file, Cipher cipher,String flag) throws IOException {
         if(file == null){
-            throw new BaseException("加密或解密的文件不能为空...");
+            throw new ClientParameterInvalid("加密或解密的文件不能为空...");
         }
         byte[] inputByte = null;
         int i = 0;

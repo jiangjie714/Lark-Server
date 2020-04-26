@@ -2,7 +2,7 @@ package com.github.hollykunge.security.util;
 
 import com.ace.cache.api.impl.CacheRedis;
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.comtants.FileComtants;
 import com.github.hollykunge.security.vo.FileAppendInfoVO;
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
@@ -86,10 +86,10 @@ public class AppendFileUtils {
                                                          String currentNo,
                                                          String totalSize) throws Exception {
         if (Integer.parseInt(currentNo) > Integer.parseInt(totalSize)) {
-            throw new BaseException("currentNo more then totalSize...");
+            throw new ClientParameterInvalid("currentNo more then totalSize...");
         }
         if (StringUtils.isEmpty(personKey)) {
-            throw new BaseException("分块上传上传人唯一性不能为空...");
+            throw new ClientParameterInvalid("分块上传上传人唯一性不能为空...");
         }
         String appendPersonKey = FileComtants.REDIS_KEY_CON_APPEND_FILE
                 + personKey
