@@ -14,7 +14,7 @@ import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.exception.server.ServerHandlerException;
 import com.github.hollykunge.security.common.exception.service.PermissionException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.UserTokenException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenForbiddenResponse;
