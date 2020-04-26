@@ -1,5 +1,7 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
+import com.cxytiandi.encrypt.springboot.annotation.Encrypt;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
@@ -66,6 +68,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @return
      * @throws Exception
      */
+    @Encrypt
     @RequestMapping(value = "/front/info", method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<?> getUserInfo(String token, HttpServletRequest request) throws Exception {
@@ -86,6 +89,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param entity 用户实体
      * @return 用户id
      */
+    @Decrypt
     @RequestMapping(value = "/userInfo", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<AdminUser> addUser(@RequestBody User entity,
@@ -113,6 +117,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param positions
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "userInfo", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<User> updateUser(@RequestBody User entity,
@@ -139,6 +144,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param userId 用户id
      * @return
      */
+    @Encrypt
     @RequestMapping(value = "userInfo", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<Object>> getUser(@RequestParam("id") String userId) {
@@ -170,6 +176,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param roles  角色集（以“，”隔开的字符串）
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/role", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUserRoles(@RequestParam("userId") String userId, @RequestParam("roles") String roles) {
@@ -184,6 +191,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param userId 用户id
      * @return 角色
      */
+    @Encrypt
     @RequestMapping(value = "/role", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<Role>> getRolesByUserId(@RequestParam("id") String userId) {
@@ -198,6 +206,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param userId 用户id
      * @return 权限列表
      */
+    @Encrypt
     @RequestMapping(value = "/getPositionByUserId", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<Position>> getPositionsByUserId(@RequestParam("userId") String userId) {
@@ -213,6 +222,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @return 角色
      * fansq 修改 添加异常 ClientInvalidException
      */
+    @Encrypt
     @RequestMapping(value = "/nameLike", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<AdminUser>> getUserByNameLike(@RequestParam("nameLike") String nameLike) {
@@ -235,6 +245,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @return
      * fansq 修改 添加异常 ClientInvalidException
      */
+    @Encrypt
     @RequestMapping(value = "/findUsers", method = RequestMethod.GET)
     @ResponseBody
     public TableResultResponse<User> findUsers(@RequestParam Map<String, Object> params) {
@@ -253,6 +264,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @return
      * @throws Exception
      */
+    @Encrypt
     @RequestMapping(value = "/exportExcelWeb", method = RequestMethod.GET)
     public void exportUserExcelWeb(
             @RequestParam Map<String, Object> params,
