@@ -7,8 +7,6 @@ import com.github.hollykunge.security.admin.mapper.NoticeMapper;
 
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;
@@ -18,7 +16,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -67,9 +64,6 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
      * @param entity
      */
     public void sentNotice(Notice entity) {
-        if (StringUtils.isEmpty(entity.getId())) {
-            throw new FrontInputException("该通知已不存在。");
-        }
         entity.setIsSend("1");
         mapper.updateByPrimaryKeySelective(entity);
         //保存完成后向mq发送一条消息
@@ -90,9 +84,6 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
      */
     public void sentCancelNotice(String id) {
         Notice entity = new Notice();
-        if (StringUtils.isEmpty(id)) {
-            throw new FrontInputException("该通知已不存在。");
-        }
         entity.setId(id);
         entity.setIsSend("0");
         mapper.updateByPrimaryKeySelective(entity);
@@ -104,9 +95,6 @@ public class NoticeBiz extends BaseBiz<NoticeMapper, Notice> {
     }
 
     public TableResultResponse<Notice> pageList(Query query, String userId) {
-        if(StringUtils.isEmpty(userId)){
-            throw new FrontInputException("没有当前用户。");
-        }
         Class<Notice> clazz = (Class<Notice>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
         Example.Criteria criteria = example.createCriteria();

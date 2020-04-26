@@ -1,9 +1,7 @@
 package com.github.hollykunge.security.service;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -117,7 +115,7 @@ public class UserCommonToolsService extends BaseBiz<UserCommonToolsMapper, UserC
             }
         }
         if (StringUtils.isEmpty(orgCode) || "".equals(orgCode)) {
-            throw new UserInvalidException("当前用户没有组织编码，无法获取常用链接。");
+            throw new DatabaseDataException("当前用户没有组织编码，无法获取常用链接。");
         }
         //查询status为启用的数据
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
@@ -148,7 +146,7 @@ public class UserCommonToolsService extends BaseBiz<UserCommonToolsMapper, UserC
             UserCommonToolsVO userCommonToolsVO = new UserCommonToolsVO();
             BeanUtils.copyProperties(commonTool, userCommonToolsVO);
             if (StringUtils.isEmpty(commonTool.getId())) {
-                throw new FrontInputException("常用链接id异常。");
+                throw new DatabaseDataException("常用链接id异常。");
             }
             boolean isContains = userCommonToolsList.parallelStream().
                     anyMatch(userCommonTool -> commonTool.getId().equals(userCommonTool.getToolId()));
@@ -176,7 +174,7 @@ public class UserCommonToolsService extends BaseBiz<UserCommonToolsMapper, UserC
         userCommonTools.forEach(userTool -> {
             UserCommonToolsVO userCommonToolsVO = new UserCommonToolsVO();
             if (StringUtils.isEmpty(userTool.getToolId())) {
-                throw new FrontInputException("常用链接信息异常。");
+                throw new DatabaseDataException("常用链接信息异常。");
             }
             CommonTools commonTools = commonToolsMapper.selectByPrimaryKey(userTool.getToolId());
             BeanUtils.copyProperties(commonTools, userCommonToolsVO);

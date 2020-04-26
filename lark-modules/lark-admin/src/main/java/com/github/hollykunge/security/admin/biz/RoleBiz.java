@@ -13,8 +13,7 @@ import com.github.hollykunge.security.admin.mapper.*;
 import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +91,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
     @CacheClear(keys = {"permission:menu", "permission:u", "frontPermission{1}"})
     public void modifyAuthorityMenu(String roleId, List<AdminPermission> permissionList) {
         if (StringUtils.isEmpty(roleId) || permissionList.isEmpty()) {
-            throw new BaseException("args is null...");
+            throw new ClientParameterInvalid("roleId 和权限列表不能为空");
         }
         //用roleId删除所有与角色相关的资源
         Example resourceRoleExample = new Example(ResourceRoleMap.class);
@@ -142,9 +141,6 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
      */
     private List<String> getPermissionMenu(List<AdminPermission> permissionList) {
         List<String> listResult = new ArrayList<>();
-        if (permissionList.isEmpty()) {
-            throw new FrontInputException("传入的权限列表为空。");
-        }
         permissionList.stream().filter(permissionEntity -> permissionEntity.getActionEntitySetList().stream()
                 .anyMatch(actionEntitySet -> actionEntitySet.getDefaultCheck() == true))
                 .forEach(adminPermission -> {
@@ -325,7 +321,7 @@ public class RoleBiz extends BaseBiz<RoleMapper, Role> {
             menu.setCode(menuCode);
             menu = menuMapper.selectOne(menu);
             if (menu == null) {
-                throw new FrontInputException("找不到与{"+menuCode+"}匹配的菜单项。");
+                throw new ClientParameterInvalid("找不到与{"+menuCode+"}匹配的菜单项。");
             }
             Element element = new Element();
             element.setMenuId(menu.getId());

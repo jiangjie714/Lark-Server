@@ -4,16 +4,12 @@ import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.Position;
 import com.github.hollykunge.security.admin.entity.PositionUserMap;
-import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
 import com.github.hollykunge.security.common.util.EntityUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,9 +58,6 @@ public class PositionBiz extends BaseBiz<PositionMapper, Position> {
     }
 
     public List<AdminUser> getPositionUsers(String positionId,String secretLevel,String orgCode){
-        if(StringUtils.isEmpty(positionId) || StringUtils.isEmpty(orgCode)){
-            throw new FrontInputException("岗位id或者组织不能为空。");
-        }
         List<AdminUser> usersByPositionId = setUsersByPositionId(positionId,orgCode);
         filterBySecret(usersByPositionId,secretLevel);
         return usersByPositionId;

@@ -1,16 +1,12 @@
 package com.github.hollykunge.security.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
-import com.github.hollykunge.security.common.exception.service.ServiceHandleException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.entity.CardInfo;
 import com.github.hollykunge.security.entity.UserCard;
-import com.github.hollykunge.security.feign.IUserService;
 import com.github.hollykunge.security.service.CardService;
 import com.github.hollykunge.security.service.UserCardService;
 import com.github.hollykunge.security.vo.UserCardVO;
@@ -48,9 +44,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @ResponseBody
     public ObjectRestResponse<UserCard> add(@RequestBody UserCard userCard) {
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求中不包含用户信息。");
-        }
         userCard.setUserId(userId);
         // 非幂等问题不用加多余判断
         if (baseBiz.selectCount(userCard) > 0) {
@@ -70,9 +63,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @ResponseBody
     public ObjectRestResponse<CardInfo> removeUserCard(@RequestParam String cardId) {
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new BaseException("");
-        }
         UserCard userCard = new UserCard();
         userCard.setUserId(userId);
         userCard.setCardId(cardId);
@@ -94,9 +84,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @ResponseBody
     public ListRestResponse<List<UserCardVO>> userCards(HttpServletRequest request) {
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求token中没有用户信息。");
-        }
         List<UserCardVO> userCardVOList = baseBiz.userCards(userId);
         return new ListRestResponse("", userCardVOList.size(), userCardVOList);
     }
@@ -113,19 +100,16 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @ResponseBody
     public ObjectRestResponse modifyUserCards(@RequestParam String data, HttpServletRequest request) {
         if (StringUtils.isEmpty(data)) {
-            throw new FrontInputException("输入参数为空。");
+            throw new ClientParameterInvalid("输入参数为空。");
         }
         String[] datas = data.split(",");
         for (String param : datas) {
             param = "{" + param + "}";
             Map<Object, Integer> map = JSONObject.parseObject(param, Map.class);
             if (map == null) {
-                throw new ServiceHandleException("UserCardController", "ERROR LARK: param cannot be transfer to Map. { class=UserCardController" + ",param=" + param + "}");
+                throw new ClientParameterInvalid("ERROR LARK: param cannot be transfer to Map. { class=UserCardController" + ",param=" + param + "}");
             }
             String userId = request.getHeader("userId");
-            if (StringUtils.isEmpty(userId)) {
-                throw new FrontInputException("请求token中没有用户信息。");
-            }
             Set<Object> sets = map.keySet();
             for (Object temp : sets) {
                 UserCard userCard = new UserCard();
@@ -149,9 +133,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
     @ResponseBody
     public ListRestResponse<List<UserCardVO>> allCard() {
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
-            throw new FrontInputException("请求token中没有用户信息。");
-        }
         List<UserCardVO> list = baseBiz.allCard(userId);
         return new ListRestResponse("", list.size(), list);
     }

@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.rpc;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
@@ -44,7 +44,7 @@ public class CardRest {
         String uuid = UUIDUtils.generateShortUuid();
         cardDto.setId(uuid);
         if(cardService.selectCount(cardDto)>0){
-            throw new UserInvalidException("当前卡片已经存在。");
+            throw new DatabaseDataException("当前卡片已经存在。");
         };
         cardService.insertSelective(cardDto);
         if(Constants.CARDLORGUSERSTATUSONE.equals(cardDto.getCardOrgUserStatus())){
@@ -90,7 +90,7 @@ public class CardRest {
     public  ObjectRestResponse<CardDto> remove(@RequestParam("id") String id){
         Object s = cardService.selectById(id);
         if(s==null){
-            throw new UserInvalidException("卡片不存在，无法移除当前卡片。");
+            throw new DatabaseDataException("卡片不存在，无法移除当前卡片。");
         }
         cardService.deleteById(id);
         UserCard userCard = new UserCard();

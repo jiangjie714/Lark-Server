@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,7 +160,7 @@ public class UserRest implements AdminUserServiceFeignClient {
      * @return
      */
     @RequestMapping(value = "/user/pwd",method = RequestMethod.PUT)
-    public ObjectRestResponse<Boolean> changeUserPwd(@RequestBody ChangeUserPwdDto changeUserPwdDto, HttpServletRequest request) throws Exception {
+    public ObjectRestResponse<Boolean> changeUserPwd(@RequestBody @Valid ChangeUserPwdDto changeUserPwdDto, HttpServletRequest request) throws Exception {
         userBiz.changeUserPwd(changeUserPwdDto,request);
         return new ObjectRestResponse<>().data(true).rel(true);
     }

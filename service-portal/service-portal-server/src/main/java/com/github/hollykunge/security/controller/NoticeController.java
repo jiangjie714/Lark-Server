@@ -1,8 +1,6 @@
 package com.github.hollykunge.security.controller;
 
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -41,9 +39,6 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     @RequestMapping(value = "/orgNotice", method = RequestMethod.GET)
     public ListRestResponse<List<Notice>> findUserNotice(@RequestParam("orgCode") String orgCode) {
         String userSecretLevel = request.getHeader("userSecretLevel");
-        if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new FrontInputException("该用户无密级。");
-        }
         List<Notice> notices = baseBiz.selectNoticList(orgCode);
         List<Notice> noticeList = baseBiz.selectNotic(orgCode, userSecretLevel);
         notices.addAll(noticeList);
@@ -61,9 +56,6 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     @ResponseBody
     public ListRestResponse<List<Notice>> orgNotices(@RequestParam String orgCode) {
         String userSecretLevel = request.getHeader("userSecretLevel");
-        if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new FrontInputException("该用户无密级。");
-        }
         Notice notice = new Notice();
         notice.setOrgCode(orgCode);
         List<Notice> notices = baseBiz.selectList(notice, userSecretLevel);
@@ -82,11 +74,11 @@ public class NoticeController extends BaseController<NoticeService, Notice> {
     public TableResultResponse<Notice> page(@RequestParam Map<String, Object> params) {
         String orgCode = (String) params.get("orgCode");
         if (StringUtils.isEmpty(orgCode)) {
-            throw new FrontInputException("该用户无组织。");
+            throw new ClientParameterInvalid("该用户无组织。");
         }
         String userSecretLevel = request.getHeader("userSecretLevel");
         if (StringUtils.isEmpty(userSecretLevel)) {
-            throw new FrontInputException("该用户无密级。");
+            throw new ClientParameterInvalid("该用户无密级。");
         }
         Query query = new Query(params);
         return baseBiz.page(query, userSecretLevel, orgCode);

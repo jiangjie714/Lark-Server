@@ -11,9 +11,10 @@ import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
 import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
-import com.github.hollykunge.security.common.exception.auth.PermissionException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
+import com.github.hollykunge.security.common.exception.server.ServerHandlerException;
+import com.github.hollykunge.security.common.exception.service.PermissionException;
+import com.github.hollykunge.security.common.exception.service.UserTokenException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenForbiddenResponse;
@@ -94,6 +95,7 @@ public class AdminAccessFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         final String requestUri = request.getRequestURI().substring(zuulPrefix.length());
         String errorMessage = null;
+        int responStatus = HttpReponseStatusEnum.OK.value();
         try {
             BaseContextHandler.setToken(null);
             String dnname = request.getHeader(this.dnName);
@@ -112,24 +114,28 @@ public class AdminAccessFilter extends ZuulFilter {
             String pId = parsingDnname(dnname);
             //秘钥登录
             return authorization(requestUri, ctx, request, pId.toLowerCase());
-        } catch (ClientInvalidException clientInvalidEx) {
+        } catch (ServerHandlerException clientInvalidEx) {
+            responStatus = HttpReponseStatusEnum.SYSTEM_ERROR.value();
             //client无效异常
-            errorMessage =JSON.toJSONString(new BaseResponse(CommonConstants.EX_CLIENT_INVALID_CODE,GATEWAY_ERROR+clientInvalidEx.getMessage()));
+            errorMessage =JSON.toJSONString(new BaseResponse(clientInvalidEx.getStatus(),GATEWAY_ERROR+clientInvalidEx.getMessage()));
         } catch (UserTokenException tokenEx) {
+            responStatus = HttpReponseStatusEnum.BIZ_RUN_ERROR.value();
             //纯token异常
             errorMessage = JSON.toJSONString(new TokenErrorResponse(tokenEx.getMessage()));
         } catch (PermissionException permissionEx){
+            responStatus = HttpReponseStatusEnum.BIZ_RUN_ERROR.value();
             //权限异常导致tokenerror
             TokenForbiddenResponse tokenForbiddenResponse = new TokenForbiddenResponse(permissionEx.getMessage());
             tokenForbiddenResponse.setStatus(permissionEx.getStatus());
             errorMessage = JSON.toJSONString(tokenForbiddenResponse);
         } catch (Exception ex){
+            responStatus = HttpReponseStatusEnum.SYSTEM_ERROR.value();
             //其他未知异常
             errorMessage =JSON.toJSONString(new BaseResponse(CommonConstants.EX_OTHER_CODE,GATEWAY_ERROR+ExceptionUtils.getMessage(ex)));
         }
         //异常信息返回前端
         if(!StringUtils.isEmpty(errorMessage)){
-            setFailedRequest(errorMessage, CommonConstants.HTTP_SUCCESS);
+            setFailedRequest(errorMessage, responStatus);
         }
         //无业务逻辑和异常逻辑，只是网关返回null，意为该过滤器已经执行完毕
         return null;
@@ -145,7 +151,7 @@ public class AdminAccessFilter extends ZuulFilter {
         try {
             dnname = new String(dnname.getBytes(CommonConstants.PERSON_CHAR_SET));
         } catch (UnsupportedEncodingException e) {
-            throw new ClientInvalidException("ERROR LARK: dnname transfer error, class=AdminAccessFilter.");
+            throw new ServerHandlerException("ERROR LARK: dnname transfer error, class=AdminAccessFilter.");
         }
         String[] userObjects = dnname.trim().split(",", 0);
         String pid = null;
@@ -288,9 +294,6 @@ public class AdminAccessFilter extends ZuulFilter {
      * @param user
      */
     private void checkUserPermission(String requestUri, List<FrontPermission> permissionInfos, RequestContext ctx, IJWTInfo user) throws Exception {
-        if (StringUtils.isEmpty(requestUri)) {
-            throw new ClientInvalidException("ERROR LARK: requestUri Parameter exception, class=AdminAccessFilter.");
-        }
         permissionInfos = permissionInfos.stream()
                 .filter((FrontPermission permissionInfo) ->{
                         if (StringUtils.isEmpty(permissionInfo.getUri())) {

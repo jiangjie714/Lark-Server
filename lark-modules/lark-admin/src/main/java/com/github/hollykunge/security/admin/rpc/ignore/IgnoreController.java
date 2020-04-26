@@ -2,10 +2,8 @@ package com.github.hollykunge.security.admin.rpc.ignore;
 
 import com.github.hollykunge.security.admin.api.authority.*;
 import com.github.hollykunge.security.admin.biz.GateLogBiz;
-import com.github.hollykunge.security.admin.biz.OrgBiz;
-import com.github.hollykunge.security.admin.rpc.ignore.service.IgnoreService;
 import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,15 +92,15 @@ public class IgnoreController {
     public ObjectRestResponse statisticsBar(@RequestParam Map<String, Object> map) throws Exception {
         PortalStatistics portalStatistics = new PortalStatistics();
         if (map.isEmpty()) {
-            throw new BaseException("参数不可为空！");
+            throw new ClientParameterInvalid("参数不可为空！");
         }
         Object dateRange = map.get("dateRange");
         if (dateRange == "" || dateRange == null) {
-            throw new BaseException("时间范围不可为空！");
+            throw new ClientParameterInvalid("时间范围不可为空！");
         }
         Object unitRange = map.get("unitRange");
         if (dateRange == "" || dateRange == null) {
-            throw new BaseException("单位组织范围不可为空！");
+            throw new ClientParameterInvalid("单位组织范围不可为空！");
         }
         //柱状图  访问量
         List<AccessNum> accessNums = gateLogBiz.accessNums(unitRange.toString(), dateRange.toString());

@@ -5,6 +5,7 @@ import com.github.hollykunge.security.auth.client.config.ServiceAuthConfig;
 import com.github.hollykunge.security.auth.client.feign.ServiceAuthFeign;
 import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.auth.common.util.jwt.JWTHelper;
+import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.auth.ClientTokenException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -41,11 +42,11 @@ public class ServiceAuthUtil{
         try {
             return JWTHelper.getInfoFromToken(token, serviceAuthConfig.getPubKeyByte());
         } catch (ExpiredJwtException ex) {
-            throw new ClientTokenException("Client token expired!");
+            throw new ClientTokenException(CommonConstants.EX_CLIENT_TOKEN_EXPIRED,"Client token expired!");
         } catch (SignatureException ex) {
-            throw new ClientTokenException("Client token signature error!");
+            throw new ClientTokenException(CommonConstants.EX_CLIENT_TOKEN_SIGNATURE,"Client token signature error!");
         } catch (IllegalArgumentException ex) {
-            throw new ClientTokenException("Client token is null or empty!");
+            throw new ClientTokenException(CommonConstants.EX_CLIENT_TOKEN_INVALID,"Client token is null or empty!");
         }
     }
 

@@ -14,8 +14,8 @@ import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
 
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.util.StringHelper;
 
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -87,7 +87,7 @@ public class PermissionService {
         //判断是否为系统超级管理员
         if (Objects.equals(userPid, sysAuthConfig.getSysUsername())) {
             if (!Objects.equals(password, sysAuthConfig.getSysPassword())) {
-                throw new UserTokenException("超级管理员密码错误");
+                throw new ClientParameterInvalid("超级管理员密码错误");
             }
             info.setId(sysAuthConfig.getSysUsername());
             info.setPId(sysAuthConfig.getSysUsername());
@@ -98,10 +98,10 @@ public class PermissionService {
         }
         User user = userBiz.getUserByUserPid(userPid);
         if (user == null) {
-            throw new UserTokenException("没有该用户");
+            throw new ClientParameterInvalid("没有该用户");
         }
         if (!PassWordEncoderUtil.ENCODER.matches(password, user.getPassword())) {
-            throw new UserTokenException("密码错误");
+            throw new ClientParameterInvalid("密码错误");
         }
         BeanUtils.copyProperties(user, info);
         info.setId(user.getId());
@@ -154,7 +154,7 @@ public class PermissionService {
         } else {
             List<Role> roleByUserId = roleBiz.getRoleByUserId(userId);
             if (roleByUserId.size() == 0) {
-                throw new ClientInvalidException("用户"+userId+"无角色信息。");
+                throw new DatabaseDataException("用户"+userId+"无角色信息。");
             }
             roleId = roleByUserId.get(0).getId();
         }
@@ -202,10 +202,11 @@ public class PermissionService {
      */
     public FrontUser getUserInfo(String token) throws Exception {
         String userId = userAuthUtil.getInfoFromToken(token).getId();
-        if (userId == null) {
-            //20-2-21 fansq添加异常返回类型
-            throw new UserTokenException("解析token异常。");
-        }
+        //这个位置不可能出现异常，如果userid为null，token解析的时候已经报异常了
+//        if (userId == null) {
+//            //20-2-21 fansq添加异常返回类型
+//            throw new UserTokenException("解析token异常。");
+//        }
         FrontUser frontUser = new FrontUser();
         //如果是超级管理员，则显示所有的菜单和操作
         if (Objects.equals(sysAuthConfig.getSysUsername(), userId)) {

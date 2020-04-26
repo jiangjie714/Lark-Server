@@ -10,9 +10,7 @@ import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.vo.FrontUser;
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
-import com.github.hollykunge.security.common.exception.auth.FrontInputException;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -218,18 +216,15 @@ public class UserController extends BaseController<UserBiz, User> {
     @RequestMapping(value = "/nameLike", method = RequestMethod.GET)
     @ResponseBody
     public ListRestResponse<List<AdminUser>> getUserByNameLike(@RequestParam("nameLike") String nameLike) {
+        //异常放在biz层
         List<AdminUser> adminUsers = new ArrayList<>();
-        if (StringUtils.isEmpty(nameLike)) {
-            throw new UserInvalidException("用户名为空。");
-        } else {
-            List<User> users = baseBiz.selectUserByNameLike(nameLike);
-            users.stream().forEach(user -> {
-                AdminUser adminUser = new AdminUser();
-                BeanUtils.copyProperties(user, adminUser);
-                adminUser.setPathName(orgBiz.getPathName(user.getOrgCode()).get(0).getPathName());
-                adminUsers.add(adminUser);
-            });
-        }
+        List<User> users = baseBiz.selectUserByNameLike(nameLike);
+        users.stream().forEach(user -> {
+            AdminUser adminUser = new AdminUser();
+            BeanUtils.copyProperties(user, adminUser);
+            adminUser.setPathName(orgBiz.getPathName(user.getOrgCode()).get(0).getPathName());
+            adminUsers.add(adminUser);
+        });
         return new ListRestResponse("", adminUsers.size(), adminUsers);
     }
 
@@ -243,8 +238,9 @@ public class UserController extends BaseController<UserBiz, User> {
     @RequestMapping(value = "/findUsers", method = RequestMethod.GET)
     @ResponseBody
     public TableResultResponse<User> findUsers(@RequestParam Map<String, Object> params) {
+        //todo 改异常无法放到业务层，业务方法被很多接口使用
         if (StringUtils.isEmpty(params.get("name"))) {
-            throw new FrontInputException("用户名为空。");
+            throw new ClientParameterInvalid("用户名为空。");
         }
         return baseBiz.selectByQuery(new Query(params));
     }

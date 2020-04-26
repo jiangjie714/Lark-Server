@@ -24,6 +24,7 @@
     </build>
     <properties>
         <mapper.version>3.4.1</mapper.version>
+        <javax.validation.vsersion>2.0.1.Final</javax.validation.vsersion>
     </properties>
     <dependencies>
         <dependency>
@@ -125,6 +126,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>${javax.validation.vsersion}</version>
         </dependency>
 
     </dependencies>
