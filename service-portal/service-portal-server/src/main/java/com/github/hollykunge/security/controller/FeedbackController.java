@@ -13,6 +13,7 @@ import java.util.Objects;
 
 /**
  * 问题反馈
+ *
  * @author hollykunge
  */
 @RestController
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class FeedbackController extends BaseController<FeedbackService, Feedback> {
     /**
      * todo:未使用
+     *
      * @param params
      * @return
      */
@@ -27,14 +29,12 @@ public class FeedbackController extends BaseController<FeedbackService, Feedback
     @ResponseBody
     @Override
     public TableResultResponse<Feedback> page(@RequestParam Map<String, Object> params) {
-        String roleId = (String)params.get("roleId");
-        if(!Objects.equals(Constants.ROLE_ID,roleId)){
+        String roleId = (String) params.get("roleId");
+        if (!Objects.equals(Constants.ROLE_ID, roleId)) {
             String userId = request.getHeader("userId");
-            params.put("crtUser",userId);
+            params.put("crtUser", userId);
         }
-        if(params.containsKey("roleId")){
-            params.remove("roleId");
-        }
+        params.remove("roleId");
         //查询列表数据
         Query query = new Query(params);
         return baseBiz.selectByQuery(query);

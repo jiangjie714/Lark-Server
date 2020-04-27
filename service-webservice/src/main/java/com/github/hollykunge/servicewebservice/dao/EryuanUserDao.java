@@ -1,6 +1,5 @@
 package com.github.hollykunge.servicewebservice.dao;
 
-import com.github.hollykunge.servicewebservice.model.EryuanOrg;
 import com.github.hollykunge.servicewebservice.model.EryuanUser;
 import tk.mybatis.mapper.common.Mapper;
 

@@ -8,6 +8,9 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
+/**
+ * @author LARK
+ */
 public interface UserMapper extends Mapper<User> {
     /**
      * 通过角色ID查询用户列表，关联表中查询

@@ -7,6 +7,9 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+/**
+ * @author dd
+ */
 public class ConfigRequestWrapper extends HttpServletRequestWrapper {
     public ConfigRequestWrapper(HttpServletRequest request) {
 

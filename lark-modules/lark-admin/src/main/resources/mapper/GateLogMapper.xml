@@ -61,7 +61,7 @@
             <if test = "type == '6' || type == 6">
                 and   TO_CHAR(crt_time, 'yyyy-MM-dd')
                 between
-                to_char((select trunc(sysdate, 'd') + 1 from dual),'yyyy-mm-dd')
+                to_char((select TRUNC(SYSDATE - 7)   from dual),'yyyy-mm-dd')
                 and
                 to_char(sysdate,'yyyy-mm-dd')
             </if>
@@ -69,7 +69,7 @@
             <if test = "type == '7' || type == 7">
                 and   TO_CHAR(crt_time, 'yyyy-MM-dd')
                 between
-                to_char((select trunc(sysdate, 'mm') from dual),'yyyy-mm-dd')
+                to_char((select TRUNC(SYSDATE - 30)   from dual),'yyyy-mm-dd')
                 and
                 to_char(sysdate,'yyyy-mm-dd')
             </if>

@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.util;
 
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.comtants.FileComtants;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.exception.FdfsUnsupportStorePathException;
@@ -171,7 +171,7 @@ public class FastDFSClientWrapper {
      */
     public void deleteFile(String fileUrl) {
         if (StringUtils.isEmpty(fileUrl)) {
-            throw new BaseException("要删除的文件id,不能为null...");
+            throw new ClientParameterInvalid("要删除的文件id,不能为null...");
         }
         try {
             StorePath storePath = StorePath.parseFromUrl(fileUrl);
@@ -202,11 +202,11 @@ public class FastDFSClientWrapper {
     public String crtThumbImage(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         if(StringUtils.isEmpty(originalFilename)){
-            throw new BaseException("上传文件有错误...");
+            throw new ClientParameterInvalid("上传文件有错误...");
         }
         String originalName = originalFilename.substring(originalFilename.indexOf(".") + 1, originalFilename.length());
         if(permission.contains(originalName)){
-            throw new BaseException("生成缩略图的图片类型不允许...");
+            throw new ClientParameterInvalid("生成缩略图的图片类型不允许...");
         }
         System.out.printf(originalFilename);
         //上传图片的缩略图

@@ -67,6 +67,6 @@ public class RouteFallbackProvider implements FallbackProvider {
 
     @Override
     public ClientHttpResponse fallbackResponse(String s, Throwable throwable) {
-        return fallbackResponse(null);
+        return fallbackResponse(throwable);
     }
 }

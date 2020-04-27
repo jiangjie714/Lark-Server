@@ -7,6 +7,9 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 
+/**
+ * @author LARK
+ */
 public interface RpcUserMapper{
     /**
      * 根据人员id和身份证号，获取人员信息

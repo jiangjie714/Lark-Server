@@ -2,6 +2,7 @@ package com.github.hollykunge.security.auth.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.server.InternalException;
 import feign.Response;
 import feign.Util;
 import feign.codec.ErrorDecoder;
@@ -28,12 +29,8 @@ public class FeignExceptionErrorHandler implements ErrorDecoder {
             log.error(exception.getMessage());
             return new InternalException(exception.getMessage());
         }
-        return new InternalException("系统异常,请联系管理员");
+        return new InternalException("ERROR LARK: FeignExceptionErrorHandler is error");
     }
 
-    public class InternalException extends RuntimeException {
-        public InternalException(String msg) {
-            super(msg);
-        }
-    }
+
 }
