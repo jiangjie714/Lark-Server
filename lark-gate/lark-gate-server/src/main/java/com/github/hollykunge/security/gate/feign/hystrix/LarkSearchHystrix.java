@@ -5,6 +5,7 @@ import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
 import com.github.hollykunge.security.search.dto.TopicDto;
 import com.github.hollykunge.security.search.web.api.response.SearchObjectRestResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,9 +16,18 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class LarkSearchHystrix implements ILarkSearchFeign {
+    private Throwable throwable;
+
+    public void setThrowable(Throwable throwable){
+        this.throwable = throwable;
+    }
+
     @Override
     public SearchObjectRestResponse sendKafka(TopicDto topic) throws Exception {
-        log.error("发送搜索服务日志信息失败!!!!{}", JSONObject.toJSONString(topic));
-        return null;
+        String message = ExceptionUtils.getMessage(throwable);
+        SearchObjectRestResponse searchObjectRestResponse = new SearchObjectRestResponse();
+        searchObjectRestResponse.setMessage(message);
+        searchObjectRestResponse.setStatus(500);
+        return searchObjectRestResponse;
     }
 }

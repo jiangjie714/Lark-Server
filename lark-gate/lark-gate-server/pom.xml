@@ -93,11 +93,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-        <!-- todo:将搜索服务发布api接口到私服中 -->
         <dependency>
-            <groupId>com.github.hollykunge.security</groupId>
-            <artifactId>lark-searchs-api-web</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.github.hollykunge</groupId>
+            <artifactId>lark-search-api-web</artifactId>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
