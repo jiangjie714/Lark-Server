@@ -77,7 +77,7 @@ public class ZzCodeMeetingFunctionController {
         res.data("操作成功");
         String userId = common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo = common.nulToEmptyString(request.getHeader("pid"));
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
         try {
             zzCodeMeetingFunction.setUpdHost(userIp);

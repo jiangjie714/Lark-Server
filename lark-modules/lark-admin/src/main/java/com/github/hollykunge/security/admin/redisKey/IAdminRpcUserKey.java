@@ -3,7 +3,7 @@ package com.github.hollykunge.security.admin.redisKey;
 import com.ace.cache.constants.CacheScope;
 import com.ace.cache.parser.IKeyGenerator;
 import com.ace.cache.parser.IUserKeyGenerator;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;
@@ -25,15 +25,15 @@ public class IAdminRpcUserKey extends IKeyGenerator {
     public String buildKey(String key, CacheScope scope, Class<?>[] parameterTypes, Object[] arguments) {
         String pre = "";
         String pid = (String) arguments[0];
-        String userid = (String) arguments[1];
+        String userId = (String) arguments[1];
         if (!StringUtils.isEmpty(pid) && !Objects.equals("", pid)) {
             pre = pid;
         }
-        if (StringUtils.isEmpty(pre) && !StringUtils.isEmpty(userid) && !Objects.equals("", userid)) {
-            pre = userid;
+        if (StringUtils.isEmpty(pre) && !StringUtils.isEmpty(userId) && !Objects.equals("", userId)) {
+            pre = userId;
         }
         if(StringUtils.isEmpty(pre)){
-            throw new BaseException("pid或者userid不能都为null或空串...");
+            throw new ClientParameterInvalid("pid或者userId都为空。");
         }
         return key+CONNECT+pre;
     }

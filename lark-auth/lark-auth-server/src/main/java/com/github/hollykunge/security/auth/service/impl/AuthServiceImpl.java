@@ -1,15 +1,11 @@
 package com.github.hollykunge.security.auth.service.impl;
 
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.auth.common.util.jwt.JWTInfo;
 import com.github.hollykunge.security.auth.feign.IUserService;
 import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtTokenUtil;
-import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
+import com.github.hollykunge.security.common.exception.service.UserInvalidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

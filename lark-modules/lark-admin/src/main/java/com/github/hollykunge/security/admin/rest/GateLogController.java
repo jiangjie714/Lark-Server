@@ -36,6 +36,7 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
     /**
      * todo:使用
      * 分页获取数据
+     *
      * @param params
      * @return
      */
@@ -43,45 +44,32 @@ public class GateLogController extends BaseController<GateLogBiz, GateLog> {
     @ResponseBody
     @Override
     public TableResultResponse<GateLog> page(@RequestParam Map<String, Object> params) {
-        String pid = null;
 
-        pid = request.getHeader("dnname");
+        String pid = request.getHeader("pid");
+
         if (StringUtils.isEmpty(pid)) {
             pid = BaseContextHandler.getUsername();
         }
-
-//        List<String> userPidlist = new ArrayList();
-//        userPidlist.add("2");
-//        userPidlist.add("3");
-//
-//        if (pid.equals("3")) {
-//            params.put("pid", userPidlist);
-//            return baseBiz.selectByQueryM(new Query(params), "log");
-//        } else if (pid.equals("4")) {
-//            params.put("pid", userPidlist);
-//            return baseBiz.selectByQueryM(new Query(params), "Security");
-//        }
-//        return baseBiz.selectByQuery(new Query(params));
-        return baseBiz.pageByRole(new Query(params),pid);
+        return baseBiz.pageByRole(new Query(params), pid);
     }
 
     /**
      * todo:使用
      * 导出日志
+     *
      * @param response
      * @throws Exception
      */
     @GetMapping("/export")
     public void download(HttpServletResponse response) throws Exception {
         String pid = null;
-        pid = request.getHeader("dnname");
+        pid = request.getHeader("pid");
         if (StringUtils.isEmpty(pid)) {
             pid = BaseContextHandler.getUsername();
         }
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("日志文件.xls", "UTF-8"));
         ServletOutputStream outputStream = response.getOutputStream();
-//        List<GateLog> gateLogs = baseBiz.selectListAll();
         List<GateLog> gateLogs = baseBiz.gateLogExport();
         List<GateLog> gateLogsTemp = new ArrayList<>();
 

@@ -6,6 +6,9 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
+/**
+ * @author LARK
+ */
 public interface RoleUserMapMapper extends Mapper<RoleUserMap> {
 
     /**

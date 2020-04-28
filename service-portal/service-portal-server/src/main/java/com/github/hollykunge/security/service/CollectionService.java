@@ -18,8 +18,4 @@ public class CollectionService extends BaseBiz<CollectionMapper, Collection> {
     protected String getPageName() {
         return null;
     }
-
-//    public List<Collection> selectLastFive(String id){
-//        return mapper.selectLastFiveByUserId(id);
-//    }
 }

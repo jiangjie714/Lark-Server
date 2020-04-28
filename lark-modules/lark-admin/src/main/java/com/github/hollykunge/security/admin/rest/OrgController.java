@@ -8,18 +8,12 @@ import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.User;
-import com.github.hollykunge.security.admin.rpc.service.OrgRestService;
-import com.github.hollykunge.security.admin.util.EasyExcelUtil;
-import com.github.hollykunge.security.admin.util.ExcelListener;
 import com.github.hollykunge.security.admin.vo.OrgTreeAll;
-import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.ClientInvalidException;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.TreeUtil;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import io.swagger.annotations.Api;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -46,8 +39,6 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     @Autowired
     private OrgBiz orgBiz;
 
-    @Autowired
-    private OrgRestService orgRestService;
     /**
      * todo:使用
      * fansq
@@ -58,8 +49,6 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Org> add(@RequestBody Org org) {
-        //添加空字段默认值 以及pathcode  pathname  值
-        String id = UUIDUtils.generateShortUuid();
         org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
         org.setPathCode(org.getPathCode()+org.getOrgCode()+AdminCommonConstant.ORG_PATH_CODE);
         org.setPathName(org.getPathName()+org.getOrgName()+AdminCommonConstant.ORG_PATH_NAME);
@@ -107,6 +96,8 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return
      * fansq 添加异常 ClientInvalidException
      */
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
     @Override
     public ObjectRestResponse<Org> remove(@PathVariable String id) {
         User user = new User();
@@ -117,10 +108,10 @@ public class OrgController extends BaseController<OrgBiz, Org> {
         List<User> userList = userBiz.selectList(user);
         List<Org> orgList = orgBiz.selectList(org);
         if(orgList.size() > 0){
-            throw new ClientInvalidException("The organization has sub-organization and cannot be deleted");
+            throw new DatabaseDataException("选择组织包含子节点，无法删除。");
         }
         if(userList.size()>0){
-            throw new ClientInvalidException("The organization has users and cannot be deleted");
+            throw new DatabaseDataException("选择组织包含用户，无法删除。");
         }
         return super.remove(id);
     }
@@ -135,10 +126,10 @@ public class OrgController extends BaseController<OrgBiz, Org> {
     public ListRestResponse<List<AdminUser>> getUsers(@RequestParam Map<String,String> map, HttpServletRequest request) {
         String orgCode = map.get("orgCode");
         String secretLevels = map.get("secretLevels");
-        String PId = map.get("PId");
-        String grouptype = map.get("grouptype");
+        String pId = map.get("PId");
+        String groupType = map.get("grouptype");
         String userOrgCode = map.get("userOrgCode");
-        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, PId,grouptype,userOrgCode);
+        List<AdminUser> orgUsers = baseBiz.getOrgUsers(orgCode, secretLevels, pId,groupType,userOrgCode);
         return new ListRestResponse("", orgUsers.size(), orgUsers);
     }
 
@@ -183,11 +174,9 @@ public class OrgController extends BaseController<OrgBiz, Org> {
 
     private List<OrgTreeAll> getTree(List<Org> orgs, String parentTreeId) {
         List<OrgTreeAll> trees = new ArrayList<>();
-        OrgTreeAll node;
         for (Org org : orgs) {
-            node = new OrgTreeAll();
             String jsonNode = JSON.toJSONString(org);
-            node = JSON.parseObject(jsonNode, OrgTreeAll.class);
+            OrgTreeAll node = JSON.parseObject(jsonNode, OrgTreeAll.class);
             node.setLabel(org.getOrgName());
             node.setOrder(org.getOrderId());
             node.setLevel(org.getOrgLevel());
@@ -195,7 +184,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
             node.setPathName(org.getPathName());
             trees.add(node);
         }
-        Collections.sort(trees, Comparator.comparing(OrgTreeAll::getOrder));
+        trees.sort(Comparator.comparing(OrgTreeAll::getOrder));
         return TreeUtil.bulid(trees, parentTreeId);
     }
 

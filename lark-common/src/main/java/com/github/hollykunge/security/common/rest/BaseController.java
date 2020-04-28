@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class BaseController<Biz extends BaseBiz, Entity> {
 
     @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseBody
-    public ObjectRestResponse<Entity> update(@RequestBody Entity entity) {
+    public ObjectRestResponse<Entity> update(@RequestBody @Valid Entity entity) {
         baseBiz.updateSelectiveById(entity);
         return new ObjectRestResponse<Entity>().rel(true);
     }

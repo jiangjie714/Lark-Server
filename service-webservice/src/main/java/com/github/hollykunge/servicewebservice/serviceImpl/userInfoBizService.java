@@ -19,7 +19,6 @@ public class userInfoBizService {
     public String getXmlUserInfo(String address)throws ServiceException {
         Service service = new Service();
         Call call = (Call) service.createCall();
-       // call.setTargetEndpointAddress( "http://10.11.1.29/axis/services/BizService" );
         call.setTargetEndpointAddress( address);
 
         call.setOperationName( "runBiz" );

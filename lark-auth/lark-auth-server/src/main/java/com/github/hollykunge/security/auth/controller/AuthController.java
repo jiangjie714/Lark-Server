@@ -3,11 +3,8 @@ package com.github.hollykunge.security.auth.controller;
 import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationRequest;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationResponse;
-import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.exception.auth.UserInvalidException;
-import com.github.hollykunge.security.common.exception.auth.UserTokenException;
-import com.github.hollykunge.security.common.msg.ListRestResponse;
+import com.github.hollykunge.security.common.exception.server.ServerHandlerException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.util.IntranetRequestHeaderUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import zipkin2.Call;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,11 +37,20 @@ public class AuthController {
     public ObjectRestResponse<?> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletRequest request) throws Exception {
         final String token;
-        String pid = IntranetRequestHeaderUtils.getDnName(request);
-        if (pid==""||pid==null){
+        String pid = request.getHeader("pid");
+        //如果用户名和密码存在的话，使用用户名和密码登录
+        if (authenticationRequest != null &&
+                !StringUtils.isEmpty(authenticationRequest.getUsername()) &&
+                !StringUtils.isEmpty(authenticationRequest.getPassword())) {
             token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        } else {
+        }
+        //内网使用密匙登录
+        else if(!StringUtils.isEmpty(pid)){
             token = authService.login(pid, defaultPassword);
+        }
+        //无效登录
+        else{
+            throw new ClientParameterInvalid("无效的登录请求，请检查用户身份信息是否正确。");
         }
 
         return new ObjectRestResponse().data(new JwtAuthenticationResponse(token)).msg("获取token成功");
@@ -58,7 +63,7 @@ public class AuthController {
         String token = request.getHeader(tokenHeader);
         String refreshedToken = authService.refresh(token);
         if (refreshedToken == null) {
-            throw new UserTokenException("用户token刷新失败");
+            throw new ServerHandlerException("用户token刷新失败。");
         } else {
             return new ObjectRestResponse().data(new JwtAuthenticationResponse(refreshedToken)).msg("刷新token成功");
         }

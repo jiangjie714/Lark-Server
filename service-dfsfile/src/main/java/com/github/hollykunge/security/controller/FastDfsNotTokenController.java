@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.controller;
 
 import com.github.hollykunge.security.biz.FileInfoBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -14,8 +14,6 @@ import com.github.hollykunge.security.jwt.FileJwtInfo;
 import com.github.hollykunge.security.util.FastDFSClientWrapper;
 import com.github.hollykunge.security.util.FileTypeEnum;
 import com.github.hollykunge.security.vo.JwtInfoVO;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
@@ -235,22 +233,22 @@ public class FastDfsNotTokenController extends BaseController<FileInfoBiz, FileI
         String fileName = request.getHeader("fileName");
         String fileSize = request.getHeader("fileSize");
         if (StringUtils.isEmpty(currentNo)) {
-            throw new BaseException("当前段数不能为空...");
+            throw new ClientParameterInvalid("当前段数不能为空...");
         }
         if (StringUtils.isEmpty(totalSize)) {
-            throw new BaseException("总段数不能为空...");
+            throw new ClientParameterInvalid("总段数不能为空...");
         }
         if (StringUtils.isEmpty(key)) {
-            throw new BaseException("文件唯一性不能为空...");
+            throw new ClientParameterInvalid("文件唯一性不能为空...");
         }
         if (file == null || file.getBytes() == null) {
-            throw new BaseException("文件不能为空...");
+            throw new ClientParameterInvalid("文件不能为空...");
         }
         if (StringUtils.isEmpty(fileName)) {
-            throw new BaseException("文件名不能为空...");
+            throw new ClientParameterInvalid("文件名不能为空...");
         }
         if (StringUtils.isEmpty(fileSize)) {
-            throw new BaseException("文件大小不能为空...");
+            throw new ClientParameterInvalid("文件大小不能为空...");
         }
         currentNo = URLDecoder.decode(currentNo, "UTF-8");
         totalSize = URLDecoder.decode(totalSize, "UTF-8");
