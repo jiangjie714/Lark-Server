@@ -58,6 +58,10 @@ public class CommonConstants {
      */
     public static final int EX_MQ_CONSUMER_BIZ = 50021;
     /**
+     * feign接口调用异常
+     */
+    public static final int EX_FEIGN_EXECUT = 50030;
+    /**
      * 其它未知异常
      */
     public static final int EX_OTHER_CODE = 50099;
