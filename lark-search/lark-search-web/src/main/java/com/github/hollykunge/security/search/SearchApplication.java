@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.search;
 
+import com.github.hollykunge.security.common.handler.GlobalExceptionHandler;
 import com.github.hollykunge.security.search.utils.SpringContextUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,5 +24,10 @@ public class SearchApplication {
     @Bean
     public SpringContextUtil getSpringContextUtil(){
         return new SpringContextUtil();
+    }
+
+    @Bean
+    public GlobalExceptionHandler setGlobalExceptionHandler(){
+        return new GlobalExceptionHandler();
     }
 }
