@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author zhhongyu
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 public class UserCommonTools {
     @Id
     @Column(name = "ID")
+    @NotBlank(message = "用户常用工具id不能为空")
     private String id;
 
     @Column(name = "USER_ID")

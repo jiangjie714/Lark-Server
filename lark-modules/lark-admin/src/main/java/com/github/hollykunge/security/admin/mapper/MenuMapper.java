@@ -5,6 +5,9 @@ import tk.mybatis.mapper.common.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
+/**
+ * @author LARK
+ */
 public interface MenuMapper extends Mapper<Menu> {
     /**
      * 根据角色Id获取权限下的Element

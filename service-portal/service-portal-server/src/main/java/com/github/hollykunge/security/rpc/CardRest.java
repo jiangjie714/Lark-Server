@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.rpc;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
@@ -13,7 +14,6 @@ import com.github.hollykunge.security.entity.User;
 import com.github.hollykunge.security.entity.UserCard;
 import com.github.hollykunge.security.service.CardService;
 import com.github.hollykunge.security.service.UserCardService;
-import com.github.hollykunge.security.vo.UserCardVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +44,7 @@ public class CardRest {
         String uuid = UUIDUtils.generateShortUuid();
         cardDto.setId(uuid);
         if(cardService.selectCount(cardDto)>0){
-            return new ObjectRestResponse<>().rel(false).msg("error,this commonTool is exist");
+            throw new DatabaseDataException("当前卡片已经存在。");
         };
         cardService.insertSelective(cardDto);
         if(Constants.CARDLORGUSERSTATUSONE.equals(cardDto.getCardOrgUserStatus())){
@@ -90,7 +90,7 @@ public class CardRest {
     public  ObjectRestResponse<CardDto> remove(@RequestParam("id") String id){
         Object s = cardService.selectById(id);
         if(s==null){
-            return new ObjectRestResponse<>().data("查询不到此卡片，无法删除！").rel(false);
+            throw new DatabaseDataException("卡片不存在，无法移除当前卡片。");
         }
         cardService.deleteById(id);
         UserCard userCard = new UserCard();

@@ -4,9 +4,7 @@ import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @Table(name = "AUTH_CLIENT")

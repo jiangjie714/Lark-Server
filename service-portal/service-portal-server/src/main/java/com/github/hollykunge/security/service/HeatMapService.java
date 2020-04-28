@@ -137,14 +137,4 @@ public class HeatMapService extends BaseBiz<HeatMapMapper, HeatMap> {
         }
         return false;
     }
-
-    public static void main(String[] args) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            Date parse = dateFormat.parse("2019-06-29 10:10:10");
-            System.out.println(isLastWeekOfMonth(parse));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
 }

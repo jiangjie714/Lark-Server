@@ -5,7 +5,6 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.HashMap;
 
 /**
  * @description: 常用工具

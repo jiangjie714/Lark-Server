@@ -64,7 +64,7 @@ public class ZzGroupApproveController {
        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
        //userName="测试";
        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
-       String userNo=common.nulToEmptyString(request.getHeader("dnname"));
+       String userNo=common.nulToEmptyString(request.getHeader("pid"));
        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
        objectRestResponse.rel(true);
        objectRestResponse.msg("200");
