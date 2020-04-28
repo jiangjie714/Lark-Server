@@ -1,26 +1,18 @@
 package com.github.hollykunge.security.gate.feign.hystrix;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
 import com.github.hollykunge.security.search.dto.TopicDto;
 import com.github.hollykunge.security.search.web.api.response.SearchObjectRestResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 
 /**
  * @author: zhhongyu
- * @description:
- * @since: Create in 14:54 2020/3/16
+ * @description: 网关服务降级类
+ * @since: Create in 15:30 2020/4/27
  */
-@Slf4j
 @Component
-public class LarkSearchHystrix implements ILarkSearchFeign {
-    private Throwable throwable;
-
-    public void setThrowable(Throwable throwable){
-        this.throwable = throwable;
-    }
+public class LarkSearchHytix extends BaseFeignFactory<LarkSearchHytix> implements ILarkSearchFeign {
 
     @Override
     public SearchObjectRestResponse sendKafka(TopicDto topic) throws Exception {

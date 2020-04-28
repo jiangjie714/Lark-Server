@@ -1,8 +1,6 @@
 package com.github.hollykunge.security.gate.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.admin.api.log.LogInfo;
-import com.github.hollykunge.security.admin.api.service.AdminLogServiceFeignClient;
 import com.github.hollykunge.security.gate.constants.GateConstants;
 import com.github.hollykunge.security.gate.dto.LogInfoDto;
 import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;

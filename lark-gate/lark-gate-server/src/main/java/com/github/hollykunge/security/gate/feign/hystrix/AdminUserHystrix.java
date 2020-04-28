@@ -10,12 +10,12 @@ import java.util.List;
 
 /**
  * @author: zhhongyu
- * @description:
+ * @description: 调用admin服务降级
  * @since: Create in 13:52 2020/4/28
  */
 @Component
 @Slf4j
-public class AdminUserHystrix implements AdminUserFeign {
+public class AdminUserHystrix extends BaseFeignFactory<AdminUserHystrix> implements AdminUserFeign {
     @Override
     public List<FrontPermission> getPermissionByUserId(String userId) {
         log.error("ERROR LARK INVOKE: {}, {}", "getPermissionByUserId", userId);
