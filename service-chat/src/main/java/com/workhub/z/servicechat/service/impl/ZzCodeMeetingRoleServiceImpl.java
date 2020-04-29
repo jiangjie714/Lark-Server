@@ -5,10 +5,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.CodeMeetingFunctionVo;
 import com.workhub.z.servicechat.VO.CodeMeetingRoleVo;
+import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.meeting.ZzCodeMeetingFunctionDao;
-import com.workhub.z.servicechat.dao.meeting.ZzCodeMeetingRoleDao;
+import com.workhub.z.servicechat.dao.ZzCodeMeetingFunctionDao;
+import com.workhub.z.servicechat.dao.ZzCodeMeetingRoleDao;
 import com.workhub.z.servicechat.entity.meeting.ZzCodeMeetingRole;
 import com.workhub.z.servicechat.service.ZzCodeMeetingRoleService;
 import org.slf4j.Logger;
@@ -38,9 +38,9 @@ public class ZzCodeMeetingRoleServiceImpl implements ZzCodeMeetingRoleService {
     public  String add(ZzCodeMeetingRole zzCodeMeetingRole){
         zzCodeMeetingRole.setId(RandomId.getUUID());
         try {
-            common.putVoNullStringToEmptyString(zzCodeMeetingRole);
+            Common.putVoNullStringToEmptyString(zzCodeMeetingRole);
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
         Map params = new HashMap(16);
         params.put("code",zzCodeMeetingRole.getCode());
@@ -57,7 +57,7 @@ public class ZzCodeMeetingRoleServiceImpl implements ZzCodeMeetingRoleService {
     public  int deleteData(Map param){
         String keyId = "id";
         String keyCode = "code";
-        if("".equals(common.nulToEmptyString(param.get(keyId))) && "".equals(common.nulToEmptyString(param.get(keyCode)))){
+        if("".equals(Common.nulToEmptyString(param.get(keyId))) && "".equals(Common.nulToEmptyString(param.get(keyCode)))){
             return -2;
         }
         return  this.zzCodeMeetingRoleDao.deleteData(param);
@@ -70,12 +70,12 @@ public class ZzCodeMeetingRoleServiceImpl implements ZzCodeMeetingRoleService {
     /**查询 name编码名称、isUse是否使用中、pageSize、pageNo页数页码*/
     @Override
     public TableResultResponse query(Map param){
-        String pageSize = common.nulToEmptyString(param.get("pageSize"));
+        String pageSize = Common.nulToEmptyString(param.get("pageSize"));
         if("".equals(pageSize)){
             pageSize = "10";
         }
 
-        String pageNum = common.nulToEmptyString(param.get("pageNo"));
+        String pageNum = Common.nulToEmptyString(param.get("pageNo"));
 
         if("".equals(pageNum)){
             pageNum = "1";
@@ -87,15 +87,15 @@ public class ZzCodeMeetingRoleServiceImpl implements ZzCodeMeetingRoleService {
         for(Object obj : pageInfo.getList()){
             Map map = (Map)obj;
             CodeMeetingRoleVo codeMeetingRoleVo = new CodeMeetingRoleVo();
-            codeMeetingRoleVo.setId(common.nulToEmptyString(map.get("ID")));
-            codeMeetingRoleVo.setCode(common.nulToEmptyString(map.get("CODE")));
-            codeMeetingRoleVo.setName(common.nulToEmptyString(map.get("NAME")));
-            codeMeetingRoleVo.setIsUse(common.nulToEmptyString(map.get("ISUSE")));
-            codeMeetingRoleVo.setCrtHost(common.nulToEmptyString(map.get("CRTHOST")));
-            codeMeetingRoleVo.setCrtName(common.nulToEmptyString(map.get("CRTNAME")));
-            codeMeetingRoleVo.setCrtUser(common.nulToEmptyString(map.get("CRTUSER")));
-            codeMeetingRoleVo.setCrtTime(common.nulToEmptyString(map.get("CRTTIME")));
-            String functions = common.nulToEmptyString(map.get("MEETFUNCTION"));
+            codeMeetingRoleVo.setId(Common.nulToEmptyString(map.get("ID")));
+            codeMeetingRoleVo.setCode(Common.nulToEmptyString(map.get("CODE")));
+            codeMeetingRoleVo.setName(Common.nulToEmptyString(map.get("NAME")));
+            codeMeetingRoleVo.setIsUse(Common.nulToEmptyString(map.get("ISUSE")));
+            codeMeetingRoleVo.setCrtHost(Common.nulToEmptyString(map.get("CRTHOST")));
+            codeMeetingRoleVo.setCrtName(Common.nulToEmptyString(map.get("CRTNAME")));
+            codeMeetingRoleVo.setCrtUser(Common.nulToEmptyString(map.get("CRTUSER")));
+            codeMeetingRoleVo.setCrtTime(Common.nulToEmptyString(map.get("CRTTIME")));
+            String functions = Common.nulToEmptyString(map.get("MEETFUNCTION"));
             if(!"".equals(functions)){
 
                 String newFunctions = "";

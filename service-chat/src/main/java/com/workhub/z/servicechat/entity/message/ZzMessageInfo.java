@@ -32,10 +32,14 @@ public class ZzMessageInfo implements Serializable {
     private String iscross;
     //IP
     private String ip;
-    //sn
-    private String senderSN;
-    //发送人组织编码
-    private String orgCode;
-    //发送人组织名称
-    private String orgName;
+    /**是否附件类型1非附件2图片3附件*/
+    private String fileType    ;;
+    /**发送内容或者文件名称等*/
+    private String msg      ;
+    /**如果是附件，附件id*/
+    private String fileId;
+    /**前端消息id*/
+    private String frontId;
+    /**撤销*/
+    private String cancel;
 }

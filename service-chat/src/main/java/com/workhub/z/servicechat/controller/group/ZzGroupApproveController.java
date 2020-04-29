@@ -2,17 +2,18 @@ package com.workhub.z.servicechat.controller.group;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.workhub.z.servicechat.VO.ChatAdminUserVo;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.group.ZzGroupApprove;
 import com.workhub.z.servicechat.entity.group.ZzGroupApproveLog;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
-import com.workhub.z.servicechat.feign.IUserService;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
+import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzGroupApproveService;
 import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;
 import org.slf4j.Logger;
@@ -45,13 +46,18 @@ public class ZzGroupApproveController {
     @Resource
     ZzRequireApproveAuthorityService zzRequireApproveAuthorityService;
     @Resource
-    IUserService iUserService;
+    AdminUserService iUserService;
+    //gate请求属性
+    static String pidInHeaderRequest = GateRequestHeaderParamConfig.getPid();
+    static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
+    static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
+    static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     /**
      * todo:使用
     * @MethodName: add
      * @Description: 新增审批信息
      * @Param: [msg]msg：前台传过来的json串
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/11
      * msg里sourceType这个参数没有用了（如果有的话），groupType标识的是跨场所，cross表示的是会议类型（如果有的话）
@@ -59,12 +65,12 @@ public class ZzGroupApproveController {
    @PostMapping("/add")
    public ObjectRestResponse add(@RequestBody String msg) throws Exception{
        //log.info("======================="+msg.length()+"");
-       String userId = common.nulToEmptyString(request.getHeader("userId"));
+       String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
        //userId= "123123123123";
-       String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
+       String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
        //userName="测试";
-       String userIp = common.nulToEmptyString(request.getHeader("userHost"));
-       String userNo=common.nulToEmptyString(request.getHeader("pid"));
+       String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
+       String userNo= Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
        objectRestResponse.rel(true);
        objectRestResponse.msg("200");
@@ -108,8 +114,8 @@ public class ZzGroupApproveController {
        //记录流水日志
        ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
        zzGroupStatus.setId(RandomId.getUUID());
-       zzGroupStatus.setOperatorName(common.nulToEmptyString(userName));
-       zzGroupStatus.setOperator(common.nulToEmptyString(userId));
+       zzGroupStatus.setOperatorName(Common.nulToEmptyString(userName));
+       zzGroupStatus.setOperator(Common.nulToEmptyString(userId));
        //创建群
        zzGroupStatus.setOperateType(MessageType.FLOW_NEW);
        zzGroupStatus.setGroupId(groupId);
@@ -169,20 +175,20 @@ public class ZzGroupApproveController {
            approveNames = userName;
        }
 
-       approveLog.setApprove(common.nulToEmptyString(approveIds));
-       approveLog.setApproveName(common.nulToEmptyString(approveNames));
+       approveLog.setApprove(Common.nulToEmptyString(approveIds));
+       approveLog.setApproveName(Common.nulToEmptyString(approveNames));
        approveLog.setIp(userIp);
        approveLog.setApproveRes("");
-       approveLog.setGroupId(common.nulToEmptyString(groupJson.getString("groupId")));
-       approveLog.setGroupName(common.nulToEmptyString(groupJson.getString("groupName")));
-       approveLog.setGroupDes(common.nulToEmptyString(groupJson.getString("groupDescribe")));
-       approveLog.setGroupLevel(common.nulToEmptyString(groupJson.getString("levels")));
-       approveLog.setGroupPro(common.nulToEmptyString(groupJson.getString("pname")));
-       approveLog.setGroupScope(common.nulToEmptyString(groupJson.getString("scop")));
-       approveLog.setGroupType(common.nulToEmptyString(groupJson.getString("groupType")));
+       approveLog.setGroupId(Common.nulToEmptyString(groupJson.getString("groupId")));
+       approveLog.setGroupName(Common.nulToEmptyString(groupJson.getString("groupName")));
+       approveLog.setGroupDes(Common.nulToEmptyString(groupJson.getString("groupDescribe")));
+       approveLog.setGroupLevel(Common.nulToEmptyString(groupJson.getString("levels")));
+       approveLog.setGroupPro(Common.nulToEmptyString(groupJson.getString("pname")));
+       approveLog.setGroupScope(Common.nulToEmptyString(groupJson.getString("scop")));
+       approveLog.setGroupType(Common.nulToEmptyString(groupJson.getString("groupType")));
        approveLog.setStatus("1");
        approveLog.setOperateType(MessageType.FLOW_NEW);
-       approveLog.setOperator(common.nulToEmptyString(groupJson.getString("creator")));
+       approveLog.setOperator(Common.nulToEmptyString(groupJson.getString("creator")));
        approveLog.setOperatorNo(userNo);
        approveLog.setOperatorName(userName);
        approveLog.setOperateTime(new Date());
@@ -200,7 +206,7 @@ public class ZzGroupApproveController {
            zzGroupApprove.setType(type);
            this.zzGroupApproveService.add(zzGroupApprove);
        }catch (Exception e){
-           log.error("新建群（会议或其他资源）报错："+common.getExceptionMessage(e));
+           log.error("新建群（会议或其他资源）报错："+ Common.getExceptionMessage(e));
            objectRestResponse.rel(false);
            objectRestResponse.data("操作失败");
            String desPart22 = "";
@@ -215,9 +221,7 @@ public class ZzGroupApproveController {
 
        rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
        rabbitMqMsgProducer.sendMsgGroupApproveLog(approveLog);
-       Map p2 = new HashMap<>(16);
-       p2.put("userid",userId);
-       AdminUser userInfo = iUserService.getUserInfo(userId);
+       ChatAdminUserVo userInfo = iUserService.getUserInfo(userId);
        int require_approve_authority = zzRequireApproveAuthorityService.needApprove(userInfo.getOrgCode());
        //无需审批(1特殊权限2非密的研讨群不用审批)，直接审批通过，生成会议或者群组。注:该功能与本类approve的逻辑保持一致。
        if(((MessageType.NO_REQUIRE_APPROVE_AUTHORITY == require_approve_authority) || !needApproveFlg )&& objectRestResponse.isRel()){
@@ -242,19 +246,19 @@ public class ZzGroupApproveController {
    * @MethodName: approve
     * @Description: 审批
     * @Param: [param] id：数据主键；approveFlg：审批标记1 通过2 不通过
-    * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+    * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
     * @Author: zhuqz
     * @Date: 2019/9/11
    **/
     @PutMapping("/approve")
     public ObjectRestResponse approve(@RequestParam Map param) throws Exception{
-        String userId = common.nulToEmptyString(request.getHeader("userId"));
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         param.put("userId",userId);
         //param.put("userId","yanzhenqing");
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
         param.put("userName",userName);
         //param.put("userName","严振卿");
-        String ip = common.nulToEmptyString(request.getHeader("userHost"));
+        String ip = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
         param.put("ip",ip);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
         objectRestResponse.rel(true);
@@ -270,7 +274,7 @@ public class ZzGroupApproveController {
                 objectRestResponse.data("该记录已经审批");
             }
         }catch (Exception e){
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
             objectRestResponse.rel(false);
             objectRestResponse.data("操作失败");
         }
@@ -287,13 +291,13 @@ public class ZzGroupApproveController {
         //记录群状态变动begin
         ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
         zzGroupStatus.setId(RandomId.getUUID());
-        zzGroupStatus.setOperatorName(common.nulToEmptyString(userName));
-        zzGroupStatus.setOperator(common.nulToEmptyString(userId));
+        zzGroupStatus.setOperatorName(Common.nulToEmptyString(userName));
+        zzGroupStatus.setOperator(Common.nulToEmptyString(userId));
         zzGroupStatus.setOperateTime(new Date());
         //群审批
         zzGroupStatus.setOperateType(MessageType.FLOW_APPROVE);
         //记录群状态变动end
-        String type = common.nulToEmptyString(resMap.get("type"));
+        String type = Common.nulToEmptyString(resMap.get("type"));
         zzGroupStatus.setGroupId(resMap.get("groupId"));
         zzGroupStatus.setType(type);
         String decPart2 = "";
@@ -323,23 +327,23 @@ public class ZzGroupApproveController {
      * @Description: 查询审批列表
      * @Param: [param] approveFlg：0未审批1通过2不通过3已审批4全部;pageSize;pageNo;type 0 群，1会议
      * groupName 群（会议）名称
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/11
     **/
     @GetMapping("/getApproveList")
     public TableResultResponse getApproveList(@RequestParam Map param) throws Exception{
-        String approveFlg = common.nulToEmptyString(param.get("approveFlg"));
+        String approveFlg = Common.nulToEmptyString(param.get("approveFlg"));
         if(approveFlg.equals("")){
             param.put("approveFlg","0");
         }
-        String userId = common.nulToEmptyString(request.getHeader("userId"));
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         param.put("userId",userId);
         //param.put("userId","7803632385204eb6ab88265c04dba81f");
         try {
             return this.zzGroupApproveService.getApproveList(param);
         }catch (Exception e){
-            log.error("获取审批群列表出错"+common.getExceptionMessage(e));
+            log.error("获取审批群列表出错"+ Common.getExceptionMessage(e));
         }
         return null;
     }
@@ -364,16 +368,16 @@ public class ZzGroupApproveController {
      * @MethodName: getApplyGroupList
      * @Description: 查询申请列表
      * @Param: [param] approveFlg：0未审批1通过2不通过3已审批4全部;pageSize;pageNo;type 0 群，1会议,-1全部
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/11
      **/
     @GetMapping("/getApplyGroupList")
     public TableResultResponse getApplyGroupList(@RequestParam Map param) throws Exception{
-        String userId = common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
 
-        String approveFlg = common.nulToEmptyString(param.get("approveFlg"));
+        String approveFlg = Common.nulToEmptyString(param.get("approveFlg"));
         if(approveFlg.equals("")){
             param.put("approveFlg","0");
         }
@@ -383,7 +387,7 @@ public class ZzGroupApproveController {
         try {
             return this.zzGroupApproveService.getApplyGroupList(param);
         }catch (Exception e){
-            log.error("获取群申请列表出错"+common.getExceptionMessage(e));
+            log.error("获取群申请列表出错"+ Common.getExceptionMessage(e));
         }
         return null;
     }

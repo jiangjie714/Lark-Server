@@ -18,14 +18,14 @@ public interface StatisticsService {
      * @return
      */
     List<StatisticsChartDataVo> groupInfStatistics(String dateType, String orgCode) ;
-    //TableResultResponse<StatisticsGroupVo> groupStatistics(int page,int size,String groupName, String isCross) ;
+     //TableResultResponse<StatisticsGroupVo> groupStatistics(int page,int size,String groupName, String isCross) ;
 
     /**
      * 消息统计
      * @return
      */
     List<StatisticsChartDataVo> msgStatistics(String dateType, String orgCode) ;
-    //StatisticsMsgVo msgStatistics(String dateType) ;
+     //StatisticsMsgVo msgStatistics(String dateType) ;
     /**
      * 附件统计
      * @return

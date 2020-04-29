@@ -7,7 +7,7 @@ package com.workhub.z.servicechat.VO;
 import lombok.Data;
 
 @Data
-public class GroupVO {
+public class GroupVo {
     //用户组id
     private String groupId;
     //组名称

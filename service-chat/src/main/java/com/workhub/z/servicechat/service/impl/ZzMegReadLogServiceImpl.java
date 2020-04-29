@@ -1,16 +1,16 @@
 package com.workhub.z.servicechat.service.impl;
 
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.workhub.z.servicechat.VO.MegReadLogVO;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzGroupDao;
+import com.workhub.z.servicechat.VO.ChatAdminUserVo;
+import com.workhub.z.servicechat.VO.MegReadLogVo;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzGroupDao;
+import com.workhub.z.servicechat.dao.ZzMegReadLogDao;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
-import com.workhub.z.servicechat.dao.message.ZzMegReadLogDao;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzMegReadLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * (ZzMegReadLog)表服务实现类
@@ -33,7 +31,7 @@ import java.util.Map;
 public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
     private static Logger log = LoggerFactory.getLogger(ZzMessageInfoServiceImpl.class);
     @Autowired
-    private IUserService userService;
+    private AdminUserService userService;
     @Resource
     private ZzMegReadLogDao zzMegReadLogDao;
     @Resource
@@ -71,9 +69,9 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
     @Override
     public ZzMegReadLog insert(ZzMegReadLog zzMegReadLog) {
         try {
-            common.putVoNullStringToEmptyString(zzMegReadLog);
+            Common.putVoNullStringToEmptyString(zzMegReadLog);
         }catch (Exception e){
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         this.zzMegReadLogDao.insert(zzMegReadLog);
         return zzMegReadLog;
@@ -114,15 +112,13 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
                                                String senderName){
         PageHelper.startPage(pageNum, pageSize);
         Page<ZzMegReadLog> dataList = this.zzMegReadLogDao.queryAllReadLog(reviserName,senderName);
-        List<MegReadLogVO> megReadLogList = new ArrayList<>();
+        List<MegReadLogVo> megReadLogList = new ArrayList<>();
         for(ZzMegReadLog data:dataList){
-            MegReadLogVO megReadLogVO = new MegReadLogVO();
+            MegReadLogVo megReadLogVO = new MegReadLogVo();
             megReadLogVO.setId(data.getId());
             megReadLogVO.setReadtime(data.getReadtime());
             megReadLogVO.setSender(data.getSender());
-            Map p = new HashMap<>(16);
-            p.put("userid",data.getSender());
-            AdminUser userInfo = userService.getUserInfo(data.getSender());
+            ChatAdminUserVo userInfo = userService.getUserInfo(data.getSender());
             if (userInfo.getId() != null){
                 megReadLogVO.setSenderName(userInfo.getName());
                 megReadLogVO.setSenderSN(userInfo.getPId());
@@ -131,19 +127,17 @@ public class ZzMegReadLogServiceImpl implements ZzMegReadLogService {
                 megReadLogVO.setSenderName(groupinfo.getGroupName());
                 megReadLogVO.setSenderSN(groupinfo.getGroupId());
             }
-            Map p2 = new HashMap<>(16);
-            p2.put("userid",data.getReviser());
-            AdminUser userinfo1 = userService.getUserInfo(data.getReviser());
+            ChatAdminUserVo userinfo1 = userService.getUserInfo(data.getReviser());
             megReadLogVO.setReviser(data.getReviser());
             megReadLogVO.setReviserName(userinfo1.getName());
             megReadLogVO.setReviserSN(userinfo1.getPId());
             megReadLogList.add(megReadLogVO);
         }
         try {
-            common.putVoNullStringToEmptyString(megReadLogList);
+            Common.putVoNullStringToEmptyString(megReadLogList);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
 
         TableResultResponse res = new TableResultResponse(

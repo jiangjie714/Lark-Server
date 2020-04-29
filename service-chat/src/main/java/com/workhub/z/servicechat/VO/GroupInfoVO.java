@@ -4,7 +4,7 @@ package com.workhub.z.servicechat.VO;
 *@Author: 忠
 *@date: 2019/5/14
 */
-public class GroupInfoVO
+public class GroupInfoVo
 {
 //  群id
     private String id;

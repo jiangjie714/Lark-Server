@@ -1,15 +1,16 @@
 package com.workhub.z.servicechat.service.impl;
 
 import com.workhub.z.servicechat.config.MessageType;
-import com.workhub.z.servicechat.dao.config.ZzRequireApproveAuthorityDao;
+import com.workhub.z.servicechat.dao.ZzRequireApproveAuthorityDao;
 import com.workhub.z.servicechat.entity.config.ZzRequireApproveAuthority;
-import com.workhub.z.servicechat.server.Const;
 import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.workhub.z.servicechat.config.MessageType.GROUP_SYS;
 
 /**
  * @author:zhuqz
@@ -50,7 +51,7 @@ public class ZzRequireApproveAuthorityServiceImpl implements ZzRequireApproveAut
             String[] orgArr = zzRequireApproveAuthority.getSocketTeam().split(",");
             List<String> orgList = Arrays.asList(orgArr);
             //如果有全体不需要审批权限，直接返回不需要
-            if(orgList.contains(Const.GROUP_SYS)){
+            if(orgList.contains(GROUP_SYS)){
                 return MessageType.NO_REQUIRE_APPROVE_AUTHORITY;
             }
             //如果列表里含有当期人所在的org，返回不需要的权限

@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.VO;
 import java.util.Date;
 import java.util.List;
 
-public class SingleMessageVO {
+public class SingleMessageVo {
         //    消息的id
         private String id;
         //    发送者姓名
@@ -21,7 +21,7 @@ public class SingleMessageVO {
         //    消息类型，根据类型判断消息显示方式（1 - 文本消息，2 - 文件消息，3 - 图片消息）
         private Integer type;
         //   消息的内容（根据消息类型，如果为文本消息，该值为文本内容；如果为图片或者文件，该值为文件或图片的名称和文件类型，文件id）
-        private ContentVO content;
+        private ContentVo content;
         //   消息发送时间
         private Date time;
         //   消息发送时间（当天显示时间，昨天以前显示日志）
@@ -95,11 +95,11 @@ public class SingleMessageVO {
             this.type = type;
         }
 
-        public ContentVO getContent() {
+        public ContentVo getContent() {
             return content;
         }
 
-        public void setContent(ContentVO content) {
+        public void setContent(ContentVo content) {
             this.content = content;
         }
 

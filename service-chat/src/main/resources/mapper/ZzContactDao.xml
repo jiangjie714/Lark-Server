@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzContactDao">
+    <resultMap type="com.workhub.z.servicechat.entity.ZzContactInf" id="zzContactInf">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="avartar" column="avartar" jdbcType="VARCHAR"/>
+        <result property="levels" column="levels" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="pid" column="pid" jdbcType="VARCHAR"/>
+        <result property="memberNum" column="member_num" jdbcType="VARCHAR"/>
+        <result property="groupOwner" column="group_owner" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    <select id="countsById" resultType="string">
+        select to_char(count(1)) as cnt
+        from ZZ_CONTACT_INF
+        where 1=1
+        and id = #{id}
+    </select>
+    <select id="queryById" resultMap="zzContactInf">
+        select id,name,avartar,levels,type,pid,member_num,group_owner
+        from ZZ_CONTACT_INF
+        where 1=1
+        and id = #{id}
+    </select>
+    <update id="add" >
+        merge into ZZ_CONTACT_INF a using (select #{params.pid} as id from dual  ) c on (c.id =  #{params.id})
+        when not matched then
+        insert
+          (id,
+           name,
+           avartar,
+           levels,
+           type,
+           pid,
+           member_num,
+           group_owner
+           )
+        values
+          (
+           #{params.id},
+           #{params.name},
+           #{params.avartar},
+           #{params.levels},
+           #{params.type},
+           #{params.pid},
+           #{params.memberNum},
+           #{params.groupOwner}
+           )
+     </update>
+    <!--修改会议-->
+    <update id="update" >
+        update ZZ_CONTACT_INF
+        <set>
+            <if test="params.name != null and params.name != ''">
+                name = #{params.name},
+            </if>
+            <if test="params.avartar != null and params.avartar != ''">
+                avartar = #{params.avartar},
+            </if>
+            <if test="params.levels != null and params.levels != ''">
+                levels = #{params.levels},
+            </if>
+            <if test="params.pid != null and params.pid != ''">
+                pid = #{params.pid},
+            </if>
+        </set>
+        where id = #{params.id}
+    </update>
+    <delete id="deleteData">
+        delete  from ZZ_CONTACT_INF where id = #{id}
+    </delete>
+
+</mapper>

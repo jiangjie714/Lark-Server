@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service.impl;
 
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.message.ZzMsgTabRelationDao;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzMsgTabRelationDao;
 import com.workhub.z.servicechat.entity.message.ZzMsgTabRelation;
 import com.workhub.z.servicechat.service.ZzMsgTabRelationService;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
 
 /**
  * 标记消息关系表(ZzMsgTabRelation)表服务实现类
@@ -35,10 +35,10 @@ public class ZzMsgTabRelationServiceImpl implements ZzMsgTabRelationService {
     public ZzMsgTabRelation queryById(String id) {
         ZzMsgTabRelation zzMsgTabRelation=this.zzMsgTabRelationDao.queryById(id);
         try {
-            common.putVoNullStringToEmptyString(zzMsgTabRelation);
+            Common.putVoNullStringToEmptyString(zzMsgTabRelation);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         return zzMsgTabRelation;
     }

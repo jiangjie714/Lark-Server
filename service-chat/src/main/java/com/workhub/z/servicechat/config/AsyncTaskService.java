@@ -4,11 +4,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-
 /**
 *@Description: 多线程任务处理类
 *@Param: 
@@ -56,7 +51,7 @@ public class AsyncTaskService {
 
     @Async
     public void fileUpload(MultipartFile file,String url) throws Exception {
-        fileManage.uploadFile(file,url);
+        FileManage.uploadFile(file,url);
     }
 
 //    @Override

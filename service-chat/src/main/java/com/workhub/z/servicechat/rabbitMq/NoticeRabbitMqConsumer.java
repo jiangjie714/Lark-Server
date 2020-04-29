@@ -2,7 +2,7 @@ package com.workhub.z.servicechat.rabbitMq;
 
 import com.github.hollykunge.security.common.vo.mq.NoticeVO;
 import com.rabbitmq.client.Channel;
-import com.workhub.z.servicechat.config.common;
+import com.workhub.z.servicechat.config.Common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -27,7 +27,7 @@ public class NoticeRabbitMqConsumer {
             //手动签收消息
             channel.basicAck(deliveryTag,false);
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));//报错信息打印日志
+            logger.error(Common.getExceptionMessage(e));//报错信息打印日志
         }
     }
 }

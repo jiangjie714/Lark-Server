@@ -4,9 +4,9 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.CodeMeetingFunctionVo;
+import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.meeting.ZzCodeMeetingFunctionDao;
+import com.workhub.z.servicechat.dao.ZzCodeMeetingFunctionDao;
 import com.workhub.z.servicechat.entity.meeting.ZzCodeMeetingFunction;
 import com.workhub.z.servicechat.service.ZzCodeMeetingFunctionService;
 import org.slf4j.Logger;
@@ -33,9 +33,9 @@ public class ZzCodeMeetingFunctionServiceImpl implements ZzCodeMeetingFunctionSe
     public  String add(ZzCodeMeetingFunction zzCodeMeetingFunction){
         zzCodeMeetingFunction.setId(RandomId.getUUID());
         try {
-            common.putVoNullStringToEmptyString(zzCodeMeetingFunction);
+            Common.putVoNullStringToEmptyString(zzCodeMeetingFunction);
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
         Map params = new HashMap(16);
         params.put("code",zzCodeMeetingFunction.getCode());
@@ -52,7 +52,7 @@ public class ZzCodeMeetingFunctionServiceImpl implements ZzCodeMeetingFunctionSe
     public  int deleteData(Map param){
         String keyId = "id";
         String keyCode = "code";
-        if("".equals(common.nulToEmptyString(param.get(keyId))) && "".equals(common.nulToEmptyString(param.get(keyCode)))){
+        if("".equals(Common.nulToEmptyString(param.get(keyId))) && "".equals(Common.nulToEmptyString(param.get(keyCode)))){
             return -2;
         }
         return  this.zzCodeMeetingFunctionDao.deleteData(param);
@@ -65,12 +65,12 @@ public class ZzCodeMeetingFunctionServiceImpl implements ZzCodeMeetingFunctionSe
     /**查询 name编码名称、isUse是否使用中、pageSize、pageNo页数页码*/
     @Override
     public  TableResultResponse query(Map param){
-        String pageSize = common.nulToEmptyString(param.get("pageSize"));
+        String pageSize = Common.nulToEmptyString(param.get("pageSize"));
         if("".equals(pageSize)){
             pageSize = "10";
         }
 
-        String pageNum = common.nulToEmptyString(param.get("pageNo"));
+        String pageNum = Common.nulToEmptyString(param.get("pageNo"));
 
         if("".equals(pageNum)){
             pageNum = "1";

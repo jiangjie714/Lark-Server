@@ -3,9 +3,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
-
 /**
- * @author 82455
  * @auther: zhuqz
  * @date: 2020/3/29 09:53
  * @description:群人员统计外层

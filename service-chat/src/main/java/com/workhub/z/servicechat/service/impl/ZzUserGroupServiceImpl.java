@@ -1,23 +1,24 @@
 package com.workhub.z.servicechat.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
 import com.github.hollykunge.security.common.vo.rpcvo.MessageContent;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.workhub.z.servicechat.VO.ChatAdminUserVo;
 import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.NoReadVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
 import com.workhub.z.servicechat.config.CacheConst;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzUserGroupDao;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzUserGroupDao;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.entity.group.ZzUserGroup;
-import com.workhub.z.servicechat.feign.IUserService;
+import com.workhub.z.servicechat.model.RawMessageDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;
 import com.workhub.z.servicechat.redis.RedisUtil;
+import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzGroupService;
 import com.workhub.z.servicechat.service.ZzMsgReadRelationService;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
@@ -29,10 +30,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
 
 //import com.workhub.z.servicechat.VO.ContactVO;
 
@@ -55,7 +57,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
     private ZzGroupService zzGroupService;
 
     @Autowired
-    private IUserService iUserService;
+    private AdminUserService iUserService;
     @Autowired
     private RabbitMqMsgProducer rabbitMqMsgProducer;
     /**
@@ -68,10 +70,10 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
     public ZzUserGroup queryById(String id) {
         ZzUserGroup zzUserGroup = this.zzUserGroupDao.queryById(id);
         try {
-            common.putVoNullStringToEmptyString(zzUserGroup);
+            Common.putVoNullStringToEmptyString(zzUserGroup);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
 
         return zzUserGroup;
@@ -160,7 +162,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
         //新写查询分页
         PageHelper.startPage(page, size);
         List<GroupListVo> list = this.zzUserGroupDao.groupList(id);
-        common.putVoNullStringToEmptyString(list);
+        Common.putVoNullStringToEmptyString(list);
         PageInfo<GroupListVo> pageInfo = new PageInfo<>(list);
         return pageInfo;
     }
@@ -171,20 +173,31 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
     }
 
     @Override
-    public List<UserNewMsgVo> getUserNewMsgList(String id) {
-        List<UserNewMsgVo> list=this.zzUserGroupDao.getUserNewMsgList(id);
+    public List<UserNewMsgVo> getUserNewMsgList2(String id) {
+        List<UserNewMsgVo> list=this.zzUserGroupDao.getUserNewMsgList2(id);
         try {
-            common.putVoNullStringToEmptyString(list);
+            Common.putVoNullStringToEmptyString(list);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
+        }
+        return list;
+    }
+    @Override
+    public List<RawMessageDto> getUserNewMsgList(String id) {
+        List<RawMessageDto> list=this.zzUserGroupDao.getUserNewMsgList(id);
+        try {
+            Common.putVoNullStringToEmptyString(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(Common.getExceptionMessage(e));
         }
         return list;
     }
 
     @Override
-    public List<ContactVO> getContactVOList(String id) {
-        List<UserNewMsgVo> userNewMsgList = this.getUserNewMsgList(id);
+    public List<ContactVO> getContactVOList2(String id) {
+        List<UserNewMsgVo> userNewMsgList = this.getUserNewMsgList2(id);
         // TODO: 2019/6/12 是否@
         // TODO: 2019/6/12 私有化定制
         List<ContactVO> list = new ArrayList<ContactVO>();
@@ -220,9 +233,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 ZzGroup group = new ZzGroup();
                 group = zzGroupService.queryById(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
-                Map p2 = new HashMap<>(16);
-                p2.put("userid",n.getMsgReceiver());
-                AdminUser userInfo = iUserService.getUserInfo(n.getMsgReceiver());
+                ChatAdminUserVo userInfo = iUserService.getUserInfo(n.getMsgReceiver());
 //                JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class);
 //                MessageContent testProcessInfo = (MessageContent)JSONObject.toBean(n.getMsg(), MessageContent.class);
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
@@ -240,8 +251,8 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 contactVO.setIsMute(false);
 //               群组密级
                 contactVO.setSecretLevel(Integer.parseInt(group.getLevels()));
-                contactVO.setGroupOwnerId(common.nulToEmptyString(group.getGroupOwnerId()));
-                contactVO.setGroupOwnerName(common.nulToEmptyString(group.getGroupOwnerName()));
+                contactVO.setGroupOwnerId(Common.nulToEmptyString(group.getGroupOwnerId()));
+                contactVO.setGroupOwnerName(Common.nulToEmptyString(group.getGroupOwnerName()));
                 try {
                     contactVO.setMemberNum(Math.toIntExact(this.zzGroupService.groupUserListTotal(group.getGroupId())));
                 } catch (Exception e) {
@@ -250,9 +261,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 contactVO.setIsGroup(n.getTableType().equals("GROUP"));
                 contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(group.getGroupId(),id));
             } else if ("USER".equals(n.getTableType())) {
-                Map p2 = new HashMap<>(16);
-                p2.put("userid",n.getMsgSener());
-                AdminUser userInfo = iUserService.getUserInfo(n.getMsgSener());
+                ChatAdminUserVo userInfo = iUserService.getUserInfo(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
                 contactVO.setLastMessage(JSON.toJavaObject(JSON.parseObject(n.getMsg()), MessageContent.class));
                 contactVO.setFullTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(n.getSendTime()==null?(new Date()):n.getSendTime()));
@@ -286,10 +295,134 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
         });
         Map<String,List<ContactVO>> data=new HashMap<>();
         try {
-            common.putVoNullStringToEmptyString(list);
+            Common.putVoNullStringToEmptyString(list);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
+        }
+        data.put(id,list);//当前登录人的id作为key，联系人列表作为value
+        rabbitMqMsgProducer.sendMsg(data);
+        return list;
+    }
+    @Override
+    public List<ContactVO> getContactVOList(String id) {
+        List<RawMessageDto> userNewMsgList = this.getUserNewMsgList(id);
+        // TODO: 2019/6/12 是否@
+        // TODO: 2019/6/12 私有化定制
+        List<ContactVO> list = new ArrayList<ContactVO>();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //mq添加消息发送 开发测试用begin
+        /*try {
+            ContactVO vo=new ContactVO();
+            vo.setUnreadNum(1);
+            vo.setAtMe(true);
+            vo.setAvatar("1111");
+            vo.setId("223323");
+            MessageContent mes = new MessageContent();
+            mes.setExtension("123");
+            mes.setType(0);
+            mes.setId("11111");
+            mes.setSecretLevel(40);
+            mes.setTitle("ceshi");
+            mes.setUrl("www.baidu.com");
+            vo.setLastMessage(mes);
+            list.add(vo);
+
+            Map<String,List<ContactVO>> data=new HashMap<>();
+            data.put(id,list);//当前登录人的id作为key，联系人列表作为value
+            rabbitMqMsgProducer.sendMsg(data);
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+        //mq添加消息发送 开发测试用end
+        List<NoReadVo> noReadVos = zzMsgReadRelationService.queryNoReadCountList(id);
+        if(userNewMsgList == null|| userNewMsgList.isEmpty()){ return list;}
+        userNewMsgList.stream().forEach(n ->{
+            ContactVO contactVO = new ContactVO();
+            if ("GROUP".equals(n.getType())) {
+                ZzGroup group = new ZzGroup();
+                group = zzGroupService.queryById(n.getSenderid());
+                contactVO.setId(n.getSenderid());
+                MessageContent content = new MessageContent();
+                content.setTitle(n.getMsg());
+                content.setId(n.getFileid());
+                content.setExtension(n.getFileext());
+                content.setSecretLevel(Integer.parseInt(n.getLevels()));
+                content.setType(Integer.parseInt(n.getFiletype()));
+                contactVO.setLastMessage(content);
+                contactVO.setFullTime(n.getCreatetime());
+
+                Date sDate = null;
+                try {
+                     sDate = sf.parse(n.getCreatetime());
+                } catch (ParseException e) {
+                    log.error("消息日期转换错误");
+                    log.error(Common.getExceptionMessage(e));
+                    sDate = new Date();
+                }
+                if(new SimpleDateFormat("yyyy-MM-dd").format(sDate).equals(new SimpleDateFormat("yyyy-MM-dd").format(new Date()))){//格式化为相同格式
+                    contactVO.setTime(new SimpleDateFormat("HH:mm").format(sDate));
+                }else {
+                    contactVO.setTime(new SimpleDateFormat("MM-dd").format(sDate));
+                }
+                contactVO.setAvatar(group.getGroupImg());
+                contactVO.setName(group.getGroupName());
+                contactVO.setSender(n.getReceivername());
+                contactVO.setAtMe(false);
+                contactVO.setIsTop(false);
+                contactVO.setIsMute(false);
+//               群组密级
+                contactVO.setSecretLevel(Integer.parseInt(group.getLevels()));
+                contactVO.setGroupOwnerId(Common.nulToEmptyString(group.getGroupOwnerId()));
+                contactVO.setGroupOwnerName(Common.nulToEmptyString(group.getGroupOwnerName()));
+                try {
+                    contactVO.setMemberNum(Math.toIntExact(this.zzGroupService.groupUserListTotal(group.getGroupId())));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                contactVO.setIsGroup(n.getType().equals("GROUP"));
+                contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(group.getGroupId(),id));
+            } else if ("USER".equals(n.getType())) {
+                contactVO.setId(n.getSenderid());
+                MessageContent content = new MessageContent();
+                content.setTitle(n.getMsg());
+                content.setId(n.getFileid());
+                content.setExtension(n.getFileext());
+                content.setSecretLevel(Integer.parseInt(n.getLevels()));
+                content.setType(Integer.parseInt(n.getFiletype()));
+                contactVO.setLastMessage(content);
+                contactVO.setFullTime(n.getCreatetime());
+                Date sDate = null;
+                try {
+                    sDate = sf.parse(n.getCreatetime());
+                } catch (ParseException e) {
+                    log.error("消息日期转换错误");
+                    log.error(Common.getExceptionMessage(e));
+                    sDate = new Date();
+                }
+                if(new SimpleDateFormat("yyyy-MM-dd").format(sDate).equals(new SimpleDateFormat("yyyy-MM-dd").format(new Date()))){//格式化为相同格式
+                    contactVO.setTime(new SimpleDateFormat("HH:mm").format(sDate));
+                }else {
+                    contactVO.setTime(new SimpleDateFormat("MM-dd").format(sDate));
+                }
+                contactVO.setAvatar(n.getSenderavatar());
+                contactVO.setName(n.getSendername());
+                contactVO.setSender("");
+                contactVO.setAtMe(false);
+                contactVO.setIsTop(false);
+                contactVO.setIsMute(false);
+                contactVO.setIsGroup(n.getType().equals("GROUP"));
+                contactVO.setSecretLevel(Integer.parseInt(n.getSenderlevels()));
+                contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(n.getSenderid(),n.getReceiverid()));
+            }
+            list.add(contactVO);
+        });
+        Map<String,List<ContactVO>> data=new HashMap<>();
+        try {
+            Common.putVoNullStringToEmptyString(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(Common.getExceptionMessage(e));
         }
         data.put(id,list);//当前登录人的id作为key，联系人列表作为value
         rabbitMqMsgProducer.sendMsg(data);

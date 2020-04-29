@@ -3,7 +3,7 @@ package com.workhub.z.servicechat.VO;
 import lombok.Data;
 
 @Data
-public class UserInfoVO {
+public class UserInfoVo {
     /**
      * 用户id
      */

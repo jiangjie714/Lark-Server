@@ -1,7 +1,6 @@
 package com.workhub.z.servicechat.model;
 
 import lombok.Data;
-
 /**
  * @auther: zhuqz
  * @date: 2020/3/29 09:50

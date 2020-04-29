@@ -2,7 +2,8 @@ package com.workhub.z.servicechat.controller.meeting;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.config.common;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.entity.meeting.ZzCodeMeetingFunction;
 import com.workhub.z.servicechat.service.ZzCodeMeetingFunctionService;
 import org.slf4j.Logger;
@@ -27,11 +28,16 @@ public class ZzCodeMeetingFunctionController {
     private ZzCodeMeetingFunctionService zzCodeMeetingFunctionService;
     @Resource
     private HttpServletRequest request;
+    //gate请求属性
+    static String pidInHeaderRequest = GateRequestHeaderParamConfig.getPid();
+    static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
+    static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
+    static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     /**
      * @MethodName: add
      * @Description: 新增
      * @Param: [zzCodeMeetingFunction]
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse 返回id
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回id
      * @Author: zhuqz
      * @Date: 2019/9/20
      **/
@@ -40,9 +46,9 @@ public class ZzCodeMeetingFunctionController {
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
-        String userId= common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
         try {
             zzCodeMeetingFunction.setCrtUser(userId);
             zzCodeMeetingFunction.setCrtName(userName);
@@ -55,7 +61,7 @@ public class ZzCodeMeetingFunctionController {
                 res.rel(false);
             }
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             res.rel(false);
             res.data("系统出错");
         }
@@ -65,7 +71,7 @@ public class ZzCodeMeetingFunctionController {
      * @MethodName: update
      * @Description: 修改
      * @Param: [ZzCodeMeetingFunction]id,code编码，name名称，isUse是否使用1是0否
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
      **/
@@ -75,10 +81,10 @@ public class ZzCodeMeetingFunctionController {
         res.rel(true);
         res.msg("200");
         res.data("操作成功");
-        String userId = common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("pid"));
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userNo = Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
         try {
             zzCodeMeetingFunction.setUpdHost(userIp);
             zzCodeMeetingFunction.setUpdName(userName);
@@ -87,7 +93,7 @@ public class ZzCodeMeetingFunctionController {
         }catch (Exception e){
             res.rel(false);
             res.data("系统出错");
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
         return res;
     }
@@ -95,7 +101,7 @@ public class ZzCodeMeetingFunctionController {
     * @MethodName: delete
      * @Description: 删除
      * @Param: [param]code 编码，id主键 两个任意传一个即可
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/23
     **/
@@ -119,7 +125,7 @@ public class ZzCodeMeetingFunctionController {
         }catch (Exception e){
             res.rel(false);
             res.data("系统出错");
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
         return res;
     }
@@ -127,7 +133,7 @@ public class ZzCodeMeetingFunctionController {
     * @MethodName: query
      * @Description: 查询
      * @Param: [param] pageSize、pageNo页码页数；isUse是否使用1是0否；name名称
-     * @Return: com.github.hollykunge.security.common.msg.TableResultResponse
+     * @Return: com.github.hollykunge.security.Common.msg.TableResultResponse
      * @Author: zhuqz
      * @Date: 2019/9/23
     **/

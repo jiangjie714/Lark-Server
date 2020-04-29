@@ -1,8 +1,8 @@
 package com.workhub.z.servicechat.service.impl;
 
 import com.workhub.z.servicechat.VO.NoReadVo;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.message.ZzMsgReadRelationDao;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzMsgReadRelationDao;
 import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;
 import com.workhub.z.servicechat.service.ZzMsgReadRelationService;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
 
 /**
  * 消息阅读状态关系表(ZzMsgReadRelation)表服务实现类
@@ -37,10 +37,10 @@ public class ZzMsgReadRelationServiceImpl implements ZzMsgReadRelationService {
     public ZzMsgReadRelation queryById(String id) {
         ZzMsgReadRelation zzMsgReadRelation=this.zzMsgReadRelationDao.queryById(id);
         try {
-            common.putVoNullStringToEmptyString(zzMsgReadRelation);
+            Common.putVoNullStringToEmptyString(zzMsgReadRelation);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         return zzMsgReadRelation;
     }

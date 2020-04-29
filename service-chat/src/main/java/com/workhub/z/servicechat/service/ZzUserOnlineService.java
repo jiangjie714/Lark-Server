@@ -13,4 +13,11 @@ public interface ZzUserOnlineService {
      * @return
      */
     List<String> getAllOnlineUserList();
+
+    /**
+     * 用户是否在线
+     * @param userId
+     * @return
+     */
+    boolean isUserOnline(String userId);
 }

@@ -3,8 +3,8 @@ package com.workhub.z.servicechat.controller.message;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.NoReadVo;
+import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;
 import com.workhub.z.servicechat.service.ZzMsgReadRelationService;
 import org.slf4j.Logger;
@@ -50,10 +50,10 @@ public class ZzMsgReadRelationController {
     public ObjectRestResponse insert(@RequestBody ZzMsgReadRelation zzMsgReadRelation){
         zzMsgReadRelation.setId(RandomId.getUUID());
         try{
-            common.putEntityNullToEmptyString(zzMsgReadRelation);
+            Common.putEntityNullToEmptyString(zzMsgReadRelation);
         }catch (Exception e){
             e.getStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         this.zzMsgReadRelationService.insert(zzMsgReadRelation);
 //        Integer insert = this.zzMsgReadRelationService.insert(zzMsgReadRelation);

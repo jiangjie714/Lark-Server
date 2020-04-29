@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workhub.z.servicechat.dao.meeting.ZzMeetingDao">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzMeetingDao">
     <resultMap type="com.workhub.z.servicechat.model.MeetingDto" id="meetingDto">
         <result property="id" column="id" jdbcType="VARCHAR"/>
         <result property="name" column="meet_name" jdbcType="VARCHAR"/>
@@ -180,7 +180,7 @@
     </select>
     <select id="getMeetingListForContacts" resultMap="meetingDto">
         select t.*
-      from zz_meeting t, zz_meeting_user mu , (select max(createtime) lastmsgtime,receiver from zz_message_info ms  where type = 'MEET' group by receiver) ms2
+      from zz_meeting t, zz_meeting_user mu , (select max(createtime) lastmsgtime,receiver from zz_message_info ms  where type = 'MEET' and cancel = '0' group by receiver) ms2
      where mu.meeting_id = t.id
        and t.id = ms2.receiver(+)
        and mu.user_id = #{userId}

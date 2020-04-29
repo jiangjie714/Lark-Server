@@ -6,7 +6,7 @@ import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 
-public class MessageVO {
+public class MessageVo {
 //    消息的id
     private String id;
 //    发送者姓名

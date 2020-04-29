@@ -7,7 +7,7 @@ import java.util.List;
 *@Author: 忠
 *@date: 2019/6/22
 */
-public class HistoryMessageVO {
+public class HistoryMessageVo {
 //      联系人
     private String contactsId;
 
@@ -39,7 +39,7 @@ public class HistoryMessageVO {
                 ;
     }
     ////      消息体
-//    private List<MessageVO> messageVO;
+//    private List<MessageVo> messageVO;
 //
 //    public String getContacts() {
 //        return contactsId;
@@ -49,11 +49,11 @@ public class HistoryMessageVO {
 //        contactsId = contactsId;
 //    }
 //
-//    public List<MessageVO> getMessageVO() {
+//    public List<MessageVo> getMessageVO() {
 //        return messageVO;
 //    }
 //
-//    public void setMessageVO(List<MessageVO> messageVO) {
+//    public void setMessageVO(List<MessageVo> messageVO) {
 //        this.messageVO = messageVO;
 //    }
 }

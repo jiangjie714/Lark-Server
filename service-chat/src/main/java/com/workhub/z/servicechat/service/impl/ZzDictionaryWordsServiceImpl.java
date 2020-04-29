@@ -4,7 +4,7 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.dao.config.ZzDictionaryWordsDao;
+import com.workhub.z.servicechat.dao.ZzDictionaryWordsDao;
 import com.workhub.z.servicechat.entity.config.ZzDictionaryWords;
 import com.workhub.z.servicechat.service.ZzDictionaryWordsService;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.*;
 
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
 
 /**
  * 字典词汇表(ZzDictionaryWords)表服务实现类
@@ -47,10 +47,10 @@ public class ZzDictionaryWordsServiceImpl implements ZzDictionaryWordsService {
         return  super.selectOne(entity);*/
        ZzDictionaryWords zzDictionaryWords = this.zzDictionaryWordsDao.queryById(id);
         try {
-            common.putVoNullStringToEmptyString(zzDictionaryWords);
+            Common.putVoNullStringToEmptyString(zzDictionaryWords);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         return zzDictionaryWords;
     }
@@ -153,7 +153,7 @@ public class ZzDictionaryWordsServiceImpl implements ZzDictionaryWordsService {
         if (null == zzDictionaryWordsList && zzDictionaryWordsList.isEmpty()) {
             return txt;
         }
-        return common.sensitiveSearch(txt,zzDictionaryWordsList);
+        return Common.sensitiveSearch(txt,zzDictionaryWordsList);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class ZzDictionaryWordsServiceImpl implements ZzDictionaryWordsService {
 //        zzDictionaryWordsList.stream().forEach(zzDictionaryWordsListfor ->{
 //            strSet.add(zzDictionaryWordsListfor.getWordName());
 //        });
-        return common.stringSearch(txt, zzDictionaryWordsList);
+        return Common.stringSearch(txt, zzDictionaryWordsList);
     }
 
     //导入敏感词汇
@@ -215,9 +215,9 @@ public class ZzDictionaryWordsServiceImpl implements ZzDictionaryWordsService {
 
             datamap = ExcelUtil.readExcelContentz(wb,titleRowNum);
         } catch (Exception e) {
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
             e.printStackTrace();
-            info.append(common.getExceptionMessage(e));
+            info.append(Common.getExceptionMessage(e));
         }
         //excel数据存在map里，map.get(0).get(0)为excel(实际存放数据区域，比如标题头不算工作区)第1行第1列的值，此处可对数据进行处理
         if(datamap!=null && datamap.size()!=0){
@@ -307,7 +307,7 @@ public class ZzDictionaryWordsServiceImpl implements ZzDictionaryWordsService {
         PageHelper.startPage(page, size);
         List<ZzDictionaryWords> dataList =this.zzDictionaryWordsDao.query(type,code,name,replace,isUse);
         //null的String类型属性转换空字符串
-        common.putVoNullStringToEmptyString(dataList);
+        Common.putVoNullStringToEmptyString(dataList);
         PageInfo<ZzDictionaryWords> pageInfo = new PageInfo<>(dataList);
         TableResultResponse<ZzDictionaryWords> res = new TableResultResponse<ZzDictionaryWords>(
                 pageInfo.getPageSize(),

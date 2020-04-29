@@ -1,8 +1,8 @@
 package com.workhub.z.servicechat.controller.message;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
+import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.message.ZzMsgTabInfo;
 import com.workhub.z.servicechat.entity.message.ZzMsgTabRelation;
 import com.workhub.z.servicechat.service.ZzMsgTabInfoService;
@@ -56,10 +56,10 @@ public class ZzMsgTabInfoController {
         zzMsgTabInfo.setId(RandomId.getUUID());
 //        Integer insert = this.zzMsgTabInfoService.insert(zzMsgTabInfo);
         try {
-            common.putEntityNullToEmptyString(zzMsgTabInfo);
+            Common.putEntityNullToEmptyString(zzMsgTabInfo);
         }catch (Exception e){
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
 
         this.zzMsgTabInfoService.insert(zzMsgTabInfo);
@@ -84,7 +84,7 @@ public class ZzMsgTabInfoController {
 //            return objectRestResponse;
 //        }
         try {
-            common.putEntityNullToEmptyString(zzMsgTabRelation);
+            Common.putEntityNullToEmptyString(zzMsgTabRelation);
         }catch (Exception e){
             e.printStackTrace();
         }

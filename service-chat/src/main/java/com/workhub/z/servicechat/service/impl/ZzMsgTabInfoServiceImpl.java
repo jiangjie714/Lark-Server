@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service.impl;
 
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.message.ZzMsgTabInfoDao;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzMsgTabInfoDao;
 import com.workhub.z.servicechat.entity.message.ZzMsgTabInfo;
 import com.workhub.z.servicechat.service.ZzMsgTabInfoService;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
 
 /**
  * 消息标记信息表(ZzMsgTabInfo)表服务实现类
@@ -35,10 +35,10 @@ public class ZzMsgTabInfoServiceImpl implements ZzMsgTabInfoService {
     public ZzMsgTabInfo queryById(String id) {
         ZzMsgTabInfo zzMsgTabInfo = this.zzMsgTabInfoDao.queryById(id);
         try {
-            common.putVoNullStringToEmptyString(zzMsgTabInfo);
+            Common.putVoNullStringToEmptyString(zzMsgTabInfo);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         return zzMsgTabInfo;
     }

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
 import com.workhub.z.servicechat.entity.group.ZzUserGroup;
+import com.workhub.z.servicechat.model.RawMessageDto;
 
 import java.util.List;
 
@@ -62,8 +63,10 @@ public interface ZzUserGroupService {
     //总记录数
     Long groupUserListTotal(String id) throws Exception;
     //获取最新消息列表
-    List<UserNewMsgVo> getUserNewMsgList(String id);
+    List<UserNewMsgVo> getUserNewMsgList2(String id);
+    List<RawMessageDto> getUserNewMsgList(String id);
     //获取最新联系人列表
+    List<ContactVO> getContactVOList2(String id);
     List<ContactVO> getContactVOList(String id);
     /**
      * 修改用户群个性化信息--是否置顶

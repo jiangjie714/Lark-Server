@@ -17,7 +17,7 @@ import java.util.*;
 *@Author: 忠
 *@date: 2019/5/14
 */
-public class fileManage {
+public class FileManage {
 
     private static final Long FILE_SIZE = 300 * 1024 * 1024L;
 

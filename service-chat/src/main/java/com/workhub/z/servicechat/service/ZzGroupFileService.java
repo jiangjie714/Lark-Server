@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.VO.FileMonitoringVO;
+import com.workhub.z.servicechat.VO.FileMonitoringVo;
 import com.workhub.z.servicechat.VO.GroupFileVo;
 import com.workhub.z.servicechat.entity.group.ZzGroupFile;
 
@@ -95,7 +95,7 @@ public interface ZzGroupFileService {
     //记录上传文件
     public int fileRecord(ZzGroupFile zzUploadFile) throws Exception;
     //文件监控查询
-    public TableResultResponse<FileMonitoringVO> fileMonitoring(Map<String,Object> params) throws Exception;
+    public TableResultResponse<FileMonitoringVo> fileMonitoring(Map<String,Object> params) throws Exception;
 
     //设置文件审计标记 fileId 、approveFlg
     public int setFileApproveFLg(String files,String userId) throws Exception;

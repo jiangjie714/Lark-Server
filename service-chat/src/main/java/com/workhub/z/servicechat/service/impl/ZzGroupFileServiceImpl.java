@@ -3,13 +3,13 @@ package com.workhub.z.servicechat.service.impl;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.workhub.z.servicechat.VO.FileMonitoringVO;
+import com.workhub.z.servicechat.VO.FileMonitoringVo;
 import com.workhub.z.servicechat.VO.GroupFileVo;
 import com.workhub.z.servicechat.config.FileTypeEnum;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzGroupFileDao;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzGroupFileDao;
 import com.workhub.z.servicechat.entity.group.ZzGroupFile;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.feign.IFileUploadService;
@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
 
 /**
  * 群文件(ZzGroupFile)表服务实现类
@@ -58,10 +58,10 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
         return super.selectOne(entity);*/
         ZzGroupFile zzGroupFile = this.zzGroupFileDao.queryById(fileId);
         try {
-            common.putVoNullStringToEmptyString(zzGroupFile);
+            Common.putVoNullStringToEmptyString(zzGroupFile);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         return zzGroupFile;
     }
@@ -151,7 +151,7 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
         PageHelper.startPage(page, size);
         List<GroupFileVo> dataList =this.zzGroupFileDao.groupFileList(id,userId,query);
         //null的String类型属性转换空字符串
-        common.putVoNullStringToEmptyString(dataList);
+        Common.putVoNullStringToEmptyString(dataList);
         PageInfo<GroupFileVo> pageInfo = new PageInfo<>(dataList);
         TableResultResponse<GroupFileVo> res = new TableResultResponse<GroupFileVo>(
                 pageInfo.getPageSize(),
@@ -181,7 +181,7 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
         PageHelper.startPage(page, size);
         List<GroupFileVo> dataList =this.zzGroupFileDao.groupFileListByMe(groupId,userId);
         //null的String类型属性转换空字符串
-        common.putVoNullStringToEmptyString(dataList);
+        Common.putVoNullStringToEmptyString(dataList);
         PageInfo<GroupFileVo> pageInfo = new PageInfo<>(dataList);
         TableResultResponse<GroupFileVo> res = new TableResultResponse<GroupFileVo>(
                 pageInfo.getPageSize(),
@@ -210,7 +210,7 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
         PageHelper.startPage(page, size);
         List<GroupFileVo> dataList =this.zzGroupFileDao.groupFileListByOwner(groupId,userId);
         //null的String类型属性转换空字符串
-        common.putVoNullStringToEmptyString(dataList);
+        Common.putVoNullStringToEmptyString(dataList);
         PageInfo<GroupFileVo> pageInfo = new PageInfo<>(dataList);
         TableResultResponse<GroupFileVo> res = new TableResultResponse<GroupFileVo>(
                 pageInfo.getPageSize(),
@@ -239,7 +239,7 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
         PageHelper.startPage(page, size);
         List<GroupFileVo> dataList =this.zzGroupFileDao.groupFileListByPass(groupId);
         //null的String类型属性转换空字符串
-        common.putVoNullStringToEmptyString(dataList);
+        Common.putVoNullStringToEmptyString(dataList);
         PageInfo<GroupFileVo> pageInfo = new PageInfo<>(dataList);
         TableResultResponse<GroupFileVo> res = new TableResultResponse<GroupFileVo>(
                 pageInfo.getPageSize(),
@@ -283,7 +283,7 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
             divide=1024*1024*1024*1024L;
         }
         double sizes = this.zzGroupFileDao.queryFileSize(dateFmt,queryDate,divide);
-        res=String.valueOf(common.formatDouble2(sizes));
+        res=String.valueOf(Common.formatDouble2(sizes));
         return res;
     }
     /**
@@ -317,7 +317,7 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
         List<Map> data = this.zzGroupFileDao.queryFileSizeRange(dateFmt,queryDateBegin,queryDateEnd,divide);
         for(Map<String,Object> temp : data){
             String date = (String)temp.get("DATES");
-            String size = String.valueOf(common.formatDouble2(((BigDecimal)temp.get("SIZES")).doubleValue()));
+            String size = String.valueOf(Common.formatDouble2(((BigDecimal)temp.get("SIZES")).doubleValue()));
             Map<String,String> map=new HashMap<>();
             map.put("date",date);
             map.put("size",size);
@@ -339,15 +339,15 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
     //参数说明：page 页码 size 每页几条 userName上传用户名称 dateBegin、dateEnd上传时间开始结束 isGroup 是否群主1是0否
     //fileName文件名称 level密级
     @Override
-    public TableResultResponse<FileMonitoringVO> fileMonitoring(Map<String,Object> params) throws Exception{
-        int page=Integer.valueOf(common.nulToEmptyString(params.get("page")));
-        int size=Integer.valueOf(common.nulToEmptyString(params.get("size")));
+    public TableResultResponse<FileMonitoringVo> fileMonitoring(Map<String,Object> params) throws Exception{
+        int page=Integer.valueOf(Common.nulToEmptyString(params.get("page")));
+        int size=Integer.valueOf(Common.nulToEmptyString(params.get("size")));
         PageHelper.startPage(page, size);
-        List<FileMonitoringVO> dataList =this.zzGroupFileDao.fileMonitoring(params);
+        List<FileMonitoringVo> dataList =this.zzGroupFileDao.fileMonitoring(params);
         //null的String类型属性转换空字符串
-        common.putVoNullStringToEmptyString(dataList);
-        PageInfo<FileMonitoringVO> pageInfo = new PageInfo<>(dataList);
-        TableResultResponse<FileMonitoringVO> res = new TableResultResponse<FileMonitoringVO>(
+        Common.putVoNullStringToEmptyString(dataList);
+        PageInfo<FileMonitoringVo> pageInfo = new PageInfo<>(dataList);
+        TableResultResponse<FileMonitoringVo> res = new TableResultResponse<FileMonitoringVo>(
                 pageInfo.getPageSize(),
                 pageInfo.getPageNum(),
                 pageInfo.getPages(),
@@ -363,7 +363,7 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
     @Override
     public int setFileApproveFLg(String files, String userId) throws Exception{
         List<Map<String,String>> params = new ArrayList<>();
-        List<String> fileArr = common.stringToList(files,";");
+        List<String> fileArr = Common.stringToList(files,";");
         for(String temp:fileArr){
             String[] fileParam = temp.split(",",-1);
             if(fileParam[0]==null||fileParam[0].equals("")){
@@ -382,34 +382,34 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
     public int saveMeetFile(String message) throws Exception{
         int i;
         //文件资源类型0私聊文件1群文件905会议文件
-        String fileType = common.nulToEmptyString(common.getJsonStringKeyValue(message,"fileType"));
+        String fileType = Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"fileType"));
         try {
 
             ZzGroupFile zzGroupFile = new ZzGroupFile();
             zzGroupFile.setId(RandomId.getUUID());
-            zzGroupFile.setFileId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.id")));
-            zzGroupFile.setCreator(common.nulToEmptyString(common.getJsonStringKeyValue(message,"fromId")));
-            zzGroupFile.setCreatorName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username")));
+            zzGroupFile.setFileId(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.id")));
+            zzGroupFile.setCreator(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"fromId")));
+            zzGroupFile.setCreatorName(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"username")));
             zzGroupFile.setCreateTime(new Date());
-            zzGroupFile.setSizes(Double.parseDouble(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.fileSize"))));
-            zzGroupFile.setFileName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title")));
-            zzGroupFile.setFileExt(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension")));
-            zzGroupFile.setFileType(FileTypeEnum.getEnumByValue(common.nulToEmptyString(zzGroupFile.getFileExt())).getType());
-            zzGroupFile.setLevels(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.secretLevel")));
-            zzGroupFile.setGroupId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"toId")));
-            zzGroupFile.setReceiverName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"toName")));
+            zzGroupFile.setSizes(Double.parseDouble(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.fileSize"))));
+            zzGroupFile.setFileName(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.title")));
+            zzGroupFile.setFileExt(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.extension")));
+            zzGroupFile.setFileType(FileTypeEnum.getEnumByValue(Common.nulToEmptyString(zzGroupFile.getFileExt())).getType());
+            zzGroupFile.setLevels(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.secretLevel")));
+            zzGroupFile.setGroupId(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"toId")));
+            zzGroupFile.setReceiverName(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"toName")));
             //默认通过
             zzGroupFile.setApproveFlg("1");
             zzGroupFile.setIsGroup(fileType);
             //如是会议文件
             if(String.valueOf(MessageType.MEETING_FILE).equals(fileType)){
-                zzGroupFile.setMeetFileType(common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.meetFileType")));
+                zzGroupFile.setMeetFileType(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.meetFileType")));
             }
-            common.putVoNullStringToEmptyString(zzGroupFile);
+            Common.putVoNullStringToEmptyString(zzGroupFile);
             i = zzGroupFileDao.fileRecord(zzGroupFile);
         } catch (Exception e){
             log.error("记录附件信息出错！");
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
             return -1;
 
         } finally{
@@ -426,17 +426,17 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
         //记录会议状态变动
         ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
         zzGroupStatus.setId(RandomId.getUUID());
-        zzGroupStatus.setOperatorName(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username")));
-        zzGroupStatus.setOperator(common.nulToEmptyString(common.getJsonStringKeyValue(message,"fromId")));
+        zzGroupStatus.setOperatorName(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"username")));
+        zzGroupStatus.setOperator(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"fromId")));
         zzGroupStatus.setOperateType(MessageType.FLOW_UPLOADFILE);//上传附件
-        zzGroupStatus.setGroupId(common.nulToEmptyString(common.getJsonStringKeyValue(message,"toId")));
+        zzGroupStatus.setGroupId(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"toId")));
         zzGroupStatus.setOperateTime(new Date());
         //会议
         zzGroupStatus.setType(MessageType.FLOW_LOG_MEET);
-        zzGroupStatus.setDescribe(common.nulToEmptyString(common.getJsonStringKeyValue(message,"username"))+
+        zzGroupStatus.setDescribe(Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"username"))+
                 "上传了附件："+
-                common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.title"))+
-                (((common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))).equals(""))?"":("."+common.nulToEmptyString(common.getJsonStringKeyValue(message,"content.extension"))))
+                Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.title"))+
+                (((Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.extension"))).equals(""))?"":("."+ Common.nulToEmptyString(Common.getJsonStringKeyValue(message,"content.extension"))))
         );
         rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
     }
@@ -448,12 +448,12 @@ public class ZzGroupFileServiceImpl implements ZzGroupFileService {
      */
     @Override
     public TableResultResponse<GroupFileVo> getGroupFileList(Map<String, String> params) throws Exception {
-        int page=Integer.valueOf(common.nulToEmptyString(params.get("page")));
-        int size=Integer.valueOf(common.nulToEmptyString(params.get("size")));
+        int page=Integer.valueOf(Common.nulToEmptyString(params.get("page")));
+        int size=Integer.valueOf(Common.nulToEmptyString(params.get("size")));
         PageHelper.startPage(page, size);
         List<GroupFileVo> dataList =this.zzGroupFileDao.getGroupFileList(params);
         //null的String类型属性转换空字符串
-        common.putVoNullStringToEmptyString(dataList);
+        Common.putVoNullStringToEmptyString(dataList);
         PageInfo<GroupFileVo> pageInfo = new PageInfo<>(dataList);
         TableResultResponse<GroupFileVo> res = new TableResultResponse<GroupFileVo>(
                 pageInfo.getPageSize(),

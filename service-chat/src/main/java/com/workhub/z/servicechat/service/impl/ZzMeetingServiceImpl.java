@@ -1,14 +1,12 @@
 package com.workhub.z.servicechat.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.*;
-import com.workhub.z.servicechat.dao.meeting.ZzMeetingDao;
+import com.workhub.z.servicechat.dao.ZzMeetingDao;
 import com.workhub.z.servicechat.entity.meeting.ZzMeeting;
 import com.workhub.z.servicechat.entity.meeting.ZzMeetingUser;
 import com.workhub.z.servicechat.model.MeetingDto;
@@ -52,9 +50,9 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
     public  String add(ZzMeeting zzMeeting){
         zzMeeting.setId(RandomId.getUUID());
         try {
-            common.putVoNullStringToEmptyString(zzMeeting);
+            Common.putVoNullStringToEmptyString(zzMeeting);
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
 
         int i = this.zzMeetingDao.add(zzMeeting);
@@ -68,7 +66,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
         List<MeetRoleCodeVo> rolefunlist = this.getMeetRoleCodeListData();
         try {
             if(meetingDto != null){
-                common.copyObject(meetingDto,meetingVo);
+                Common.copyObject(meetingDto,meetingVo);
                 List<MeetUserVo>  userVos = this.zzMeetingUserService.queryMeetAllUsersVo(meetId);
                 for(MeetUserVo user:userVos){
                     String roleCode = user.getUserRoleCode();
@@ -84,9 +82,9 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
                 this.dealMeetProgress(meetingVo,meetingDto.getAllProgress(),meetingDto.getCurrentProgress());
             }
 
-            common.putVoNullStringToEmptyString(meetingVo);
+            Common.putVoNullStringToEmptyString(meetingVo);
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
         return meetingVo;
     }
@@ -123,13 +121,13 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
 
             JSONObject jsonObject = JSONObject.parseObject(meetingJson);
 
-            String userId = common.nulToEmptyString(jsonObject.getString("creator"));
+            String userId = Common.nulToEmptyString(jsonObject.getString("creator"));
             zzMeeting.setCrtUser(userId);
-            String userName = common.nulToEmptyString(jsonObject.getString("creatorName"));
+            String userName = Common.nulToEmptyString(jsonObject.getString("creatorName"));
             zzMeeting.setCrtName(userName);
-            String userIp = common.nulToEmptyString(jsonObject.getString("creatorIp"));
+            String userIp = Common.nulToEmptyString(jsonObject.getString("creatorIp"));
             zzMeeting.setCrtHost(userIp);
-            String userNo = common.nulToEmptyString(jsonObject.getString("creatorNo"));
+            String userNo = Common.nulToEmptyString(jsonObject.getString("creatorNo"));
 
             zzMeeting.setId(jsonObject.getString("groupId"));
 
@@ -151,7 +149,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
                     zzMeetingUser.setUserLevel(userJson.getString("userLevels"));
                     zzMeetingUser.setUserName(userJson.getString("userName"));
                     zzMeetingUser.setUserNo(userJson.getString("userNo"));
-                    String roleCode = common.nulToEmptyString(userJson.getString("roleCode"));
+                    String roleCode = Common.nulToEmptyString(userJson.getString("roleCode"));
                     /*if(!zzCodeMeetingRoleService.ifRoleCodeExist(roleCode)){
                         res.rel(false);
                         res.data("群成员："+userJson.getString("userName")+" 对应的会议角色不存在或已经失效！");
@@ -162,35 +160,35 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
                 }
             }
 
-            zzMeeting.setMeetName(common.nulToEmptyString(jsonObject.getString("groupName")));
-            zzMeeting.setMeetDescribe(common.nulToEmptyString(jsonObject.getString("groupDescribe")));
+            zzMeeting.setMeetName(Common.nulToEmptyString(jsonObject.getString("groupName")));
+            zzMeeting.setMeetDescribe(Common.nulToEmptyString(jsonObject.getString("groupDescribe")));
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            zzMeeting.setBeginTime(dateFormat.parse(common.nulToEmptyString(jsonObject.getString("beginTime"))));
-            zzMeeting.setEndTime(dateFormat.parse(common.nulToEmptyString(jsonObject.getString("endTime"))));
+            zzMeeting.setBeginTime(dateFormat.parse(Common.nulToEmptyString(jsonObject.getString("beginTime"))));
+            zzMeeting.setEndTime(dateFormat.parse(Common.nulToEmptyString(jsonObject.getString("endTime"))));
             //注意cross 表示的是会议类型
-            zzMeeting.setMeetType(common.nulToEmptyString(jsonObject.getString("cross")));
-            zzMeeting.setPname(common.nulToEmptyString(jsonObject.getString("pname")));
-            zzMeeting.setScop(common.nulToEmptyString(jsonObject.getString("scop")));
-            zzMeeting.setLevels(common.nulToEmptyString(jsonObject.getString("levels")));
-            zzMeeting.setOrg(common.nulToEmptyString(jsonObject.getString("org")));
+            zzMeeting.setMeetType(Common.nulToEmptyString(jsonObject.getString("cross")));
+            zzMeeting.setPname(Common.nulToEmptyString(jsonObject.getString("pname")));
+            zzMeeting.setScop(Common.nulToEmptyString(jsonObject.getString("scop")));
+            zzMeeting.setLevels(Common.nulToEmptyString(jsonObject.getString("levels")));
+            zzMeeting.setOrg(Common.nulToEmptyString(jsonObject.getString("org")));
             //注意groupType表示的是跨场所
-            zzMeeting.setIscross(common.nulToEmptyString(jsonObject.getString("groupType")));
-            //zzMeeting.setAllProgress(common.nulToEmptyString(jsonObject.getString("allProgress")));
+            zzMeeting.setIscross(Common.nulToEmptyString(jsonObject.getString("groupType")));
+            //zzMeeting.setAllProgress(Common.nulToEmptyString(jsonObject.getString("allProgress")));
             List<GeneralCodeNameVo> dataList = this.zzMeetingDao.getMeetProgressCodeList();
             //默认有两个议程
             zzMeeting.setAllProgress(MeetingConst.FIRST_MEET_PROGRESS+","+MeetingConst.LAST_MEET_PROGRESS);
             //设置当前议程未选中任何议程
             zzMeeting.setCurrentProgress("0");
-            common.putVoNullStringToEmptyString(zzMeeting);
+            Common.putVoNullStringToEmptyString(zzMeeting);
             /*//添加会议*/
             this.zzMeetingDao.add(zzMeeting);
-            common.putVoNullStringToEmptyString(meetUserList);
+            Common.putVoNullStringToEmptyString(meetUserList);
             /*//添加成员*/
             this.zzMeetingUserService.addListUsers(meetUserList);
 
         }catch (Exception e){
             logger.error("创建会议出错");
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             res.rel(false);
             res.data("系统出错");
             /*//手动回滚事务*/
@@ -220,9 +218,9 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
         String functionKey = "MEETFUNCTION";
         for(Map map : datas){
             MeetRoleCodeVo meetRoleCodeVo = new MeetRoleCodeVo();
-            meetRoleCodeVo.setCode(common.nulToEmptyString(map.get(codeKey)));
-            meetRoleCodeVo.setName(common.nulToEmptyString(map.get(nameKey)));
-            String functions = common.nulToEmptyString(map.get(functionKey));
+            meetRoleCodeVo.setCode(Common.nulToEmptyString(map.get(codeKey)));
+            meetRoleCodeVo.setName(Common.nulToEmptyString(map.get(nameKey)));
+            String functions = Common.nulToEmptyString(map.get(functionKey));
             String newFunctions = "";
             String[] functionArr = functions.split(",");
             for(String function : functionArr){
@@ -299,7 +297,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             }
         }catch (Exception e){
             logger.error("获取联系人会议列表出错！");
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
 
 
@@ -319,7 +317,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
    * @MethodName: pushNewMeetInfToSocket
     * @Description: socket推送消息到前端
     * @Param: [meetId]
-    * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+    * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
     * @Author: zhuqz
     * @Date: 2019/10/22
    **/
@@ -327,14 +325,23 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
     public ObjectRestResponse pushNewMeetInfToSocket(String userId,String meetingId){
         try {
             MeetingVo resMeeting = this.queryById(meetingId);
-            AnswerToFrontReponse answerToFrontReponse = new AnswerToFrontReponse();
-            answerToFrontReponse.setCode(MEET_CHANGE);
+            SocketMsgDetailVo answerToFrontReponse = new SocketMsgDetailVo();
+            answerToFrontReponse.setCode(SocketMsgDetailTypeEnum.MEET_CHANGE);
             answerToFrontReponse.setData(resMeeting);
             // TODO: 2019/10/14 通知会议所有人员JSON.toJSONString(data)
-            systemMessage.sendMessageToMeet(meetingId,userId,JSON.toJSONString(answerToFrontReponse, SerializerFeature.DisableCircularReferenceDetect));
+            SocketMsgVo msgVo = new SocketMsgVo();
+            msgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
+            msgVo.setReceiver(meetingId);
+            msgVo.setMsg(answerToFrontReponse);
+            //校验消息
+            CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
+            //只有消息合法才去绑定socket通信频道
+            if(cRes.getRes()){
+                rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
+            }
         }catch (Exception e){
             logger.error("会议变更推送前端报错！");
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             return new ObjectRestResponse().data("操作失败").msg("200").rel(false);
         }
         return new ObjectRestResponse().data("操作成功").msg("200").rel(true);
@@ -366,7 +373,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
                 allProgressList.add(generalCodeNameVo);
                 //如果是当前议程
                 if(Integer.parseInt(currentProgress)-1 == i){
-                    common.copyObject(generalCodeNameVo,meetingCurrentProgressVo);
+                    Common.copyObject(generalCodeNameVo,meetingCurrentProgressVo);
                     meetingCurrentProgressVo.setIndex(currentProgress);
                 }
             }*/
@@ -376,7 +383,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
                 allProgressList.add(generalCodeNameVo);
                 //如果是当前议程
                 if(Integer.parseInt(currentProgress)-1 == i){
-                    common.copyObject(generalCodeNameVo,meetingCurrentProgressVo);
+                    Common.copyObject(generalCodeNameVo,meetingCurrentProgressVo);
                 }
             }
             meetingCurrentProgressVo.setIndex(currentProgress);
@@ -384,7 +391,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             meetingVo.setCurrentProgress(meetingCurrentProgressVo);
         } catch (Exception e) {
             logger.error("处理会议议程出错！");
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
         }
     }
 

@@ -2,10 +2,11 @@ package com.workhub.z.servicechat.controller.group;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.workhub.z.servicechat.VO.FileMonitoringVO;
+import com.workhub.z.servicechat.VO.FileMonitoringVo;
 import com.workhub.z.servicechat.VO.GroupFileVo;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.group.ZzGroupFile;
 import com.workhub.z.servicechat.service.ZzGroupFileService;
 import org.slf4j.Logger;
@@ -37,6 +38,11 @@ public class ZzGroupFileController {
     private static Logger log = LoggerFactory.getLogger(ZzGroupFileController.class);
     @Autowired
     private HttpServletRequest request;
+    //gate请求属性
+    static String pidInHeaderRequest = GateRequestHeaderParamConfig.getPid();
+    static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
+    static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
+    static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     /**
      * 通过主键查询单条数据
      *
@@ -66,7 +72,7 @@ public class ZzGroupFileController {
                                                           @RequestParam(value = "page",defaultValue = "1")Integer page,
                                                           @RequestParam(value = "size",defaultValue = "10")Integer size){
         String query="";//前端查询添加，文件名称，暂时没有加，这里先传个空就行
-        String userId=common.nulToEmptyString(request.getHeader("userId"));
+        String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         TableResultResponse<GroupFileVo> pageInfo = null;
         Long total = 0L;
         try {
@@ -157,7 +163,7 @@ public class ZzGroupFileController {
      */
     @PostMapping ("/getGroupFileList")
     public TableResultResponse<GroupFileVo> getGroupFileList(@RequestParam Map<String,String> params){
-        String userId=common.nulToEmptyString(request.getHeader("userId"));
+        String userId= Common.nulToEmptyString(request.getHeader("userId"));
         TableResultResponse<GroupFileVo> pageInfo = null;
         try {
             pageInfo = this.zzGroupFileService.getGroupFileList(params);
@@ -196,7 +202,7 @@ public class ZzGroupFileController {
         zzGroupFile.setCreator("登陆人id");//TODO
         zzGroupFile.setCreateTime(new Date());
         try{
-            common.putEntityNullToEmptyString(zzGroupFile);
+            Common.putEntityNullToEmptyString(zzGroupFile);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -222,11 +228,11 @@ public class ZzGroupFileController {
      */
     @PostMapping("/update")
     public ObjectRestResponse update(@RequestBody ZzGroupFile zzGroupFile){
-        String userId=common.nulToEmptyString(request.getHeader("userId"));
+        String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         zzGroupFile.setUpdator(userId);
         zzGroupFile.setUpdateTime(new Date());
         try{
-            common.putEntityNullToEmptyString(zzGroupFile);
+            Common.putEntityNullToEmptyString(zzGroupFile);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -245,12 +251,12 @@ public class ZzGroupFileController {
      * @return
      */
     @PostMapping("/fileMonitoring")
-    public TableResultResponse<FileMonitoringVO> fileMonitoring(@RequestParam Map<String,Object> params){
-        TableResultResponse<FileMonitoringVO> pageInfo = null;
+    public TableResultResponse<FileMonitoringVo> fileMonitoring(@RequestParam Map<String,Object> params){
+        TableResultResponse<FileMonitoringVo> pageInfo = null;
         try {
             pageInfo = this.zzGroupFileService.fileMonitoring(params);
         } catch (Exception e) {
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         return pageInfo;
     }
@@ -269,9 +275,9 @@ public class ZzGroupFileController {
         res.rel(true);
         res.msg("200");
         res.data("操作成功");
-        String userId=common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userIp = Common.nulToEmptyString(request.getHeader("userHost"));
         int i = this.zzGroupFileService.saveMeetFile(msg);
         if(i!=1){
             res.rel(false);

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class MegReadLogVO {
+public class MegReadLogVo {
     //    id
     private String    id;
     //    发送人id，被阅读人

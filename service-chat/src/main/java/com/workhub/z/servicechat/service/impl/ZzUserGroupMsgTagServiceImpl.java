@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.workhub.z.servicechat.VO.SingleMessageVO;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzUserGroupMsgTagDao;
+import com.workhub.z.servicechat.VO.SingleMessageVo;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzUserGroupMsgTagDao;
 import com.workhub.z.servicechat.entity.group.ZzUserGroupMsgTag;
 import com.workhub.z.servicechat.service.ZzUserGroupMsgTagService;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.workhub.z.servicechat.config.common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
 
 /**
  * 用户标记群消息
@@ -122,12 +122,12 @@ public class ZzUserGroupMsgTagServiceImpl implements ZzUserGroupMsgTagService {
         List<String> list = this.zzUserGroupMsgTagDao.getInfList(userId,groupId,tagType);
         PageInfo pageInfo = new PageInfo<>(list);
 
-        List<SingleMessageVO> voList=new ArrayList<>();
+        List<SingleMessageVo> voList=new ArrayList<>();
         for(String temp:list){
-            SingleMessageVO vo = JSON.parseObject(temp, SingleMessageVO.class);
+            SingleMessageVo vo = JSON.parseObject(temp, SingleMessageVo.class);
             voList.add(vo);
         }
-        common.putVoNullStringToEmptyString(voList);
+        Common.putVoNullStringToEmptyString(voList);
 
         TableResultResponse res = new TableResultResponse(
                 pageInfo.getPageSize(),

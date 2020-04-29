@@ -4,7 +4,7 @@ import lombok.Data;
 
 //文件监控前端返回格式
 @Data
-public class FileMonitoringVO {
+public class FileMonitoringVo {
     //文件id
     private String fileId;
 

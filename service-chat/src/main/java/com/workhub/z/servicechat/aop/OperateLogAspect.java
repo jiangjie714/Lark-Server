@@ -1,7 +1,7 @@
 package com.workhub.z.servicechat.aop;
 
+import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.config.ZzChatLog;
 import com.workhub.z.servicechat.service.ZzLogService;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -33,7 +33,6 @@ public class OperateLogAspect {
     @Pointcut("execution(public * com.workhub.z.servicechat.service.impl..*.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzLogServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzPrivateMsgServiceImpl.*(..)) " +
-            "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupMsgServiceImpl.*(..))" +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMessageInfoServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupStatusServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMegReadLogServiceImpl.*(..)) " +
@@ -72,7 +71,7 @@ public class OperateLogAspect {
         if(isSocket){
             zzChatLog.setUserName("");
         }else{
-            String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
+            String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
             zzChatLog.setUserName(userName);
         }
 
@@ -128,8 +127,8 @@ public class OperateLogAspect {
             obj = joinPoint.proceed();
         }catch (Exception e){
             zzChatLog.setSuccessFlg("0");
-            log.error(common.getExceptionMessage(e));
-            zzChatLog.setErrorInf(common.getExceptionMessage(e).substring(0,499));
+            log.error(Common.getExceptionMessage(e));
+            zzChatLog.setErrorInf(Common.getExceptionMessage(e).substring(0,499));
         }
         //原方法执行结束，打印这行日志
         if (obj != null && obj instanceof byte[]){
@@ -147,7 +146,7 @@ public class OperateLogAspect {
         try{
             zzLogService.log(zzChatLog);
         }catch (Exception e){
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
 
         //返回方法返回参数

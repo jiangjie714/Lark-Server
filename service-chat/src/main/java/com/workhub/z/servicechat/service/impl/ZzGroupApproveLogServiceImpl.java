@@ -8,8 +8,8 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupApproveLogVo;
 import com.workhub.z.servicechat.VO.GroupMemberVo;
 import com.workhub.z.servicechat.VO.MeetUserVo;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzGroupApproveLogDao;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzGroupApproveLogDao;
 import com.workhub.z.servicechat.entity.group.ZzGroupApproveLog;
 import com.workhub.z.servicechat.service.ZzGroupApproveLogService;
 import com.workhub.z.servicechat.service.ZzGroupApproveService;
@@ -48,15 +48,15 @@ public class ZzGroupApproveLogServiceImpl implements ZzGroupApproveLogService {
         int pageNum=1;
         int pageSize=10;
         try {
-            pageNum=Integer.valueOf(common.nulToEmptyString(params.get("pageNo")));
-            pageSize=Integer.valueOf(common.nulToEmptyString(params.get("pageSize")));
+            pageNum=Integer.valueOf(Common.nulToEmptyString(params.get("pageNo")));
+            pageSize=Integer.valueOf(Common.nulToEmptyString(params.get("pageSize")));
         }catch (Exception e){
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         /**默认是群日志*/
         String typeKey = "type";
-        if("".equals(common.nulToEmptyString(params.get(typeKey)))){
+        if("".equals(Common.nulToEmptyString(params.get(typeKey)))){
             String groupTypeValue = "0";
             params.put(typeKey,groupTypeValue);
         }
@@ -65,7 +65,7 @@ public class ZzGroupApproveLogServiceImpl implements ZzGroupApproveLogService {
         PageInfo pageInfo = new PageInfo<>(dataList);
 
         try {
-            common.putVoNullStringToEmptyString(dataList);
+            Common.putVoNullStringToEmptyString(dataList);
             List<GroupMemberVo> groupMemberVos = new ArrayList<>();
             //如果是群日志
             if("0".equals(params.get(typeKey))){
@@ -81,11 +81,11 @@ public class ZzGroupApproveLogServiceImpl implements ZzGroupApproveLogService {
                         for (int i = 0; i < userList.size(); i++) {
                             GroupMemberVo groupMemberVo = new GroupMemberVo();
                             JSONObject userJson = JSONObject.parseObject(userList.getString(i));
-                            groupMemberVo.setUserId(common.nulToEmptyString(userJson.getString("userId")));
-                            groupMemberVo.setUserName(common.nulToEmptyString(userJson.getString("userName")));
-                            groupMemberVo.setUserNo(common.nulToEmptyString(userJson.getString("userNo")));
-                            groupMemberVo.setUserLevel(common.nulToEmptyString(userJson.getString("userLevels")));
-                            groupMemberVo.setUserImg(common.nulToEmptyString(userJson.getString("img")));
+                            groupMemberVo.setUserId(Common.nulToEmptyString(userJson.getString("userId")));
+                            groupMemberVo.setUserName(Common.nulToEmptyString(userJson.getString("userName")));
+                            groupMemberVo.setUserNo(Common.nulToEmptyString(userJson.getString("userNo")));
+                            groupMemberVo.setUserLevel(Common.nulToEmptyString(userJson.getString("userLevels")));
+                            groupMemberVo.setUserImg(Common.nulToEmptyString(userJson.getString("img")));
                             groupMemberVos.add(groupMemberVo);
                         }
                     }
@@ -100,11 +100,11 @@ public class ZzGroupApproveLogServiceImpl implements ZzGroupApproveLogService {
                     if(meetUserVos!=null){
                         for (int i = 0; i < meetUserVos.size(); i++) {
                             GroupMemberVo groupMemberVo = new GroupMemberVo();
-                            groupMemberVo.setUserId(common.nulToEmptyString(meetUserVos.get(i).getUserId()));
-                            groupMemberVo.setUserName(common.nulToEmptyString(meetUserVos.get(i).getUserName()));
-                            groupMemberVo.setUserNo(common.nulToEmptyString(meetUserVos.get(i).getUserNo()));
-                            groupMemberVo.setUserLevel(common.nulToEmptyString(meetUserVos.get(i).getUserLevel()));
-                            groupMemberVo.setUserImg(common.nulToEmptyString(meetUserVos.get(i).getUserImg()));
+                            groupMemberVo.setUserId(Common.nulToEmptyString(meetUserVos.get(i).getUserId()));
+                            groupMemberVo.setUserName(Common.nulToEmptyString(meetUserVos.get(i).getUserName()));
+                            groupMemberVo.setUserNo(Common.nulToEmptyString(meetUserVos.get(i).getUserNo()));
+                            groupMemberVo.setUserLevel(Common.nulToEmptyString(meetUserVos.get(i).getUserLevel()));
+                            groupMemberVo.setUserImg(Common.nulToEmptyString(meetUserVos.get(i).getUserImg()));
                             groupMemberVos.add(groupMemberVo);
                         }
                     }
@@ -114,7 +114,7 @@ public class ZzGroupApproveLogServiceImpl implements ZzGroupApproveLogService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
 
         TableResultResponse res = new TableResultResponse(

@@ -4,7 +4,8 @@ import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.MeetingVo;
 import com.workhub.z.servicechat.VO.UserCurrentDayMeetJobVo;
-import com.workhub.z.servicechat.config.common;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.entity.meeting.ZzMeetingUser;
 import com.workhub.z.servicechat.service.ZzMeetingUserService;
 import org.slf4j.Logger;
@@ -30,11 +31,16 @@ public class ZzMeetingUserController {
     ZzMeetingUserService zzMeetingUserService;
     @Autowired
     HttpServletRequest request;
+    //gate请求属性
+    static String pidInHeaderRequest = GateRequestHeaderParamConfig.getPid();
+    static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
+    static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
+    static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
 /**
 * @MethodName: addUser
  * @Description: 添加用户
  * @Param: [zzMeetingUser]meetingId会议id；userId用户id；roleCode用户角色
- * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+ * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
  * @Author: zhuqz
  * @Date: 2019/9/20
 **/
@@ -43,10 +49,10 @@ public class ZzMeetingUserController {
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
-        String userId = common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("pid"));
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userNo = Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
         try {
             zzMeetingUser.setCrtHost(userIp);
             zzMeetingUser.setCrtName(userName);
@@ -55,7 +61,7 @@ public class ZzMeetingUserController {
             this.zzMeetingUserService.addUser(zzMeetingUser);
             res.data("操作成功");
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             res.rel(false);
             res.data("系统出错");
         }
@@ -65,7 +71,7 @@ public class ZzMeetingUserController {
 * @MethodName: delUser
  * @Description: 删除用户
  * @Param: [meetId, userId]会议id，人员id
- * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+ * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
  * @Author: zhuqz
  * @Date: 2019/9/20
 **/
@@ -74,15 +80,15 @@ public class ZzMeetingUserController {
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
-        String operateId = common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("pid"));
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String operateId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userNo = Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
         try {
             this.zzMeetingUserService.delUser(meetId,userId);
             res.data("操作成功");
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             res.rel(false);
             res.data("系统出错");
         }
@@ -92,7 +98,7 @@ public class ZzMeetingUserController {
     * @MethodName: queryMeetAllUsers
      * @Description: 查询会议所有用户
      * @Param: [meetId]
-     * @Return: com.github.hollykunge.security.common.msg.ListRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ListRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
     **/
@@ -105,7 +111,7 @@ public class ZzMeetingUserController {
     * @MethodName: updateUser
      * @Description:
      * @Param: [meetingUser]meetId会议id，userId用户id，roleCode角色编码
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
     **/
@@ -114,10 +120,10 @@ public class ZzMeetingUserController {
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
-        String operateId = common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("pid"));
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String operateId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userNo = Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
         try {
             meetingUser.setUpdNo(userNo);
             meetingUser.setUpdHost(userIp);
@@ -126,7 +132,7 @@ public class ZzMeetingUserController {
             this.zzMeetingUserService.updateUser(meetingUser);
             res.data("操作成功");
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             res.rel(false);
             res.data("系统出错");
         }
@@ -137,7 +143,7 @@ public class ZzMeetingUserController {
     * @MethodName: updateUserList
      * @Description: 更新用户列表信息(批量)
      * @Param: [meetingUser]
-     * @Return: com.github.hollykunge.security.common.msg.ObjectRestResponse
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/10/21
     **/
@@ -146,10 +152,10 @@ public class ZzMeetingUserController {
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
-        String operateId = common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("pid"));
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String operateId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userNo = Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
         try {
             for(ZzMeetingUser meetingUser : meetingUsers){
                 meetingUser.setUpdNo(userNo);
@@ -160,7 +166,7 @@ public class ZzMeetingUserController {
             this.zzMeetingUserService.updateUserList(meetingUsers);
             res.data("操作成功");
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             res.rel(false);
             res.data("系统出错");
         }
@@ -179,10 +185,16 @@ public class ZzMeetingUserController {
         res.rel(true);
         res.msg("200");
         res.data("操作成功");
-        String operateId = common.nulToEmptyString(request.getHeader("userId"));
-        String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("pid"));
-        String userIp = common.nulToEmptyString(request.getHeader("userHost"));
+        String operateId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        String userNo = Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
+        //只有会议人员可以邀请其他人员
+        List<String> memberList = zzMeetingUserService.getMeetingByUserId(meetingVo.getId());
+        if(!memberList.contains(operateId)){
+            res.rel(false);
+            res.data("操作失败，操作人不在会议内");
+        }
         try {
             int i = this.zzMeetingUserService.editMeetUser(meetingVo,operateId,userName,userNo,userIp);
             if(i!=1){
@@ -190,7 +202,7 @@ public class ZzMeetingUserController {
                 res.data("操作出错，会议可能已经不存在");
             }
         }catch (Exception e){
-            logger.error(common.getExceptionMessage(e));
+            logger.error(Common.getExceptionMessage(e));
             res.rel(false);
             res.data("系统出错");
         }
@@ -203,7 +215,7 @@ public class ZzMeetingUserController {
      */
     @GetMapping("getUserCurrentDayMeetJob")
     public ListRestResponse getUserCurrentDayMeetJob(){
-        String userId = common.nulToEmptyString(request.getHeader("userId"));
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         List<UserCurrentDayMeetJobVo> data = this.zzMeetingUserService.getUserCurrentDayMeetJob(userId);
         return new ListRestResponse("500",data.size(),data);
     }

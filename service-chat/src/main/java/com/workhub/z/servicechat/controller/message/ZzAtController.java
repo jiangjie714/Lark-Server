@@ -2,8 +2,8 @@ package com.workhub.z.servicechat.controller.message;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.message.ZzAt;
 import com.workhub.z.servicechat.service.ZzAtService;
 import org.slf4j.Logger;
@@ -43,9 +43,9 @@ public class ZzAtController{
     public ObjectRestResponse insert(@RequestBody ZzAt zzAt){
         zzAt.setId(RandomId.getUUID());
         try {
-            common.putEntityNullToEmptyString(zzAt);
+            Common.putEntityNullToEmptyString(zzAt);
         }catch (Exception e){
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
 
         this.zzAtService.insert(zzAt);

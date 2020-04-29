@@ -49,7 +49,7 @@ public class EncryptionAndDeciphering {
             }
             output.flush();
         } catch (IOException e) {
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
             return false;
         }finally {
             if(input!=null){
@@ -57,7 +57,7 @@ public class EncryptionAndDeciphering {
                     input.close();
                     inFile.delete();
                 } catch (IOException e) {
-                    log.error(common.getExceptionMessage(e));
+                    log.error(Common.getExceptionMessage(e));
                 }
             }
             if(output!=null){
@@ -65,7 +65,7 @@ public class EncryptionAndDeciphering {
                     output.close();
                     outFile.renameTo(inFile);
                 } catch (IOException e) {
-                    log.error(common.getExceptionMessage(e));
+                    log.error(Common.getExceptionMessage(e));
                 }
             }
         }
@@ -91,7 +91,7 @@ public class EncryptionAndDeciphering {
                 return "-1";
             }
         } catch (IOException e) {
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
             return "-1";
         }
 
@@ -109,21 +109,21 @@ public class EncryptionAndDeciphering {
             }
             output.flush();
         } catch (IOException e) {
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
             return "-1";
         }finally {
             if(input!=null){
                 try {
                     input.close();
                 } catch (IOException e) {
-                    log.error(common.getExceptionMessage(e));
+                    log.error(Common.getExceptionMessage(e));
                 }
             }
             if(output!=null){
                 try {
                     output.close();
                 } catch (IOException e) {
-                    log.error(common.getExceptionMessage(e));
+                    log.error(Common.getExceptionMessage(e));
                 }
             }
         }

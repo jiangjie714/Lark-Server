@@ -1,6 +1,6 @@
 package com.workhub.z.servicechat.job;
 
-import com.workhub.z.servicechat.config.common;
+import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.service.JobService;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -25,7 +25,7 @@ public class UnUsedFileDealTask  extends QuartzJobBean {
             log.info("处理无用的附件定时任务结束");
         }catch (Exception e){
             e.printStackTrace();
-            log.error("处理无用附件错误："+common.getExceptionMessage(e));
+            log.error("处理无用附件错误："+ Common.getExceptionMessage(e));
         }
     }
 }

@@ -2,8 +2,9 @@ package com.workhub.z.servicechat.controller.config;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.config.RandomId;
-import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.entity.config.ZzDictionaryWords;
 import com.workhub.z.servicechat.service.ZzDictionaryWordsService;
 import org.slf4j.Logger;
@@ -35,7 +36,11 @@ public class ZzDictionaryWordsController{
     private ZzDictionaryWordsService zzDictionaryWordsService;
     @Autowired
     private HttpServletRequest request;
-
+    //gate请求属性
+    static String pidInHeaderRequest = GateRequestHeaderParamConfig.getPid();
+    static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
+    static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
+    static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     /**
      * 通过主键查询单条数据
      *
@@ -87,19 +92,19 @@ public class ZzDictionaryWordsController{
     //参数：pageNo pageSize wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇
     public ObjectRestResponse insert(@RequestParam Map<String, Object> params){
         ZzDictionaryWords zzDictionaryWords = new ZzDictionaryWords();
-        zzDictionaryWords.setWordName(common.nulToEmptyString(params.get("wordName")));
-        zzDictionaryWords.setWordCode(common.nulToEmptyString(params.get("wordCode")));
-        zzDictionaryWords.setWordType(common.nulToEmptyString(params.get("wordType")));
-        zzDictionaryWords.setReplaceWord(common.nulToEmptyString(params.get("replaceWord")));
-        String userID = request.getHeader("userId");
+        zzDictionaryWords.setWordName(Common.nulToEmptyString(params.get("wordName")));
+        zzDictionaryWords.setWordCode(Common.nulToEmptyString(params.get("wordCode")));
+        zzDictionaryWords.setWordType(Common.nulToEmptyString(params.get("wordType")));
+        zzDictionaryWords.setReplaceWord(Common.nulToEmptyString(params.get("replaceWord")));
+        String userID = request.getHeader(userIdInHeaderRequest);
         zzDictionaryWords.setId(RandomId.getUUID());
         zzDictionaryWords.setCreateTime(new Date());
         zzDictionaryWords.setCreateUser(userID);
         try{
-            common.putEntityNullToEmptyString(zzDictionaryWords);
+            Common.putEntityNullToEmptyString(zzDictionaryWords);
         }catch(Exception e){
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         int insert=this.zzDictionaryWordsService.insert(zzDictionaryWords);
 
@@ -126,19 +131,19 @@ public class ZzDictionaryWordsController{
     public ObjectRestResponse update(@RequestParam Map<String, Object> params){
         ZzDictionaryWords zzDictionaryWords = new ZzDictionaryWords();
         zzDictionaryWords.setUpdateTime(new Date());
-        String userID = request.getHeader("userId");
+        String userID = request.getHeader(userIdInHeaderRequest);
         zzDictionaryWords.setUpdateUser(userID);
-        zzDictionaryWords.setWordName(common.nulToEmptyString(params.get("wordName")));
-        zzDictionaryWords.setWordCode(common.nulToEmptyString(params.get("wordCode")));
-        zzDictionaryWords.setWordType(common.nulToEmptyString(params.get("wordType")));
-        zzDictionaryWords.setReplaceWord(common.nulToEmptyString(params.get("replaceWord")));
-        zzDictionaryWords.setIsUse(common.nulToEmptyString(params.get("isUse")));
-        zzDictionaryWords.setId(common.nulToEmptyString(params.get("id")));
+        zzDictionaryWords.setWordName(Common.nulToEmptyString(params.get("wordName")));
+        zzDictionaryWords.setWordCode(Common.nulToEmptyString(params.get("wordCode")));
+        zzDictionaryWords.setWordType(Common.nulToEmptyString(params.get("wordType")));
+        zzDictionaryWords.setReplaceWord(Common.nulToEmptyString(params.get("replaceWord")));
+        zzDictionaryWords.setIsUse(Common.nulToEmptyString(params.get("isUse")));
+        zzDictionaryWords.setId(Common.nulToEmptyString(params.get("id")));
         try{
-            common.putEntityNullToEmptyString(zzDictionaryWords);
+            Common.putEntityNullToEmptyString(zzDictionaryWords);
         }catch(Exception e){
             e.printStackTrace();
-            log.error(common.getExceptionMessage(e));
+            log.error(Common.getExceptionMessage(e));
         }
         /*Integer update = this.zzDictionaryWordsService.update(zzDictionaryWords);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -163,9 +168,9 @@ public class ZzDictionaryWordsController{
     @PutMapping ("/stopUse")
     //flg=0停用1启用
     public ObjectRestResponse stopUse(@RequestParam Map<String, Object> params) throws Exception{
-        String id = common.nulToEmptyString(params.get("id"));
-        String flg = common.nulToEmptyString(params.get("isUse"));
-        String userID = request.getHeader("userId");
+        String id = Common.nulToEmptyString(params.get("id"));
+        String flg = Common.nulToEmptyString(params.get("isUse"));
+        String userID = request.getHeader(userIdInHeaderRequest);
         this.zzDictionaryWordsService.stopUse(id,flg,userID);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
         objectRestResponse.msg("200");
@@ -181,7 +186,7 @@ public class ZzDictionaryWordsController{
      */
     @DeleteMapping("/delete")
     public ObjectRestResponse delete(@RequestParam Map<String, Object> params){
-        String id = common.nulToEmptyString(params.get("id"));
+        String id = Common.nulToEmptyString(params.get("id"));
         /*boolean flag = this.zzDictionaryWordsService.deleteById(id);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
         objectRestResponse.data(flag);*/
@@ -202,7 +207,7 @@ public class ZzDictionaryWordsController{
     @ResponseBody
     //导入敏感词汇
     public ObjectRestResponse importDictionaryWords(@RequestParam("file") MultipartFile file) {
-        String userID = request.getHeader("userId");
+        String userID = request.getHeader(userIdInHeaderRequest);
         if(userID==null){
             userID="";
         }
@@ -229,7 +234,7 @@ public class ZzDictionaryWordsController{
             e.printStackTrace();
             objectRestResponse.rel(false);
             objectRestResponse.msg("500");
-            objectRestResponse.data("导入失败："+ common.getExceptionMessage(e));
+            objectRestResponse.data("导入失败："+ Common.getExceptionMessage(e));
         }
         return objectRestResponse;
     }

@@ -5,8 +5,8 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupStatusVo;
-import com.workhub.z.servicechat.config.common;
-import com.workhub.z.servicechat.dao.group.ZzGroupStatusDao;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.dao.ZzGroupStatusDao;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.model.GroupStatusDto;
 import com.workhub.z.servicechat.service.ZzGroupStatusService;
@@ -46,19 +46,19 @@ public class ZzGroupStatusServiceImpl implements ZzGroupStatusService {
     */
     @Override
     public TableResultResponse<GroupStatusVo> query(Map param) throws Exception{
-           String pageSize = common.nulToEmptyString(param.get("pageSize"));
+           String pageSize = Common.nulToEmptyString(param.get("pageSize"));
            if("".equals(pageSize)){
                pageSize = "10";
            }
 
-           String pageNum = common.nulToEmptyString(param.get("pageNo"));
+           String pageNum = Common.nulToEmptyString(param.get("pageNo"));
 
             if("".equals(pageNum)){
                 pageNum = "1";
             }
         /**默认是群日志*/
         String typeKey = "type";
-        if("".equals(common.nulToEmptyString(param.get(typeKey)))){
+        if("".equals(Common.nulToEmptyString(param.get(typeKey)))){
             String groupTypeValue = "0";
             param.put(typeKey,groupTypeValue);
         }
@@ -68,9 +68,9 @@ public class ZzGroupStatusServiceImpl implements ZzGroupStatusService {
            for(int i=0;i<listData.size();i++){
                GroupStatusVo groupStatusVo = new GroupStatusVo();
                GroupStatusDto groupStatusDto = listData.get(i);
-               common.copyObject(groupStatusDto,groupStatusVo);
+               Common.copyObject(groupStatusDto,groupStatusVo);
                Clob des = groupStatusDto.getDescribe();
-               groupStatusVo.setDescribe(common.ClobToString(des));
+               groupStatusVo.setDescribe(Common.ClobToString(des));
                list.add(groupStatusVo);
            }
            PageInfo pageInfo = new PageInfo<>(list);

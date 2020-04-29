@@ -1,6 +1,6 @@
 package com.workhub.z.servicechat.VO;
 
-public class PrivateFileVO {
+public class PrivateFileVo {
     //文件id
     private String fileId;
 

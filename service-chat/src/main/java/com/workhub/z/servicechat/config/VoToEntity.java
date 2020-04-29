@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.common.vo.rpcvo.MessageContent;
-import com.workhub.z.servicechat.VO.GroupInfoVO;
+import com.workhub.z.servicechat.VO.GroupInfoVo;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.entity.group.ZzGroupMsg;
 import com.workhub.z.servicechat.entity.message.ZzPrivateMsg;
@@ -119,7 +119,7 @@ public abstract class VoToEntity {
     *@date: 2019/6/14
     */
     public static Object ZzGroupToGroupInfo(ZzGroup zzGroup){
-        GroupInfoVO groupInfo = new GroupInfoVO();
+        GroupInfoVo groupInfo = new GroupInfoVo();
         groupInfo.setAvatar(zzGroup.getGroupImg());
         groupInfo.setCreateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(zzGroup.getCreateTime()));
         groupInfo.setCreator(zzGroup.getCreator());
@@ -128,9 +128,9 @@ public abstract class VoToEntity {
         groupInfo.setName(zzGroup.getGroupName());
         groupInfo.setSecurityClass(zzGroup.getLevels());
         groupInfo.setSubject(zzGroup.getPname());
-        groupInfo.setCreatorName(common.nulToEmptyString(zzGroup.getCreatorName()));
-        groupInfo.setGroupOwnerId(common.nulToEmptyString(zzGroup.getGroupOwnerId()));
-        groupInfo.setGroupOwnerName(common.nulToEmptyString(zzGroup.getGroupOwnerName()));
+        groupInfo.setCreatorName(Common.nulToEmptyString(zzGroup.getCreatorName()));
+        groupInfo.setGroupOwnerId(Common.nulToEmptyString(zzGroup.getGroupOwnerId()));
+        groupInfo.setGroupOwnerName(Common.nulToEmptyString(zzGroup.getGroupOwnerName()));
         return groupInfo;
     }
 }
