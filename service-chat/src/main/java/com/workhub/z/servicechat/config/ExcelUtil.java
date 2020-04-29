@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.config;
 
+import cn.hutool.poi.excel.ExcelWriter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -7,11 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ExcelUtil {
@@ -94,9 +100,9 @@ public class ExcelUtil {
     private static Object getCellFormatValue(Cell cell) {
         Object cellvalue = "";
         if (cell != null) {
-            switch (cell.getCellType()) {
-                case Cell.CELL_TYPE_NUMERIC:
-                case Cell.CELL_TYPE_FORMULA: {
+            switch (cell.getCellTypeEnum()) {
+                case NUMERIC:
+                case FORMULA: {
                     if (DateUtil.isCellDateFormatted(cell)) {
                         Date date = cell.getDateCellValue();
                         cellvalue = date;
@@ -105,7 +111,7 @@ public class ExcelUtil {
                     }
                     break;
                 }
-                case Cell.CELL_TYPE_STRING:
+                case STRING:
                     cellvalue = cell.getRichStringCellValue().getString();
                     break;
                 default:
@@ -115,5 +121,53 @@ public class ExcelUtil {
             cellvalue = "";
         }
         return cellvalue;
+    }
+
+    /**
+     * 导出
+     * @param fileName 文件名称 不带后缀
+     * @param isHighExcelVersion 是否高版本 true xlsx,false xls
+     * @param firstRowtitle  第一行标题，没有空或者“”
+     * @param firstRowTitleCols 第一行标题占用列数
+     * @param dataList 数据列表
+     * @param colTitle 数据列表名称转义
+     * @param response
+     */
+    public static<T extends List>  void exportExcel(String fileName, boolean isHighExcelVersion, String firstRowtitle,int firstRowTitleCols, T dataList, List<String[]> colTitle, HttpServletResponse response){
+        ExcelWriter writer = cn.hutool.poi.excel.ExcelUtil.getWriter();//xls
+        String fileExt = "xls";
+        if(isHighExcelVersion){
+            fileExt = "xlsx";
+            cn.hutool.poi.excel.ExcelUtil.getWriter(true);
+        }
+        if(firstRowtitle!=null && !"".equals(firstRowtitle)){
+            writer.merge(firstRowTitleCols-1, firstRowtitle);
+        }
+        if(colTitle!=null){
+            for(String[] temp:colTitle){
+                writer.addHeaderAlias(temp[0], temp[1]);
+            }
+        }
+
+        writer.write(dataList,true);
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String finalFileName = null;//其他浏览器
+        try {
+            finalFileName = URLEncoder.encode(fileName+"."+fileExt,"UTF8");
+        } catch (UnsupportedEncodingException e) {
+            log.error("研讨excel导出错误：");
+            log.error(Common.getExceptionMessage(e));
+        }
+        response.setHeader("Content-disposition", "attachment;filename="+finalFileName);
+        ServletOutputStream out= null;
+        try {
+            out = response.getOutputStream();
+        } catch (IOException e) {
+            log.error("研讨excel导出错误：");
+            log.error(Common.getExceptionMessage(e));
+        }
+        writer.flush(out);
+        writer.close();
     }
 }

@@ -31,11 +31,9 @@ public class ProcessMsg extends AbstractMsgProcessor {
      * 消息处理入口
      */
 
-    public MsgSendStatusVo process(String userId, String messageInf, String ip) {
+    public MsgSendStatusVo process(String userId, String msg, String ip) {
         MsgSendStatusVo sendStatusVo = null;
         try{
-            JSONObject msgInf = JSONObject.parseObject(messageInf);
-            String msg = msgInf.getString("messageInf");
             JSONObject jsonObject = JSONObject.parseObject(msg);
             String code = jsonObject.getString("code");
             String message = jsonObject.getString("data");

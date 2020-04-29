@@ -46,6 +46,14 @@
         <result property="createtime" column="createtime" jdbcType="VARCHAR"/>
         <result property="contactsid" column="contactsid" jdbcType="VARCHAR"/>
     </resultMap>
+    <resultMap id="exportMsgVo" type="com.workhub.z.servicechat.VO.ExportMsgVo">
+        <result property="sender" column="sender" jdbcType="VARCHAR"/>
+        <result property="receiver" column="receiver" jdbcType="VARCHAR"/>
+        <result property="msgType" column="msg_type" jdbcType="VARCHAR"/>
+        <result property="msgContent" column="msg_content" jdbcType="VARCHAR"/>
+        <result property="sendTime" column="send_time" jdbcType="VARCHAR"/>
+        <result property="levels" column="levels" jdbcType="VARCHAR"/>
+    </resultMap>
 
     <!--新增所有列-->
     <insert id="insert">
@@ -831,5 +839,157 @@
         </if>
 
         order by createtime desc
+    </select>
+
+    <select id="exportHistoryMessageForSinglePrivate" resultMap="exportMsgVo">
+        select
+        sendername sender,
+        receivername receiver,
+        decode(levels,'30','非密','40','密码','60','机密','未知') levels,
+        decode(filetype,'2','图片','3','附件','1','文字','999','会议通知','未知') msg_type,
+        msg msg_content,
+        to_char(createtime, 'yyyy-mm-dd hh24:mi:ss') send_time
+        from (
+        select
+        t.msg_id,
+        T.TYPE,
+        sender.id senderid,
+        sender.name sendername,
+        sender.avartar senderavatar,
+        sender.levels senderlevels,
+        sender.pid senderpid,
+        receiver.id receiverid,
+        receiver.name receivername,
+        receiver.avartar receiveravatar,
+        receiver.member_num receivermembernum,
+        receiver.levels receiverlevels,
+        receiver.group_owner receivergroupowner,
+        receiver.pid receiverpid,
+        f.file_id fileid,
+        f.file_ext fileext,
+        to_char(f.sizes) filesize,
+        t.levels levels,
+        t.front_id frontid,
+        t.file_type filetype,
+        t.msg msg,
+        t.createtime
+        from zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
+        where 1 = 1
+        and t.sender = sender.id
+        and t.receiver = receiver.id
+        and t.file_id = f.file_id(+)
+        and t.receiver = #{userId}
+        and t.sender = #{contactId}
+        <if test = "beginDate!=null and beginDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &gt;= #{beginDate}
+        </if>
+        <if test = "endDate!=null and endDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
+        </if>
+        and t.type='USER'
+        and t.cancel  = '0'
+        union
+        select
+        t.msg_id,
+        T.TYPE,
+        sender.id senderid,
+        sender.name sendername,
+        sender.avartar senderavatar,
+        sender.levels senderlevels,
+        sender.pid senderpid,
+        receiver.id receiverid,
+        receiver.name receivername,
+        receiver.avartar receiveravatar,
+        receiver.member_num receivermembernum,
+        receiver.levels receiverlevels,
+        receiver.group_owner receivergroupowner,
+        receiver.pid receiverpid,
+        f.file_id fileid,
+        f.file_ext fileext,
+        to_char(f.sizes) filesize,
+        t.levels levels,
+        t.front_id frontid,
+        t.file_type filetype,
+        t.msg msg,
+        t.createtime
+        from zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
+        where 1 = 1
+        and t.sender = sender.id
+        and t.receiver = receiver.id
+        and t.file_id = f.file_id(+)
+        and t.receiver = #{contactId}
+        and t.sender = #{userId}
+        <if test = "beginDate!=null and beginDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &gt;= #{beginDate}
+        </if>
+        <if test = "endDate!=null and endDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
+        </if>
+        and t.type='USER'
+        and t.cancel  = '0'
+        ) a
+        order by a.createtime asc
+    </select>
+    <select id="exportHistoryMessageForSingleGroup" resultMap="exportMsgVo">
+        select
+        sender.name sender,
+        receiver.name receiver,
+        decode(t.levels,'30','非密','40','密码','60','机密','未知') levels,
+        decode(t.file_type,'2','图片','3','附件','1','文字','999','会议通知','未知') msg_type,
+        t.msg msg_content,
+        to_char(t.createtime, 'yyyy-mm-dd hh24:mi:ss') send_time
+        from  zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
+        where 1 = 1
+        and t.sender = sender.id
+        and t.receiver = receiver.id
+        and t.file_id = f.file_id(+)
+        and t.receiver = #{contactId}
+        <if test = "beginDate!=null and beginDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &gt;= #{beginDate}
+        </if>
+        <if test = "endDate!=null and endDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
+        </if>
+        and t.type = 'GROUP'
+        and t.cancel  = '0'
+        and exists (select 1
+        from zz_user_group c
+        where 1 = 1
+        and c.user_id = #{userId}
+        and c.group_id = #{contactId}
+        and c.createtime &lt;= t.createtime
+        )
+        order by t.createtime asc
+    </select>
+    <select id="exportHistoryMessageForSingleMeet" resultMap="exportMsgVo">
+        select
+        sender.name sender,
+        receiver.name receiver,
+        decode(t.levels,'30','非密','40','密码','60','机密','未知') levels,
+        decode(t.file_type,'2','图片','3','附件','1','文字','999','会议通知','未知') msg_type,
+        t.msg msg_content,
+        to_char(t.createtime, 'yyyy-mm-dd hh24:mi:ss') send_time
+        from  zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
+        where 1 = 1
+        and t.sender = sender.id
+        and t.receiver = receiver.id
+        and t.file_id = f.file_id(+)
+        and t.receiver = #{contactId}
+        <if test = "beginDate!=null and beginDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &gt;= #{beginDate}
+        </if>
+        <if test = "endDate!=null and endDate != ''">
+            and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
+        </if>
+        and t.type = 'MEET'
+        and t.cancel  = '0'
+        and exists (select 1
+        from zz_meeting_user c
+        where 1 = 1
+        and c.user_id = #{userId}
+        and c.meeting_id = #{contactId}
+        and c.crt_time &lt;= t.createtime
+        )
+        order by t.createtime asc
     </select>
 </mapper>

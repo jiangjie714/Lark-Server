@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.dao;
 
+import com.workhub.z.servicechat.VO.ExportMsgVo;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
 import com.workhub.z.servicechat.model.RawMessageDto;
@@ -67,6 +68,10 @@ public interface ZzMessageInfoDao {
     List<RawMessageDto> queryHistoryMessageForSinglePrivate(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
     List<RawMessageDto> queryHistoryMessageForSingleGroup(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
     List<RawMessageDto> queryHistoryMessageForSingleMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("query")String query);
+    //导出消息
+    List<ExportMsgVo> exportHistoryMessageForSinglePrivate(@Param("userId")String userId, @Param("contactId")String contactId, @Param("beginDate")String beginDate, @Param("endDate")String endDate);
+    List<ExportMsgVo> exportHistoryMessageForSingleGroup(@Param("userId")String userId,@Param("contactId")String contactId,@Param("beginDate")String beginDate,@Param("endDate")String endDate);
+    List<ExportMsgVo> exportHistoryMessageForSingleMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("beginDate")String beginDate,@Param("endDate")String endDate);
 
    List<Map<String,String>> queryAllMessagePrivate2(@Param("params")Map params);
    List<Map<String,String>> queryAllMessageGroup2(@Param("params")Map params);

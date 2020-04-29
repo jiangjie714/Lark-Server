@@ -3,6 +3,7 @@ package com.workhub.z.servicechat.service;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -72,4 +73,15 @@ public interface ZzMessageInfoService {
      * @return
      */
     int msgCancel(String msgId,String receiver,String type,String user);
+
+    /**
+     * 导出聊天历史记录
+     * @param userId 登录人
+     * @param contactId 聊天对象
+     * @param beginDate 开始日期
+     * @param endDate 结束日期
+     * @param type 类型 user meet group
+     * @return 1成功 其他失败
+     */
+    void exportHistoryMessageForSingle(String userId, String contactId, String beginDate, String endDate, String type, HttpServletResponse httpServletResponse);
 }

@@ -5,10 +5,7 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.*;
-import com.workhub.z.servicechat.config.Common;
-import com.workhub.z.servicechat.config.MessageType;
-import com.workhub.z.servicechat.config.SocketMsgDetailTypeEnum;
-import com.workhub.z.servicechat.config.SocketMsgTypeEnum;
+import com.workhub.z.servicechat.config.*;
 import com.workhub.z.servicechat.dao.ZzMessageInfoDao;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
@@ -20,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -730,5 +727,26 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
 
 
         return  i;
+    }
+    @Override
+    public void exportHistoryMessageForSingle(String userId, String contactId, String beginDate, String endDate, String type, HttpServletResponse httpServletResponse){
+        List<ExportMsgVo> dataList = null;
+        if("user".equals(type)){
+            dataList = this.zzMessageInfoDao.exportHistoryMessageForSinglePrivate(userId,contactId,beginDate,endDate);
+        }else if("group".equals(type)){
+            dataList = this.zzMessageInfoDao.exportHistoryMessageForSingleGroup(userId,contactId,beginDate,endDate);
+        }else if("meet".equals(type)){
+            dataList = this.zzMessageInfoDao.exportHistoryMessageForSingleMeet(userId,contactId,beginDate,endDate);
+        }else {
+            log.error("研讨导出消息类型未知:"+type);
+        }
+        List<String[]> colTitle = new ArrayList<>();
+        colTitle.add(new String[]{"sender", "发送人"});
+        colTitle.add(new String[]{"receiver", "接收人"});
+        colTitle.add(new String[]{"msgType", "类型"});
+        colTitle.add(new String[]{"msgContent", "内容"});
+        colTitle.add(new String[]{"sendTime", "发送时间"});
+        colTitle.add(new String[]{"levels", "消息密级"});
+        ExcelUtil.exportExcel("消息导出",false, "消息通信记录",6, dataList, colTitle, httpServletResponse);
     }
 }
