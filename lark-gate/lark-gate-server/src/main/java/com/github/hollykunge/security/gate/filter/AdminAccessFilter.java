@@ -2,7 +2,6 @@ package com.github.hollykunge.security.gate.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.admin.api.authority.FrontPermission;
-import com.github.hollykunge.security.admin.api.service.AdminUserServiceFeignClient;
 import com.github.hollykunge.security.auth.client.config.ServiceAuthConfig;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.config.UserAuthConfig;
@@ -19,6 +18,7 @@ import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenForbiddenResponse;
 import com.github.hollykunge.security.common.util.ClientUtil;
+import com.github.hollykunge.security.gate.feign.AdminUserFeign;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +47,7 @@ public class AdminAccessFilter extends ZuulFilter {
 
     @Autowired
     @Lazy
-    private AdminUserServiceFeignClient userService;
+    private AdminUserFeign userService;
 
     @Value("${gate.ignore.startWith}")
     private String startWith;

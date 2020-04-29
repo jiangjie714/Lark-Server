@@ -3,8 +3,6 @@ package com.github.hollykunge.security.gate;
 
 import com.github.hollykunge.gate.ratelimit.EnableAceGateRateLimit;
 import com.github.hollykunge.gate.ratelimit.config.IUserPrincipal;
-import com.github.hollykunge.security.admin.api.hystrix.AdminLogServiceFallback;
-import com.github.hollykunge.security.admin.api.hystrix.AdminUserServiceFallback;
 import com.github.hollykunge.security.auth.client.EnableAceAuthClient;
 import com.github.hollykunge.security.gate.config.UserPrincipal;
 import com.github.hollykunge.security.gate.utils.DBLog;
