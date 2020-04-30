@@ -4,7 +4,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.simulation.biz.FileResultBiz;
 import com.github.hollykunge.security.simulation.entity.SystemInfo;
-import com.github.hollykunge.security.simulation.vo.BothConfigVo;
+import com.github.hollykunge.security.simulation.vo.SystemInfoVo;
 import org.springframework.web.bind.annotation.*;
 
 import static com.github.hollykunge.security.simulation.config.Constant.NAME_REGULATION_WRONG;
@@ -52,7 +52,7 @@ public class FileResultController extends BaseController<FileResultBiz, SystemIn
      */
     @RequestMapping(value = "/getConfig", method = RequestMethod.POST)
     @ResponseBody
-    public ObjectRestResponse getConfig(@RequestBody BothConfigVo entity) {
+    public ObjectRestResponse getConfig(@RequestBody SystemInfoVo entity) {
         baseBiz.getConfig(entity);
         return new ObjectRestResponse().rel(true).msg("");
     }

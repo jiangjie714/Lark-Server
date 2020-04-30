@@ -30,4 +30,11 @@ public class Constant {
     public static final String RT_ERROR = "-1";
     public static final String RT_WARNING = "0";
     public static final String RT_SUCCESS = "1";
+
+    /**
+     * 根路径
+     */
+    public static final String BASE_PATH = "D:\\ospl\\";
+    public static final String CONFIG_PATH = BASE_PATH + "lark_simu_config\\";
+
 }

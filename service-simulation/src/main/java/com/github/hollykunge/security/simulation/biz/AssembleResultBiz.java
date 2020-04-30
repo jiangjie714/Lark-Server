@@ -4,7 +4,7 @@ import com.github.hollykunge.security.simulation.pojo.ActiveDataTypes;
 import com.github.hollykunge.security.simulation.pojo.ActiveModels;
 import com.github.hollykunge.security.simulation.pojo.Content;
 import com.github.hollykunge.security.simulation.pojo.InterfaceList;
-import com.github.hollykunge.security.simulation.vo.BothConfigVo;
+import com.github.hollykunge.security.simulation.vo.SystemInfoVo;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class AssembleResultBiz {
 
     //生成整个文档
     public void generateDocument(
-            org.jdom2.Document rootDocument, BothConfigVo entity) {
+            org.jdom2.Document rootDocument, SystemInfoVo entity) {
         Element militaryScenarioElement = new Element("MilitaryScenario");
         rootDocument.addContent(militaryScenarioElement);
 

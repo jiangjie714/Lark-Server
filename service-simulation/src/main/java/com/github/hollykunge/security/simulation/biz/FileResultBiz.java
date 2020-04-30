@@ -7,7 +7,7 @@ import com.github.hollykunge.security.simulation.entity.SystemInfo;
 import com.github.hollykunge.security.simulation.entity.SystemUserMap;
 import com.github.hollykunge.security.simulation.mapper.SystemInfoMapper;
 import com.github.hollykunge.security.simulation.mapper.SystemUserMapMapper;
-import com.github.hollykunge.security.simulation.vo.BothConfigVo;
+import com.github.hollykunge.security.simulation.vo.SystemInfoVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,7 +81,7 @@ public class FileResultBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
         return SUCCESS;
     }
 
-    public void getConfig(BothConfigVo entity) {
+    public void getConfig(SystemInfoVo entity) {
         System.out.println("从文件服务器请求" + entity.getFileName());
         // TODO
     }

@@ -5,6 +5,7 @@ import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.simulation.entity.SystemInfo;
 import com.github.hollykunge.security.simulation.mapper.SystemInfoMapper;
 import com.github.hollykunge.security.simulation.pojo.HistoryFile;
+import com.github.hollykunge.security.simulation.pojo.HistoryTopics;
 import com.github.hollykunge.security.simulation.vo.HistoryInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -72,9 +73,9 @@ public class HistoryBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
         return true;
     }
 
-    public byte[] downloadTopicData(String name, String topic, boolean isStruct) {
+    public byte[] downloadTopicData(String name, HistoryTopics historyTopics) {
 
-        Query query = Query.query(Criteria.where("topicName").is(topic));
+        Query query = Query.query(Criteria.where("topicName").is(historyTopics.getTopicName()));
         List<HistoryFile> infos =
                 mongoTemplate.find(query, HistoryFile.class, name);
 
@@ -85,8 +86,8 @@ public class HistoryBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
 
         for (HistoryFile hf : infos) {
             map = JSONObject.parseObject(hf.getContent());
-            if (isStruct) {
-                map = (Map<String, Object>) map.get(topic);
+            if (historyTopics.getIsStruct()) {
+                map = (Map<String, Object>) map.get(historyTopics.getTopicName());
             }
 
             if (!setHeader) {

@@ -5,15 +5,13 @@ import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.simulation.biz.AssembleResultBiz;
 import com.github.hollykunge.security.simulation.biz.MongoResultBiz;
 import com.github.hollykunge.security.simulation.entity.SystemInfo;
-import com.github.hollykunge.security.simulation.vo.BothConfigVo;
-import com.github.hollykunge.security.simulation.vo.MongoResultVo;
+import com.github.hollykunge.security.simulation.vo.SystemInfoVo;
 import org.jdom2.output.XMLOutputter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 import static com.github.hollykunge.security.simulation.config.Constant.NAME_REGULATION_WRONG;
 
@@ -58,14 +56,11 @@ public class MongoResultController extends BaseController<MongoResultBiz, System
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public ObjectRestResponse update(@RequestBody MongoResultVo entity) {
-        int ret = baseBiz.update(entity);
-        switch (ret) {
-            case NAME_REGULATION_WRONG:
-                return new ObjectRestResponse().rel(false).msg("名称不符合规范");
-            default:
-                return new ObjectRestResponse().rel(true).msg("");
+    public ObjectRestResponse update(@RequestBody SystemInfoVo entity) {
+        if(null == baseBiz.update(entity)) {
+            return new ObjectRestResponse().rel(false).msg("更新失败");
         }
+        return new ObjectRestResponse().rel(true).msg("");
     }
 
     /**
@@ -73,9 +68,9 @@ public class MongoResultController extends BaseController<MongoResultBiz, System
      */
     @RequestMapping(value = "/getConfig", method = RequestMethod.POST)
     @ResponseBody
-    public void getConfig(@RequestBody BothConfigVo entity, HttpServletResponse response) {
+    public void getConfig(@RequestBody SystemInfoVo entity, HttpServletResponse response) {
         try {
-            org.jdom2.Document rootDocument = baseBiz.getConfig(entity);
+            org.jdom2.Document rootDocument = baseBiz.update(entity);
             XMLOutputter XMLOut = new XMLOutputter(assembleResultBiz.FormatXML());
             XMLOut.output(rootDocument, response.getOutputStream());
         } catch (IOException ignored) {

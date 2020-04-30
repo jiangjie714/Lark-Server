@@ -10,8 +10,8 @@ import com.github.hollykunge.security.simulation.entity.SystemUserMap;
 import com.github.hollykunge.security.simulation.mapper.SystemInfoMapper;
 import com.github.hollykunge.security.simulation.mapper.SystemUserMapMapper;
 import com.github.hollykunge.security.simulation.pojo.*;
-import com.github.hollykunge.security.simulation.vo.BothConfigVo;
-import com.github.hollykunge.security.simulation.vo.MongoResultVo;
+import com.github.hollykunge.security.simulation.vo.SystemInfoVo;
+import org.jdom2.output.XMLOutputter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,11 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.hollykunge.security.simulation.config.Constant.NAME_REGULATION_WRONG;
-import static com.github.hollykunge.security.simulation.config.Constant.SUCCESS;
+import static com.github.hollykunge.security.simulation.config.Constant.*;
 
 /**
  * @author jihang
@@ -117,47 +117,47 @@ public class MongoResultBiz extends BaseBiz<SystemInfoMapper, SystemInfo> {
         return JSON.toJSONString(systemResult);
     }
 
-    public int update(MongoResultVo entity) {
-        //检测
-        if (SpecialStrUtils.check(entity.getSystemName())) {
-            return NAME_REGULATION_WRONG;
-        }
-
-        SystemInfo systemInfo = new SystemInfo();
-        systemInfo.setId(entity.getId());
-        systemInfo.setSystemName(entity.getSystemName());
-        systemInfo.setSystemDescribe(entity.getSystemDescribe());
-        EntityUtils.setUpdatedInfo(systemInfo);
-        mapper.updateByPrimaryKeySelective(systemInfo);
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("SYSTEM_ID").is(entity.getId()));
-        Update update = new Update();
-        update.set("FLOW_DATA", entity.getSystemResult().getFlowData());
-        update.set("ACTIVE_MODELS", entity.getSystemResult().getActiveModels());
-        update.set("ACTIVE_MODEL_TYPES", entity.getSystemResult().getActiveDataTypes());
-        update.set("INTERFACE_LIST", entity.getSystemResult().getInterfaceList());
-        mongoTemplate.updateFirst(query, update, SystemResult.class);
-
-        return SUCCESS;
-    }
-
-    public org.jdom2.Document getConfig(BothConfigVo entity) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("SYSTEM_ID").is(entity.getId()));
-        SystemResult systemResult = mongoTemplate.findOne(query, SystemResult.class);
-        entity.setSystemResult(systemResult);
-
-        org.jdom2.Document rootDocument = null;
+    public org.jdom2.Document update(SystemInfoVo entity) {
         try {
-            rootDocument = new org.jdom2.Document();
+            //检测
+            if (SpecialStrUtils.check(entity.getSystemName())) {
+                return null;
+            }
+
+            // 保存
+            SystemInfo systemInfo = new SystemInfo();
+            systemInfo.setId(entity.getId());
+            systemInfo.setSystemName(entity.getSystemName());
+            systemInfo.setSystemDescribe(entity.getSystemDescribe());
+            EntityUtils.setUpdatedInfo(systemInfo);
+            mapper.updateByPrimaryKeySelective(systemInfo);
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("SYSTEM_ID").is(entity.getId()));
+            Update update = new Update();
+            update.set("FLOW_DATA", entity.getSystemResult().getFlowData());
+            update.set("ACTIVE_MODELS", entity.getSystemResult().getActiveModels());
+            update.set("ACTIVE_MODEL_TYPES", entity.getSystemResult().getActiveDataTypes());
+            update.set("INTERFACE_LIST", entity.getSystemResult().getInterfaceList());
+            mongoTemplate.updateFirst(query, update, SystemResult.class);
+
+            // 获取
+            org.jdom2.Document rootDocument = new org.jdom2.Document();
             assembleResultBiz.generateDocument(rootDocument, entity);
+
+            // 写文件
+            XMLOutputter XMLOut = new XMLOutputter(assembleResultBiz.FormatXML());
+            OutputStream os = new FileOutputStream(new File(CONFIG_PATH + entity.getId() + ".xml"));
+            XMLOut.output(rootDocument, os);
+
+            return rootDocument;
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        return rootDocument;
+        return null;
     }
 
+    // 目前这个信息直接从前端获取
     public boolean isStruct(String systemId, String topic) {
         Query query = new Query();
         query.addCriteria(Criteria.where("SYSTEM_ID").is(systemId));

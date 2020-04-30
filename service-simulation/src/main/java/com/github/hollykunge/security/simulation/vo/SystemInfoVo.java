@@ -4,7 +4,7 @@ import com.github.hollykunge.security.simulation.entity.SystemResult;
 import lombok.Data;
 
 @Data
-public class MongoResultVo {
+public class SystemInfoVo {
 
     private String id;
 
@@ -12,6 +12,9 @@ public class MongoResultVo {
 
     private String systemDescribe;
 
-    private SystemResult systemResult;
+    private String modelName;
 
+    private String fileName;
+
+    private SystemResult systemResult;
 }
