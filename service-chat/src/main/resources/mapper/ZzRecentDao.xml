@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workhub.z.servicechat.dao.ZzRecentDao">
+    <resultMap type="com.workhub.z.servicechat.VO.RecentVo" id="recentVo">
+        <result property="contactId" column="contact_id" jdbcType="VARCHAR"/>
+        <result property="contactName" column="contact_name" jdbcType="VARCHAR"/>
+        <result property="contactAvartar" column="contact_avartar" jdbcType="VARCHAR"/>
+        <result property="msgType" column="msg_type" jdbcType="TIMESTAMP"/>
+        <result property="msgContent" column="msg_content" jdbcType="VARCHAR"/>
+        <result property="msgLevel" column="msg_level" jdbcType="VARCHAR"/>
+        <result property="top" column="top" jdbcType="VARCHAR"/>
+        <result property="at" column="at" jdbcType="VARCHAR"/>
+        <result property="cancel" column="cancel" jdbcType="VARCHAR"/>
+        <result property="unreadNum" column="unread_num" jdbcType="VARCHAR"/>
+        <result property="sendTime" column="send_time" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--新增-->
+    <insert id="add" >
+        insert into ZZ_RECENT
+          ( id,
+            crt_time,
+            crt_user,
+            crt_name,
+            crt_host,
+            user_id,
+            contact_id,
+            msg_id,
+            top,
+            at,
+            unread_num
+           )
+        values
+          (
+           #{params.id,jdbcType = VARCHAR},
+           sysdate,
+           #{params.crtUser,jdbcType = VARCHAR},
+           #{params.crtName,jdbcType = VARCHAR},
+           #{params.crtHost,jdbcType = VARCHAR},
+           #{params.userId,jdbcType = VARCHAR},
+           #{params.contactId,jdbcType = VARCHAR},
+           #{params.msgId,jdbcType = VARCHAR},
+           #{params.top,jdbcType = VARCHAR},
+           #{params.at,jdbcType = VARCHAR},
+           #{params.unreadNum,jdbcType = DOUBLE}
+           )
+     </insert>
+    <!--修改会议-->
+    <update id="update" >
+        update ZZ_RECENT
+        <set>
+            <if test="params.top != null and params.top != ''">
+                top = #{params.top},
+            </if>
+            <if test="params.msgId != null and params.msgId != ''">
+                msg_id = #{params.msgId},
+            </if>
+            <if test="params.at != null and params.at != ''">
+                at = #{params.at},
+            </if>
+            <if test="params.unreadNum != null and params.unreadNum != ''">
+                unread_num = #{params.unreadNum,jdbcType = DOUBLE},
+            </if>
+            upd_time = sysdate,
+            upd_user = #{params.updUser,jdbcType = VARCHAR},
+            upd_host = #{params.updHost,jdbcType = VARCHAR},
+            upd_name = #{params.updName,jdbcType = VARCHAR}
+        </set>
+        where user_id = #{params.userId}
+        and contact_id = #{params.contactId}
+    </update>
+    <delete id="deleteData">
+        delete  from ZZ_RECENT
+          where user_id = #{userId,jdbcType = VARCHAR}
+          and  contact_id= #{contactId,jdbcType = VARCHAR}
+    </delete>
+    <select id="getList" resultMap="recentVo">
+  select c.id contact_id,
+         c.name contact_name,
+         c.avartar contact_avartar,
+         m.file_type msg_type,
+         m.msg msg_content,
+         m.cancel cancel,
+         m.levels msg_level,
+         r.top top,
+         r.at at,
+         to_char(r.unread_num) unread_num,
+         to_char(m.createtime, 'yyyy-mm-dd hh24:mi:ss') send_time
+    from ZZ_RECENT r, zz_message_info m, zz_contact_inf c
+   where r.contact_id = c.id
+     and r.msg_id = m.msg_id
+     and r.user_id = #{userId,jdbcType = VARCHAR}
+
+    </select>
+</mapper>
