@@ -5,6 +5,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.common.vo.RpcUserInfo;
 import com.github.hollykunge.security.task.biz.LarkTaskMemberbiz;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,9 +81,20 @@ public class TaskMemberController extends BaseController<LarkTaskMemberbiz, Lark
             larkTaskMember1.setTaskCode(larkTaskMember.getTaskCode());
             larkTaskMember1.setIsExecutor(0);
             baseBiz.delete(larkTaskMember1);
+            larkTaskMember.setIsExecutor(0);
             baseBiz.insertSelective(larkTaskMember);
         }
         return new BaseResponse(200,"任务已指派！");
     }
 
+    /**
+     * 任务邀请人
+     * 返回1.项目参与人  2.子项目参与人
+     *
+     * @return
+     */
+    public ObjectRestResponse<List<Object>> getProjectUser(@RequestParam("projectCode") String projectCode,
+                                                           @RequestParam("taskCode") String taskCode){
+        return larkTaskMemberbiz.getProjectUser(projectCode,taskCode);
+    }
 }

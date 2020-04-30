@@ -3,6 +3,7 @@ package com.github.hollykunge.security.task.mapper;
 import com.github.hollykunge.security.task.dto.LarkTaskDto;
 import com.github.hollykunge.security.task.dto.TaskNum;
 import com.github.hollykunge.security.task.entity.LarkTask;
+import com.github.hollykunge.security.task.vo.LarkTaskVO;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -26,13 +27,11 @@ public interface LarkTaskMapper extends Mapper<LarkTask> {
     /**
      * 拆分请求第二步 getTasksByProjectId
      * 根据具体任务列id  获取具体任务集合 以及任务的具体信息
-     * @param stagesCode
+     * @param larkTaskVO
      * @return
      */
-    List<LarkTaskDto> getLarkTaskList(
-            @Param("stagesCode") String stagesCode,
-            @Param("pCode") String pCode,
-            @Param("userId") String userId);
+    List<LarkTaskDto> getLarkTaskList(@Param("larkTaskVo") LarkTaskVO larkTaskVO);
 
     TaskNum getTotalAndComoleted(@Param("id") String id);
+    String getNums(@Param("taskCode") String taskCode);
 }

@@ -24,18 +24,4 @@ public interface AdminElementTaskMapper extends Mapper<AdminElementTask> {
     List<AdminElementTask> getAuthorityMenuElement(@Param("roleId") String roleId, @Param("menuId") String menuId,
                                                    @Param("type") String type);
 
-    /**
-     * 给task任务使用获取资源
-     * @param roleId
-     * @param type
-     * @return
-     */
-    List<AdminElementTask> getAuthorityMenuElementTask(@Param("roleId") String roleId,
-                                                   @Param("type") String type);
-    /**
-     * 根据角色Id获取权限下的Element
-     * @param roleId 角色Id
-     * @return
-     */
-    List<AdminElementTask> getElemntByRoleId(@Param("roleId")String roleId);
 }

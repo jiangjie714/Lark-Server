@@ -107,11 +107,14 @@ public class LarkTaskDto implements Serializable {
 
     private String avatar;
 
+    //子任务数量和完成数量
     private TaskNum taskNum;
-
     //子任务
     private List<LarkTaskDto> larkTaskList;
     //标签
     private List<LarkTaskTagDto> larkTaskTagList;
-
+    //工时
+    private List<LarkTaskWorkTimeDto> larkTaskWorkTimeDtoList;
+    //工时总数
+    private String nums;
 }

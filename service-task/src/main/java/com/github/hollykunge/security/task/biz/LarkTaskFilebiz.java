@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
@@ -72,6 +73,10 @@ public class LarkTaskFilebiz extends BaseBiz<LarkFileMapper, LarkFile> {
      * @return
      */
     public void taskFileDownload(LarkFile larkFile) {
+        int count = mapper.selectCount(larkFile);
+        if(count<0){
+            throw new BaseException("文件不存在！");
+        }
         larkProjectFileFeign.taskFileDownload(larkFile.getId());
         larkFile.setDownloads(larkFile.getDownloads()+1);
         mapper.updateByPrimaryKeySelective(larkFile);
@@ -90,4 +95,6 @@ public class LarkTaskFilebiz extends BaseBiz<LarkFileMapper, LarkFile> {
         List<LarkFile> larkFiles = larkFileMapper.getTaskFileList(projectCode,taskCode);
         return new TableResultResponse<>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), larkFiles);
     }
+
+
 }

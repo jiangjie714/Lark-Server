@@ -14,6 +14,7 @@ import com.github.hollykunge.security.task.dto.LarkTaskDto;
 import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import com.github.hollykunge.security.task.entity.LarkTaskToTag;
+import com.github.hollykunge.security.task.vo.LarkTaskVO;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +48,25 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
     /**
      * 重写add 在新建任务时
      * @param larkTask
+     * memberCode  执行人
      * @return
      */
     @RequestMapping(value = "/add",method = RequestMethod.POST)
+    @ResponseBody
     public ObjectRestResponse<LarkTask> add(@RequestBody LarkTask larkTask,
                                             @RequestParam("memberCode") String memberCode,
                                             HttpServletRequest request) {
         return larkTaskbiz.add(larkTask,memberCode,request);
+    }
+
+    /**
+     * task 搜索  需要关联  task-member表 来确定任务执行者  参与者  创建者
+     * @return
+     */
+    @RequestMapping(value = "/query",method = RequestMethod.GET)
+    public ObjectRestResponse<List<LarkTask>> queryLarkTask(@RequestBody LarkTaskVO larkTaskVO){
+        larkTaskbiz.queryLarkTask(larkTaskVO);
+        return null;
     }
 
     /**
@@ -103,15 +116,14 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
     /**
      * 拆分请求第二步 getTasksByProjectId
      * 根据具体任务列id  获取具体任务集合 以及任务的具体信息
-     * @param stagesCode
+     * @param larkTaskVO
      * @return
      */
     @RequestMapping(value = "/getLarkTaskList",method = RequestMethod.GET)
     @ResponseBody
-    public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(@RequestParam("stagesCode") String stagesCode){
-        String userId = request.getHeader("userId");
-        //todo 暂时使用写死的userId
-        return larkTaskbiz.getLarkTaskList(stagesCode,"68yHX85Z");
+    public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(
+            @RequestBody LarkTaskVO larkTaskVO){
+        return larkTaskbiz.getLarkTaskList(larkTaskVO);
     }
 
     /**

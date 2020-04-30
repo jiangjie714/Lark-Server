@@ -6,8 +6,6 @@ import com.github.hollykunge.security.admin.entity.AdminElementTask;
 import com.github.hollykunge.security.admin.vo.AdminPermission;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.Map;
  * @deprecation task角色资源处理类
  */
 @RestController
-@RequestMapping
+@RequestMapping("/elementTask")
 public class ElementTaskController extends BaseController<ElementTaskBiz, AdminElementTask> {
 
     /**
@@ -50,15 +48,17 @@ public class ElementTaskController extends BaseController<ElementTaskBiz, AdminE
         return new ObjectRestResponse().data(authorityMenu);
     }
 
-    /**
-     * @since 4-15修改
-     * 获取菜单和关联功能
-     * @param id 角色id
-     */
-    @RequestMapping(value = "/rolePermission", method = RequestMethod.GET)
-    @ResponseBody
-    public ObjectRestResponse<List<AdminElementTask>> getRoleMenuAuthority(@RequestParam("id") String id) {
-        List<AdminElementTask> authorityMenu = baseBiz.getAuthorityMenuByRoleId(id);
-        return new ObjectRestResponse().data(authorityMenu);
-    }
+//    /**
+//     * @since 4-15修改 task
+//     * @author fansq
+//     * @deprecation 4-28修改
+//     * 获取菜单和关联功能
+//     * @param userId 用户id
+//     */
+//    @RequestMapping(value = "/rolePermission", method = RequestMethod.GET)
+//    @ResponseBody
+//    public ObjectRestResponse<List<AdminElementTask>> getRoleMenuAuthority(@RequestParam("userId") String userId) {
+//        List<AdminElementTask> authorityMenu = baseBiz.getAuthorityMenuByRoleId(userId);
+//        return new ObjectRestResponse().data(authorityMenu);
+//    }
 }

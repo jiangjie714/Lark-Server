@@ -114,9 +114,7 @@
       </if>
       <if test="num == '1' || num == 1">
         and
-        ltm.is_owner='1'
-        and
-        ltm.is_executor='1'
+        ltm.attr1='0'
       </if>
   </select>
 
@@ -131,6 +129,17 @@
         <result column="TAG_NAME" property="name" jdbcType="VARCHAR"/>
         <result column="TAG_COLOR" property="color" jdbcType="VARCHAR"/>
     </collection>
+    <collection property="larkTaskWorkTimeDtoList" ofType="com.github.hollykunge.security.task.dto.LarkTaskWorkTimeDto"
+        javaType="java.util.ArrayList">
+        <id column="work_time_id" property="id" jdbcType="VARCHAR"/>
+        <result column="work_time_member_code" property="memberCode" jdbcType="VARCHAR"/>
+        <result column="work_time_crt_time" property="crtTime" jdbcType="TIMESTAMP"/>
+        <result column="work_time_content" property="content" jdbcType="VARCHAR"/>
+        <result column="work_time_begin_time" property="beginTime" jdbcType="TIMESTAMP"/>
+        <result column="work_time_num" property="num" jdbcType="VARCHAR"/>
+        <result column="" property="" jdbcType=""/>
+        <result column="" property="" jdbcType=""/>
+    </collection>
     <collection property="taskNum" ofType="com.github.hollykunge.security.task.dto.TaskNum"
         select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getTotalAndComoleted"
         column="id">
@@ -140,11 +149,19 @@
                 column="{stagesCode=stag_code,pCode=id,userId=USER_ID}"
                 select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getLarkTaskList">
     </collection>
+    <collection property="nums" ofType="java.lang.String"
+                select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getNums"
+                column="{taskCode=task_code}">
+    </collection>
   </resultMap>
 
-  <select id="getLarkTaskList" resultMap="TaskListBaseResultMap">
+  <select id="getLarkTaskList" resultMap="TaskListBaseResultMap"
+          parameterType="com.github.hollykunge.security.task.vo.LarkTaskVO">
  select s.*,ltm.memeber_code from(
-    select lt.* ,au.id USER_ID,au.name USER_NAME,au.avatar AVATAR,ltt.name TAG_NAME,ltt.color TAG_COLOR,ltt.id TAG_ID
+    select lt.* ,au.id USER_ID,au.name USER_NAME,au.avatar AVATAR,ltt.name TAG_NAME,ltt.color TAG_COLOR,ltt.id TAG_ID,
+    ltwt.id work_time_id ,ltwt.member_code work_time_member_code,
+    ltwt.crt_time work_time_crt_time ,ltwt.content work_time_content,
+    ltwt.begin_time work_time_begin_time,ltwt.num work_time_num
     from
     lark_task lt
     LEFT join
@@ -159,12 +176,40 @@
     lark_task_tag ltt
     on
     lttt.tag_code = ltt.id
+    left join
+    lark_task_work_time ltwt
+    on
+    lt.id = ltwt.task_code
     where
     lt.stag_code=#{stagesCode}
     and
     lt.pcode = #{pCode}
     and
     lt.deleted=0
+    <if test="larkTaskVo.name != null || larkTaskVo.name != ''" >
+        and lt.name '%'||  #{larkTaskVo.name} || '%'
+    </if>
+    <if test="larkTaskVo.done != null || larkTaskVo.done != ''" >
+        and lt.done = #{larkTaskVo.done}
+    </if>
+    <if test="larkTaskVo.pri != null || larkTaskVo.pri != ''" >
+        and lt.pri = #{larkTaskVo.pri}
+    </if>
+    <if test="larkTaskVo.status != null || larkTaskVo.status != ''" >
+        and lt.status = #{larkTaskVo.status}
+    </if>
+    <if test="larkTaskVo.doneTime != null || larkTaskVo.doneTime != ''" >
+        and  to_char(lt.done_time,'yyyy-MM-dd') = #{larkTaskVo.doneTime}
+    </if>
+    <if test="larkTaskVo.crtTime != null || larkTaskVo.crtTime != ''" >
+        and  to_char(lt.crt_time,'yyyy-MM-dd') = #{larkTaskVo.crtTime}
+    </if>
+    <if test="larkTaskVo.beginTime != null || larkTaskVo.begin_time != ''" >
+        and  to_char(lt.begin_time,'yyyy-MM-dd') = #{larkTaskVo.beginTime}
+    </if>
+    <if test="larkTaskVo.endTime != null || larkTaskVo.endTime != ''" >
+        and  to_char(lt.end_time,'yyyy-MM-dd') = #{larkTaskVo.endTime}
+    </if>
     order by lt.crt_time desc
     ) s
     inner join
@@ -172,9 +217,31 @@
     on
     s.id = ltm.task_code
     where
-    ltm.memeber_code=#{userId}
-    or
     s.task_private='0'
+      <if test="larkTaskVo.executors != null and larkTaskVo.executors.size >0" >
+          and ltm.member_code in
+          <foreach item="executor" index="index" collection="larkTaskVo.executors"
+                   open="(" separator="," close=")">
+              #{executor}
+          </foreach>
+          and ltm.is_executor='0'
+      </if>
+      <if test="larkTaskVo.creators != null and larkTaskVo.creators.size >0" >
+          and ltm.member_code in
+          <foreach item="executor" index="index" collection="larkTaskVo.executors"
+                   open="(" separator="," close=")">
+              #{executor}
+          </foreach>
+          and ltm.is_owner='0'
+      </if>
+      <if test="larkTaskVo.joiners != null || larkTaskVo.joiners != ''" >
+          and ltm.member_code in
+          <foreach item="executor" index="index" collection="larkTaskVo.executors"
+                   open="(" separator="," close=")">
+              #{executor}
+          </foreach>
+          and ltm.attr1='0'
+      </if>
   </select>
 
   <select id="getTotalAndComoleted" resultType="com.github.hollykunge.security.task.dto.TaskNum">
@@ -184,5 +251,8 @@
     from lark_task
     where
     pcode=#{id}
+  </select>
+  <select id="getNums" resultType="java.lang.String">
+      select sum(num) from lark_task_work_time where task_code=#{taskCode};
   </select>
 </mapper>

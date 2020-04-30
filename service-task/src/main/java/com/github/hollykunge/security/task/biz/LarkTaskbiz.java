@@ -11,6 +11,7 @@ import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import com.github.hollykunge.security.task.mapper.LarkTaskMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper;
+import com.github.hollykunge.security.task.vo.LarkTaskVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
@@ -60,13 +61,14 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         larkTask.setCrtUser("userId");
         larkTask.setPath("/"+larkTask.getName());
         larkTaskMapper.insertSelective(larkTask);
-        if(StringUtils.isEmpty(memberCode)){
+        if(StringUtils.pathEquals(memberCode,userId)){
             LarkTaskMember larkTaskMember = new LarkTaskMember();
             larkTaskMember.setId(UUIDUtils.generateShortUuid());
             larkTaskMember.setTaskCode(taskId);
-            larkTaskMember.setMemeberCode("68yHX85Z");
+            larkTaskMember.setMemeberCode(memberCode);
             larkTaskMember.setIsOwner(0);
             larkTaskMember.setIsExecutor(0);
+            larkTaskMember.setAttr1("0");
             larkTaskMember.setJoinTime(new Date());
             larkTaskMemberMapper.insertSelective(larkTaskMember);
         }else{
@@ -76,6 +78,7 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
             larkTaskMember.setMemeberCode(memberCode);
             larkTaskMember.setIsOwner(0);
             larkTaskMember.setIsExecutor(1);
+            larkTaskMember.setAttr1("0");
             larkTaskMember.setJoinTime(new Date());
             larkTaskMemberMapper.insertSelective(larkTaskMember);
             LarkTaskMember larkTaskMember1 = new LarkTaskMember();
@@ -84,6 +87,7 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
             larkTaskMember1.setMemeberCode(userId);
             larkTaskMember1.setIsOwner(1);
             larkTaskMember1.setIsExecutor(0);
+            larkTaskMember1.setAttr1("0");
             larkTaskMember1.setJoinTime(new Date());
             larkTaskMemberMapper.insertSelective(larkTaskMember1);
         }
@@ -107,11 +111,14 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
     /**
      * 拆分请求第二步 getTasksByProjectId
      * 根据具体任务列id  获取具体任务集合 以及任务的具体信息
-     * @param stagesCode
+     * @param larkTaskVO
      * @return
      */
-    public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(String stagesCode,String userId){
-        List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getLarkTaskList(stagesCode,"0",userId);
+    public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(LarkTaskVO larkTaskVO){
+        List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getLarkTaskList(larkTaskVO);
         return new ObjectRestResponse<>().data(larkTaskDtos).rel(true);
+    }
+
+    public void queryLarkTask(LarkTaskVO larkTaskVO) {
     }
 }

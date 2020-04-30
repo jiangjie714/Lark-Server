@@ -98,8 +98,13 @@ public class FileController extends BaseController<LarkTaskFilebiz, LarkFile> {
      */
     @RequestMapping(value = "/recycel",method = RequestMethod.GET)
     public ObjectRestResponse<Object> recycle(@RequestParam("fileCode") String fileCode){
-        //return new ObjectRestResponse<Object>().data(fileService.recycle(fileCode)).msg("已移动到回收站！");
-        return  null;
+        LarkFile larkFile = new LarkFile();
+        larkFile.setId(fileCode);
+        larkFile.setDeleted("1");
+        baseBiz.updateById(larkFile);
+        LarkFile larkFile1 = baseBiz.selectById(fileCode);
+        larkFile1.setDeleted("1");
+        return new ObjectRestResponse<>().data(larkFile1).rel(true);
     }
 
     /**
@@ -111,12 +116,17 @@ public class FileController extends BaseController<LarkTaskFilebiz, LarkFile> {
      */
     @RequestMapping(value = "/recovery",method = RequestMethod.GET)
     public ObjectRestResponse<Object> recovery(@RequestParam("fileCode") String fileCode){
-        //return new ObjectRestResponse<Object>().data(fileService.recovery(fileCode)).msg("文件以还原！");
-        return null;
+        LarkFile larkFile = new LarkFile();
+        larkFile.setId(fileCode);
+        larkFile.setDeleted("0");
+        baseBiz.updateById(larkFile);
+        LarkFile larkFile1 = baseBiz.selectById(fileCode);
+        larkFile1.setDeleted("0");
+        return new ObjectRestResponse<>().data(larkFile1).rel(true);
     }
 
     /**
-     * 删除
+     * 删除 取消关联
      * @param {*} fileCode
      *   export function del(fileCode) {
      *       return $http.delete('project/file/delete', {fileCode: fileCode});
@@ -124,6 +134,8 @@ public class FileController extends BaseController<LarkTaskFilebiz, LarkFile> {
      */
     @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
     public ObjectRestResponse<Object> delete(@RequestParam("fileCode")  String fileCode){
-        return new ObjectRestResponse<>().msg("删除成功！");
+        LarkFile larkFile = baseBiz.selectById(fileCode);
+        baseBiz.deleteById(fileCode);
+        return new ObjectRestResponse<>().msg("删除成功！").data(larkFile).rel(true);
     }
 }

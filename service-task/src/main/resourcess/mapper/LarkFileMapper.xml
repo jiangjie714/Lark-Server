@@ -47,5 +47,7 @@
                AND task_code=#{taskCode}
            </if>
     　　</trim>
+    and
+    deleted='0'
   </select>
 </mapper>
