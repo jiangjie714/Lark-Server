@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.OrgDTO;
 import com.github.hollykunge.security.admin.entity.User;
@@ -42,7 +43,8 @@ public class PortalCommonToolsController {
      * @param entity
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @Decrypt
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> add(@RequestBody CommonToolsDto entity) {
         return portalServerFeign.add(returnParam(entity));
@@ -66,7 +68,8 @@ public class PortalCommonToolsController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @Decrypt
+    @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> update(@RequestBody CommonToolsDto entity) throws Exception {
         return portalServerFeign.update(returnParam(entity));

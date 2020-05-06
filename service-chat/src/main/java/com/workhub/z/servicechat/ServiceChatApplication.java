@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat;
 
 
+import com.cxytiandi.encrypt.springboot.annotation.EnableEncrypt;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.common;
 import com.workhub.z.servicechat.redis.RedisUtil;
@@ -24,6 +25,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @MapperScan("com.workhub.z.servicechat.dao")
 @EnableTransactionManagement
 @EnableCaching
+@EnableEncrypt
 public class ServiceChatApplication {
     static Logger logger = LoggerFactory.getLogger(ServiceChatApplication.class);
     //是否清理缓存
