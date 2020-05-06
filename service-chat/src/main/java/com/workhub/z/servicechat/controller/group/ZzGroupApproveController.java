@@ -90,7 +90,7 @@ public class ZzGroupApproveController {
        boolean needApproveFlg = true;
        String groupLevel = groupJson.getString("levels");//密级
        //如果是非密的研讨组
-       if(MessageType.NO_SECRECT_LEVEL.equals(groupLevel) && MessageType.FLOW_LOG_GROUP.equals(type)){
+       if(MessageType.NO_SECRECT_LEVEL.equals(groupLevel)){
            //如果是非密不需要审批
            needApproveFlg = false;
        }
