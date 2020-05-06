@@ -10,11 +10,9 @@ import com.github.hollykunge.security.task.biz.LarkProjectMemberbiz;
 import com.github.hollykunge.security.task.entity.LarkProjectMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,7 +41,7 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberbiz
         return new TableResultResponse();
     }
     /**
-     * 邀请成员
+     * 邀请成员  通过mq发送邀请消息
      * @param {*} memberCode
      * @param {*} code
      *   export function inviteMember(memberCode, code) {
@@ -51,7 +49,9 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberbiz
      *   }
      */
     @RequestMapping(value = "/inviteMember",method = RequestMethod.POST)
-    public BaseResponse inviteMember(@RequestParam("memberCode") String memberCode, @RequestParam("projectCode") String code){
+    public BaseResponse inviteMember(
+            @RequestBody List<String> memberCodes,
+            @RequestParam("projectCode") String code){
         larkProjectMemberbiz.sendInviteMemberMessage(code);
         return new BaseResponse(200,"已发送邀请");
     }

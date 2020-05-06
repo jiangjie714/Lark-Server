@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -57,16 +58,6 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
                                             @RequestParam("memberCode") String memberCode,
                                             HttpServletRequest request) {
         return larkTaskbiz.add(larkTask,memberCode,request);
-    }
-
-    /**
-     * task 搜索  需要关联  task-member表 来确定任务执行者  参与者  创建者
-     * @return
-     */
-    @RequestMapping(value = "/query",method = RequestMethod.GET)
-    public ObjectRestResponse<List<LarkTask>> queryLarkTask(@RequestBody LarkTaskVO larkTaskVO){
-        larkTaskbiz.queryLarkTask(larkTaskVO);
-        return null;
     }
 
     /**
@@ -142,5 +133,31 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
         return new BaseResponse(200,"设置成功");
     }
 
+
+    /**
+     * @author fansq
+     * @deprecation 标签页面 数据显示接口拆分 第二步
+     * @return 返回任务和具体标签的对应关系
+     * todo 其实不推荐使用map传参（可以做个参数数据模型）  维护很麻烦 不能直观的看到参数列表 swagger也识别不了map 我看都再用 保持队形
+     */
+    @RequestMapping(value = "/getTaskAndTag",method = RequestMethod.GET)
+    @ResponseBody
+    public TableResultResponse<LarkTaskDto> getTaskAndTag(
+            @RequestBody Map<String,Object> map){
+        return larkTaskbiz.getTaskAndTag(map);
+    }
+
+    /**
+     * fansq
+     * excel文件导入
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/upload")
+    @ResponseBody
+    public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
+        return larkTaskbiz.importExcel(file,larkTaskbiz);
+    }
 }
 

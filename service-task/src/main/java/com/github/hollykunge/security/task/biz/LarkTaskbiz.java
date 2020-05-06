@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.task.biz;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
+import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -11,15 +12,18 @@ import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import com.github.hollykunge.security.task.mapper.LarkTaskMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper;
+import com.github.hollykunge.security.task.util.EasyExcelUtil;
 import com.github.hollykunge.security.task.vo.LarkTaskVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -119,6 +123,37 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         return new ObjectRestResponse<>().data(larkTaskDtos).rel(true);
     }
 
-    public void queryLarkTask(LarkTaskVO larkTaskVO) {
+    /**
+     * @deprecation 标签页面 数据显示接口拆分 第二步
+     * @param map 参数列表
+     * @return 结果集分页
+     */
+    public TableResultResponse<LarkTaskDto> getTaskAndTag(Map<String, Object> map) {
+        Query query = new Query(map);
+        if(MapUtils.isEmpty(map)){
+            throw new BaseException("参数不可为空！");
+        }
+        Object projectCode = map.get("projectCode");
+        if(ObjectUtils.isEmpty(projectCode)){
+            throw new BaseException("项目id不可为空！");
+        }
+        Object taskCode = map.get("taskCode");
+        if(ObjectUtils.isEmpty(map.get("taskCode"))){
+            throw new BaseException("任务id不可为空！");
+        }
+        Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
+        List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getTaskAndTag(projectCode.toString(),taskCode.toString());
+        return new TableResultResponse<>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), larkTaskDtos);
+    }
+
+    /**
+     * 任务文件导入 最多100条
+     * @param file
+     * @param larkTaskbiz
+     * @return
+     */
+    public ObjectRestResponse importExcel(MultipartFile file, LarkTaskbiz larkTaskbiz) {
+        //EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
+        return new ObjectRestResponse().rel(true).msg("导入成功！");
     }
 }

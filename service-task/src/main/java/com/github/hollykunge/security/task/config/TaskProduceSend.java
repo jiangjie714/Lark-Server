@@ -19,8 +19,6 @@ public class TaskProduceSend {
     private RabbitTemplate taskRabbitTemplate;
     /**
      * fansq
-     * 20-2-18
-     * 发送消息 取消公告发布
      * @param id
      * @param message
      */

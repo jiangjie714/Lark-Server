@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * @deprecation 仅限于项目 任务 的角色操作使用
  */
 @Controller
-@RequestMapping("/role")
+@RequestMapping("/roleTask")
 public class RoleTaskController extends BaseController<RoleTaskBiz, RoleTask> {
 
 

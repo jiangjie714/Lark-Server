@@ -34,4 +34,12 @@ public interface LarkTaskMapper extends Mapper<LarkTask> {
 
     TaskNum getTotalAndComoleted(@Param("id") String id);
     String getNums(@Param("taskCode") String taskCode);
+
+    /**
+     * 标签页面 数据显示接口拆分 第二步
+     * @param projectCode
+     * @param taskCode
+     * @return
+     */
+    List<LarkTaskDto> getTaskAndTag(String projectCode, String taskCode);
 }

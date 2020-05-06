@@ -146,6 +146,32 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.4</version>
     </dependency>
+    <!--fansq 20-2-7 easyexcel -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>easyexcel</artifactId>
+      <version>2.1.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.poi</groupId>
+          <artifactId>poi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.poi</groupId>
+          <artifactId>poi-ooxml</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>4.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>4.1.0</version>
+    </dependency>
   </dependencies>
   <repositories>
     <repository>

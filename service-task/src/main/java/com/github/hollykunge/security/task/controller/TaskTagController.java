@@ -2,12 +2,15 @@ package com.github.hollykunge.security.task.controller;
 
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.task.biz.LarkTaskTagbiz;
 import com.github.hollykunge.security.task.entity.LarkTaskTag;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author fansq
@@ -33,5 +36,15 @@ public class TaskTagController extends BaseController<LarkTaskTagbiz,LarkTaskTag
         return new BaseResponse(200,"新增成功！");
     }
 
+    /**
+     * @author fansq
+     * @deprecation 标签页面 数据显示接口拆分 第一步
+     * @return 标签列表 不分页
+     */
+    @RequestMapping(value = "/getAllTag",method = RequestMethod.GET)
+    @ResponseBody
+    public ObjectRestResponse<List<LarkTaskTag>> getAllTag(){
+        return new ObjectRestResponse<>().data(baseBiz.selectListAll()).rel(true);
+    }
 
 }
