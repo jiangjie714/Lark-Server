@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.admin.rest;
 
 import com.alibaba.fastjson.JSON;
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
@@ -46,7 +47,8 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return 结果集
      */
     @Override
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @Decrypt
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Org> add(@RequestBody Org org) {
         org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
@@ -66,7 +68,8 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return
      */
     @Override
-    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @Decrypt
+    @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<Org> update(@RequestBody Org org) {
         String parentPathName = org.getPathName();
@@ -140,6 +143,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @param id    组织id
      * @param users 以逗号分隔的userId
      */
+    @Decrypt
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUsers(@RequestParam("orgId") String id, @RequestParam("users") String users) {

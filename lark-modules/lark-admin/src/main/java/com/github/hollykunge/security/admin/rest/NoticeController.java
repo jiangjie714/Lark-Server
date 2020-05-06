@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.biz.NoticeBiz;
 
 import com.github.hollykunge.security.admin.entity.Notice;
@@ -35,6 +36,7 @@ public class NoticeController extends BaseController<NoticeBiz,Notice> {
      * @param notice 消息实体类必须带id
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Boolean> sendNotice(@RequestBody @Valid Notice notice){
