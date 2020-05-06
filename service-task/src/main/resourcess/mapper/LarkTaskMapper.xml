@@ -137,8 +137,6 @@
         <result column="work_time_content" property="content" jdbcType="VARCHAR"/>
         <result column="work_time_begin_time" property="beginTime" jdbcType="TIMESTAMP"/>
         <result column="work_time_num" property="num" jdbcType="VARCHAR"/>
-        <result column="" property="" jdbcType=""/>
-        <result column="" property="" jdbcType=""/>
     </collection>
     <collection property="taskNum" ofType="com.github.hollykunge.security.task.dto.TaskNum"
         select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getTotalAndComoleted"

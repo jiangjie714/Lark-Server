@@ -3,7 +3,10 @@ package com.github.hollykunge.security.task.biz;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.vo.RpcUserInfo;
+import com.github.hollykunge.security.task.dto.LarkProjectMemberDto;
+import com.github.hollykunge.security.task.dto.LarkTaskMemberDto;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
+import com.github.hollykunge.security.task.mapper.LarkProjectMemberMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,9 @@ public class LarkTaskMemberbiz extends BaseBiz<LarkTaskMemberMapper, LarkTaskMem
 
     @Autowired
     private LarkTaskMemberMapper larkTaskMemberMapper;
+
+    @Autowired
+    private LarkProjectMemberMapper larkProjectMemberMapper;
     @Override
     protected String getPageName() {
         return null;
@@ -31,11 +37,11 @@ public class LarkTaskMemberbiz extends BaseBiz<LarkTaskMemberMapper, LarkTaskMem
      * @return
      */
     public ObjectRestResponse<List<Object>> getProjectUser(String projectCode, String taskCode) {
-        List<RpcUserInfo> rpcUserInfos = larkTaskMemberMapper.getProjectUser(projectCode);
-        List<RpcUserInfo> rpcUserInfoList = larkTaskMemberMapper.getChildTaskUser(taskCode);
+        List<LarkProjectMemberDto> projectUsers = larkProjectMemberMapper.getProjectUser(projectCode);
+        List<LarkTaskMemberDto> taskUsers = larkTaskMemberMapper.getChildTaskUser(taskCode);
         List<Object> objects = new ArrayList<>();
-        objects.add(rpcUserInfoList);
-        objects.add(rpcUserInfos);
+        objects.add(projectUsers);
+        objects.add(taskUsers);
         return new ObjectRestResponse<>().data(objects).rel(true);
     }
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author fansq
@@ -13,6 +14,7 @@ import java.util.Date;
 @Data
 public class LarkTaskMemberDto implements Serializable {
 
+    //任务信息
     private String taskCode;
     private Integer isExecutor;
     private String memberCode;
@@ -33,9 +35,13 @@ public class LarkTaskMemberDto implements Serializable {
     private String attr3;
     private String attr4;
 
+    //人员信息
     private String avatar;
     private String orgCode;
     private String orgName;
     private String pid;
     private String userName;
+
+    //子任务信息
+    private List<LarkTaskMemberDto> larkTaskMemberDtos;
 }
