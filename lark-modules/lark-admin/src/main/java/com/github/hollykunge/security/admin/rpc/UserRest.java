@@ -4,8 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.api.authority.FrontPermission;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.api.dto.ChangeUserPwdDto;
 import com.github.hollykunge.security.admin.api.dto.OrgUser;
-import com.github.hollykunge.security.admin.api.service.AdminUserServiceFeignClient;
+import com.github.hollykunge.security.admin.api.rest.AdminUserRpcRest;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
 import com.github.hollykunge.security.admin.biz.UserBiz;
@@ -14,23 +15,30 @@ import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 系统管理对内部服务接口（包括权限接口、用户接口）
+ * 系统管理对内部服务接口和需要被网关忽略权限校验的接口
+ *
+ * <p>该类创建接口约束行为如下：<p/>
+ * <p>1、对外提供的接口中的@RequestMapping要加在父类中的方法上。</p>
+ * <p>2、需要提供给前端，并对网关忽略权限校验的接口，正常定义在该类中</p>
  *
  * @author 协同设计小组
  * @date 2017-06-21 8:15
  */
 @RestController
 @RequestMapping("api")
-public class UserRest implements AdminUserServiceFeignClient {
+public class UserRest implements AdminUserRpcRest {
 
     @Autowired
     private PermissionService permissionService;
@@ -48,29 +56,22 @@ public class UserRest implements AdminUserServiceFeignClient {
     private PositionBiz positionBiz;
 
     @Override
-    @RequestMapping(value = "/permissions", method = RequestMethod.GET)
-    @ResponseBody
+
     public List<FrontPermission> getAllPermission() {
         return permissionService.getAllPermission();
     }
 
     @Override
-    @RequestMapping(value = "/user/un/{userId}/permissions", method = RequestMethod.GET)
-    @ResponseBody
     public List<FrontPermission> getPermissionByUserId(@PathVariable("userId") String userId) {
         return permissionService.getPermissionByUserId(userId);
     }
 
     @Override
-    @RequestMapping(value = "/user/validate", method = RequestMethod.POST)
-    @ResponseBody
     public AdminUser validate(String pid, String password) {
         return permissionService.validate(pid, password);
     }
 
     @Override
-    @RequestMapping(value = "/user/pid/{id}/info", method = RequestMethod.GET)
-    @ResponseBody
     public AdminUser getUserInfoByPid(@PathVariable("id") String pid) {
         User user = userBiz.getUserByUserPid(pid);
         AdminUser info = new AdminUser();
@@ -83,8 +84,6 @@ public class UserRest implements AdminUserServiceFeignClient {
     }
 
     @Override
-    @RequestMapping(value = "/user/userId/{id}/info", method = RequestMethod.GET)
-    @ResponseBody
     public AdminUser getUserInfoByUserId(@PathVariable("id") String userId) {
         User user = userBiz.getUserByUserId(userId);
         AdminUser info = new AdminUser();
@@ -98,8 +97,6 @@ public class UserRest implements AdminUserServiceFeignClient {
 
     @Override
     @FilterByDeletedAndOrderHandler
-    @RequestMapping(value = "/user/{ids}/list", method = RequestMethod.GET)
-    @ResponseBody
     public List<AdminUser> getUserListByIds(@PathVariable("ids") String userIds) {
         List<AdminUser> userInfos = new ArrayList<AdminUser>();
         if (!StringUtils.isEmpty(userIds)) {
@@ -114,8 +111,6 @@ public class UserRest implements AdminUserServiceFeignClient {
     }
 
     @Override
-    @RequestMapping(value = "/user/{positionId}/{secretLevel}/list", method = RequestMethod.GET)
-    @ResponseBody
     public List<AdminUser> getUserListByPosAndSec(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel) {
         return positionBiz.getPositionUsersBySecret(positionId, secretLevel);
     }
@@ -148,5 +143,17 @@ public class UserRest implements AdminUserServiceFeignClient {
         }
         List<OrgUser> orgUsers = orgBiz.getChildOrgUser(orgCode);
         return new ListRestResponse("", orgUsers.size(), orgUsers);
+    }
+
+    /**
+     * 用户修改密码接口
+     * @param changeUserPwdDto
+     * @return
+     */
+    @RequestMapping(value = "/user/pwd",method = RequestMethod.PUT)
+    @ResponseBody
+    public ObjectRestResponse<Boolean> changeUserPwd(@RequestBody @Valid ChangeUserPwdDto changeUserPwdDto, HttpServletRequest request) throws Exception {
+        userBiz.changeUserPwd(changeUserPwdDto,request);
+        return new ObjectRestResponse<>().data(true).rel(true);
     }
 }

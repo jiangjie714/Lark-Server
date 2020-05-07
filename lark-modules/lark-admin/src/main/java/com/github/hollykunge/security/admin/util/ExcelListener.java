@@ -21,9 +21,8 @@ import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
-import com.github.hollykunge.security.common.constant.UserConstant;
 import com.github.hollykunge.security.common.entity.BaseEntity;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.SpecialStrUtils;
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -32,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -92,14 +90,12 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	@Override
 	public void doAfterAllAnalysed(AnalysisContext context) {
 		saveData();
-		log.info("所有数据解析完成！");
 	}
 
 	/**
 	 * 加上存储数据库
 	 */
 	private void saveData() {
-		log.info("{}条数据，开始存储数据库！", list.size());
 		if (!CollectionUtils.isEmpty(list)) {
 			userBiz.insertUserExcel(list);
 			roleUserMapMapper.insertExcelUserRole(roleUserMaps);
@@ -108,7 +104,6 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		if(!CollectionUtils.isEmpty(orgList)){
 			orgMapper.insertExcelOrg(orgList);
 		}
-		log.info("存储数据库成功！");
 	}
 
 	@Override
@@ -120,7 +115,7 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 			Integer columnIndex = ((ExcelDataConvertException) exception).getColumnIndex() + 1;
 			Integer rowIndex = ((ExcelDataConvertException) exception).getRowIndex() + 1;
 			String message = "第" + rowIndex + "行，第" + columnIndex + "列" + "，数据格式有误，请按照模板规定格式填写！";
-			throw new RuntimeException(message);
+			throw new ClientParameterInvalid(message);
 		} else if (exception instanceof RuntimeException) {
 			throw exception;
 		} else {
@@ -136,40 +131,40 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 	 */
 	public void importOrgExcel(Org org,int rowIndex) throws Exception{
 		if(StringUtils.isEmpty(org.getParentId())){
-			throw new BaseException("第"+rowIndex+"行，上级组织编码不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，上级组织编码不可为空！");
 		}
 		Org orgSelect = new Org();
 		orgSelect.setId(org.getParentId());
 		Org result = orgMapper.selectByPrimaryKey(orgSelect);
 		if(result==null){
-			throw new BaseException("第"+rowIndex+"行，上级组织编码填写错误,没有对应的组织名称！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，上级组织编码填写错误,没有对应的组织名称！");
 		}
 		if(StringUtils.isEmpty(org.getOrgName())){
-			throw new BaseException("第"+rowIndex+"行，组织名称不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，组织名称不可为空！");
 		}
 		if (org.getOrgName().length()>10) {
-			throw new BaseException("第"+rowIndex+"行，组织名称不可超过10个字符!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，组织名称不可超过10个字符!");
 		}
 		if(org.getOrderId()==null){
-			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，排序字段不可为空！");
 		}
 		String orgCode = org.getOrgCode();
 		if(StringUtils.isEmpty(orgCode)){
-			throw new BaseException("第"+rowIndex+"行，组织编码不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，组织编码不可为空！");
 		}
 		Org orgByOrgCode = new Org();
 		orgByOrgCode.setOrgCode(orgCode);
 		if(orgMapper.selectCount(orgByOrgCode)>0){
-			throw new BaseException("第"+rowIndex+"行，该组织编码已存在！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，该组织编码已存在！");
 		}
 		if(!orgOrgCodeRowIndex.containsKey(orgCode)){
 			orgOrgCodeRowIndex.put(orgCode,rowIndex);
 		}else{
 			int orgCodeIndex = orgOrgCodeRowIndex.get(orgCode);
-			throw new BaseException("第"+rowIndex+"行和第"+orgCodeIndex+"行的组织编码重复，请修改！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行和第"+orgCodeIndex+"行的组织编码重复，请修改！");
 		}
 		if(org.getOrgLevel()==null){
-			throw new BaseException("第"+rowIndex+"行，组织层级不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，组织层级不可为空！");
 		}
 		if(StringUtils.isEmpty(org.getDescription())){
 			org.setDescription("添加方式为数据导入！");
@@ -182,7 +177,6 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		EntityUtils.setCreatAndUpdatInfo(org);
 		org.setId(org.getOrgCode());
 		orgList.add(org);
-		log.info("解析到一条数据:{}", JSON.toJSONString(org));
 		if (orgList.size() >= BATCH_COUNT) {
 			saveData();
 			orgList.clear();
@@ -199,69 +193,69 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
 		String pId = data.getPId().toLowerCase();
 		String name = data.getName();
 		if(StringUtils.isEmpty(name)){
-			throw new BaseException("第"+rowIndex+"行，姓名不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，姓名不可为空！");
 		}
 		if (name.length()>10) {
-			throw new BaseException("第"+rowIndex+"行，姓名不可超过10个字符!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，姓名不可超过10个字符!");
 		}
 		if (SpecialStrUtils.check(name)) {
-			throw new BaseException("第"+rowIndex+"行，姓名中不能包含特殊字符!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，姓名中不能包含特殊字符!");
 		}
 		if(StringUtils.isEmpty(pId)){
-			throw  new BaseException("第"+rowIndex+"行，身份证号不可为空！");
+			throw  new ClientParameterInvalid("第"+rowIndex+"行，身份证号不可为空！");
 		}
 		String pattern = "\\d{17}[\\d|x]|\\d{15}";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(pId);
 		if(!m.matches()){
-			throw new BaseException("第"+rowIndex+"行，身份证号格式错误!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，身份证号格式错误!");
 		}
 		//校验身份证是否在数据库中存在
 		User user = new User();
 		user.setPId(pId);
 		if (userMapper.selectCount(user) > 0) {
-			throw new BaseException("第"+rowIndex+"行，身份证号已存在!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，身份证号已存在!");
 		}
 
 		if(!userPidRowIndex.containsKey(pId)){
 			userPidRowIndex.put(pId,rowIndex);
 		}else{
 			int pidIndex = userPidRowIndex.get(pId);
-			throw new BaseException("第"+rowIndex+"行和第"+pidIndex+"行的身份证号重复，请修改！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行和第"+pidIndex+"行的身份证号重复，请修改！");
 		}
 
 		if(StringUtils.isEmpty(data.getOrgCode())){
-			throw  new BaseException("第"+rowIndex+"行，所属组织机构编码，不可为空！");
+			throw  new ClientParameterInvalid("第"+rowIndex+"行，所属组织机构编码，不可为空！");
 		}
 		if(StringUtils.isEmpty(data.getOrgName())){
-			throw new BaseException("第"+rowIndex+"行，所属机构名称，不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，所属机构名称，不可为空！");
 		}
 		Org org = new Org();
 		org.setId(data.getOrgCode());
 		Org orgName = orgMapper.selectOne(org);
 		if(orgName == null) {
-			throw new BaseException("第"+rowIndex+"行，组织机构不存在!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，组织机构不存在!");
 		}
 		if(!StringUtils.equals(orgName.getOrgName(),data.getOrgName())){
-			throw new BaseException("第"+rowIndex+"行，组织机构编码和组织机构名称不匹配!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，组织机构编码和组织机构名称不匹配!");
 		}
 
 		String secretLevel = data.getSecretLevel();
 		if(!NumberUtils.isNumber(secretLevel)){
-			throw new BaseException("第"+rowIndex+"行，密级应为数字!");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，密级应为数字!");
 		}
 		if(Arrays.binarySearch(secretArr,secretLevel)<0){
-			throw new BaseException("第"+rowIndex+"行，密级只能为30,40,50,60,70,80,90！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，密级只能为30,40,50,60,70,80,90！");
 		}
 		String gender = data.getGender();
 		if(StringUtils.isEmpty(gender)){
-			throw new BaseException("第"+rowIndex+"行，性别不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，性别不可为空！");
 		}
 		if(!StringUtils.equals(gender,"男")&&!StringUtils.equals(gender,"女")){
-			throw new BaseException("第"+rowIndex+"行，性别填写错误，只能为男或女！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，性别填写错误，只能为男或女！");
 		}
 		if(data.getOrderId()==null){
-			throw new BaseException("第"+rowIndex+"行，排序字段不可为空！");
+			throw new ClientParameterInvalid("第"+rowIndex+"行，排序字段不可为空！");
 		}
 		data.setPassword(AdminCommonConstant.ENCRYPTION_PASSWORD);
 		EntityUtils.setCreatAndUpdatInfo(data);
@@ -298,7 +292,6 @@ public class ExcelListener<T extends  BaseEntity> extends AnalysisEventListener<
         positionUserMapInstitutesOutter.setId(UUIDUtils.generateShortUuid());
 
 		positionUserMaps.add(positionUserMapInstitutesOutter);
-		log.info("解析到一条数据:{}", JSON.toJSONString(data));
 		if (list.size() >= BATCH_COUNT) {
 			saveData();
 			list.clear();

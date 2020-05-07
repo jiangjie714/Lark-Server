@@ -1,9 +1,9 @@
 package com.github.hollykunge.security.rpc;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.constants.Constants;
@@ -13,17 +13,14 @@ import com.github.hollykunge.security.entity.UserCommonTools;
 import com.github.hollykunge.security.mapper.UserCommonToolsMapper;
 import com.github.hollykunge.security.service.CommonToolsService;
 import com.github.hollykunge.security.service.UserCommonToolsService;
-import com.github.hollykunge.security.utils.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 对外提供常用工具增删改接口
@@ -55,7 +52,7 @@ public class CommonToolsRest{
         String uuid = UUIDUtils.generateShortUuid();
         tools.setId(uuid);
         if(commonToolsService.selectCount(tools)>0){
-            return new ObjectRestResponse<>().rel(false).msg("error,this commonTool is exist");
+            throw new DatabaseDataException("请误重复添加当前链接。");
         };
         commonToolsService.insertSelective(tools);
         if(Constants.PORTALORGUSERSTATUSONE.equals(tools.getPortalOrgUserStatus())){
@@ -95,14 +92,6 @@ public class CommonToolsRest{
                 userCommonTools.setId(UUIDUtils.generateShortUuid());
                 userCommonToolsList.add(userCommonTools);
             }
-//            //在插入数据之前先查询数据库中是否存在 指定人员对应的常用链接
-//            List<UserCommonTools> userCommonTools = userCommonToolsService.selectUserCommonTools(tools.getId(),userCommonToolsList);
-//            if(userCommonTools.size()>0){
-//                List<UserCommonTools> cs = userCommonToolsList.stream().filter(uct -> userCommonTools.stream()
-//                        .noneMatch(ucts -> uct.getUserId().equals(ucts.getUserId()))
-//                ).collect(Collectors.toList());
-//                userCommonToolsService.insertCommonTools(cs);
-//            }
             userCommonToolsService.deleteCommonTools(tools.getId(),userCommonToolsList);
             userCommonToolsService.insertCommonTools(userCommonToolsList);
         }

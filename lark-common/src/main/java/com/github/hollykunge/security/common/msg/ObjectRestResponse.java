@@ -18,7 +18,6 @@ public class ObjectRestResponse<T> extends BaseResponse {
         this.rel = rel;
     }
 
-
     public ObjectRestResponse rel(boolean rel) {
         this.setRel(rel);
         return this;

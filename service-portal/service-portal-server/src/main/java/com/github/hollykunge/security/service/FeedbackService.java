@@ -2,7 +2,6 @@ package com.github.hollykunge.security.service;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.dto.FeedBackAnswerDto;
 import com.github.hollykunge.security.dto.FeedBackDto;
@@ -37,7 +36,6 @@ public class FeedbackService extends BaseBiz<FeedbackMapper, Feedback> {
     public TableResultResponse<FeedBackAnswerDto> selectByQueryToAnswer(Query query,String crtTime) {
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//        String time = crtTime.replaceAll("\"","");
         Date date;
         String sDate = "";
         try {

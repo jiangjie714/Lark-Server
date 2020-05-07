@@ -93,11 +93,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-        <!-- todo:将搜索服务发布api接口到私服中 -->
         <dependency>
-            <groupId>com.github.hollykunge.security</groupId>
-            <artifactId>lark-searchs-api-web</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.github.hollykunge</groupId>
+            <artifactId>lark-search-api-web</artifactId>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
@@ -162,5 +161,42 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>dev/*</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/${env}</directory>
+                <includes>
+                    <include>*.*</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.yml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
     </build>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <env>prod</env>
+            </properties>
+        </profile>
+    </profiles>
 </project>

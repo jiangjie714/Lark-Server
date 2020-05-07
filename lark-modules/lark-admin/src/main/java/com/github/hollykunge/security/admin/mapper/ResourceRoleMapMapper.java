@@ -6,7 +6,6 @@ import tk.mybatis.mapper.common.Mapper;
 /**
  * @author zhhongyu
  */
-
 public interface ResourceRoleMapMapper extends Mapper<ResourceRoleMap> {
 
 }

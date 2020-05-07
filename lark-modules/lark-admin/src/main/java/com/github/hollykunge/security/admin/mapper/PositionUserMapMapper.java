@@ -6,6 +6,9 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
+/**
+ * @author LARK
+ */
 public interface PositionUserMapMapper extends Mapper<PositionUserMap> {
 
     /**

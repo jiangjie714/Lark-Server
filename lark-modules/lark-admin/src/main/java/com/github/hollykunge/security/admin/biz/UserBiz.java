@@ -2,46 +2,46 @@ package com.github.hollykunge.security.admin.biz;
 
 import com.ace.cache.annotation.CacheClear;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
+import com.github.hollykunge.security.admin.api.dto.ChangeUserPwdDto;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
+import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.util.EasyExcelUtil;
 import com.github.hollykunge.security.admin.util.ExcelListener;
+import com.github.hollykunge.security.admin.util.PassWordEncoderUtil;
+import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
+import com.github.hollykunge.security.auth.client.jwt.UserAuthUtil;
+import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
-import com.github.hollykunge.security.common.constant.UserConstant;
-import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
+import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.SpecialStrUtils;
 import com.github.hollykunge.security.common.util.UUIDUtils;
-import com.github.hollykunge.security.common.vo.RpcUserInfo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.aop.framework.AopContext;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 协同设计小组
@@ -68,19 +68,29 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PermissionService permissionService;
+    @Autowired
+    private SysAuthConfig sysAuthConfig;
+    @Autowired
+    private UserAuthUtil userAuthUtil;
+    @Autowired
+    private UserBiz userBiz;
 
     public User addUser(User entity) {
+        // 这个判断应该交给前端做
         if (SpecialStrUtils.check(entity.getName())) {
-            throw new BaseException("姓名中不能包含特殊字符...");
+            throw new ClientParameterInvalid("姓名中不能包含特殊字符。");
         }
         //校验身份证是否在数据库中存在
         User user = new User();
         user.setPId(entity.getPId());
         if (mapper.selectCount(user) > 0) {
-            throw new BaseException("身份证已存在...");
+            throw new ClientParameterInvalid("身份证号已存在。");
         }
         entity.setPId(entity.getPId().toLowerCase());
-        String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(defaultPassword);
+        //统一使用密码工具类
+        String password = PassWordEncoderUtil.ENCODER.encode(defaultPassword);
         entity.setPassword(password);
         EntityUtils.setCreatAndUpdatInfo(entity);
         //用户新增添加默认字段
@@ -106,16 +116,15 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     @CacheClear(pre = AdminCommonConstant.CACHE_KEY_RPC_USER+"{1.id}")
     public void updateSelectiveById(User entity) {
         if (SpecialStrUtils.check(entity.getName())) {
-            throw new BaseException("姓名中不能包含特殊字符...");
+            throw new ClientParameterInvalid("姓名中不能包含特殊字符。");
         }
         super.updateSelectiveById(entity);
     }
 
-    @Override
-//    @CacheClear(keys = {"user","userByPid"})
     /**
      * 用户删除  根据用户id同步删除角色 和 权限 两张关联表的数据
      */
+    @Override
     public void deleteById(String id) {
         RoleUserMap roleUserMap = new RoleUserMap();
         roleUserMap.setUserId(id);
@@ -144,7 +153,6 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      * @param pid
      * @return
      */
-//    @Cache(key = "userByPid{1}")
     public User getUserByUserPid(String pid) {
         User user = new User();
         //用户登录时通过身份证号当做用户名登录
@@ -152,7 +160,6 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         return mapper.selectOne(user);
     }
 
-    //    @Cache(key = "user")
     public List<User> getUsers() {
         return mapper.selectAll();
     }
@@ -170,7 +177,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      */
     public void modifyRoles(String userId, String roles) {
         if (StringUtils.isEmpty(userId)) {
-            throw new BaseException("userId参数为null...");
+            throw new ClientParameterInvalid("用户id为空。");
         }
         RoleUserMap roleUserMap = new RoleUserMap();
         roleUserMap.setUserId(userId);
@@ -196,12 +203,11 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     public void insertUserPosition(String positionsIds,String userId){
         PositionUserMap positionUser = new PositionUserMap();
         positionUser.setUserId(userId);
-        int deleteCount = positionUserMapMapper.delete(positionUser);
-        PositionUserMap positionUserMapDo;
+        positionUserMapMapper.delete(positionUser);
         if (!StringUtils.isEmpty(positionsIds)) {
             String[] poiArr = positionsIds.split(",");
             for (String poi : poiArr) {
-                positionUserMapDo = new PositionUserMap();
+                PositionUserMap positionUserMapDo = new PositionUserMap();
                 positionUserMapDo.setPositionId(poi);
                 positionUserMapDo.setUserId(userId);
                 //给基类赋值
@@ -211,7 +217,6 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         }
     }
 
-
     @Override
     public TableResultResponse<User> selectByQuery(Query query) {
         Class<User> clazz = (Class<User>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
@@ -220,14 +225,14 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         if (query.entrySet().size() > 0) {
 
             for (Map.Entry<String, Object> entry : query.entrySet()) {
-                //如果orgCode为航天二院组织编码，则返回的数据为空
+                // 如果orgCode为航天二院组织编码，则返回的数据为空
                 if (AdminCommonConstant.NO_DATA_ORG_CODE.equals(entry.getValue().toString())) {
                     return new TableResultResponse<User>(query.getPageSize(), query.getPageNo(), 0, 0, new ArrayList<>());
                 }
                 if (SpecialStrUtils.check(entry.getValue().toString())) {
-                    throw new BaseException("查询条件不能包含特殊字符...");
+                    throw new ClientParameterInvalid("查询条件不能包含特殊字符...");
                 }
-                if (entry.getKey().equals("name")) {
+                if ("name".equals(entry.getKey())) {
                     criteria.andCondition("(REFA || REFB || NAME) like " + "'%'||'" + entry.getValue().toString() + "'||'%'")
                             .orCondition("(upper(REFA) || upper(REFB) || NAME) like " + "'%'||'" + entry.getValue().toString() + "'||'%'")
                             .orCondition("(REFA || REFB || upper(NAME)) like " + "'%'||'" + entry.getValue().toString().toUpperCase() + "'||'%'")
@@ -247,7 +252,7 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         }
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<User> pageUsers = ((UserBiz) AopContext.currentProxy()).getPageUsers(example);
-        pageUsers.stream().forEach((User user) ->{
+        pageUsers.forEach((User user) ->{
             String orgCode = user.getOrgCode();
             if(!StringUtils.isEmpty(orgCode)){
                 Org org = orgBiz.selectById(orgCode);
@@ -269,6 +274,9 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
      * @return
      */
     public List<User> selectUserByNameLike(String nameLike){
+        if(StringUtils.isEmpty(nameLike)){
+            throw new ClientParameterInvalid("用户名为空。");
+        }
         List<User> users = mapper.selectUserByNameLike(nameLike);
         return users;
     }
@@ -276,7 +284,11 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
     @Override
     public User selectById(String id) {
         User user = super.selectById(id);
-        Org org = orgBiz.selectById(user.getOrgCode());
+        String orgCode = user.getOrgCode();
+        if(StringUtils.isEmpty(orgCode)||"".equals(orgCode)){
+            throw new DatabaseDataException("当前用户没有组织编码。");
+        }
+        Org org = orgBiz.selectById(orgCode);
         user.setOrgName(org.getPathName());
         return user;
     }
@@ -334,24 +346,33 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
                 criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
             }
         }
-        List<User> userEasyExcelList = userMapper.selectByExample(example);
-        return userEasyExcelList;
+        return userMapper.selectByExample(example);
     }
-
     /**
-     * fansq
-     * admin服务给task服务提供成员信息获取
-     * @param userIdList
-     * @return
+     * 修改用户密码业务
+     * @param changeUserPwdDto
      */
-    public ObjectRestResponse<List<RpcUserInfo>> getUserInfo(List<String> userIdList){
-        List<RpcUserInfo> rpcUserInfos = new ArrayList<>();
-        for (String userId:userIdList){
-            User user = userMapper.selectByPrimaryKey(userId);
-            RpcUserInfo rpcUserInfo = new RpcUserInfo();
-            BeanUtils.copyProperties(user,rpcUserInfo);
-            rpcUserInfos.add(rpcUserInfo);
+    public void changeUserPwd(ChangeUserPwdDto changeUserPwdDto, HttpServletRequest request) throws Exception {
+        String token = request.getHeader("token");
+        //解析token
+        IJWTInfo tokenUser = userAuthUtil.getInfoFromToken(token);
+        if(Objects.equals(tokenUser.getUniqueName(),sysAuthConfig.getSysUsername())){
+            throw new ClientParameterInvalid("超级管理员不能修改密码");
         }
-        return new ObjectRestResponse<>().data(rpcUserInfos);
+        //校验原始的用户名和密码是否正确
+        User dataUser = userBiz.getUserByUserPid(changeUserPwdDto.getUsername());
+        if(dataUser == null){
+            throw new ClientParameterInvalid("用户不存在...");
+        }
+        if (!PassWordEncoderUtil.ENCODER.matches(changeUserPwdDto.getOldPassword(), dataUser.getPassword())) {
+            throw new ClientParameterInvalid("密码错误...");
+        }
+        User tempUser = new User();
+        tempUser.setId(dataUser.getId());
+        tempUser.setPassword(PassWordEncoderUtil.ENCODER.encode(changeUserPwdDto.getNewPassword()));
+        tempUser.setUpdTime(new Date());
+        tempUser.setUpdUser(tokenUser.getId());
+        tempUser.setUpdName(tokenUser.getName());
+        userMapper.updateByPrimaryKeySelective(tempUser);
     }
 }

@@ -34,8 +34,6 @@ public class PortalCommonToolsController {
     @Resource
     private UserMapper userMapper;
 
-    @Autowired
-    private OrgMapper orgMapper;
     /**
      * todo:使用
      * 19-12-11
@@ -96,22 +94,12 @@ public class PortalCommonToolsController {
         HashMap<String,Object> hashMap = new HashMap<>();
         if(AdminCommonConstant.PORTALORGUSERSTATUS.equals(entity.getPortalOrgUserStatus())){
             String orgCode = entity.getOrgCode();
+            Example example = new Example(User.class);
+            Example.Criteria criteria = example.createCriteria();
             if ("0010".equals(orgCode)) {
-                Example example = new Example(User.class);
-                Example.Criteria criteria = example.createCriteria();
                 List<User> userList = userMapper.selectByExample(example);
                 hashMap.put("user",userList);
             }else {
-//                List<OrgDTO> orgDTOS = orgMapper.findOrg(orgCode);
-//                System.out.println(orgDTOS);
-//                List<String> os = new ArrayList<String>();
-//                this.findOrdId(orgDTOS,os);
-//                List<User> userList = userMapper.findUserByOrgCode(os);
-//                if(userList.size()>0){
-//                    hashMap.put("user", userList);
-//                }
-                Example example = new Example(User.class);
-                Example.Criteria criteria = example.createCriteria();
                 criteria.andLike("orgCode",orgCode);
                 List<User> userList = userMapper.selectByExample(example);
                 if(userList.size()>0){

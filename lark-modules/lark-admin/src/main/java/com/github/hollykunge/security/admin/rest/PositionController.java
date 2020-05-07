@@ -60,17 +60,4 @@ public class PositionController extends BaseController<PositionBiz, Position> {
         baseBiz.insertUserPosition(positionIds,userId);
         return new ObjectRestResponse().rel(true).msg("添加成功");
     }
-    
-    /**
-     * 根据岗位ID和密级获取审批人
-     *
-     * @param id 岗位id
-     */
-    //TODO:没有用到的接口
-//    @RequestMapping(value = "/userSecret", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ListRestResponse<List<User>> getUsersBySecret(@RequestParam("id") String id,@RequestParam("secretLevel")String secretLevel) {
-//        List<User> positionUsers = baseBiz.getPositionUsersBySecret(id,secretLevel);
-//        return new ListRestResponse("",positionUsers.size(),positionUsers);
-//    }
 }

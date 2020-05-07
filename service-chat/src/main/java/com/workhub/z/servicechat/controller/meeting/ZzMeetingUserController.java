@@ -45,7 +45,7 @@ public class ZzMeetingUserController {
         res.msg("200");
         String userId = common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo = common.nulToEmptyString(request.getHeader("pid"));
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
         try {
             zzMeetingUser.setCrtHost(userIp);
@@ -76,7 +76,7 @@ public class ZzMeetingUserController {
         res.msg("200");
         String operateId = common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo = common.nulToEmptyString(request.getHeader("pid"));
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
         try {
             this.zzMeetingUserService.delUser(meetId,userId);
@@ -116,7 +116,7 @@ public class ZzMeetingUserController {
         res.msg("200");
         String operateId = common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo = common.nulToEmptyString(request.getHeader("pid"));
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
         try {
             meetingUser.setUpdNo(userNo);
@@ -148,7 +148,7 @@ public class ZzMeetingUserController {
         res.msg("200");
         String operateId = common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo = common.nulToEmptyString(request.getHeader("pid"));
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
         try {
             for(ZzMeetingUser meetingUser : meetingUsers){
@@ -181,7 +181,7 @@ public class ZzMeetingUserController {
         res.data("操作成功");
         String operateId = common.nulToEmptyString(request.getHeader("userId"));
         String userName = URLDecoder.decode(common.nulToEmptyString(request.getHeader("userName")),"UTF-8");
-        String userNo = common.nulToEmptyString(request.getHeader("dnname"));
+        String userNo = common.nulToEmptyString(request.getHeader("pid"));
         String userIp = common.nulToEmptyString(request.getHeader("userHost"));
         try {
             int i = this.zzMeetingUserService.editMeetUser(meetingVo,operateId,userName,userNo,userIp);

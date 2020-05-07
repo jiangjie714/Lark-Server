@@ -1,22 +1,21 @@
-package com.github.hollykunge.security.admin.api.hystrix;
+package com.github.hollykunge.security.gate.feign.hystrix;
 
 import com.github.hollykunge.security.admin.api.authority.FrontPermission;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.admin.api.dto.OrgUser;
-import com.github.hollykunge.security.admin.api.service.AdminUserServiceFeignClient;
+import com.github.hollykunge.security.gate.feign.AdminUserFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
 /**
- * 服务降级
- * @author LARK
+ * @author: zhhongyu
+ * @description: 调用admin服务降级
+ * @since: Create in 13:52 2020/4/28
  */
 @Component
 @Slf4j
-public class AdminUserServiceFallback implements AdminUserServiceFeignClient {
+public class AdminUserHystrix extends BaseFeignFactory<AdminUserHystrix> implements AdminUserFeign {
     @Override
     public List<FrontPermission> getPermissionByUserId(String userId) {
         log.error("ERROR LARK INVOKE: {}, {}", "getPermissionByUserId", userId);
