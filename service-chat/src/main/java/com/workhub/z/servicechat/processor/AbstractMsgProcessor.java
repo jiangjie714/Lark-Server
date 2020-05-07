@@ -136,7 +136,6 @@ public class AbstractMsgProcessor {
                 receiverContact !=null &&
                 senderContact.getType().equals("USER") &&
                 receiverContact.getType().equals("USER")){
-            //todo 改成socket代码规范
             SocketMsgVo msgVo = new SocketMsgVo();
             msgVo.setCode(SocketMsgTypeEnum.SINGLE_MSG);
             msgVo.setSender(receiver);
@@ -148,7 +147,6 @@ public class AbstractMsgProcessor {
             detailVo.setData(readerVo);
             detailVo.setCode(SocketMsgDetailTypeEnum.PRIVATE_RECEIVER_OPEN_BOARD);
             msgVo.setMsg(detailVo);
-            //todo SocketMsgVo加密
             rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
         }
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.workhub.z.servicechat.config.Common.*;
 import static com.workhub.z.servicechat.config.MessageType.*;
 
 @Service
@@ -34,7 +35,7 @@ public class ProcessMsg extends AbstractMsgProcessor {
     public MsgSendStatusVo process(String userId, String msg, String ip) {
         MsgSendStatusVo sendStatusVo = null;
         try{
-            JSONObject jsonObject = JSONObject.parseObject(msg);
+            JSONObject jsonObject = JSONObject.parseObject((String) getJsonStringKeyValue(msg,"messageInfo"));
             String code = jsonObject.getString("code");
             String message = jsonObject.getString("data");
             switch (Integer.parseInt(code)){
@@ -61,7 +62,7 @@ public class ProcessMsg extends AbstractMsgProcessor {
                     break;
                 case MSG_EDIT_READ:
                     JSONObject temp = JSONObject.parseObject(message);
-                        super.deleteNoReadMsg(temp.getString("sender"),temp.getString("reviser"),temp.getString("reviserName"),temp.getString("senderName"));
+                    super.deleteNoReadMsg(temp.getString("sender"),temp.getString("reviser"),temp.getString("reviserName"),temp.getString("senderName"));
                     break;
                 default:
                     // TODO: 2020/2/22 消息类型未知错误
