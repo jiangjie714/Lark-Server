@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.group;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.GroupStatusVo;
@@ -32,6 +33,7 @@ public class ZzGroupStatusController {
     static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
     static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
     static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
+    @Decrypt
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzGroupStatus zzGroupStatus) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -57,6 +59,7 @@ public class ZzGroupStatusController {
     timeEnd 结束时间
     all 如果有次参数且是1 那么查询全部
     */
+    @Decrypt
     @PostMapping("query")
     public TableResultResponse<GroupStatusVo> query(@RequestParam Map params) throws Exception{
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));

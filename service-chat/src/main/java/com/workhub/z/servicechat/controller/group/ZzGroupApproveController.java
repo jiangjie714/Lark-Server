@@ -2,6 +2,8 @@ package com.workhub.z.servicechat.controller.group;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.ChatAdminUserVo;
@@ -62,6 +64,7 @@ public class ZzGroupApproveController {
      * @Date: 2019/9/11
      * msg里sourceType这个参数没有用了（如果有的话），groupType标识的是跨场所，cross表示的是会议类型（如果有的话）
     **/
+    @Decrypt
    @PostMapping("/add")
    public ObjectRestResponse add(@RequestBody String msg) throws Exception{
        //log.info("======================="+msg.length()+"");
@@ -250,6 +253,7 @@ public class ZzGroupApproveController {
     * @Author: zhuqz
     * @Date: 2019/9/11
    **/
+    @Decrypt
     @PutMapping("/approve")
     public ObjectRestResponse approve(@RequestParam Map param) throws Exception{
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));

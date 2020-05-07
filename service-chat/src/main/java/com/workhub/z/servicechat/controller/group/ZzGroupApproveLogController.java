@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.group;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.Common;
@@ -35,6 +36,7 @@ public class ZzGroupApproveLogController {
     static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
     static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     //新增接口
+    @Decrypt
     @PostMapping("/add")
     public ObjectRestResponse add(@RequestBody ZzGroupApproveLog zzGroupApproveLog) throws Exception{
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));

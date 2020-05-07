@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.meeting;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.MeetingVo;
@@ -44,6 +45,7 @@ public class ZzMeetingUserController {
  * @Author: zhuqz
  * @Date: 2019/9/20
 **/
+    @Decrypt
     @PostMapping("addUser")
     public ObjectRestResponse addUser(@RequestBody ZzMeetingUser zzMeetingUser) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -115,6 +117,7 @@ public class ZzMeetingUserController {
      * @Author: zhuqz
      * @Date: 2019/9/20
     **/
+    @Decrypt
     @PutMapping("updateUser")
     public ObjectRestResponse  updateUser(@RequestBody  ZzMeetingUser meetingUser) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -147,6 +150,7 @@ public class ZzMeetingUserController {
      * @Author: zhuqz
      * @Date: 2019/10/21
     **/
+    @Decrypt
     @PutMapping("updateUserList")
     public ObjectRestResponse  updateUserList(@RequestBody List<ZzMeetingUser> meetingUsers) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -179,6 +183,7 @@ public class ZzMeetingUserController {
      * @return
      * @throws Exception
      */
+    @Decrypt
     @PutMapping("editMeetUser")
     public ObjectRestResponse  editMeetUser(@RequestBody MeetingVo meetingVo) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();

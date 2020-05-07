@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.group;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -47,6 +48,7 @@ public class ZzUserGroupController{
         return  objectRestResponse;
     }
 
+    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzUserGroup zzUserGroup){
         zzUserGroup.setId(RandomId.getUUID());
@@ -64,6 +66,7 @@ public class ZzUserGroupController{
         return objectRestResponse;
     }
 
+    @Decrypt
     @PostMapping("/update")
     public ObjectRestResponse update(@RequestBody ZzUserGroup zzUserGroup){
         Integer update = this.zzUserGroupService.update(zzUserGroup);
@@ -89,6 +92,7 @@ public class ZzUserGroupController{
         return objectRestResponse;
     }
 
+    @Decrypt
     @PostMapping("/querygroup")
     //id参数是userid
     public TableResultResponse queryGroupList(@RequestParam("id")String id,
@@ -108,6 +112,7 @@ public class ZzUserGroupController{
                 groupUserListVoPageInfo.getList());
     }
 
+    @Decrypt
     @PostMapping("/usernewmsglist2")
     public ListRestResponse getUserNewMsgList2(@RequestParam("id") String id){
         List<UserNewMsgVo> userNewMsgList = this.zzUserGroupService.getUserNewMsgList2(id);
@@ -125,6 +130,7 @@ public class ZzUserGroupController{
      * @author zhuqz
      * @since 2019-06-11
      */
+    @Decrypt
     @PostMapping("/setUserGroupTop")
     public ObjectRestResponse setUserGroupTop(@RequestParam("userId") String userId, @RequestParam("groupId") String groupId, @RequestParam("topFlg") String topFlg){
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -156,6 +162,7 @@ public class ZzUserGroupController{
      * @author zhuqz
      * @since 2019-06-11
      */
+    @Decrypt
     @PostMapping("/setUserGroupMute")
     public ObjectRestResponse setUserGroupMute(@RequestParam("userId") String userId, @RequestParam("groupId") String groupId, @RequestParam("muteFlg") String muteFlg){
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -182,6 +189,7 @@ public class ZzUserGroupController{
         return  objectRestResponse;
     }
     //测试一下获取最近联系的接口
+    @Decrypt
     @PostMapping("/testGetContactVOList")
     //id参数是userid
     public void testGetContactVOList(@RequestParam("userId")String userId){
