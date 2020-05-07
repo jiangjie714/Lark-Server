@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat;
 
 
+import com.github.hollykunge.security.common.config.DruidConfig;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.redis.RedisUtil;
@@ -16,6 +17,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.request.RequestContextListener;
 
@@ -23,6 +25,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableFeignClients({"com.github.hollykunge.security","com.workhub.z.servicechat.feign"})
 @EnableDiscoveryClient
 @MapperScan("com.workhub.z.servicechat.dao")
+@Import(DruidConfig.class)
 @EnableTransactionManagement
 @EnableCaching
 @ComponentScan({"com.workhub.z.servicechat.*","com.github.hollykunge.security.admin.api.*"})

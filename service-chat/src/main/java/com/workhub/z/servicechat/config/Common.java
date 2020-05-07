@@ -162,7 +162,7 @@ public class Common {
     }
 
     //校验消息密级 type  0只检验到第一个不通过词汇就返回，1全部检验
-    public static MessageSecretValidVo checkMessageSecretQuick(String txt, List<ZzDictionaryWords> zzDictionaryWordsList,String matchType) {
+    public static MessageSecretValidVo checkMessageSecretQuick(String txt, List<ZzDictionaryWords> zzDictionaryWordsList, String matchType) {
         MessageSecretValidVo messageSecretValidVo = new MessageSecretValidVo();
         messageSecretValidVo.setSendStatus("1");
         try {
@@ -713,10 +713,10 @@ public class Common {
      */
     public static void copyObject(Object source, Object dest) throws  Exception{
         //获取属性
-        BeanInfo sourceBean = Introspector.getBeanInfo(source.getClass(), java.lang.Object.class);
+        BeanInfo sourceBean = Introspector.getBeanInfo(source.getClass(), Object.class);
         PropertyDescriptor[] sourceProperty = sourceBean.getPropertyDescriptors();
 
-        BeanInfo destBean = Introspector.getBeanInfo(dest.getClass(), java.lang.Object.class);
+        BeanInfo destBean = Introspector.getBeanInfo(dest.getClass(), Object.class);
         PropertyDescriptor[] destProperty = destBean.getPropertyDescriptors();
 
         try{
@@ -748,10 +748,10 @@ public class Common {
         List<T> resList = new ArrayList<>(16);
         for(T2 source:sources){
             //获取属性
-            BeanInfo sourceBean = Introspector.getBeanInfo(source.getClass(), java.lang.Object.class);
+            BeanInfo sourceBean = Introspector.getBeanInfo(source.getClass(), Object.class);
             PropertyDescriptor[] sourceProperty = sourceBean.getPropertyDescriptors();
 
-            BeanInfo destBean = Introspector.getBeanInfo(targetClass, java.lang.Object.class);
+            BeanInfo destBean = Introspector.getBeanInfo(targetClass, Object.class);
             PropertyDescriptor[] destProperty = destBean.getPropertyDescriptors();
             T dest = targetClass.newInstance();
             try{
@@ -782,7 +782,7 @@ public class Common {
      * @param oriList 原来人员列表
      * @param nowList 最新人员列表
      */
-    public  static TeamMemberChangeListVo  teamMemberChangeInf(List<String> oriList,List<String> nowList){
+    public  static TeamMemberChangeListVo teamMemberChangeInf(List<String> oriList, List<String> nowList){
         TeamMemberChangeListVo vo = new TeamMemberChangeListVo();
         List<String> addList = new ArrayList<>();
         List<String> delList = new ArrayList<>();

@@ -32,6 +32,7 @@ public class OperateLogAspect {
     //切入点 类似注入一个operateLogAspect 同时定义了哪些类的方法被切入
     @Pointcut("execution(public * com.workhub.z.servicechat.service.impl..*.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzLogServiceImpl.*(..)) " +
+            "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzRecentServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzPrivateMsgServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMessageInfoServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupStatusServiceImpl.*(..)) " +

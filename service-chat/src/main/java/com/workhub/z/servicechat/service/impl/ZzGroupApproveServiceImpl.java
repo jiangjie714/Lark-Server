@@ -90,11 +90,11 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
             String message = jsonObject.getString("data");
             JSONObject groupJson = JSONObject.parseObject(message);
             String type = "";//类型：或者0代表群，1会议
-            if((MessageType.CREATE_MEETING+"").equals(code)){
+            if(("901").equals(code)){
                 //会议
                 type = MessageType.FLOW_LOG_MEET;
             }
-            if((MessageType.GROUP_CREATE+"").equals(code)){
+            if(("3").equals(code)){
                 //群
                 type = MessageType.FLOW_LOG_GROUP;
             }
@@ -109,13 +109,14 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
                         msgVo.setCode(SocketMsgTypeEnum.SINGLE_MSG);
                         msgVo.setReceiver(userInfo0.getId());
                         SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
-                        for(SocketMsgDetailTypeEnum senum:SocketMsgDetailTypeEnum.values()){
+                        /*for(SocketMsgDetailTypeEnum senum:SocketMsgDetailTypeEnum.values()){
                             if(senum.getCode().equals(code)){
                                 detailVo.setCode(senum);
                                 break;
                             }
 
-                        }
+                        }*/
+                        detailVo.setCode(SocketMsgDetailTypeEnum.GROUP_CREATE);
                         detailVo.setData(message);
                         msgVo.setMsg(detailVo);
                         rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
