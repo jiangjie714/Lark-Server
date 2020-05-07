@@ -21,10 +21,10 @@ public class LarkTaskVO implements Serializable {
     private String projectCode;
     //任务列id
     private String stagesCode;
-    //项目名称
+    //任务名称
     private String name;
     //默认父任务
-    private String pCode;
+    private String pCode="0";
     //紧急程度
     private Integer pri;
     //项目状态

@@ -223,7 +223,15 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     }
 
 
-
-
+    /**
+     * 根据用户id 获取所参与项目的权限资源列表
+     * @param userId 用户id
+     * @return list userPermission
+     */
+    @RequestMapping(value = "/permission",method = RequestMethod.GET)
+    @ResponseBody
+    public ObjectRestResponse<LarkProjectDto> getProjectResourceToUser(@RequestParam("userId")String userId){
+        return larkProjectBiz.getProjectResourceToUser(userId);
+    }
 }
 

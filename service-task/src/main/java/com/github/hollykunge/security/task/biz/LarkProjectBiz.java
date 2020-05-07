@@ -215,4 +215,14 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
         larkProjectMemberMapper.insertSelective(larkProjectMember);
         return project;
     }
+
+    /**
+     * 根据用户id 获取所参与项目的权限资源列表
+     * @param userId
+     * @return
+     */
+    public ObjectRestResponse<LarkProjectDto> getProjectResourceToUser(String userId) {
+        List<LarkProjectDto> projectDtos = larkProjectMapper.getProjectResourceToUser(userId);
+        return new ObjectRestResponse<>().data(projectDtos).rel(true);
+    }
 }

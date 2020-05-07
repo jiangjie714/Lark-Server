@@ -27,4 +27,11 @@ public interface LarkProjectMapper extends Mapper<LarkProject> {
      * @return
      */
     List<LarkProject> getProjectByUserId(@Param("userId") String userId);
+
+    /**
+     * 根据用户id 获取所参与项目的权限资源列表
+     * @param userId
+     * @return
+     */
+    List<LarkProjectDto> getProjectResourceToUser(@Param("userId") String userId);
 }

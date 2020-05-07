@@ -43,52 +43,6 @@
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
 
-  <resultMap id="LarkProjectDtoMap" type="com.github.hollykunge.security.task.dto.LarkProjectDto" >
-    <id column="ID" property="id" jdbcType="VARCHAR" />
-    <result column="COVER" property="cover" jdbcType="VARCHAR" />
-    <result column="NAME" property="name" jdbcType="VARCHAR" />
-    <result column="CODE" property="code" jdbcType="VARCHAR" />
-    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
-    <result column="ACCESS_CONTROL_TYPE" property="accessControlType" jdbcType="VARCHAR" />
-    <result column="WHITE_LIST" property="whiteList" jdbcType="VARCHAR" />
-    <result column="PROJECT_ORDER" property="projectOrder" jdbcType="INTEGER" />
-    <result column="DELETED" property="deleted" jdbcType="INTEGER" />
-    <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR" />
-    <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL" />
-    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
-    <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
-    <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
-    <result column="PRIVATED" property="privated" jdbcType="DECIMAL" />
-    <result column="PREFIX" property="prefix" jdbcType="VARCHAR" />
-    <result column="OPEN_PREFIX" property="openPrefix" jdbcType="INTEGER" />
-    <result column="ARCHIVE" property="archive" jdbcType="INTEGER" />
-    <result column="ARCHIVE_TIME" property="archiveTime" jdbcType="TIMESTAMP" />
-    <result column="OPEN_BEGIN_TIME" property="openBeginTime" jdbcType="VARCHAR" />
-    <result column="OPEN_TASK_PRIVATED" property="openTaskPrivated" jdbcType="INTEGER" />
-    <result column="TASK_BOARD_THEME" property="taskBoardTheme" jdbcType="VARCHAR" />
-    <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
-    <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
-    <result column="AUTO_UPDATE_SCHEDULE" property="autoUpdateSchedule" jdbcType="INTEGER" />
-    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
-    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
-    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
-    <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />
-    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
-    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
-    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
-    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
-    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
-    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
-    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
-    <result column="IS_OWNER" property="isOwner" jdbcType="INTEGER" />
-    <result column="MEMBER_CODE" property="projectUserId" jdbcType="VARCHAR" />
-    <result column="AU_NAME" property="projectUserName" jdbcType="VARCHAR" />
-    <result column="P_ID" property="projectUserPid" jdbcType="VARCHAR" />
-    <result column="ORG_CODE" property="projectUserOrgCode" jdbcType="VARCHAR" />
-    <result column="ORG_NAME" property="projectUserOrgCodeName" jdbcType="VARCHAR" />
-    <result column="O_EMAIL" property="oEmail" jdbcType="VARCHAR" />
-  </resultMap>
-
   <select id="getProjectByUserId" resultMap="BaseResultMap">
     SELECT
     pro.ID,pro.COVER,pro.NAME,pro.CODE,pro.DESCRIPTION,pro.ACCESS_CONTROL_TYPE,pro.WHITE_LIST,pro.PROJECT_ORDER,pro.DELETED,
@@ -109,6 +63,16 @@
     order by pro.crt_time
   </select>
 
+  <resultMap id="LarkProjectDtoMap" type="com.github.hollykunge.security.task.dto.LarkProjectDto"
+             extends="BaseResultMap">
+    <result column="IS_OWNER" property="isOwner" jdbcType="INTEGER" />
+    <result column="MEMBER_CODE" property="projectUserId" jdbcType="VARCHAR" />
+    <result column="AU_NAME" property="projectUserName" jdbcType="VARCHAR" />
+    <result column="P_ID" property="projectUserPid" jdbcType="VARCHAR" />
+    <result column="ORG_CODE" property="projectUserOrgCode" jdbcType="VARCHAR" />
+    <result column="ORG_NAME" property="projectUserOrgCodeName" jdbcType="VARCHAR" />
+    <result column="O_EMAIL" property="oEmail" jdbcType="VARCHAR" />
+  </resultMap>
   <select id="getProjectOwner" resultMap="LarkProjectDtoMap">
     select p.*,au.name AU_NAME,
     au.P_ID,au.ORG_CODE,au.ORG_NAME,au.O_EMAIL from (
@@ -139,5 +103,52 @@
       lark_admin.ADMIN_USER au
       on
       p.MEMBER_CODE=au.id
+  </select>
+
+  <resultMap id="GetProjectResource" type="com.github.hollykunge.security.task.dto.LarkProjectDto"
+             extends="BaseResultMap">
+    <id column="role_id" property="roleId" jdbcType="VARCHAR"/>
+    <result column="role_code" property="roleCode" jdbcType="VARCHAR"/>
+    <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+    <collection property="elementList" ofType="com.github.hollykunge.security.task.dto.LarkTaskElement"
+                javaType="java.util.ArrayList">
+      <id column="element_task_id" property="elementTaskId" jdbcType="VARCHAR"/>
+      <result column="element_task_code" property="elementTaskCode" jdbcType="VARCHAR"/>
+      <result column="menu_id" property="menuId" jdbcType="VARCHAR"/>
+      <result column="method" property="method" jdbcType="VARCHAR"/>
+      <result column="element_task_name" property="elementTaskName" jdbcType="VARCHAR"/>
+      <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+      <result column="path" property="path" jdbcType="VARCHAR"/>
+      <result column="element_task_type" property="elementTaskType" jdbcType="VARCHAR"/>
+      <result column="uri" property="uri" jdbcType="VARCHAR"/>
+    </collection>
+  </resultMap>
+  <select id="getProjectResourceToUser" resultMap="GetProjectResource">
+    select
+      lp.*,
+      lpm.is_owner,lpm.member_code,
+      aet.id element_task_id,aet.code element_task_code,aet.menu_id,aet.method,aet.name element_task_name,
+      aet.parent_id,aet.path,aet.type element_task_type,aet.uri,
+      art.id role_id,art.code role_code ,art.name role_name
+      from
+      lark_project lp
+      left join
+      lark_project_member lpm
+      on
+      lp.id = lpm.project_code
+      left join
+      LARK_ADMIN.admin_resourcerolemap_task ast
+      on
+      lpm.authorize = ast.role_id
+      left join
+      LARK_ADMIN.admin_element_task aet
+      on
+      ast.resource_id = aet.id
+      left join
+      LARK_ADMIN.admin_role_task art
+      on
+      ast.role_id = art.id
+      where
+      lpm.member_code = #{userId}
   </select>
 </mapper>

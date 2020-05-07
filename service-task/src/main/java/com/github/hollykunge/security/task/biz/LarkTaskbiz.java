@@ -12,7 +12,6 @@ import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import com.github.hollykunge.security.task.mapper.LarkTaskMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper;
-import com.github.hollykunge.security.task.util.EasyExcelUtil;
 import com.github.hollykunge.security.task.vo.LarkTaskVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -155,5 +154,15 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
     public ObjectRestResponse importExcel(MultipartFile file, LarkTaskbiz larkTaskbiz) {
         //EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
         return new ObjectRestResponse().rel(true).msg("导入成功！");
+    }
+
+    /**
+     * 复制任务
+     * @param taskId
+     * @return
+     * todo 没想好怎么写
+     */
+    public ObjectRestResponse<LarkTask> copyTaskInfo(String taskId) {
+        return null;
     }
 }

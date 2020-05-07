@@ -113,7 +113,8 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
     @RequestMapping(value = "/getLarkTaskList",method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<List<LarkTaskDto>> getLarkTaskList(
-            @RequestBody LarkTaskVO larkTaskVO){
+            @RequestBody LarkTaskVO larkTaskVO
+            ){
         return larkTaskbiz.getLarkTaskList(larkTaskVO);
     }
 
@@ -138,7 +139,7 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
      * @author fansq
      * @deprecation 标签页面 数据显示接口拆分 第二步
      * @return 返回任务和具体标签的对应关系
-     * todo 其实不推荐使用map传参（可以做个参数数据模型）  维护很麻烦 不能直观的看到参数列表 swagger也识别不了map 我看都再用 保持队形
+     * todo 其实不推荐使用map传参（可以做个参数数据模型）  维护很麻烦 不能直观的看到参数列表 swagger也识别不了map 分页的query需要map类型
      */
     @RequestMapping(value = "/getTaskAndTag",method = RequestMethod.GET)
     @ResponseBody
@@ -159,5 +160,20 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
     public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
         return larkTaskbiz.importExcel(file,larkTaskbiz);
     }
+
+    /**
+     * 复制任务
+     * @param taskId
+     * @return 复制的任务
+     */
+    @RequestMapping(value = "",method = RequestMethod.GET)
+    @ResponseBody
+    public ObjectRestResponse<LarkTask> copyTaskInfo(@RequestParam("taskId") String taskId){
+        return larkTaskbiz.copyTaskInfo(taskId);
+    }
+
+    /**
+     * 移动任务就是 update 任务 的 任务列id  task-> stagesCode
+     */
 }
 

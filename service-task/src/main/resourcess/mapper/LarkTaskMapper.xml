@@ -103,17 +103,16 @@
     </collection>
     <collection property="larkTaskList" ofType="com.github.hollykunge.security.task.dto.LarkTaskDto"
                 javaType="java.util.ArrayList"
-                column="{stagesCode=stag_code,pCode=id,userId=USER_ID}"
+                column="{params.stagesCode=stag_code,params.pCode=id}"
                 select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getLarkTaskList">
     </collection>
     <collection property="nums" ofType="java.lang.String"
                 select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getNums"
-                column="{taskCode=task_code}">
+                column="{taskCode=id}">
     </collection>
   </resultMap>
 
-  <select id="getLarkTaskList" resultMap="TaskListBaseResultMap"
-          parameterType="com.github.hollykunge.security.task.vo.LarkTaskVO">
+  <select id="getLarkTaskList" resultMap="TaskListBaseResultMap">
  select s.*,ltm.memeber_code from(
     select lt.* ,au.id USER_ID,au.name USER_NAME,au.avatar AVATAR,ltt.name TAG_NAME,ltt.color TAG_COLOR,ltt.id TAG_ID,
     ltwt.id work_time_id ,ltwt.member_code work_time_member_code,
@@ -138,34 +137,34 @@
     on
     lt.id = ltwt.task_code
     where
-    lt.stag_code=#{stagesCode}
+    lt.stag_code=#{params.stagesCode,jdbcType=VARCHAR}
     and
-    lt.pcode = #{pCode}
+    lt.pcode = #{params.pCode,jdbcType=VARCHAR}
     and
     lt.deleted=0
-    <if test="larkTaskVo.name != null || larkTaskVo.name != ''" >
-        and lt.name '%'||  #{larkTaskVo.name} || '%'
+    <if test="params.name != null and params.name != ''" >
+        and lt.name like '%'||#{params.name,jdbcType=VARCHAR}||'%'
     </if>
-    <if test="larkTaskVo.done != null || larkTaskVo.done != ''" >
-        and lt.done = #{larkTaskVo.done}
+    <if test="params.done != null and params.done != ''" >
+        and lt.done = #{params.done,jdbcType=INTEGER}
     </if>
-    <if test="larkTaskVo.pri != null || larkTaskVo.pri != ''" >
-        and lt.pri = #{larkTaskVo.pri}
+    <if test="params.pri != null and params.pri != ''" >
+        and lt.pri = #{params.pri,jdbcType=INTEGER}
     </if>
-    <if test="larkTaskVo.status != null || larkTaskVo.status != ''" >
-        and lt.status = #{larkTaskVo.status}
+    <if test="params.status != null and params.status != ''" >
+        and lt.status = #{params.status,jdbcType=VARCHAR}
     </if>
-    <if test="larkTaskVo.doneTime != null || larkTaskVo.doneTime != ''" >
-        and  to_char(lt.done_time,'yyyy-MM-dd') = #{larkTaskVo.doneTime}
+    <if test="params.doneTime != null and params.doneTime != ''" >
+        and  to_char(lt.done_time,'yyyy-MM-dd') = #{params.doneTime,jdbcType=VARCHAR}
     </if>
-    <if test="larkTaskVo.crtTime != null || larkTaskVo.crtTime != ''" >
-        and  to_char(lt.crt_time,'yyyy-MM-dd') = #{larkTaskVo.crtTime}
+    <if test="params.crtTime != null and params.crtTime != ''" >
+        and  to_char(lt.crt_time,'yyyy-MM-dd') = #{params.crtTime,jdbcType=VARCHAR}
     </if>
-    <if test="larkTaskVo.beginTime != null || larkTaskVo.begin_time != ''" >
-        and  to_char(lt.begin_time,'yyyy-MM-dd') = #{larkTaskVo.beginTime}
+    <if test="params.beginTime != null and params.beginTime != ''" >
+        and  to_char(lt.begin_time,'yyyy-MM-dd') = #{params.beginTime,jdbcType=VARCHAR}
     </if>
-    <if test="larkTaskVo.endTime != null || larkTaskVo.endTime != ''" >
-        and  to_char(lt.end_time,'yyyy-MM-dd') = #{larkTaskVo.endTime}
+    <if test="params.endTime != null and params.endTime != ''" >
+        and  to_char(lt.end_time,'yyyy-MM-dd') = #{params.endTime,jdbcType=VARCHAR}
     </if>
     order by lt.crt_time desc
     ) s
@@ -175,27 +174,27 @@
     s.id = ltm.task_code
     where
     s.task_private='0'
-      <if test="larkTaskVo.executors != null and larkTaskVo.executors.size >0" >
+      <if test="params.executors != null and params.executors.size >0" >
           and ltm.member_code in
-          <foreach item="executor" index="index" collection="larkTaskVo.executors"
+          <foreach item="executor" index="index" collection="params.executors"
                    open="(" separator="," close=")">
-              #{executor}
+              #{executor,jdbcType=VARCHAR}
           </foreach>
           and ltm.is_executor='0'
       </if>
-      <if test="larkTaskVo.creators != null and larkTaskVo.creators.size >0" >
+      <if test="params.creators != null and params.creators.size >0" >
           and ltm.member_code in
-          <foreach item="executor" index="index" collection="larkTaskVo.executors"
+          <foreach item="creators" index="index" collection="params.creators"
                    open="(" separator="," close=")">
-              #{executor}
+              #{creators,jdbcType=VARCHAR}
           </foreach>
           and ltm.is_owner='0'
       </if>
-      <if test="larkTaskVo.joiners != null || larkTaskVo.joiners != ''" >
+      <if test="params.joiners != null and params.joiners.size >0" >
           and ltm.member_code in
-          <foreach item="executor" index="index" collection="larkTaskVo.executors"
+          <foreach item="joiners" index="index" collection="params.joiners"
                    open="(" separator="," close=")">
-              #{executor}
+              #{joiners,jdbcType=VARCHAR}
           </foreach>
           and ltm.attr1='0'
       </if>
@@ -210,7 +209,7 @@
     pcode=#{id}
   </select>
   <select id="getNums" resultType="java.lang.String">
-      select sum(num) from lark_task_work_time where task_code=#{taskCode};
+      select sum(num) from lark_task_work_time where task_code=#{taskCode}
   </select>
 
   <resultMap id="GetTaskAndTagMap" type="com.github.hollykunge.security.task.dto.LarkTaskDto"

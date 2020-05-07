@@ -30,7 +30,7 @@ public interface LarkTaskMapper extends Mapper<LarkTask> {
      * @param larkTaskVO
      * @return
      */
-    List<LarkTaskDto> getLarkTaskList(@Param("larkTaskVo") LarkTaskVO larkTaskVO);
+    List<LarkTaskDto> getLarkTaskList(@Param("params") LarkTaskVO larkTaskVO);
 
     TaskNum getTotalAndComoleted(@Param("id") String id);
     String getNums(@Param("taskCode") String taskCode);

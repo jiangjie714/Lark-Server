@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author  fansq
@@ -92,6 +93,7 @@ public class LarkProjectDto implements Serializable {
 
     private String attr4;
 
+    //projectUserId -> avatar  初始化项目信息时 存储用户数据使用
     private String projectUserId;
     private String projectUserName;
     private String projectUserOrgCode;
@@ -100,4 +102,10 @@ public class LarkProjectDto implements Serializable {
     private String oEmail;
     private Integer isOwner;
     private String avatar;
+
+    //elementList -> roleName 初始化项目信息时 存储权限资源使用
+    private List<LarkTaskElement> elementList;
+    private String roleId;
+    private String roleCode;
+    private String roleName;
 }
