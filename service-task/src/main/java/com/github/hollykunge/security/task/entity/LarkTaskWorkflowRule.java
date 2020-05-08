@@ -3,8 +3,8 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
-import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Table;
 
 /**
  * @author  fansq
@@ -19,18 +19,18 @@ public class LarkTaskWorkflowRule extends BaseEntity {
     private String code;
 
     @Column(name = "TYPE")
-    private Short type;
+    private Integer type;
 
     @Column(name = "OBJECT_CODE")
     private String objectCode;
 
     @Column(name = "ACTION")
-    private Short action;
+    private Integer action;
 
     @Column(name = "WORKFLOW_CODE")
     private String workflowCode;
 
     @Column(name = "SORT")
-    private Short sort;
+    private Integer sort;
 
 }

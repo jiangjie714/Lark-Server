@@ -3,8 +3,8 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
-import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Table;
 
 /**
  * @author  fansq
@@ -19,7 +19,7 @@ public class LarkProjectAuth extends BaseEntity {
     private String title;
 
     @Column(name = "STATUS")
-    private Short status;
+    private Integer status;
 
     @Column(name = "SORT")
     private Integer sort;
@@ -28,7 +28,7 @@ public class LarkProjectAuth extends BaseEntity {
     private String descption;
 
     @Column(name = "CREATE_BY")
-    private Long createBy;
+    private String createBy;
 
     @Column(name = "CREATE_AT")
     private String createAt;
@@ -37,7 +37,7 @@ public class LarkProjectAuth extends BaseEntity {
     private String organizationCode;
 
     @Column(name = "IS_DEFAULT")
-    private Short isDefault;
+    private Integer isDefault;
 
     @Column(name = "TYPE")
     private String type;

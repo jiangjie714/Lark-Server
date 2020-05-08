@@ -3,9 +3,10 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author  fansq
@@ -35,10 +36,10 @@ public class LarkProject extends BaseEntity {
     private String whiteList;
 
     @Column(name = "PROJECT_ORDER")
-    private Long projectOrder;
+    private Integer projectOrder;
 
     @Column(name = "DELETED")
-    private Short deleted;
+    private Integer deleted;
 
     @Column(name = "TEMPLATE_CODE")
     private String templateCode;
@@ -50,28 +51,28 @@ public class LarkProject extends BaseEntity {
     private String organizationCode;
 
     @Column(name = "DELETED_TIME")
-    private String deletedTime;
+    private Date deletedTime;
 
     @Column(name = "PRIVATED")
-    private Short privated;
+    private Integer privated;
 
     @Column(name = "PREFIX")
     private String prefix;
 
     @Column(name = "OPEN_PREFIX")
-    private Short openPrefix;
+    private Integer openPrefix;
 
     @Column(name = "ARCHIVE")
-    private Short archive;
+    private Integer archive;
 
     @Column(name = "ARCHIVE_TIME")
-    private String archiveTime;
+    private Date archiveTime;
 
     @Column(name = "OPEN_BEGIN_TIME")
     private String openBeginTime;
 
     @Column(name = "OPEN_TASK_PRIVATED")
-    private Short openTaskPrivated;
+    private Integer openTaskPrivated;
 
     @Column(name = "TASK_BOARD_THEME")
     private String taskBoardTheme;
@@ -83,6 +84,6 @@ public class LarkProject extends BaseEntity {
     private Date endTime;
 
     @Column(name = "AUTO_UPDATE_SCHEDULE")
-    private Short autoUpdateSchedule;
+    private Integer autoUpdateSchedule;
 
 }

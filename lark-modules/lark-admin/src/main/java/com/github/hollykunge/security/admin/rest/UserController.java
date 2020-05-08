@@ -16,6 +16,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
+import com.github.hollykunge.security.common.vo.RpcUserInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -272,5 +273,19 @@ public class UserController extends BaseController<UserBiz, User> {
     @ResponseBody
     public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
         return userBiz.importExcel(file,userBiz);
+    }
+
+    /**
+     * todo 暂时不用
+     * fansq
+     * 20-4-16
+     * admin服务给task服务提供成员信息获取
+     * @param userIdList
+     * @return
+     */
+    @RequestMapping(value = "/getUserInfo",method = RequestMethod.POST)
+    @ResponseBody
+    public ObjectRestResponse<List<RpcUserInfo>> getUserInfo(@RequestBody List<String> userIdList){
+        return userBiz.getUserInfo(userIdList);
     }
 }

@@ -9,28 +9,28 @@
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
     <result column="NAME" property="name" jdbcType="VARCHAR" />
-    <result column="PRI" property="pri" jdbcType="DECIMAL" />
+    <result column="PRI" property="pri" jdbcType="INTEGER" />
     <result column="EXECUTE_STATUS" property="executeStatus" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="DONE_USER" property="doneUser" jdbcType="VARCHAR" />
     <result column="DONE_TIME" property="doneTime" jdbcType="TIMESTAMP" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="ASSIGN_TO" property="assignTo" jdbcType="VARCHAR" />
-    <result column="DELETED" property="deleted" jdbcType="DECIMAL" />
+    <result column="DELETED" property="deleted" jdbcType="INTEGER" />
     <result column="STAG_CODE" property="stagCode" jdbcType="VARCHAR" />
     <result column="TASK_TAG" property="taskTag" jdbcType="VARCHAR" />
-    <result column="DONE" property="done" jdbcType="DECIMAL" />
+    <result column="DONE" property="done" jdbcType="INTEGER" />
     <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
     <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
     <result column="REMIND_TIME" property="remindTime" jdbcType="TIMESTAMP" />
     <result column="PCODE" property="pcode" jdbcType="VARCHAR" />
-    <result column="SORT" property="sort" jdbcType="DECIMAL" />
-    <result column="TASK_LIKE" property="taskLike" jdbcType="DECIMAL" />
-    <result column="STAR" property="star" jdbcType="DECIMAL" />
-    <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
-    <result column="TASK_PRIVATE" property="taskPrivate" jdbcType="DECIMAL" />
-    <result column="ID_NUM" property="idNum" jdbcType="DECIMAL" />
-    <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+    <result column="TASK_LIKE" property="taskLike" jdbcType="INTEGER" />
+    <result column="STAR" property="star" jdbcType="INTEGER" />
+    <result column="DELETED_TIME" property="deletedTime" jdbcType="TIMESTAMP" />
+    <result column="TASK_PRIVATE" property="taskPrivate" jdbcType="INTEGER" />
+    <result column="ID_NUM" property="idNum" jdbcType="VARCHAR" />
+    <result column="SCHEDULE" property="schedule" jdbcType="INTEGER" />
     <result column="VERSION_CODE" property="versionCode" jdbcType="VARCHAR" />
     <result column="FEATURES_CODE" property="featuresCode" jdbcType="VARCHAR" />
     <result column="WORK_TIME" property="workTime" jdbcType="DECIMAL" />
@@ -45,7 +45,199 @@
     <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
-    <result column="DESCRIPTION" property="description" jdbcType="CLOB" />
-    <result column="PATH" property="path" jdbcType="CLOB" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="PATH" property="path" jdbcType="VARCHAR" />
   </resultMap>
+
+  <resultMap id="GetTaskBaseResultMap" type="com.github.hollykunge.security.task.dto.LarkTaskDto"
+             extends="BaseResultMap">
+    <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getTaskByUserIdAndDone" resultMap="GetTaskBaseResultMap">
+    select * ,lp.name as PROJECT_NAME from lark_task lt
+      inner join lark_project lp
+      on lt.project_code = lp.id
+      inner join lark_task_member ltm
+      on lt.id = ltm.task_code
+      where
+      lt.done = #{done}
+      and
+      ltm.memeber_code=#{userId}
+      <if test="num == '3' || num == 3">
+        and
+        ltm.is_executor='0'
+      </if>
+      <if test="num == '2' || num == 2">
+        and
+        ltm.is_owner='0'
+      </if>
+      <if test="num == '1' || num == 1">
+        and
+        ltm.attr1='0'
+      </if>
+  </select>
+
+
+  <resultMap id="TaskListBaseResultMap" type="com.github.hollykunge.security.task.dto.LarkTaskDto" extends="BaseResultMap">
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="AVATAR" property="avatar" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <collection property="larkTaskTagList" ofType="com.github.hollykunge.security.task.dto.LarkTaskTagDto"
+                javaType="java.util.ArrayList">
+        <id column="TAG_ID" property="id" jdbcType="VARCHAR" />
+        <result column="TAG_NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="TAG_COLOR" property="color" jdbcType="VARCHAR"/>
+    </collection>
+    <collection property="larkTaskWorkTimeDtoList" ofType="com.github.hollykunge.security.task.dto.LarkTaskWorkTimeDto"
+        javaType="java.util.ArrayList">
+        <id column="work_time_id" property="id" jdbcType="VARCHAR"/>
+        <result column="work_time_member_code" property="memberCode" jdbcType="VARCHAR"/>
+        <result column="work_time_crt_time" property="crtTime" jdbcType="TIMESTAMP"/>
+        <result column="work_time_content" property="content" jdbcType="VARCHAR"/>
+        <result column="work_time_begin_time" property="beginTime" jdbcType="TIMESTAMP"/>
+        <result column="work_time_num" property="num" jdbcType="VARCHAR"/>
+    </collection>
+    <collection property="taskNum" ofType="com.github.hollykunge.security.task.dto.TaskNum"
+        select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getTotalAndComoleted"
+        column="id">
+    </collection>
+    <collection property="larkTaskList" ofType="com.github.hollykunge.security.task.dto.LarkTaskDto"
+                javaType="java.util.ArrayList"
+                column="{params.stagesCode=stag_code,params.pCode=id}"
+                select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getLarkTaskList">
+    </collection>
+    <collection property="nums" ofType="java.lang.String"
+                select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getNums"
+                column="{taskCode=id}">
+    </collection>
+  </resultMap>
+
+  <select id="getLarkTaskList" resultMap="TaskListBaseResultMap">
+ select s.*,ltm.memeber_code from(
+    select lt.* ,au.id USER_ID,au.name USER_NAME,au.avatar AVATAR,ltt.name TAG_NAME,ltt.color TAG_COLOR,ltt.id TAG_ID,
+    ltwt.id work_time_id ,ltwt.member_code work_time_member_code,
+    ltwt.crt_time work_time_crt_time ,ltwt.content work_time_content,
+    ltwt.begin_time work_time_begin_time,ltwt.num work_time_num
+    from
+    lark_task lt
+    LEFT join
+    LARK_ADMIN.ADMIN_USER au
+    on
+    lt.crt_user = au.id
+    LEFT join
+    lark_task_to_tag lttt
+    on
+    lt.id = lttt.task_code
+    LEFT join
+    lark_task_tag ltt
+    on
+    lttt.tag_code = ltt.id
+    left join
+    lark_task_work_time ltwt
+    on
+    lt.id = ltwt.task_code
+    where
+    lt.stag_code=#{params.stagesCode,jdbcType=VARCHAR}
+    and
+    lt.pcode = #{params.pCode,jdbcType=VARCHAR}
+    and
+    lt.deleted=0
+    <if test="params.name != null and params.name != ''" >
+        and lt.name like '%'||#{params.name,jdbcType=VARCHAR}||'%'
+    </if>
+    <if test="params.done != null and params.done != ''" >
+        and lt.done = #{params.done,jdbcType=INTEGER}
+    </if>
+    <if test="params.pri != null and params.pri != ''" >
+        and lt.pri = #{params.pri,jdbcType=INTEGER}
+    </if>
+    <if test="params.status != null and params.status != ''" >
+        and lt.status = #{params.status,jdbcType=VARCHAR}
+    </if>
+    <if test="params.doneTime != null and params.doneTime != ''" >
+        and  to_char(lt.done_time,'yyyy-MM-dd') = #{params.doneTime,jdbcType=VARCHAR}
+    </if>
+    <if test="params.crtTime != null and params.crtTime != ''" >
+        and  to_char(lt.crt_time,'yyyy-MM-dd') = #{params.crtTime,jdbcType=VARCHAR}
+    </if>
+    <if test="params.beginTime != null and params.beginTime != ''" >
+        and  to_char(lt.begin_time,'yyyy-MM-dd') = #{params.beginTime,jdbcType=VARCHAR}
+    </if>
+    <if test="params.endTime != null and params.endTime != ''" >
+        and  to_char(lt.end_time,'yyyy-MM-dd') = #{params.endTime,jdbcType=VARCHAR}
+    </if>
+    order by lt.crt_time desc
+    ) s
+    inner join
+    lark_task_member ltm
+    on
+    s.id = ltm.task_code
+    where
+    s.task_private='0'
+      <if test="params.executors != null and params.executors.size >0" >
+          and ltm.member_code in
+          <foreach item="executor" index="index" collection="params.executors"
+                   open="(" separator="," close=")">
+              #{executor,jdbcType=VARCHAR}
+          </foreach>
+          and ltm.is_executor='0'
+      </if>
+      <if test="params.creators != null and params.creators.size >0" >
+          and ltm.member_code in
+          <foreach item="creators" index="index" collection="params.creators"
+                   open="(" separator="," close=")">
+              #{creators,jdbcType=VARCHAR}
+          </foreach>
+          and ltm.is_owner='0'
+      </if>
+      <if test="params.joiners != null and params.joiners.size >0" >
+          and ltm.member_code in
+          <foreach item="joiners" index="index" collection="params.joiners"
+                   open="(" separator="," close=")">
+              #{joiners,jdbcType=VARCHAR}
+          </foreach>
+          and ltm.attr1='0'
+      </if>
+  </select>
+
+  <select id="getTotalAndComoleted" resultType="com.github.hollykunge.security.task.dto.TaskNum">
+    select
+    COUNT(id) total,
+    COUNT(CASE WHEN status = 1 THEN 1 ELSE NULL END) completed
+    from lark_task
+    where
+    pcode=#{id}
+  </select>
+  <select id="getNums" resultType="java.lang.String">
+      select sum(num) from lark_task_work_time where task_code=#{taskCode}
+  </select>
+
+  <resultMap id="GetTaskAndTagMap" type="com.github.hollykunge.security.task.dto.LarkTaskDto"
+            extends="BaseResultMap">
+      <collection property="larkTaskTagList" ofType="com.github.hollykunge.security.task.dto.LarkTaskTagDto"
+                  javaType="java.util.ArrayList">
+          <id column="TAG_ID" property="id" jdbcType="VARCHAR" />
+          <result column="TAG_NAME" property="name" jdbcType="VARCHAR"/>
+          <result column="TAG_COLOR" property="color" jdbcType="VARCHAR"/>
+      </collection>
+  </resultMap>
+  <select id="getTaskAndTag">
+    select
+      lt.*,
+      ltt.id TAG_ID ,ltt.name TAG_NAME,ltt.color TAG_COLOR
+    from
+      lark_task lt
+    left join
+      lark_task_to_tag lttt
+    on
+      lt.id=lttt.task_code
+    left join
+      lark_task_tag ltt
+    on
+      lttt.tag_code = ltt.id
+    where
+      ltt.project_code=#{projectCode}
+    and
+      lttt.task_code=#{taskCode}
+  </select>
 </mapper>
