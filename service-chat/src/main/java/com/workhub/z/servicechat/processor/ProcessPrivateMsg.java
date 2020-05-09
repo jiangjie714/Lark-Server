@@ -106,6 +106,12 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor {
                     //存储消息信息（新）
                     msgId = super.saveMessageInfo("USER", ip, msg);
                 }
+                if (Common.isEmpty(msgId))
+                {
+                    msgSendStatusVo.setStatus(false);
+                    msgSendStatusVo.setContent("未发现接收人id，请联系管理员");
+                    return msgSendStatusVo;
+                }
                 msgSendStatusVo.setId(msgId);
                 //把前端的消息id替换成后端的id
                 String newMsg = Common.setJsonStringKeyValue(msg,"data.id",msgId);

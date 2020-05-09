@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.processor;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.workhub.z.servicechat.VO.MsgSendStatusVo;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.service.ZzGroupFileService;
@@ -31,11 +32,10 @@ public class ProcessMsg extends AbstractMsgProcessor {
     /**
      * 消息处理入口
      */
-
     public MsgSendStatusVo process(String userId, String msg, String ip) {
         MsgSendStatusVo sendStatusVo = null;
         try{
-            JSONObject jsonObject = JSONObject.parseObject((String) getJsonStringKeyValue(msg,"messageInfo"));
+            JSONObject jsonObject = JSONObject.parseObject(msg);
             String code = jsonObject.getString("code");
             String message = jsonObject.getString("data");
             switch (Integer.parseInt(code)){

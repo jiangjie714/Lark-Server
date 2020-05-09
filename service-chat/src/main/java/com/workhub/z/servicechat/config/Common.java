@@ -15,6 +15,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -900,5 +901,19 @@ public class Common {
         Random rand = new Random();
         int res = rand.nextInt(max+1)+min;
         return res;
+    }
+
+    /**
+     * 判断object是否为null，包括map，list，obj
+     * @return
+     */
+    public static boolean isEmpty(Object obj) {
+        if (obj == null) return true;
+        else if (obj instanceof CharSequence) return ((CharSequence) obj).length() == 0;
+        else if (obj instanceof Collection) return ((Collection) obj).isEmpty();
+        else if (obj instanceof Map) return ((Map) obj).isEmpty();
+        else if (obj.getClass().isArray()) return Array.getLength(obj) == 0;
+
+        return false;
     }
 }

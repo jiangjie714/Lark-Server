@@ -320,10 +320,20 @@ public class AbstractMsgProcessor {
         String iscross = MessageType.CROSSTYPE_SAME_OFFICE;
         if("GROUP".equals(type)){//如是群消息
             ZzGroup group = zzGroupService.queryById(receiver);
-            iscross = group.getIscross();
+            if (!Common.isEmpty(group)){
+                iscross = group.getIscross();
+            }else {
+                // TODO: 2020/5/8 抛出没有当前群组id
+                return null;
+            }
         }else if("MEET".equals(type)){//如果是会议
-            MeetingDto group = zzMeetingService.getMeetInf(receiver);
-            iscross = group.getIscross();
+            MeetingDto meet = zzMeetingService.getMeetInf(receiver);
+            if (!Common.isEmpty(meet)){
+                iscross = meet.getIscross();
+            }else {
+                // TODO: 2020/5/8 抛出没有当前群组id
+                return null;
+            }
         }else{//如果是私聊消息
             List<ChatAdminUserVo> userInfoList = iUserService.userList(sender+","+receiver);
             ChatAdminUserVo senderInf = userInfoList.get(0)==null?new ChatAdminUserVo():userInfoList.get(0);

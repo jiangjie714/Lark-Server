@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.message;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.MsgSendStatusVo;
@@ -90,6 +91,7 @@ public class ZzMessageInfoController {
      * @param messageInf
      * @return
      */
+    @Decrypt
     @PostMapping("sendMessage")
     public ObjectRestResponse sendMessage(@RequestBody String messageInf){
             ObjectRestResponse res = new ObjectRestResponse();

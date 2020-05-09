@@ -108,6 +108,9 @@ public class ProcessGroupMsg extends AbstractMsgProcessor {
                     //rabbitMqMsgProducer.sendSocketPrivateMsg(socketMsgVo);
                 }
             }
+            else {
+                msgSendStatusVo.setContent("违规操作，发送人不在当前群组");
+            }
 
         }catch (Exception e){
             throw e;
