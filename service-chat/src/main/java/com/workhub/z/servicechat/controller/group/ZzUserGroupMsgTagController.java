@@ -26,7 +26,7 @@ public class ZzUserGroupMsgTagController{
     @Resource
     private ZzUserGroupMsgTagService zzUserGroupMsgTagService;
     /**
-     * 增加群消息标记
+     * 增加群消息标记（todo 接口未启用 暂时保留）
      * @param userId 用户id；groupId 群id；msgId 消息id；tagType标记类型，默认0重要消息
      * @return  1成功；0用户不在组内或者组已经不存在；-1错误
      * @author zhuqz
@@ -65,14 +65,13 @@ public class ZzUserGroupMsgTagController{
         return objectRestResponse;
     }
     /**
-     * 按照id删除群消息标记
+     * 按照id删除群消息标记（todo 接口未启用 暂时保留）
      * @param id 表主键
      * @return  1成功；0用户不在组内或者组已经不存在；-1错误
      * @author zhuqz
      * @since 2019-06-11
      */
-    @Decrypt
-    @PostMapping("/delUserGroupMsgTagById")
+    @DeleteMapping("/delUserGroupMsgTagById")
     public ObjectRestResponse delUserGroupMsgTagById(@RequestParam("id") String id){
 
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -100,9 +99,8 @@ public class ZzUserGroupMsgTagController{
      * @return  1成功；0用户不在组内或者组已经不存在；-1错误
      * @author zhuqz
      * @since 2019-06-11
-     */
-    @Decrypt
-    @PostMapping("/delUserGroupMsgTagByConditions")
+     *//*
+    @DeleteMapping("/delUserGroupMsgTagByConditions")
     public ObjectRestResponse delUserGroupMsgTagByConditions(@RequestParam("userId") String userId,
                                                              @RequestParam("groupId") String groupId,
                                                              @RequestParam("msgId") String msgId,
@@ -131,10 +129,10 @@ public class ZzUserGroupMsgTagController{
             objectRestResponse.msg("200");
         }
         return objectRestResponse;
-    }
+    }*/
+
     /**
-     * todo:使用
-     * 查询用户标记消息
+     * 查询用户标记消息 （todo 接口未启用 暂时保留）
      * @param userId 用户id；groupId 群id；tagType标记类型
      * @return  1成功；0用户不在组内或者组已经不存在；-1错误；数据列表
      * @author zhuqz
@@ -142,10 +140,10 @@ public class ZzUserGroupMsgTagController{
      */
     @GetMapping ("/getUserGroupMsgTagList")
     public TableResultResponse getUserGroupMsgTagList(@RequestParam("userId")String userId,
-                                              @RequestParam("groupId")String groupId,
-                                              @RequestParam("tagType")String tagType,
-                                              @RequestParam(value = "page",defaultValue = "1")Integer page,
-                                              @RequestParam(value = "size",defaultValue = "10")Integer size){
+                                                      @RequestParam("groupId")String groupId,
+                                                      @RequestParam("tagType")String tagType,
+                                                      @RequestParam(value = "page",defaultValue = "1")Integer page,
+                                                      @RequestParam(value = "size",defaultValue = "10")Integer size){
 
         TableResultResponse dataList = null;
         try {

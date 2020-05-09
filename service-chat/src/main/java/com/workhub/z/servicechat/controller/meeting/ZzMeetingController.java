@@ -42,15 +42,15 @@ public class ZzMeetingController {
     static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
     static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
     static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
-/**
-* @MethodName: add
- * @Description: 新增会议
- * @Param: [zzMeeting]
- * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回会议id
- * @Author: zhuqz
- * @Date: 2019/9/20
-**/
-@Decrypt
+    /**
+     * @MethodName: add
+     * @Description: 新增会议
+     * @Param: [zzMeeting]
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回会议id
+     * @Author: zhuqz
+     * @Date: 2019/9/20
+     *//*
+    @Decrypt
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzMeeting zzMeeting) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -72,15 +72,15 @@ public class ZzMeetingController {
         }
         return  res;
     }
-/**
- * todo:使用
-* @MethodName: getSingleMeetingInfo
- * @Description: 查询单个会议的详细信息
- * @Param: [meetId:会议id]
- * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
- * @Author: zhuqz
- * @Date: 2019/9/20
-**/
+*/
+    /**
+     * @MethodName: getSingleMeetingInfo
+     * @Description: 查询单个会议的详细信息
+     * @Param: [meetId:会议id]
+     * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
+     * @Author: zhuqz
+     * @Date: 2019/9/20
+     */
     @GetMapping("getSingleMeetingInfo")
     public ObjectRestResponse getSingleMeetingInfo(@RequestParam String meetId){
         ObjectRestResponse res = new ObjectRestResponse();
@@ -98,13 +98,13 @@ public class ZzMeetingController {
         return  res;
     }
     /**
-    * @MethodName: update
+     * @MethodName: update（todo 接口未使用，暂时保留）
      * @Description: 修改
      * @Param: [zzMeeting]
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
-    **/
+     */
     @Decrypt
     @PutMapping("update")
     public  ObjectRestResponse update(@RequestBody ZzMeeting zzMeeting) throws Exception{
@@ -128,6 +128,13 @@ public class ZzMeetingController {
         }
         return res;
     }
+
+    /**
+     * 删除会议（todo 接口未使用，暂时保留）
+     * @param meetId
+     * @return
+     * @throws Exception
+     */
     @DeleteMapping("delete")
     public ObjectRestResponse delete(@RequestParam String meetId) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -144,13 +151,13 @@ public class ZzMeetingController {
         return res;
     }
     /**
-    * @MethodName: createMeeting
+     * @MethodName: createMeeting
      * @Description: 创建会议
      * @Param: [meetingJson] 会议json
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回会议id
      * @Author: zhuqz
      * @Date: 2019/9/24
-    **/
+     *//*
     @Decrypt
     @PostMapping("createMeeting")
     public ObjectRestResponse createMeeting(@RequestBody String meetingJson) throws Exception{
@@ -172,28 +179,27 @@ public class ZzMeetingController {
         ObjectRestResponse res = this.zzMeetingService.createMeeting(meetingJson);
         return  res;
     }
+*/
     /**
-     * todo:使用
-    * @MethodName: getMeetProgressCodeList
+     * @MethodName: getMeetProgressCodeList
      * @Description: 查询会议议程全部代码表（该接口暂时废弃不用了）
      * @Param: []
      * @Return: com.github.hollykunge.security.Common.msg.ListRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/25
-    **/
+     **/
     @GetMapping("getMeetProgressCodeList")
     public ListRestResponse getMeetProgressCodeList(){
         return this.zzMeetingService.getMeetProgressCodeList();
     }
     /**
-     * todo:使用
-    * @MethodName: getMeetRoleCodeList
+     * @MethodName: getMeetRoleCodeList
      * @Description: 获取会议角色代码表
      * @Param: []
      * @Return: java.util.List<com.workhub.z.servicechat.VO.MeetRoleCodeVo>
      * @Author: zhuqz
      * @Date: 2019/9/26
-    **/
+     **/
     @GetMapping("getMeetRoleCodeList")
     public ListRestResponse getMeetRoleCodeList(){
         return this.zzMeetingService.getMeetRoleCodeList();
@@ -212,13 +218,12 @@ public class ZzMeetingController {
     }
 
     /**
-     * todo:使用
-    *@Description: 会议议程变更
-    *@Param: meetid,code
-    *@return:
-    *@Author: 忠
-    *@date: 2019/10/14
-    */
+     *@Description: 会议议程变更
+     *@Param: meetingId,code
+     *@return:
+     *@Author: 忠
+     *@date: 2019/10/14
+     */
     @Decrypt
     @PutMapping("changeMeetAgenda")
     public ObjectRestResponse changeMeetAgenda(@RequestBody Map params) throws UnsupportedEncodingException {
@@ -231,7 +236,6 @@ public class ZzMeetingController {
     }
 
     /**
-     * todo:使用
      * 会议议程变列表变更
      * @param zzMeeting id会议id，allProgress 议程列表编码 逗号分割例如：5001,5002,5003
      * @return
@@ -259,19 +263,18 @@ public class ZzMeetingController {
     }
 
     /**
-     * todo:使用
-    *@Description: 获取会议列表（联系人）
-    *@Param: userid
-    *@return: meetingvo
-    *@Author: 忠
-    *@date: 2019/10/15
-    */
+     *@Description: 获取会议列表（联系人）
+     *@Param: userid
+     *@return: meetingvo
+     *@Author: 忠
+     *@date: 2019/10/15
+     */
     @GetMapping("getMeetingListForContacts")
     public ListRestResponse getMeetingListForContacts(@Param("userId") String userId){
-       return this.zzMeetingService.getMeetingListForContacts(userId);
+        return this.zzMeetingService.getMeetingListForContacts(userId);
     }
 
-/*    *//**
+    /*    *//**
      * 获取岗位人员列表
      * @param id 岗位id
      * @param secretLevel 密级

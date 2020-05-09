@@ -72,7 +72,6 @@ public class ZzGroupController  {
     static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     /**
      * 通过主键查询单条数据
-     *
      * @param groupId 主键
      * @return 单条数据
      */
@@ -88,6 +87,7 @@ public class ZzGroupController  {
         objectRestResponse.data(groupInfo);
         return objectRestResponse;
     }
+    /*
     @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzGroup zzGroup,@RequestParam("token")String token) throws Exception{
@@ -119,7 +119,7 @@ public class ZzGroupController  {
         objectRestResponse.msg("200");
         objectRestResponse.data("成功");
         return objectRestResponse;
-    }
+    }*/
 
     @Decrypt
     @PostMapping("/update")
@@ -144,9 +144,8 @@ public class ZzGroupController  {
         objectRestResponse.data("成功");
         return objectRestResponse;
     }
-
     /**
-     * 删除研讨组
+     * 删除研讨组(todo 没有用到 暂时保留)
      * @Author: dd
      * @param id
      * @return
@@ -159,14 +158,15 @@ public class ZzGroupController  {
         return objectRestResponse;
     }
     /**
-    *@Description:
-    *@Param:
-    *@return:
-    *@Author: 忠
-    *@date: 2019/6/11
-    */
-    @Decrypt
-    @PostMapping("/querygroupuser")
+     *@Description:
+     *@Param:
+     *@return:
+     *@Author: 忠
+     *@date: 2019/6/11
+     */
+   /*
+   @Decrypt
+   @PostMapping("/querygroupuser")
     public TableResultResponse queryGroupUserList(@RequestParam("id")String id,
                                                   @RequestParam(value = "page",defaultValue = "1")Integer page,
                                                   @RequestParam(value = "size",defaultValue = "10")Integer size){
@@ -182,15 +182,15 @@ public class ZzGroupController  {
                 groupUserListVoPageInfo.getPages(),
                 groupUserListVoPageInfo.getTotal(),
                 groupUserListVoPageInfo.getList());
-    }
+    }*/
 
     /**
-    *@Description: 根据用户id查询用户所在群组信息
-    *@Param: 用户id
-    *@return: 群组列表
-    *@Author: 忠
-    *@date: 2019/6/11
-    */
+     *@Description: 根据用户id查询用户所在群组信息
+     *@Param: 用户id
+     *@return: 群组列表
+     *@Author: 忠
+     *@date: 2019/6/11
+     */
     @GetMapping("/queryGroupListByUserId")
     public ListRestResponse queryGroupListByUserId(@RequestParam("userId")String userId) throws Exception {
         List<ZzGroup> groups = this.zzGroupService.queryGroupListByUserId(userId);
@@ -242,13 +242,13 @@ public class ZzGroupController  {
         return new ListRestResponse("200", 0,myJsonArray);
     }
     /**
-    * @MethodName: queryMessageList
-     * @Description:
+     * @MethodName: queryMessageList
+     * @Description:目前只有会议在使用该接口
      * @Param: [type 消息类型 USER私人 GROUP群 MEET会议, receiver 接收人]
      * @Return: com.github.hollykunge.security.Common.msg.ListRestResponse
      * @Author: zhuqz
      * @Date: 2019/10/18
-    **/
+     **/
     @GetMapping("/queryMessageList")
     public ListRestResponse queryMessageList(@RequestParam("type")String type,@RequestParam("receiver")String receiver) throws Exception {
         String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
@@ -257,7 +257,7 @@ public class ZzGroupController  {
         return new ListRestResponse("200", myJsonArray.size(),myJsonArray);
     }
     /**
-     * 逻辑删除群
+     * 逻辑删除群（todo 目前没在使用，暂时保留）
      * @param groupId 群id;delFlg：删除标记位，1删除，0 不删
      * @return  1成功；-1失败；
      * @author zhuqz
@@ -349,7 +349,7 @@ public class ZzGroupController  {
     }
     /**
      * 群列表监控
-     //param:page 页码 size 每页几条;group_name群组名称；creator创建人姓名；level密级；
+     //param:page 页码 size 每页几条;group_name群组名称；level密级；
      // dateBegin创建时间开始；dateEnd创建时间结束；pname项目名称；isclose是否关闭;groupOwnerName群主名称
      * @return
      */
@@ -364,34 +364,34 @@ public class ZzGroupController  {
         return pageInfo;
     }
 
-    /**
+    /* *//**
      * 解散本研讨组
-     */
+     *//*
     @GetMapping("dissolve")
     public ObjectRestResponse dissolve(@RequestParam("groupId") String groupId,ChannelContext channelContext) throws Exception{
         String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
         zzGroupService.dissolveGroup(groupId,userId,userName);
         return new ObjectRestResponse().rel(true).msg("研讨组已解散...");
-    }
+    }*/
 
     /**
      * 移除研讨组成员
      */
-    @GetMapping("removeMember")
+   /* @GetMapping("removeMember")
     public ObjectRestResponse removeMember(@RequestParam("groupId") String groupId, @RequestParam("userId") String userId) {
         zzGroupService.removeMember(groupId, userId);
         return new ObjectRestResponse().rel(true).msg("成功移除组成员");
     }
-
+*/
     /**
      * 添加研讨组成员
      */
-    @GetMapping("addMember")
+   /* @GetMapping("addMember")
     public ObjectRestResponse addMember(@RequestParam("groupId") String groupId, @RequestParam("userIds") String userIds,ChannelContext channelContext) {
         zzGroupService.addMember(groupId, userIds);
         return new ObjectRestResponse().rel(true).msg("成功添加组成员");
-    }
+    }*/
 
     /**
      * 群编辑接口
@@ -448,10 +448,11 @@ public class ZzGroupController  {
         return objectRestResponse;
     }
 
-
     /**
-     * todo:使用
      * 获取全部群组信息，包括人员
+     * @param groupId
+     * @return
+     * @throws Exception
      */
     @GetMapping("getAllGroupInfo")
     public ObjectRestResponse getAllGroupInfo(@RequestParam String groupId) throws Exception{

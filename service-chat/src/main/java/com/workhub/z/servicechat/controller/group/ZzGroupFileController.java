@@ -50,7 +50,7 @@ public class ZzGroupFileController {
      * @param id 主键
      * @return 单条数据
      */
-    @GetMapping("/selectOne")
+   /* @GetMapping("/selectOne")
     public ObjectRestResponse selectOne(@RequestParam("id") String id) {
         ZzGroupFile entity = this.zzGroupFileService.queryById(id);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -58,14 +58,13 @@ public class ZzGroupFileController {
         objectRestResponse.rel(true);
         objectRestResponse.data(entity);
         return objectRestResponse;
-    }
+    }*/
 
-    /**
-     * todo：未使用
+    /* *//**
      * 群文件查询
      * @param id 群id
      * @return
-     */
+     *//*
     //query 查询文件名称
     @Decrypt
     @PostMapping("/groupfile")
@@ -84,21 +83,22 @@ public class ZzGroupFileController {
         }
 //        T data, int pageSize, int pageNo, int totalPage, int totalCount
         return pageInfo;
-    }
+    }*/
 
     /**
-     * todo:使用
      * 我上传的群文件查询
-     * @param groupId
+     * @param groupId 群id
+     * @param userId 用户id
+     * @param page
+     * @param size
      * @return
      */
-    //query 查询文件名称
     @Decrypt
     @PostMapping("/groupFileListByMe")
     public TableResultResponse<GroupFileVo> groupFileListByMe(@RequestParam("groupId")String groupId,
-                                                          @RequestParam("userId")String userId,
-                                                          @RequestParam(value = "page",defaultValue = "1")Integer page,
-                                                          @RequestParam(value = "size",defaultValue = "10")Integer size){
+                                                              @RequestParam("userId")String userId,
+                                                              @RequestParam(value = "page",defaultValue = "1")Integer page,
+                                                              @RequestParam(value = "size",defaultValue = "10")Integer size){
 
         TableResultResponse<GroupFileVo> pageInfo = null;
         Long total = 0L;
@@ -112,18 +112,19 @@ public class ZzGroupFileController {
     }
 
     /**
-     * todo:使用
      * 群文件待审批查询
-     * @param groupId
+     * @param groupId 群id
+     * @param userId 用户id
+     * @param page
+     * @param size
      * @return
      */
-    //query 查询文件名称
     @Decrypt
     @PostMapping("/groupFileListByOwner")
     public TableResultResponse<GroupFileVo> groupFileListByOwner(@RequestParam("groupId")String groupId,
-                                                          @RequestParam("userId")String userId,
-                                                          @RequestParam(value = "page",defaultValue = "1")Integer page,
-                                                          @RequestParam(value = "size",defaultValue = "10")Integer size){
+                                                                 @RequestParam("userId")String userId,
+                                                                 @RequestParam(value = "page",defaultValue = "1")Integer page,
+                                                                 @RequestParam(value = "size",defaultValue = "10")Integer size){
         TableResultResponse<GroupFileVo> pageInfo = null;
         Long total = 0L;
         try {
@@ -136,18 +137,19 @@ public class ZzGroupFileController {
     }
 
     /**
-     * todo:使用
      * 群文件通过审批查询
-     * @param groupId
+     * @param groupId 群id
+     * @param userId 用户id
+     * @param page
+     * @param size
      * @return
      */
-    //query 查询文件名称
     @Decrypt
     @PostMapping("/groupFileListByPass")
     public TableResultResponse<GroupFileVo> groupFileListByPass(@RequestParam("groupId")String groupId,
-                                                          @RequestParam("userId")String userId,
-                                                          @RequestParam(value = "page",defaultValue = "1")Integer page,
-                                                          @RequestParam(value = "size",defaultValue = "10")Integer size){
+                                                                @RequestParam("userId")String userId,
+                                                                @RequestParam(value = "page",defaultValue = "1")Integer page,
+                                                                @RequestParam(value = "size",defaultValue = "10")Integer size){
 
         TableResultResponse<GroupFileVo> pageInfo = null;
         Long total = 0L;
@@ -161,7 +163,6 @@ public class ZzGroupFileController {
     }
 
     /**
-     * todo:使用
      * 文件列表查询
      *  page size ：页数页码；groupId 会议id ；userId 用户id；isGroup 文件类型： 0 私聊 1群 905 会议
      * @return
@@ -179,7 +180,6 @@ public class ZzGroupFileController {
         return pageInfo;
     }
     /**
-     * todo:使用
      * 文件删除(删记录)
      * @param id
      * @return
@@ -202,12 +202,12 @@ public class ZzGroupFileController {
      * 创建
      * @param zzGroupFile
      * @return
-     */
+     *//*
     @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzGroupFile zzGroupFile){
         zzGroupFile.setFileId(RandomId.getUUID());
-        zzGroupFile.setCreator("登陆人id");//TODO
+        zzGroupFile.setCreator("登陆人id");
         zzGroupFile.setCreateTime(new Date());
         try{
             Common.putEntityNullToEmptyString(zzGroupFile);
@@ -226,10 +226,9 @@ public class ZzGroupFileController {
 //        }
 //        objectRestResponse.data("成功");
         return objectRestResponse;
-    }
+    }*/
 
     /**
-     * todo:使用
      * 修改
      * @param zzGroupFile
      * @return
@@ -253,9 +252,8 @@ public class ZzGroupFileController {
         return objectRestResponse;
     }
     /**
-     * todo:使用
      * 上传文件监控
-     *参数说明：page 页码 size 每页几条 userName上传用户名称 dateBegin、dateEnd上传时间开始结束 isGroup 是否群主1是0否
+     *  参数说明：page 页码 size 每页几条 userName上传用户名称 dateBegin、dateEnd上传时间开始结束 isGroup 是否群主1是0否
      * fileName文件名称 level密级
      * @return
      */
@@ -271,7 +269,6 @@ public class ZzGroupFileController {
         return pageInfo;
     }
     /**
-     * todo:使用
      *@Description: 会议文件上传
      *@Param: msg 上传文件信息json
      *@return:
