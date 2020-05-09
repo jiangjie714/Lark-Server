@@ -28,12 +28,12 @@ public class ZzAtController{
     @Resource
     private ZzAtService zzAtService;
 
-    /**
+   /* *//**
      * 通过主键查询单条数据
      *
      * @param id 主键
      * @return 单条数据
-     */
+     *//*
     @GetMapping("/selectOne")
     public ObjectRestResponse<ZzAt> selectOne(@RequestParam("id") String id) {
         return new ObjectRestResponse().data(this.zzAtService.queryById(id)).msg("200").rel(true);
@@ -83,7 +83,7 @@ public class ZzAtController{
         objectRestResponse.rel(true);
         return objectRestResponse;
     }
-
+*/
     /**
      * 查询用户标记消息
      * @param receiveId 接收人id；groupId 群id；

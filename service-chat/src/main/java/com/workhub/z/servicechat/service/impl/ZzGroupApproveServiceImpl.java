@@ -90,11 +90,11 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
             String message = jsonObject.getString("data");
             JSONObject groupJson = JSONObject.parseObject(message);
             String type = "";//类型：或者0代表群，1会议
-            if(("901").equals(code)){
+            if((MessageType.CREATE_APPROVE_MEET).equals(code)){
                 //会议
                 type = MessageType.FLOW_LOG_MEET;
             }
-            if(("3").equals(code)){
+            if((MessageType.CREATE_APPROVE_GROUP).equals(code)){
                 //群
                 type = MessageType.FLOW_LOG_GROUP;
             }

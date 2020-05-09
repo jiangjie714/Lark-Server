@@ -31,12 +31,12 @@ public class ZzUserGroupController{
     @Resource
     private ZzUserGroupService zzUserGroupService;
 
-    /**
+   /* *//**
      * 通过主键查询单条数据
      *
      * @param id 主键
      * @return 单条数据
-     */
+     *//*
     @GetMapping("/selectOne")
     public ObjectRestResponse selectOne(String id) {
         ZzUserGroup entity = this.zzUserGroupService.queryById(id);
@@ -107,8 +107,8 @@ public class ZzUserGroupController{
                 groupUserListVoPageInfo.getTotal(),
                 groupUserListVoPageInfo.getList());
     }
-
-    @PostMapping("/usernewmsglist2")
+*/
+   /* @PostMapping("/usernewmsglist2")
     public ListRestResponse getUserNewMsgList2(@RequestParam("id") String id){
         List<UserNewMsgVo> userNewMsgList = this.zzUserGroupService.getUserNewMsgList2(id);
         return new ListRestResponse("200",userNewMsgList==null?0:userNewMsgList.size(),userNewMsgList);
@@ -117,7 +117,8 @@ public class ZzUserGroupController{
     public ListRestResponse getUserNewMsgList(@RequestParam("id") String id){
         List<RawMessageDto> userNewMsgList = this.zzUserGroupService.getUserNewMsgList(id);
         return new ListRestResponse("200",userNewMsgList==null?0:userNewMsgList.size(),userNewMsgList);
-    }
+    }*/
+   //todo 接口未使用 暂时保留
     /**
      * 修改用户群个性化信息--是否置顶
      * @param userId 用户id；groupId 群id；topFlg 1置顶，0不置顶
@@ -149,6 +150,7 @@ public class ZzUserGroupController{
         }
         return  objectRestResponse;
     }
+    //todo 接口未使用 暂时保留
     /**
      * 修改用户群个性化信息--是否免打扰
      * @param userId 用户id；groupId 群id；muteFlg 1免打扰，0否
@@ -181,10 +183,10 @@ public class ZzUserGroupController{
         }
         return  objectRestResponse;
     }
-    //测试一下获取最近联系的接口
+   /* //测试一下获取最近联系的接口
     @PostMapping("/testGetContactVOList")
     //id参数是userid
     public void testGetContactVOList(@RequestParam("userId")String userId){
         this.zzUserGroupService.getContactVOList(userId);
-    }
+    }*/
 }

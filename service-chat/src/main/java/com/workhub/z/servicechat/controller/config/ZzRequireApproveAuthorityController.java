@@ -2,9 +2,7 @@ package com.workhub.z.servicechat.controller.config;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.service.ZzRequireApproveAuthorityService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -23,6 +21,7 @@ public class ZzRequireApproveAuthorityController {
      * 获取哪些群体不用审批
      * @return
      */
+    @GetMapping("/getData")
     public ObjectRestResponse queryData(){
         ObjectRestResponse res = new ObjectRestResponse();
         res.data(this.requireApproveAuthorityService.queryData());
@@ -36,6 +35,7 @@ public class ZzRequireApproveAuthorityController {
      * @param teams
      * @return
      */
+    @PutMapping("/updateData")
     public ObjectRestResponse updateData(@RequestParam String teams){
         ObjectRestResponse res = new ObjectRestResponse();
         res.data(this.requireApproveAuthorityService.updateData(teams));

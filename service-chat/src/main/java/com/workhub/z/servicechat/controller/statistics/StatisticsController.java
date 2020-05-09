@@ -24,10 +24,10 @@ import java.util.List;
 public class StatisticsController {
     @Autowired
     StatisticsService statisticsService;
-
     /**
      * 群统计
-     * orgCode 横坐标父节点
+     * @param orgCode 横坐标父节点
+     * @param dateType 日期类型
      * @return
      */
     @GetMapping("groupInfStatistics")
@@ -45,7 +45,8 @@ public class StatisticsController {
 
     /**
      * 消息统计
-     * orgCode 横坐标父节点
+     * @param orgCode 横坐标父节点
+     * @param dateType 日期类型
      * @return
      */
     @GetMapping("msgStatistics")
@@ -58,9 +59,11 @@ public class StatisticsController {
         StatisticsMsgVo msgVo =  this.statisticsService.msgStatistics(dateType);
         return new ObjectRestResponse<>().rel(true).msg("200").data(msgVo);
     }*/
+
     /**
      * 附件统计
-     * orgCode 横坐标父节点
+     * @param orgCode 横坐标父节点
+     * @param dateType 日期类型
      * @return
      */
     @GetMapping("fileStatistics")
@@ -74,7 +77,7 @@ public class StatisticsController {
     }*/
     /**
      * 群成员统计
-     * groupId 群id
+     * @param groupId 群id
      * @return
      */
     @GetMapping("groupUserStatistics")
@@ -84,7 +87,7 @@ public class StatisticsController {
     }
     /**
      * 群org统计
-     * groupId 群id
+     * @param groupId  群id
      * @return
      */
     @GetMapping("groupOrgStatistics")

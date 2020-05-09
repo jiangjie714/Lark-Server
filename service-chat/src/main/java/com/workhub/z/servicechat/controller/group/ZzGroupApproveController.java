@@ -53,8 +53,7 @@ public class ZzGroupApproveController {
     static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
     static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     /**
-     * todo:使用
-    * @MethodName: add
+     * @MethodName: add
      * @Description: 新增审批信息
      * @Param: [msg]msg：前台传过来的json串
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
@@ -85,11 +84,11 @@ public class ZzGroupApproveController {
        //0群1会议
        String type = "";
        //会议
-       if("901".equals(code)){
+       if(MessageType.CREATE_APPROVE_MEET.equals(code)){
            type = MessageType.FLOW_LOG_MEET;
        }
        //群
-       if("3".equals(code)){
+       if(MessageType.CREATE_APPROVE_GROUP.equals(code)){
            type = MessageType.FLOW_LOG_GROUP;
        }
        //是否需要审批

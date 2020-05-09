@@ -117,7 +117,7 @@ public class ZzMessageInfoController {
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回会议id
      * @Author:
      * @Date: 2020/02/23
-     **/
+     **//*
     @PostMapping("msgIdentify")
     public ObjectRestResponse msgIdentify(){
         ObjectRestResponse res = new ObjectRestResponse();
@@ -126,7 +126,7 @@ public class ZzMessageInfoController {
 
         return res;
     }
-
+*/
     /**
      * 消息撤销
      * @param msg msgId 消息id；receiver 接收人；type：类型0私聊1群2会议

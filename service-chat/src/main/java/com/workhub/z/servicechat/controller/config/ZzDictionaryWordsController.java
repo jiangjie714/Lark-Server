@@ -46,7 +46,7 @@ public class ZzDictionaryWordsController{
      *
      * @param id 主键
      * @return 单条数据
-     */
+     *//*
     @GetMapping("/selectOne")
     public ObjectRestResponse selectOne(String id) {
         ZzDictionaryWords data = this.zzDictionaryWordsService.queryById(id);
@@ -56,12 +56,11 @@ public class ZzDictionaryWordsController{
         res.data(data);
         return res;
         //return this.zzDictionaryWordsService.queryById(id);
-    }
+    }*/
 
     /**
-     * todo:使用
      * 分页查询
-     * 参数：pageNo pageSize wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇
+     * @param params 参数：pageNo pageSize wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇
      * @return
      */
     @PostMapping("/query")
@@ -84,12 +83,11 @@ public class ZzDictionaryWordsController{
     }
 
     /**
-     * todo:使用
-     * @param params
+     *
+     * @param params 参数： wordType类型 wordCode编码 wordName词汇名称 replaceWord替换词汇
      * @return
      */
     @PostMapping("/create")
-    //参数：pageNo pageSize wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇
     public ObjectRestResponse insert(@RequestParam Map<String, Object> params){
         ZzDictionaryWords zzDictionaryWords = new ZzDictionaryWords();
         zzDictionaryWords.setWordName(Common.nulToEmptyString(params.get("wordName")));
@@ -122,12 +120,11 @@ public class ZzDictionaryWordsController{
     }
 
     /**
-     * todo:使用
-     * @param params
+     *
+     * @param params 参数：wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇,id主键
      * @return
      */
     @PutMapping ("/update")
-    //参数：pageNo pageSize wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇,id主键
     public ObjectRestResponse update(@RequestParam Map<String, Object> params){
         ZzDictionaryWords zzDictionaryWords = new ZzDictionaryWords();
         zzDictionaryWords.setUpdateTime(new Date());
@@ -164,7 +161,7 @@ public class ZzDictionaryWordsController{
         }
         return objectRestResponse;
     }
-    //停用(这个接口暂时不用了，调用update)
+    /*//停用(这个接口暂时不用了，调用update)
     @PutMapping ("/stopUse")
     //flg=0停用1启用
     public ObjectRestResponse stopUse(@RequestParam Map<String, Object> params) throws Exception{
@@ -177,11 +174,10 @@ public class ZzDictionaryWordsController{
         objectRestResponse.rel(true);
         objectRestResponse.data("成功");
         return objectRestResponse;
-    }
+    }*/
 
     /**
-     * todo:使用
-     * @param params
+     * @param params id主键
      * @return
      */
     @DeleteMapping("/delete")
@@ -199,7 +195,7 @@ public class ZzDictionaryWordsController{
     }
 
     /**
-     * todo:使用
+     *
      * @param file
      * @return
      */
@@ -249,7 +245,7 @@ public class ZzDictionaryWordsController{
         objectRestResponse.data(datalist);
         return objectRestResponse;
     }*/
-    //涉密词汇缓存测试-基于注解
+   /* //涉密词汇缓存测试-基于注解
     @GetMapping("/querySecretWordsAnn")
     public ObjectRestResponse querySecretWordsAnn(@RequestParam String type){
         List<ZzDictionaryWords> datalist = null;
@@ -264,5 +260,5 @@ public class ZzDictionaryWordsController{
         objectRestResponse.rel(true);
         objectRestResponse.data(datalist);
         return objectRestResponse;
-    }
+    }*/
 }

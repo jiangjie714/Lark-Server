@@ -117,10 +117,14 @@ public class ZzFileManageController {
     }*/
     @RequestMapping("/singleFileUpload")
     @ResponseBody
-    //上传
-    //上传 成功msg=200，失败=500；
-    //     成功rel=true，失败=false
-     //    成功data=返回实体，失败 ：堆栈错误打印
+    /**
+     * 上传
+     * @param file
+     * @return
+     * 成功msg=200，失败=500；
+     * 成功rel=true，失败=false
+     * 成功data=返回实体，失败 ：堆栈错误打印
+     */
     public ObjectRestResponse singleFileUpload(@RequestParam("file") MultipartFile file) {
         //System.out.println("===================================================file upload=============================================================");
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -176,7 +180,11 @@ public class ZzFileManageController {
         return objectRestResponse;
     }
     @GetMapping("/downloadFileOwn")
-    //下载
+    /**
+     * 下载
+     * @param request
+     * @param response
+     */
     public void downloadFileOwn(HttpServletRequest request, HttpServletResponse response) {
         String fileId = request.getParameter("fileId");
         request.setAttribute("resCode","1");
@@ -281,9 +289,13 @@ public class ZzFileManageController {
             return ;
         }
     }*/
-    //最新下载方法 todo:使用
+    //
     @GetMapping("/downloadFile")
-    //下载 1成功 -1 失败 0 文件不存在,-2未审计通过，无权限下载
+    /**
+     * 最新下载方法
+     * @param fileId
+     * @return 1成功 -1 失败 0 文件不存在,-2未审计通过，无权限下载
+     */
     public ObjectRestResponse downloadFile(@RequestParam String fileId) throws Exception{
         fileId = (fileId==null)?"":fileId;
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
@@ -399,7 +411,11 @@ public class ZzFileManageController {
         return  objectRestResponse;
     }
     @PostMapping ("/fileDeleteOwn")
-    //删除文件 1成功 -1 失败 0 文件不存在
+    /**
+     * /删除文件
+     * @param fileId
+     * @return 1成功 -1 失败 0 文件不存在
+     */
     public ObjectRestResponse fileDeleteOwn(@RequestParam("fileId") String fileId) {
         ObjectRestResponse obj = new ObjectRestResponse();
         obj.rel(true);
@@ -423,9 +439,12 @@ public class ZzFileManageController {
         }
         return obj;
     }
-    //最新删除上传文件方法
-    @PostMapping ("/fileDelete")
-    //删除文件 1成功 -1 失败 0 文件不存在
+    /*@PostMapping ("/fileDelete")
+    *//**
+     * 最新删除上传文件方法
+     * @param fileId
+     * @return 1成功 -1 失败 0 文件不存在
+     *//*
     public ObjectRestResponse fileDelete(@RequestParam("fileId") String fileId) {
         ObjectRestResponse obj = new ObjectRestResponse();
         obj.rel(true);
@@ -459,10 +478,14 @@ public class ZzFileManageController {
             obj.data("操作出错");
         }
         return obj;
-    }
+    }*/
 
-    @PostMapping ("/fileRecord")
-    //文件上传
+   /* @PostMapping ("/fileRecord")
+    *//**
+     * 记录文件上传信息
+     * @param zzUploadFile
+     * @return
+     *//*
     public ObjectRestResponse fileRecord(@RequestBody ZzGroupFile zzUploadFile) {
         ObjectRestResponse obj = new ObjectRestResponse();
         obj.rel(true);
@@ -477,18 +500,16 @@ public class ZzFileManageController {
             obj.data("操作出错");
         }
         return obj;
-    }
+    }*/
 
+
+    @PostMapping ("/setFileApproveFLg")
     /**
-     * todo:使用
-     * @param fileId
+     * 设置文件审计标记
+     * @param fileId 参数格式fileId,approveFlg;fileId,approveFlg;fileId,approveFlg;fileId,approveFlg 组内分割用逗号，第一个表示文件id，第二个表示审计标记；组间分割用分号 例如 adcssdsf,1;dsadgeggsd,0;13353ddeww,1 表示传递了三个文件，分别把它们审计标记改成通过，不通过，通过
      * @param userId
      * @return
      */
-    @PostMapping ("/setFileApproveFLg")
-    //设置文件审计标记 参数格式fileId,approveFlg;fileId,approveFlg;fileId,approveFlg;fileId,approveFlg
-    //组内分割用逗号，第一个表示文件id，第二个表示审计标记；组间分割用分号
-    //例如 adcssdsf,1;dsadgeggsd,0;13353ddeww,1 表示传递了三个文件，分别把它们审计标记改成通过，不通过，通过
     public ObjectRestResponse setFileApproveFLg(@RequestParam("fileId") String fileId,@RequestParam("userId") String userId) {
         ObjectRestResponse obj = new ObjectRestResponse();
         obj.rel(true);
@@ -504,15 +525,26 @@ public class ZzFileManageController {
         }
         return obj;
     }
-    @RequestMapping(value = "/getFileImageStream",produces = MediaType.IMAGE_JPEG_VALUE)
+   /* @RequestMapping(value = "/getFileImageStream",produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseBody
+    *//**
+     * 图片展示
+     * @param fileId
+     * @return
+     *//*
     public BufferedImage getFileImageStream(String fileId) throws IOException {
         ZzGroupFile zzGroupFile = zzGroupFileService.queryById(fileId);
         try (InputStream is = new FileInputStream(zzGroupFile.getPath())) {
             return ImageIO.read(is);
         }
-    }
+    }*/
     @RequestMapping("/GetFile")
+    /**
+     * 下载
+     * @param request
+     * @param response
+     * @return
+     */
     public void getFile(HttpServletRequest request , HttpServletResponse response) throws IOException {
         InputStream in =null;
         OutputStream outputStream = null;
@@ -579,7 +611,7 @@ public class ZzFileManageController {
         }
 
     }
-    @GetMapping("/getGroupChatFileSizeByDB")
+   /* @GetMapping("/getGroupChatFileSizeByDB")
     //查询附件大小（数据库统计）
     //queryType 查询类型 0 天(默认)，1 月，2 年
     //returnUnit 单位 0 M(默认)，1 G，2 T
@@ -611,7 +643,7 @@ public class ZzFileManageController {
         }
 
         return res;
-    }
+    }*/
 
     /**
     *@Description: 获取文件下载状态

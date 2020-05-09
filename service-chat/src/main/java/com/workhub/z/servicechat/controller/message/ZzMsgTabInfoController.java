@@ -24,21 +24,21 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/zzMsgTabInfo")
 public class ZzMsgTabInfoController {
-    private static Logger log = LoggerFactory.getLogger(ZzMsgTabInfoController.class);
-    /**
+   /* private static Logger log = LoggerFactory.getLogger(ZzMsgTabInfoController.class);
+    *//**
      * 服务对象
-     */
+     *//*
     @Resource
     private ZzMsgTabInfoService zzMsgTabInfoService;
 
     @Autowired
     private ZzMsgTabRelationService zzMsgTabRelationService;
-    /**
+    *//**
      * 通过主键查询单条数据
      *
      * @param id 主键
      * @return 单条数据
-     */
+     *//*
     @GetMapping("/selectOne")
     public ObjectRestResponse selectOne(String id) {
         ZzMsgTabInfo data= this.zzMsgTabInfoService.queryById(id);
@@ -117,5 +117,5 @@ public class ZzMsgTabInfoController {
             return objectRestResponse;
         }
         return objectRestResponse;
-    }
+    }*/
 }

@@ -44,7 +44,7 @@ public class ZzMeetingUserController {
  * @Author: zhuqz
  * @Date: 2019/9/20
 **/
-    @PostMapping("addUser")
+   /* @PostMapping("addUser")
     public ObjectRestResponse addUser(@RequestBody ZzMeetingUser zzMeetingUser) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
@@ -66,7 +66,7 @@ public class ZzMeetingUserController {
             res.data("系统出错");
         }
         return  res;
-    }
+    }*/
 /**
 * @MethodName: delUser
  * @Description: 删除用户
@@ -74,7 +74,7 @@ public class ZzMeetingUserController {
  * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
  * @Author: zhuqz
  * @Date: 2019/9/20
-**/
+**//*
     @DeleteMapping("delUser")
     public ObjectRestResponse delUser(@RequestParam String meetId,@RequestParam String userId) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -93,7 +93,7 @@ public class ZzMeetingUserController {
             res.data("系统出错");
         }
         return  res;
-    }
+    }*/
     /**
     * @MethodName: queryMeetAllUsers
      * @Description: 查询会议所有用户
@@ -101,15 +101,14 @@ public class ZzMeetingUserController {
      * @Return: com.github.hollykunge.security.Common.msg.ListRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
-    **/
+    **//*
     @GetMapping("queryMeetAllUsers")
     public ListRestResponse queryMeetAllUsers(@RequestParam String meetId){
         return  this.zzMeetingUserService.queryMeetAllUsers(meetId);
-    }
+    }*/
     /**
-     * todo:使用
-    * @MethodName: updateUser
-     * @Description:
+     * @MethodName: updateUser
+     * @Description: 更新用户信息
      * @Param: [meetingUser]meetId会议id，userId用户id，roleCode角色编码
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
@@ -139,8 +138,7 @@ public class ZzMeetingUserController {
         return  res;
     }
     /**
-     * todo:使用
-    * @MethodName: updateUserList
+     * @MethodName: updateUserList
      * @Description: 更新用户列表信息(批量)
      * @Param: [meetingUser]
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
@@ -212,11 +210,11 @@ public class ZzMeetingUserController {
     /**
      * 获取用户当天需要提醒的会议列表
      * @return
-     */
+     *//*
     @GetMapping("getUserCurrentDayMeetJob")
     public ListRestResponse getUserCurrentDayMeetJob(){
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         List<UserCurrentDayMeetJobVo> data = this.zzMeetingUserService.getUserCurrentDayMeetJob(userId);
-        return new ListRestResponse("500",data.size(),data);
-    }
+        return new ListRestResponse("200",data.size(),data);
+    }*/
 }

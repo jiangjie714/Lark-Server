@@ -49,7 +49,7 @@ public class ZzGroupFileController {
      * @param id 主键
      * @return 单条数据
      */
-    @GetMapping("/selectOne")
+   /* @GetMapping("/selectOne")
     public ObjectRestResponse selectOne(@RequestParam("id") String id) {
         ZzGroupFile entity = this.zzGroupFileService.queryById(id);
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -57,14 +57,13 @@ public class ZzGroupFileController {
         objectRestResponse.rel(true);
         objectRestResponse.data(entity);
         return objectRestResponse;
-    }
+    }*/
 
-    /**
-     * todo：未使用
+   /* *//**
      * 群文件查询
      * @param id 群id
      * @return
-     */
+     *//*
     //query 查询文件名称
     @PostMapping("/groupfile")
     public TableResultResponse<GroupFileVo> groupFileList(@RequestParam("id")String id,
@@ -82,12 +81,15 @@ public class ZzGroupFileController {
         }
 //        T data, int pageSize, int pageNo, int totalPage, int totalCount
         return pageInfo;
-    }
+    }*/
 
     /**
      * todo:使用
      * 我上传的群文件查询
-     * @param groupId
+     * @param groupId 群id
+     * @param userId 用户id
+     * @param page
+     * @param size
      * @return
      */
     //query 查询文件名称
@@ -111,7 +113,10 @@ public class ZzGroupFileController {
     /**
      * todo:使用
      * 群文件待审批查询
-     * @param groupId
+     * @param groupId 群id
+     * @param userId 用户id
+     * @param page
+     * @param size
      * @return
      */
     //query 查询文件名称
@@ -134,7 +139,10 @@ public class ZzGroupFileController {
     /**
      * todo:使用
      * 群文件通过审批查询
-     * @param groupId
+     * @param groupId 群id
+     * @param userId 用户id
+     * @param page
+     * @param size
      * @return
      */
     //query 查询文件名称
@@ -195,7 +203,7 @@ public class ZzGroupFileController {
      * 创建
      * @param zzGroupFile
      * @return
-     */
+     *//*
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzGroupFile zzGroupFile){
         zzGroupFile.setFileId(RandomId.getUUID());
@@ -218,7 +226,7 @@ public class ZzGroupFileController {
 //        }
 //        objectRestResponse.data("成功");
         return objectRestResponse;
-    }
+    }*/
 
     /**
      * todo:使用
@@ -246,7 +254,7 @@ public class ZzGroupFileController {
     /**
      * todo:使用
      * 上传文件监控
-     *参数说明：page 页码 size 每页几条 userName上传用户名称 dateBegin、dateEnd上传时间开始结束 isGroup 是否群主1是0否
+     *  参数说明：page 页码 size 每页几条 userName上传用户名称 dateBegin、dateEnd上传时间开始结束 isGroup 是否群主1是0否
      * fileName文件名称 level密级
      * @return
      */

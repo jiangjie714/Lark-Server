@@ -35,8 +35,8 @@ public class ZzRecentController {
      * 新增最近联系人
      * @param zzRecent
      * @return
-     */
-    @PostMapping("/add")
+     *//*
+    @PostMapping("/saveRecent")
     public ObjectRestResponse add(@RequestBody ZzRecent zzRecent){
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         String userName = Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest));
@@ -44,7 +44,7 @@ public class ZzRecentController {
         zzRecent.setCrtUser(userId);
         zzRecent.setCrtHost(ip);
         zzRecent.setCrtName(userName);
-        int i = this.zzRecentService.add(zzRecent);
+        int i = this.zzRecentService.saveRecent(zzRecent);
 
         if(i==0){
             return new ObjectRestResponse().rel(false).msg("500");
@@ -52,12 +52,12 @@ public class ZzRecentController {
         return new ObjectRestResponse().rel(true).msg("200");
     }
 
-    /**
+    *//**
      * 修改
      * @param zzRecent
      * @return
-     */
-    @PutMapping("/update")
+     *//*
+    @PutMapping("/updateRecent")
     public ObjectRestResponse update(@RequestBody ZzRecent zzRecent){
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         String userName = Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest));
@@ -65,7 +65,7 @@ public class ZzRecentController {
         zzRecent.setCrtUser(userId);
         zzRecent.setCrtHost(ip);
         zzRecent.setCrtName(userName);
-        int i = this.zzRecentService.update(zzRecent);
+        int i = this.zzRecentService.updateRecent(zzRecent);
 
         if(i==0){
             return new ObjectRestResponse().rel(false).msg("500");
@@ -73,31 +73,31 @@ public class ZzRecentController {
         return new ObjectRestResponse().rel(true).msg("200");
     }
 
-    /**
+    *//**
      * 删除
      * @param userId 用户
      * @param contactId 联系人
      * @return
-     */
-    @DeleteMapping("/delete")
+     *//*
+    @DeleteMapping("/removeRecent")
     public ObjectRestResponse delete(@RequestParam("userId") String userId,@RequestParam("contactId") String contactId){
 
-        int i = this.zzRecentService.delete(userId,contactId);
+        int i = this.zzRecentService.removeRecent(userId,contactId);
 
         if(i==0){
             return new ObjectRestResponse().rel(false).msg("500");
         }
         return new ObjectRestResponse().rel(true).msg("200");
     }
-
+*/
     /**
      * 获取最近联系人列表
      * @return
      */
-    @GetMapping("/getList")
+    @GetMapping("/listRecents")
     public ListRestResponse getList(){
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-        List<RecentVo> dataList = this.zzRecentService.getList(userId);
+        List<RecentVo> dataList = this.zzRecentService.listRecents(userId);
         return new ListRestResponse("200",dataList.size(),dataList);
     }
 }

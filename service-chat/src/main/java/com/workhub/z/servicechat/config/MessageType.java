@@ -190,4 +190,8 @@ public class MessageType {
     public static final String MESSAGE_CANCEL_TYPE_GROUP = "1";//群聊
     public static final String MESSAGE_CANCEL_TYPE_MEET = "2";//会议
 
+    /**创建会议、群组审批 类型**/
+    public static final String CREATE_APPROVE_GROUP = "3";
+    public static final String CREATE_APPROVE_MEET = "901";
+
 }

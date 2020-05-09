@@ -24,13 +24,16 @@ public class ZzPrivateMsgController{
      */
     @Resource
     private ZzPrivateMsgService zzPrivateMsgService;
+
     /**
-     * todo:使用
-     * 私聊文件查询
-     * @param
+     *
+     * @param userId 发送人
+     * @param receiver 接收人
+     * @param query 文件名称
+     * @param page
+     * @param size
      * @return
      */
-    //query 查询文件名称
     @PostMapping("/privateFile")
     public TableResultResponse<PrivateFileVo> getFileList(@RequestParam("userId")String userId,
                                                           @RequestParam("receiver")String receiver,
@@ -43,7 +46,6 @@ public class ZzPrivateMsgController{
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        T data, int pageSize, int pageNo, int totalPage, int totalCount
         return pageInfo;
     }
 

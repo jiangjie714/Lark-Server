@@ -27,14 +27,13 @@ public class ZzMegReadLogController {
      *
      * @param id 主键
      * @return 单条数据
-     */
+     *//*
     @GetMapping("selectOne")
     public ZzMegReadLog selectOne(String id) {
         return this.zzMegReadLogService.queryById(id);
-    }
+    }*/
 
     /**
-     * todo:使用
      * @param pageNum
      * @param pageSize
      * @param reviserName

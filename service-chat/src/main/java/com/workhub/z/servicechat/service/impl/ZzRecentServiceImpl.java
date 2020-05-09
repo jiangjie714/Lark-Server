@@ -26,9 +26,9 @@ public class ZzRecentServiceImpl implements ZzRecentService {
      * @return
      */
     @Override
-    public int add(ZzRecent zzRecent) {
+    public int saveRecent(ZzRecent zzRecent) {
         zzRecent.setId(RandomId.getUUID());
-        return this.zzRecentDao.add(zzRecent);
+        return this.zzRecentDao.saveRecent(zzRecent);
     }
 
     /**
@@ -37,8 +37,8 @@ public class ZzRecentServiceImpl implements ZzRecentService {
      * @return
      */
     @Override
-    public int update(ZzRecent zzRecent) {
-        return this.zzRecentDao.update(zzRecent);
+    public int updateRecent(ZzRecent zzRecent) {
+        return this.zzRecentDao.updateRecent(zzRecent);
     }
 
     /**
@@ -48,8 +48,8 @@ public class ZzRecentServiceImpl implements ZzRecentService {
      * @return
      */
     @Override
-    public int delete(String userId, String contactId) {
-        return this.zzRecentDao.deleteData(userId,contactId);
+    public int removeRecent(String userId, String contactId) {
+        return this.zzRecentDao.removeRecent(userId,contactId);
     }
 
     /**
@@ -58,7 +58,7 @@ public class ZzRecentServiceImpl implements ZzRecentService {
      * @return
      */
     @Override
-    public List<RecentVo> getList(String userId) {
-        return this.zzRecentDao.getList(userId);
+    public List<RecentVo> listRecents(String userId) {
+        return this.zzRecentDao.listRecents(userId);
     }
 }

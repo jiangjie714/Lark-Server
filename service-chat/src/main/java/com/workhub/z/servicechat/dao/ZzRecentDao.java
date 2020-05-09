@@ -8,8 +8,8 @@ import tk.mybatis.mapper.common.Mapper;
 import java.util.List;
 
 public interface ZzRecentDao  extends Mapper<ZzRecent> {
-    int add(@Param("params") ZzRecent zzRecent);
-    int update(@Param("params") ZzRecent zzRecent);
-    int deleteData (@Param("userId") String userId,@Param("contactId") String contactId);
-    List<RecentVo> getList(@Param("userId") String userId);
+    int saveRecent(@Param("params") ZzRecent zzRecent);
+    int updateRecent(@Param("params") ZzRecent zzRecent);
+    int removeRecent (@Param("userId") String userId,@Param("contactId") String contactId);
+    List<RecentVo> listRecents(@Param("userId") String userId);
 }

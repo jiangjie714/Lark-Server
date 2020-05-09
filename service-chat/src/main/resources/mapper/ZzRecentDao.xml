@@ -16,7 +16,7 @@
     </resultMap>
 
     <!--新增-->
-    <insert id="add" >
+    <insert id="saveRecent" >
         insert into ZZ_RECENT
           ( id,
             crt_time,
@@ -46,7 +46,7 @@
            )
      </insert>
     <!--修改会议-->
-    <update id="update" >
+    <update id="updateRecent" >
         update ZZ_RECENT
         <set>
             <if test="params.top != null and params.top != ''">
@@ -69,12 +69,12 @@
         where user_id = #{params.userId}
         and contact_id = #{params.contactId}
     </update>
-    <delete id="deleteData">
+    <delete id="removeRecent">
         delete  from ZZ_RECENT
           where user_id = #{userId,jdbcType = VARCHAR}
           and  contact_id= #{contactId,jdbcType = VARCHAR}
     </delete>
-    <select id="getList" resultMap="recentVo">
+    <select id="listRecents" resultMap="recentVo">
   select c.id contact_id,
          c.name contact_name,
          c.avartar contact_avartar,

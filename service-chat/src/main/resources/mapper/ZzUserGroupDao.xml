@@ -315,7 +315,7 @@
     <update id="setUserGroupTop" parameterType="String">
         MERGE INTO ZZ_USER_GROUP a
          USING  (SELECT #{userId} as USER_ID,#{groupId} as GROUP_ID FROM DUAL) b
-            ON (a.USER_ID = b.USER_ID and a.GROUP_ID = b.GROUP_ID and a.ISDELETE = '0')
+            ON (a.USER_ID = b.USER_ID and a.GROUP_ID = b.GROUP_ID)
             WHEN MATCHED THEN
                 UPDATE
                  SET a.IS_TOP = #{topFlg}
@@ -324,7 +324,7 @@
     <update id="setUserGroupMute" parameterType="String">
         MERGE INTO ZZ_USER_GROUP a
          USING  (SELECT #{userId} as USER_ID,#{groupId} as GROUP_ID FROM DUAL) b
-            ON (a.USER_ID = b.USER_ID and a.GROUP_ID = b.GROUP_ID and a.ISDELETE = '0')
+            ON (a.USER_ID = b.USER_ID and a.GROUP_ID = b.GROUP_ID)
             WHEN MATCHED THEN
                 UPDATE
                  SET a.IS_MUTE = #{muteFlg}
