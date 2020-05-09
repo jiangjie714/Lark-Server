@@ -27,13 +27,13 @@ public class SystemMessage {
         msgVo.setReceiver(socketTeamId);
         //msgVo.setMsg(JSON.toJSONString(toFrontcontent, SerializerFeature.DisableCircularReferenceDetect));
         msgVo.setMsg(toFrontcontent);
-        //校验消息
+        /*//校验消息
         CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
         //只有消息合法才去绑定socket通信频道
         if(cRes.getRes()){
             rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
-        }
-
+        }*/
+        rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
     }
 
 }

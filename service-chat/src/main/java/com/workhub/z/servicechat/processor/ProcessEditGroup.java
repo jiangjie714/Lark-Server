@@ -111,13 +111,13 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
         detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
         detailVo.setData(socketTeamBindVo);
         msgVo.setMsg(detailVo);
-        //校验消息
+        /*//校验消息
         CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
         if(!cRes.getRes()){
             msgSendStatusVo.setStatus(false);
             msgSendStatusVo.setContent("群体绑定消息不合法");
             return msgSendStatusVo;
-        }
+        }*/
         //todo SocketMsgVo加密
         rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
 

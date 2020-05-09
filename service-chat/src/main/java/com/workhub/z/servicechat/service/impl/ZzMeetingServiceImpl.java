@@ -333,12 +333,13 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             msgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
             msgVo.setReceiver(meetingId);
             msgVo.setMsg(answerToFrontReponse);
-            //校验消息
+            /*//校验消息
             CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
             //只有消息合法才去绑定socket通信频道
             if(cRes.getRes()){
                 rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
-            }
+            }*/
+            rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
         }catch (Exception e){
             logger.error("会议变更推送前端报错！");
             logger.error(Common.getExceptionMessage(e));

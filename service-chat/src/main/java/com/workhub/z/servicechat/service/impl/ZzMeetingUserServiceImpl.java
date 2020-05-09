@@ -290,12 +290,13 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
                 detailVo.setData(socketTeamBindVo);
                 msgVo.setMsg(detailVo);
-                //校验消息
+                /*//校验消息
                 CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
                 //只有消息合法才去绑定socket通信频道
                 if(cRes.getRes()){
                     rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
-                }
+                }*/
+                rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
                 //记录群状态变动begin
                 if(!userNames.equals("")){
                     userNames = userNames.substring(1);
@@ -349,12 +350,13 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 detailVo.setData(SocketMsgDetailTypeEnum.DEFAULT);
                 detailVo.setData(socketTeamBindVo2);
                 msgVo2.setMsg(detailVo);
-                //校验消息
+                /*//校验消息
                 CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo2);
                 //只有消息合法才去绑定socket通信频道
                 if(cRes.getRes()){
                     rabbitMqMsgProducer.sendSocketTeamUnBindMsg(msgVo2);
-                }
+                }*/
+                rabbitMqMsgProducer.sendSocketTeamUnBindMsg(msgVo2);
                 //记录群状态变动begin
                 if(!userNames.equals("")){
                     userNames = userNames.substring(1);

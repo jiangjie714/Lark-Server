@@ -164,10 +164,11 @@ public class RabbitMqMsgConsumer {
             detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
             detailVo.setData(socketTeamListBindVo);
             vo2.setMsg(detailVo);
-            //如果校验通过才能转发
+            /*//如果校验通过才能转发
             if(Common.checkSocketMsg(vo).getRes()){
                 rabbitMqMsgProducer.sendSocketTeamListBindMsg(vo2);
-            }
+            }*/
+            rabbitMqMsgProducer.sendSocketTeamListBindMsg(vo2);
         }catch (Exception e){
             logger.error("人员群体信息绑定消息处理报错");
             logger.error(Common.getExceptionMessage(e));
