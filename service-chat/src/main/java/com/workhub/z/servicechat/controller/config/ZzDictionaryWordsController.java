@@ -1,5 +1,7 @@
 package com.workhub.z.servicechat.controller.config;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
+import com.cxytiandi.encrypt.springboot.annotation.Encrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.Common;
@@ -63,6 +65,7 @@ public class ZzDictionaryWordsController{
      * @param params 参数：pageNo pageSize wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇
      * @return
      */
+    @Decrypt
     @PostMapping("/query")
     public TableResultResponse<ZzDictionaryWords> query(@RequestParam Map<String, Object> params){
         int page=Integer.valueOf(params.get("pageNo").toString());
@@ -87,6 +90,7 @@ public class ZzDictionaryWordsController{
      * @param params 参数： wordType类型 wordCode编码 wordName词汇名称 replaceWord替换词汇
      * @return
      */
+    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestParam Map<String, Object> params){
         ZzDictionaryWords zzDictionaryWords = new ZzDictionaryWords();
@@ -124,6 +128,7 @@ public class ZzDictionaryWordsController{
      * @param params 参数：wordType类型 wordCode编码 wordName词汇名称 isUse是否使用中 replaceWord替换词汇,id主键
      * @return
      */
+    @Decrypt
     @PutMapping ("/update")
     public ObjectRestResponse update(@RequestParam Map<String, Object> params){
         ZzDictionaryWords zzDictionaryWords = new ZzDictionaryWords();
@@ -180,6 +185,7 @@ public class ZzDictionaryWordsController{
      * @param params id主键
      * @return
      */
+    @Decrypt
     @DeleteMapping("/delete")
     public ObjectRestResponse delete(@RequestParam Map<String, Object> params){
         String id = Common.nulToEmptyString(params.get("id"));
@@ -199,6 +205,7 @@ public class ZzDictionaryWordsController{
      * @param file
      * @return
      */
+    @Decrypt
     @RequestMapping("/importDictionaryWords")
     @ResponseBody
     //导入敏感词汇

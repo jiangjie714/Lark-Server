@@ -150,6 +150,7 @@ public class ZzGroupController  {
      * @param id
      * @return
      */
+    @Decrypt
     @DeleteMapping("/delete")
     public ObjectRestResponse delete(@RequestParam("id")String id){
         boolean flag = this.zzGroupService.deleteById(id);

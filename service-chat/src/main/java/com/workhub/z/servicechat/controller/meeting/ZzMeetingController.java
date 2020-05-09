@@ -135,6 +135,7 @@ public class ZzMeetingController {
      * @return
      * @throws Exception
      */
+    @Decrypt
     @DeleteMapping("delete")
     public ObjectRestResponse delete(@RequestParam String meetId) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();

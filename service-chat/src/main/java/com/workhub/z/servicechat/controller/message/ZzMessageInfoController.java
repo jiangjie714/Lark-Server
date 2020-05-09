@@ -134,6 +134,7 @@ public class ZzMessageInfoController {
      * @param msg msgId 消息id；receiver 接收人；type：类型0私聊1群2会议
      * @return
      */
+    @Decrypt
     @PutMapping("msgCancel")
     public ObjectRestResponse msgCancel(@RequestBody Map msg){
         ObjectRestResponse res = new ObjectRestResponse();

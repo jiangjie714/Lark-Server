@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.config;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.ChatAdminUserVo;
 import com.workhub.z.servicechat.config.*;
@@ -502,7 +503,7 @@ public class ZzFileManageController {
         return obj;
     }*/
 
-
+    @Decrypt
     @PostMapping ("/setFileApproveFLg")
     /**
      * 设置文件审计标记

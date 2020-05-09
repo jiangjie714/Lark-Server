@@ -71,6 +71,7 @@ public class ZzUserGroupMsgTagController{
      * @author zhuqz
      * @since 2019-06-11
      */
+    @Decrypt
     @DeleteMapping("/delUserGroupMsgTagById")
     public ObjectRestResponse delUserGroupMsgTagById(@RequestParam("id") String id){
 
