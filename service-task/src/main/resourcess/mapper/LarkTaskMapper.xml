@@ -240,4 +240,30 @@
     and
       lttt.task_code=#{taskCode}
   </select>
+
+    <resultMap id="GetPercentComplete" type="com.github.hollykunge.security.task.dto.TaskNum">
+        <result column="info" property="info" jdbcType="VARCHAR"/>
+        <result column="num" property="num" jdbcType="VARCHAR"/>
+        <result column="num_percent" property="numPercent" jdbcType="VARCHAR"/>
+    </resultMap>
+  <select id="getPercentComplete" resultMap="GetPercentComplete">
+      select * from (select
+        (case when done=0 then  'numDone'
+        WHEN done=1 THEN 'numNoDone' END) as info,
+        count(1) num,
+        100*round(COUNT(*)/SUM(COUNT(*)) OVER(),4)||'%' numPer
+        from
+        lark_task
+        where
+        pcode='0'
+        and
+        lark_task.project_code = #{projectCode}
+        GROUP BY CASE
+        WHEN done=0 then 'numDone'
+        WHEN done=1 then 'numNoDone'
+        END)
+        where
+        info='numDone'
+  </select>
+
 </mapper>

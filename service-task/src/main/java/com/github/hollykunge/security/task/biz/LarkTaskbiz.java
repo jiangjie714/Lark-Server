@@ -7,9 +7,13 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.task.constant.TaskCommon;
 import com.github.hollykunge.security.task.dto.LarkTaskDto;
+import com.github.hollykunge.security.task.dto.TaskNum;
+import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
+import com.github.hollykunge.security.task.mapper.LarkProjectMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper;
 import com.github.hollykunge.security.task.vo.LarkTaskVO;
@@ -24,6 +28,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +47,9 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
 
     @Autowired
     private LarkTaskMemberMapper larkTaskMemberMapper;
+
+    @Autowired
+    private LarkProjectMapper larkProjectMapper;
     @Override
     protected String getPageName() {
         return null;
@@ -63,6 +71,9 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         larkTask.setId(taskId);
         larkTask.setCrtUser("userId");
         larkTask.setPath("/"+larkTask.getName());
+        larkTask.setDone(TaskCommon.NUMBER_ONE);
+        larkTask.setPri(TaskCommon.NUMBER_ONE);
+        larkTask.setStatus("1");
         larkTaskMapper.insertSelective(larkTask);
         if(StringUtils.pathEquals(memberCode,userId)){
             LarkTaskMember larkTaskMember = new LarkTaskMember();
@@ -164,5 +175,25 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
      */
     public ObjectRestResponse<LarkTask> copyTaskInfo(String taskId) {
         return null;
+    }
+
+    /**
+     * 更新任务完成状态  完成状态和执行状态不是一回事  因为要计算项目完成进度
+     * @param larkTask
+     * @return
+     */
+    public ObjectRestResponse<LarkTask> updateTaskStatus(LarkTask larkTask) {
+        LarkProject larkProject = larkProjectMapper.selectByPrimaryKey(larkTask.getProjectCode());
+        Integer autoUpdateSchedule = larkProject.getAutoUpdateSchedule();
+        larkTask.setStatus(TaskCommon.NUMBER_ONE_STRING);
+        larkTaskMapper.updateByPrimaryKey(larkTask);
+        //if 计算任务进度并更新状态
+        if(autoUpdateSchedule.intValue()== TaskCommon.NUMBER_ZERO.intValue()){
+            //计算完成百分比
+            TaskNum taskNum = larkTaskMapper.getPercentComplete(larkTask.getProjectCode());
+            larkProject.setSchedule(new BigDecimal(taskNum.getNumPercent()));
+            larkProjectMapper.updateByPrimaryKeySelective(larkProject);
+        }
+        return new ObjectRestResponse<>().data(larkTask).rel(true);
     }
 }

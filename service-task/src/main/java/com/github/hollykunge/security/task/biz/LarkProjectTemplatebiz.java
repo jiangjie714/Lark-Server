@@ -51,7 +51,7 @@ public class LarkProjectTemplatebiz extends BaseBiz<LarkProjectTemplateMapper, L
     public TableResultResponse<LarkProjectTemplateDto> getProjectTemplateList(Query query) {
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<LarkProjectTemplateDto> larkProjectTemplates = larkProjectTemplateMapper.getProjectTemplateList();
-        //获取模板列表 同时 获取模板 任务列表  以及模板创建人的头像等信息
+        //获取模板列表 同时 获取模板 任务列表
         return new TableResultResponse<>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), larkProjectTemplates);
     }
 

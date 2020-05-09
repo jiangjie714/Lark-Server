@@ -41,4 +41,13 @@ public class TaskCommon {
      */
     public final static String INVITEMEMBER_DEAD_ROUTING_KEY = "task_inviteMember_dead_routing_key";
 
+    /**
+     * 数字1
+     */
+    public final static Integer NUMBER_ONE = 1;
+    public final static String NUMBER_ONE_STRING = "1";
+    /**
+     * 数字0
+     */
+    public final static Integer NUMBER_ZERO = 0;
 }

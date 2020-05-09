@@ -40,6 +40,19 @@ public class TaskMemberController extends BaseController<LarkTaskMemberbiz, Lark
     }
 
     /**
+     * 更新任务执行人
+     * @param modifyMemberId 修改后的执行人id
+     * @param modifiedMemberId 修改前的执行人id
+     * @return 修改结果
+     */
+    @RequestMapping(value = "/updateTaskMember",method = RequestMethod.PUT)
+    @ResponseBody
+    public ObjectRestResponse<LarkTaskMember> updateTaskMember(
+            @RequestParam("modifyMemberId") String modifyMemberId,
+            @RequestParam("modifiedMemberId") String modifiedMemberId){
+        return larkTaskMemberbiz.updateTaskMember(modifyMemberId,modifiedMemberId);
+    }
+    /**
      * 拆分请求第三步 getTasksByProjectId
      * 获取任务成员列表
      * @param {*} data

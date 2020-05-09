@@ -7,10 +7,12 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.task.biz.LarkProjectBiz;
 import com.github.hollykunge.security.task.biz.LarkTaskMemberbiz;
 import com.github.hollykunge.security.task.biz.LarkTaskToTagbiz;
 import com.github.hollykunge.security.task.biz.LarkTaskbiz;
 import com.github.hollykunge.security.task.dto.LarkTaskDto;
+import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import com.github.hollykunge.security.task.entity.LarkTaskToTag;
@@ -60,6 +62,16 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
         return larkTaskbiz.add(larkTask,memberCode,request);
     }
 
+    /**
+     * done更新任务完成状态  完成状态和 status执行状态不是一回事  因为要计算项目完成进度
+     * @param larkTask
+     * @return
+     */
+    @RequestMapping(value = "/updateTaskStatus",method = RequestMethod.PUT)
+    @ResponseBody
+    public ObjectRestResponse<LarkTask> updateTaskStatus(@RequestBody LarkTask larkTask){
+        return larkTaskbiz.updateTaskStatus(larkTask);
+    }
     /**
      * 排序
      * @param larkTasks
