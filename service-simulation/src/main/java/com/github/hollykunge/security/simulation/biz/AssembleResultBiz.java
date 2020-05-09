@@ -21,18 +21,20 @@ public class AssembleResultBiz {
     static final String INITIAL_FEDERATE = "initial_federate";
     static final String ADVANCE_REQUEST = "advance_request";
     static final String ADVANCE_GRANT = "advance_grant";
-    static final String SIMULATION_RUN = "simulation_run";
+    // static final String SIMULATION_RUN = "simulation_run";
     static final String SIMULATION_END = "simulation_end";
     static final String ENGINE_NAME = "SIMUengine777";
 
     static final List<String> allTopics = new ArrayList<String>(Arrays.asList(
             ACQUIRE_READY_STATE, NODE_READY, INITIAL_FEDERATE,
-            ADVANCE_REQUEST, ADVANCE_GRANT, SIMULATION_RUN,
+            ADVANCE_REQUEST, ADVANCE_GRANT,
+            // SIMULATION_RUN,
             SIMULATION_END));
 
     static final List<String> engPubs = new ArrayList<String>(Arrays.asList(
             ACQUIRE_READY_STATE, INITIAL_FEDERATE,
-            ADVANCE_GRANT, SIMULATION_RUN,
+            ADVANCE_GRANT,
+            // SIMULATION_RUN,
             SIMULATION_END));
 
     static final List<String> engSubs = new ArrayList<String>(Arrays.asList(

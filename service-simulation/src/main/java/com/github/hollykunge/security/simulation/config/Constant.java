@@ -37,4 +37,9 @@ public class Constant {
     public static final String BASE_PATH = "D:\\ospl\\";
     public static final String CONFIG_PATH = BASE_PATH + "lark_simu_config\\";
 
+    /**
+     * RPC节点
+     */
+    public static final String RPC_SOCKET = "SimplePrinter:default -p 22427";
+
 }

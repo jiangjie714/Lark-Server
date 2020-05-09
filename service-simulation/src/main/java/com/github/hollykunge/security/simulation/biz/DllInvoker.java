@@ -10,7 +10,7 @@ public interface DllInvoker extends Library {
     DllInvoker instance = (DllInvoker) Native.loadLibrary(
             BASE_PATH + "spliceForEngine.dll", DllInvoker.class);
 
-    String dllSystemPrepare(String systemName, double startTime, double step, String users);
+    String dllSystemPrepare(String systemName, double startTime, double step, double stopTime, String users);
 
     String dllSystemStart(String systemName);
 

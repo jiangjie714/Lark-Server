@@ -2,16 +2,16 @@ package com.github.hollykunge.security.simulation.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.github.hollykunge.security.common.rest.BaseController;
-import com.github.hollykunge.security.simulation.biz.DllInvoker;
+import com.github.hollykunge.security.simulation.biz.RunBiz;
 import com.github.hollykunge.security.simulation.biz.SystemBiz;
-import com.github.hollykunge.security.simulation.entity.SystemInfo;
+import com.zeroc.Ice.ConnectionRefusedException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static com.github.hollykunge.security.simulation.config.Constant.*;
-import static com.github.hollykunge.security.simulation.config.Constant.RT_EXCEPTION;
 
 /**
  * @author jihang
@@ -19,23 +19,36 @@ import static com.github.hollykunge.security.simulation.config.Constant.RT_EXCEP
 
 @RestController
 @RequestMapping("/runControl")
-public class RunController extends BaseController<SystemBiz, SystemInfo> {
+public class RunController {
+
+    @Resource
+    private SystemBiz systemBiz;
+
+    @Resource
+    private RunBiz runBiz;
 
     /**
      * 公共返回
      */
     private ObjectRestResponse getObjectRestResponse(String systemId, String ret, String newState) {
-        Map<String, String> ret_j = (Map<String, String>) JSON.parse(ret);
-        String retState = ret_j.get("success");
-        String retMsg = ret_j.get("message");
-        switch (retState) {
-            case RT_SUCCESS:
-                baseBiz.updateState(systemId, newState);
-                return new ObjectRestResponse().rel(true).msg(retMsg);
-            case RT_EXCEPTION:
-                return new ObjectRestResponse().rel(false).msg("动态库错误，请结束仿真，重新准备");
-            default:
-                return new ObjectRestResponse().rel(false).msg(retMsg);
+        try {
+            Map<String, String> ret_j = (Map<String, String>) JSON.parse(ret);
+            String retState = ret_j.get("success");
+            String retMsg = ret_j.get("message");
+
+            String gbk = new String(retMsg.getBytes("UTF-8"), "gb2312");
+            switch (retState) {
+                case RT_SUCCESS:
+                    systemBiz.updateState(systemId, newState);
+                    return new ObjectRestResponse().rel(true).msg(retMsg);
+                case RT_EXCEPTION:
+                    return new ObjectRestResponse().rel(false).msg("动态库错误，请结束仿真，重新准备");
+                default:
+                    return new ObjectRestResponse().rel(false).msg(retMsg);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("系统后台错误，请结束仿真，重新准备");
         }
     }
 
@@ -49,22 +62,27 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
             @RequestParam("startTime") double startTime, @RequestParam("stopTime") double stopTime,
             @RequestParam("step") double step) {
         try {
+            if(!runBiz.hasConfig(systemId)) {
+                return new ObjectRestResponse().rel(false).msg("未找到任务配置文件，请生成后重试");
+            }
             if (systemId == null || systemId.equals("")
                     || users == null || users.equals("")
                     || startTime < 0.0 || step < 0.0
                     || stopTime < 0.0 || stopTime < startTime) {
-                return new ObjectRestResponse().rel(false).msg("传入后台参数错误，请结束仿真，重新准备");
+                return new ObjectRestResponse().rel(false).msg("传入后台参数有误，请修改后重试");
             }
-            String curState = baseBiz.queryState(systemId);
+            String curState = systemBiz.queryState(systemId);
             if (!UNREADY.equals(curState)) {
-                return new ObjectRestResponse().rel(false).msg("后台状态错误，请结束仿真，重新准备");
+                return new ObjectRestResponse().rel(false).msg("任务状态错误，请结束仿真并重新准备");
             }
-            System.setProperty("jna.encoding", "GBK");
-            String ret = DllInvoker.instance.dllSystemPrepare(systemId, startTime, step, users);
+            String ret = runBiz.dllSystemPrepare(systemId, startTime, step, stopTime, users);
             return getObjectRestResponse(systemId, ret, PREPARING);
+        } catch (ConnectionRefusedException e) {
+            System.out.println("systemReady Controller : " + e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("引擎服务不可用，请联系管理员");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ObjectRestResponse().rel(false).msg("系统后台错误，请结束仿真，重新准备");
+            System.out.println("systemReady Controller : " + e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("后台执行错误，请结束仿真后重试");
         }
     }
 
@@ -75,25 +93,28 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
     @ResponseBody
     public ObjectRestResponse systemStart(@RequestParam("systemId") String systemId) {
         try {
+            if(!runBiz.hasConfig(systemId)) {
+                return new ObjectRestResponse().rel(false).msg("未找到任务配置文件，请生成后重试");
+            }
             if (systemId == null || systemId.equals("")) {
                 return new ObjectRestResponse().rel(false).msg("传入后台参数错误，请结束仿真");
             }
-            System.setProperty("jna.encoding", "GBK");
-            String curState = baseBiz.queryState(systemId);
+            String curState = systemBiz.queryState(systemId);
             String ret = null;
-            if(PREPARING.equals(curState)) {
-                ret = DllInvoker.instance.dllSystemStart(systemId);
-            }
-            else if(PAUSING.equals(curState)) {
-                ret = DllInvoker.instance.dllSystemPause(systemId);
-            }
-            else {
-                return new ObjectRestResponse().rel(false).msg("后台状态错误，请结束仿真");
+            if (PREPARING.equals(curState)) {
+                ret = runBiz.dllSystemStart(systemId);
+            } else if (PAUSING.equals(curState)) {
+                ret = runBiz.dllSystemPause(systemId);
+            } else {
+                return new ObjectRestResponse().rel(false).msg("任务状态错误，请结束仿真");
             }
             return getObjectRestResponse(systemId, ret, RUNNING);
+        } catch (ConnectionRefusedException e) {
+            System.out.println("systemStart Controller : " + e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("引擎服务不可用，请联系管理员");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ObjectRestResponse().rel(false).msg("系统后台错误，请结束仿真");
+            System.out.println("systemStart Controller : " + e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("后台执行错误，请结束仿真");
         }
     }
 
@@ -104,19 +125,24 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
     @ResponseBody
     public ObjectRestResponse systemPause(@RequestParam("systemId") String systemId) {
         try {
+            if(!runBiz.hasConfig(systemId)) {
+                return new ObjectRestResponse().rel(false).msg("未找到任务配置文件，请生成后重试");
+            }
             if (systemId == null || systemId.equals("")) {
                 return new ObjectRestResponse().rel(false).msg("传入后台参数错误，请结束仿真");
             }
-            String curState = baseBiz.queryState(systemId);
+            String curState = systemBiz.queryState(systemId);
             if (!RUNNING.equals(curState)) {
-                return new ObjectRestResponse().rel(false).msg("后台状态错误，请结束仿真");
+                return new ObjectRestResponse().rel(false).msg("任务状态错误，请结束仿真");
             }
-            System.setProperty("jna.encoding", "GBK");
-            String ret = DllInvoker.instance.dllSystemPause(systemId);
+            String ret = runBiz.dllSystemPause(systemId);
             return getObjectRestResponse(systemId, ret, PAUSING);
+        } catch (ConnectionRefusedException e) {
+            System.out.println("systemPause Controller : " + e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("引擎服务不可用，请联系管理员");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ObjectRestResponse().rel(false).msg("系统后台错误，请结束仿真");
+            System.out.println("systemPause Controller : " + e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("后台执行错误，请结束仿真");
         }
     }
 
@@ -127,15 +153,21 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
     @ResponseBody
     public ObjectRestResponse systemEnd(@RequestParam("systemId") String systemId) {
         try {
+            if(!runBiz.hasConfig(systemId)) {
+                return new ObjectRestResponse().rel(false).msg("未找到任务配置文件，请生成后重试");
+            }
             if (systemId == null || systemId.equals("")) {
                 return new ObjectRestResponse().rel(false).msg("传入后台参数错误，请结束仿真");
             }
-            System.setProperty("jna.encoding", "GBK");
-            String ret = DllInvoker.instance.dllSystemStop(systemId);
-            baseBiz.updateState(systemId, UNREADY);
+            String ret = runBiz.dllSystemStop(systemId);
+            systemBiz.updateState(systemId, UNREADY);
             return getObjectRestResponse(systemId, ret, UNREADY);
+        } catch (ConnectionRefusedException e) {
+            System.out.println("systemEnd Controller : " + e.getMessage());
+            systemBiz.updateState(systemId, UNREADY);
+            return new ObjectRestResponse().rel(false).msg("引擎服务不可用，请联系管理员");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("systemEnd Controller : " + e.getMessage());
             return new ObjectRestResponse().rel(false).msg("系统后台错误，请结束仿真");
         }
     }
@@ -147,8 +179,7 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
             if (systemId == null || systemId.equals("")) {
                 return new ObjectRestResponse().rel(false).msg("传入后台参数错误，请结束仿真");
             }
-            System.setProperty("jna.encoding", "GBK");
-            String ret = DllInvoker.instance.dllGetOnlineNodes(systemId);
+            String ret = runBiz.dllGetOnlineNodes(systemId);
             Map<String, String> ret_j = (Map<String, String>) JSON.parse(ret);
             String retState = ret_j.get("success");
             String retMsg = ret_j.get("message");
@@ -156,12 +187,15 @@ public class RunController extends BaseController<SystemBiz, SystemInfo> {
                 case RT_SUCCESS:
                     return new ObjectRestResponse().rel(true).msg(retMsg);
                 case RT_EXCEPTION:
-                    return new ObjectRestResponse().rel(false).msg("动态库错误，请结束仿真，重新准备");
+                    return new ObjectRestResponse().rel(false).msg("引擎内部错误，请结束仿真");
                 default:
                     return new ObjectRestResponse().rel(false).msg(retMsg);
             }
+        } catch (ConnectionRefusedException e) {
+            System.out.println("getOnlineNodes Controller : " + e.getMessage());
+            return new ObjectRestResponse().rel(false).msg("引擎服务不可用，请联系管理员");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("getOnlineNodes Controller : " + e.getMessage());
             return new ObjectRestResponse().rel(false).msg("系统后台错误，请结束仿真");
         }
     }
