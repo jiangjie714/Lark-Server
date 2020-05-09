@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.group;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.RandomId;
@@ -24,7 +25,6 @@ public class ZzUserGroupMsgTagController{
      */
     @Resource
     private ZzUserGroupMsgTagService zzUserGroupMsgTagService;
-    //todo 接口未启用 暂时保留
     /**
      * 增加群消息标记
      * @param userId 用户id；groupId 群id；msgId 消息id；tagType标记类型，默认0重要消息
@@ -32,6 +32,7 @@ public class ZzUserGroupMsgTagController{
      * @author zhuqz
      * @since 2019-06-11
      */
+    @Decrypt
     @PostMapping("/addUserGroupMsgTag")
     public ObjectRestResponse addUserGroupMsgTag(@RequestParam("userId") String userId,
                                                  @RequestParam("groupId") String groupId,
@@ -63,7 +64,6 @@ public class ZzUserGroupMsgTagController{
         }
         return objectRestResponse;
     }
-    //todo 接口未启用 暂时保留
     /**
      * 按照id删除群消息标记
      * @param id 表主键
@@ -71,7 +71,8 @@ public class ZzUserGroupMsgTagController{
      * @author zhuqz
      * @since 2019-06-11
      */
-    @DeleteMapping("/delUserGroupMsgTagById")
+    @Decrypt
+    @PostMapping("/delUserGroupMsgTagById")
     public ObjectRestResponse delUserGroupMsgTagById(@RequestParam("id") String id){
 
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -93,14 +94,14 @@ public class ZzUserGroupMsgTagController{
         }
         return objectRestResponse;
     }
-   /* *//**
+    /**
      * 按照条件删除群消息标记
      * @param userId 用户id；groupId 群id；msgId 消息id；tagType标记类型，默认0重要消息
      * @return  1成功；0用户不在组内或者组已经不存在；-1错误
      * @author zhuqz
      * @since 2019-06-11
-     *//*
-    //todo 接口未启用 暂时保留
+     */
+    @Decrypt
     @PostMapping("/delUserGroupMsgTagByConditions")
     public ObjectRestResponse delUserGroupMsgTagByConditions(@RequestParam("userId") String userId,
                                                              @RequestParam("groupId") String groupId,
@@ -130,9 +131,9 @@ public class ZzUserGroupMsgTagController{
             objectRestResponse.msg("200");
         }
         return objectRestResponse;
-    }*/
-    //todo 接口未启用 暂时保留
+    }
     /**
+     * todo:使用
      * 查询用户标记消息
      * @param userId 用户id；groupId 群id；tagType标记类型
      * @return  1成功；0用户不在组内或者组已经不存在；-1错误；数据列表

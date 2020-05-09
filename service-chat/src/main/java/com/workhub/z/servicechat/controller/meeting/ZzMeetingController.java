@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.controller.meeting;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.MeetingVo;
@@ -48,7 +49,8 @@ public class ZzMeetingController {
  * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回会议id
  * @Author: zhuqz
  * @Date: 2019/9/20
-**//*
+**/
+@Decrypt
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzMeeting zzMeeting) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -69,9 +71,9 @@ public class ZzMeetingController {
             res.data("系统出错");
         }
         return  res;
-    }*/
-
+    }
 /**
+ * todo:使用
 * @MethodName: getSingleMeetingInfo
  * @Description: 查询单个会议的详细信息
  * @Param: [meetId:会议id]
@@ -103,6 +105,7 @@ public class ZzMeetingController {
      * @Author: zhuqz
      * @Date: 2019/9/20
     **/
+    @Decrypt
     @PutMapping("update")
     public  ObjectRestResponse update(@RequestBody ZzMeeting zzMeeting) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -125,13 +128,6 @@ public class ZzMeetingController {
         }
         return res;
     }
-
-    /**
-     * 删除会议
-     * @param meetId
-     * @return
-     * @throws Exception
-     */
     @DeleteMapping("delete")
     public ObjectRestResponse delete(@RequestParam String meetId) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -154,7 +150,8 @@ public class ZzMeetingController {
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回会议id
      * @Author: zhuqz
      * @Date: 2019/9/24
-    **//*
+    **/
+    @Decrypt
     @PostMapping("createMeeting")
     public ObjectRestResponse createMeeting(@RequestBody String meetingJson) throws Exception{
 
@@ -174,9 +171,9 @@ public class ZzMeetingController {
         meetingJson = groupJson.toJSONString();
         ObjectRestResponse res = this.zzMeetingService.createMeeting(meetingJson);
         return  res;
-    }*/
-
+    }
     /**
+     * todo:使用
     * @MethodName: getMeetProgressCodeList
      * @Description: 查询会议议程全部代码表（该接口暂时废弃不用了）
      * @Param: []
@@ -189,6 +186,7 @@ public class ZzMeetingController {
         return this.zzMeetingService.getMeetProgressCodeList();
     }
     /**
+     * todo:使用
     * @MethodName: getMeetRoleCodeList
      * @Description: 获取会议角色代码表
      * @Param: []
@@ -214,12 +212,14 @@ public class ZzMeetingController {
     }
 
     /**
+     * todo:使用
     *@Description: 会议议程变更
-    *@Param: meetingId,code
+    *@Param: meetid,code
     *@return:
     *@Author: 忠
     *@date: 2019/10/14
     */
+    @Decrypt
     @PutMapping("changeMeetAgenda")
     public ObjectRestResponse changeMeetAgenda(@RequestBody Map params) throws UnsupportedEncodingException {
         params.put("userId", Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest)));
@@ -231,11 +231,13 @@ public class ZzMeetingController {
     }
 
     /**
+     * todo:使用
      * 会议议程变列表变更
      * @param zzMeeting id会议id，allProgress 议程列表编码 逗号分割例如：5001,5002,5003
      * @return
      * @throws UnsupportedEncodingException
      */
+    @Decrypt
     @PutMapping("changeMeetAgendaList")
     public ObjectRestResponse changeMeetAgendaList(@RequestBody ZzMeeting zzMeeting) throws UnsupportedEncodingException {
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -257,6 +259,7 @@ public class ZzMeetingController {
     }
 
     /**
+     * todo:使用
     *@Description: 获取会议列表（联系人）
     *@Param: userid
     *@return: meetingvo

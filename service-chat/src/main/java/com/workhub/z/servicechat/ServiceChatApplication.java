@@ -2,6 +2,7 @@ package com.workhub.z.servicechat;
 
 
 import com.github.hollykunge.security.common.config.DruidConfig;
+import com.cxytiandi.encrypt.springboot.annotation.EnableEncrypt;
 import com.workhub.z.servicechat.config.CacheConst;
 import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.redis.RedisUtil;
@@ -29,6 +30,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableTransactionManagement
 @EnableCaching
 @ComponentScan({"com.workhub.z.servicechat.*","com.github.hollykunge.security.admin.api.*"})
+@EnableEncrypt
 public class ServiceChatApplication {
     static Logger logger = LoggerFactory.getLogger(ServiceChatApplication.class);
     //是否清理缓存

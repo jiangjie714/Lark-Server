@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.meeting;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.MeetingVo;
@@ -44,7 +45,8 @@ public class ZzMeetingUserController {
  * @Author: zhuqz
  * @Date: 2019/9/20
 **/
-   /* @PostMapping("addUser")
+    @Decrypt
+    @PostMapping("addUser")
     public ObjectRestResponse addUser(@RequestBody ZzMeetingUser zzMeetingUser) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
@@ -66,7 +68,7 @@ public class ZzMeetingUserController {
             res.data("系统出错");
         }
         return  res;
-    }*/
+    }
 /**
 * @MethodName: delUser
  * @Description: 删除用户
@@ -74,7 +76,7 @@ public class ZzMeetingUserController {
  * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
  * @Author: zhuqz
  * @Date: 2019/9/20
-**//*
+**/
     @DeleteMapping("delUser")
     public ObjectRestResponse delUser(@RequestParam String meetId,@RequestParam String userId) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -93,7 +95,7 @@ public class ZzMeetingUserController {
             res.data("系统出错");
         }
         return  res;
-    }*/
+    }
     /**
     * @MethodName: queryMeetAllUsers
      * @Description: 查询会议所有用户
@@ -101,19 +103,21 @@ public class ZzMeetingUserController {
      * @Return: com.github.hollykunge.security.Common.msg.ListRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
-    **//*
+    **/
     @GetMapping("queryMeetAllUsers")
     public ListRestResponse queryMeetAllUsers(@RequestParam String meetId){
         return  this.zzMeetingUserService.queryMeetAllUsers(meetId);
-    }*/
+    }
     /**
-     * @MethodName: updateUser
-     * @Description: 更新用户信息
+     * todo:使用
+    * @MethodName: updateUser
+     * @Description:
      * @Param: [meetingUser]meetId会议id，userId用户id，roleCode角色编码
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
     **/
+    @Decrypt
     @PutMapping("updateUser")
     public ObjectRestResponse  updateUser(@RequestBody  ZzMeetingUser meetingUser) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -138,13 +142,15 @@ public class ZzMeetingUserController {
         return  res;
     }
     /**
-     * @MethodName: updateUserList
+     * todo:使用
+    * @MethodName: updateUserList
      * @Description: 更新用户列表信息(批量)
      * @Param: [meetingUser]
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/10/21
     **/
+    @Decrypt
     @PutMapping("updateUserList")
     public ObjectRestResponse  updateUserList(@RequestBody List<ZzMeetingUser> meetingUsers) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -177,6 +183,7 @@ public class ZzMeetingUserController {
      * @return
      * @throws Exception
      */
+    @Decrypt
     @PutMapping("editMeetUser")
     public ObjectRestResponse  editMeetUser(@RequestBody MeetingVo meetingVo) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -210,11 +217,11 @@ public class ZzMeetingUserController {
     /**
      * 获取用户当天需要提醒的会议列表
      * @return
-     *//*
+     */
     @GetMapping("getUserCurrentDayMeetJob")
     public ListRestResponse getUserCurrentDayMeetJob(){
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         List<UserCurrentDayMeetJobVo> data = this.zzMeetingUserService.getUserCurrentDayMeetJob(userId);
-        return new ListRestResponse("200",data.size(),data);
-    }*/
+        return new ListRestResponse("500",data.size(),data);
+    }
 }

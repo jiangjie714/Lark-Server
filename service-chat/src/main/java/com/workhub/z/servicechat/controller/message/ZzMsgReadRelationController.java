@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.message;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.NoReadVo;
@@ -23,19 +24,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/MsgReadRelation/")
 public class ZzMsgReadRelationController {
-    /*private static Logger log = LoggerFactory.getLogger(ZzMsgReadRelationController.class);
-    *//**
+    private static Logger log = LoggerFactory.getLogger(ZzMsgReadRelationController.class);
+    /**
      * 服务对象
-     *//*
+     */
     @Resource
     private ZzMsgReadRelationService zzMsgReadRelationService;
 
-    *//**
+    /**
      * 通过主键查询单条数据
      *
      * @param id 主键
      * @return 单条数据
-     *//*
+     */
     @GetMapping("selectOne")
     public ObjectRestResponse selectOne(String id) {
         ZzMsgReadRelation data=this.zzMsgReadRelationService.queryById(id);
@@ -46,6 +47,7 @@ public class ZzMsgReadRelationController {
         return res;
     }
 
+    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzMsgReadRelation zzMsgReadRelation){
         zzMsgReadRelation.setId(RandomId.getUUID());
@@ -80,6 +82,7 @@ public class ZzMsgReadRelationController {
         return objectRestResponse;
     }
 
+    @Decrypt
     @PostMapping("/querynoreadcount")
     public ObjectRestResponse queryNoReadCount(@RequestParam("consumer")String consumer){
         Long count = this.zzMsgReadRelationService.queryNoReadCount(consumer);
@@ -90,18 +93,20 @@ public class ZzMsgReadRelationController {
         return res;
     }
 
+    @Decrypt
     @PostMapping("/querynoreadcountlist")
     public ListRestResponse queryNoReadCountList(@RequestParam("consumer")String consumer){
         List<NoReadVo> list = this.zzMsgReadRelationService.queryNoReadCountList(consumer);
         return new ListRestResponse("200",list==null?0:list.size(),list);
     }
-    *//**
+    /**
     *@Description: 清除未读标识
     *@Param:
     *@return:
     *@Author: 忠
     *@date: 2019/6/12
-    *//*
+    */
+    @Decrypt
     @PostMapping("/deleteBySender")
     public ObjectRestResponse deleteBySender(@RequestParam("sender")String sender,@RequestParam("receiver") String receiver){
         this.zzMsgReadRelationService.deleteByConsumerAndSender(sender,receiver);
@@ -110,5 +115,5 @@ public class ZzMsgReadRelationController {
         restResponse.data("成功");
         restResponse.msg("200");
         return  restResponse;
-    }*/
+    }
 }

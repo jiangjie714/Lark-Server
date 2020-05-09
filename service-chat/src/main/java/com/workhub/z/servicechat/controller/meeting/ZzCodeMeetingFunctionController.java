@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.meeting;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.Common;
@@ -17,13 +18,13 @@ import java.util.Map;
 
 /**
  * @author zhuqz
- * description:会议功能菜单(前端暂时没有用，这里增删改查接口先注释掉)
+ * description:会议功能菜单
  * date:2019/9/23 14:55
  **/
 @RestController
 @RequestMapping("zzCodeMeetingFunction")
 public class ZzCodeMeetingFunctionController {
-    /*private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     private ZzCodeMeetingFunctionService zzCodeMeetingFunctionService;
     @Resource
@@ -33,14 +34,15 @@ public class ZzCodeMeetingFunctionController {
     static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
     static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
     static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
-    *//**
+    /**
      * @MethodName: add
      * @Description: 新增
      * @Param: [zzCodeMeetingFunction]
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse 返回id
      * @Author: zhuqz
      * @Date: 2019/9/20
-     **//*
+     **/
+    @Decrypt
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzCodeMeetingFunction zzCodeMeetingFunction) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -67,14 +69,15 @@ public class ZzCodeMeetingFunctionController {
         }
         return  res;
     }
-    *//**
+    /**
      * @MethodName: update
      * @Description: 修改
      * @Param: [ZzCodeMeetingFunction]id,code编码，name名称，isUse是否使用1是0否
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/20
-     **//*
+     **/
+    @Decrypt
     @PutMapping("update")
     public  ObjectRestResponse update(@RequestBody ZzCodeMeetingFunction zzCodeMeetingFunction) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -97,14 +100,14 @@ public class ZzCodeMeetingFunctionController {
         }
         return res;
     }
-    *//**
+    /**
     * @MethodName: delete
      * @Description: 删除
      * @Param: [param]code 编码，id主键 两个任意传一个即可
      * @Return: com.github.hollykunge.security.Common.msg.ObjectRestResponse
      * @Author: zhuqz
      * @Date: 2019/9/23
-    **//*
+    **/
     @DeleteMapping("delete")
     public ObjectRestResponse delete(@RequestBody Map param) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -129,16 +132,16 @@ public class ZzCodeMeetingFunctionController {
         }
         return res;
     }
-    *//**
+    /**
     * @MethodName: query
      * @Description: 查询
      * @Param: [param] pageSize、pageNo页码页数；isUse是否使用1是0否；name名称
      * @Return: com.github.hollykunge.security.Common.msg.TableResultResponse
      * @Author: zhuqz
      * @Date: 2019/9/23
-    **//*
+    **/
     @GetMapping("query")
     public TableResultResponse query(@RequestParam Map param) throws Exception{
         return this.zzCodeMeetingFunctionService.query(param);
-    }*/
+    }
 }
