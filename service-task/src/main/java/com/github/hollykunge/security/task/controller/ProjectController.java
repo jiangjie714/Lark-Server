@@ -1,33 +1,26 @@
 package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.task.biz.LarkProjectBiz;
-import com.github.hollykunge.security.task.biz.LarkProjectMemberbiz;
-import com.github.hollykunge.security.task.biz.LarkTaskStagesbiz;
+import com.github.hollykunge.security.task.biz.LarkProjectMemberBiz;
+import com.github.hollykunge.security.task.biz.LarkTaskStagesBiz;
 import com.github.hollykunge.security.task.dto.LarkProjectDto;
 import com.github.hollykunge.security.task.entity.LarkProject;
-import com.github.hollykunge.security.task.entity.LarkProjectMember;
-import com.github.hollykunge.security.task.entity.LarkTask;
-import com.github.hollykunge.security.task.entity.LarkTaskStages;
 import com.github.hollykunge.security.task.feign.LarkProjectFileFeign;
-import com.sun.org.apache.bcel.internal.generic.LADD;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,10 +36,10 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     private LarkProjectBiz larkProjectBiz;
 
     @Autowired
-    private LarkTaskStagesbiz larkTaskStagesbiz;
+    private LarkTaskStagesBiz larkTaskStagesbiz;
 
     @Autowired
-    private LarkProjectMemberbiz larkProjectMemberbiz;
+    private LarkProjectMemberBiz larkProjectMemberbiz;
 
     @Autowired
     private LarkProjectFileFeign larkProjectTemplateFeign;
@@ -76,7 +69,7 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
     public ObjectRestResponse<LarkProject> delete(@RequestParam("projectCode") String projectCode){
         if(StringUtils.isEmpty(projectCode)){
-           throw  new BaseException("项目编码不可为空！");
+           throw  new ClientParameterInvalid("项目编码不可为空！");
         }
         return larkProjectBiz.deleteProject(projectCode);
     }
@@ -95,7 +88,7 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
     public ObjectRestResponse<LarkProject> edit(@RequestBody LarkProject project){
         if(StringUtils.isEmpty(project.getId())){
-            throw new BaseException("更新项目id不可为空！");
+            throw new ClientParameterInvalid("更新项目id不可为空！");
         }
         larkProjectBiz.updateSelectiveById(project);
         return new ObjectRestResponse().msg("修改成功！");
@@ -148,7 +141,7 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     @RequestMapping(value = "/recycle",method = RequestMethod.POST)
     public BaseResponse recycle(@RequestParam("projectCode") String projectCode){
         if(StringUtils.isEmpty(projectCode)){
-            throw new BaseException("项目id不可为空！");
+            throw new ClientParameterInvalid("项目id不可为空！");
         }
         LarkProject larkProject = new LarkProject();
         larkProject.setId(projectCode);
@@ -168,7 +161,7 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
     @RequestMapping(value = "/recovery",method = RequestMethod.POST)
     public BaseResponse recovery(@RequestParam("projectCode") String projectCode){
         if(StringUtils.isEmpty(projectCode)){
-            throw new BaseException("项目id不可为空！");
+            throw new ClientParameterInvalid("项目id不可为空！");
         }
         LarkProject larkProject = new LarkProject();
         larkProject.setId(projectCode);

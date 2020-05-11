@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LarkProjectTemplatebiz extends BaseBiz<LarkProjectTemplateMapper, LarkProjectTemplate> {
+public class LarkProjectTemplateBiz extends BaseBiz<LarkProjectTemplateMapper, LarkProjectTemplate> {
 
     @Autowired
     private LarkProjectTemplateMapper larkProjectTemplateMapper;

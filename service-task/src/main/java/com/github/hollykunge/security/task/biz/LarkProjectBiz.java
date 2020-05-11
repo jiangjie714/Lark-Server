@@ -2,6 +2,7 @@ package com.github.hollykunge.security.task.biz;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
@@ -92,7 +93,7 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         Object userId = query.get("userId");
         if(StringUtils.isEmpty(userId)){
-            throw new BaseException("用户id不可为空");
+            throw new ClientParameterInvalid("用户id不可为空");
         }
         //List<LarkProject> larkProjectList = larkProjectMapper.getProjectPageListByUserId(userId.toString());
         List<LarkProjectDto> larkProjectDtos = larkProjectMapper.getProjectOwner(userId.toString());

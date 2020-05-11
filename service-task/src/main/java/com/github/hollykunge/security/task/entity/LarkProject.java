@@ -86,4 +86,7 @@ public class LarkProject extends BaseEntity {
     @Column(name = "AUTO_UPDATE_SCHEDULE")
     private Integer autoUpdateSchedule;
 
+    @Column(name = "SECRET_LEVEL")
+    private Integer secretLevel;
+
 }

@@ -8,6 +8,7 @@
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="PATH_NAME" property="pathName" jdbcType="VARCHAR" />
+    <result column="FOLDER_ID" property="folderId" jdbcType="VARCHAR" />
     <result column="TITLE" property="title" jdbcType="VARCHAR" />
     <result column="EXTENSION" property="extension" jdbcType="VARCHAR" />
     <result column="FILE_SIZE" property="fileSize" jdbcType="INTEGER" />

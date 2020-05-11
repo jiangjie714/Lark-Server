@@ -25,7 +25,7 @@ import java.util.Map;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LarkTaskFilebiz extends BaseBiz<LarkFileMapper, LarkFile> {
+public class LarkTaskFileBiz extends BaseBiz<LarkFileMapper, LarkFile> {
 
     @Autowired
     private LarkProjectFileFeign larkProjectFileFeign;

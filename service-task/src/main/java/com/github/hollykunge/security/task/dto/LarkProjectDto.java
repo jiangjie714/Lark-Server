@@ -67,6 +67,8 @@ public class LarkProjectDto implements Serializable {
 
     private Integer autoUpdateSchedule;
 
+    private Integer secretLevel;
+
     private String id;
 
     private Date crtTime;

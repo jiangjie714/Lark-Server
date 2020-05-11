@@ -1,10 +1,11 @@
 package com.github.hollykunge.security.task.biz;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.task.constant.TaskCommon;
@@ -40,7 +41,7 @@ import java.util.Map;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
+public class LarkTaskBiz extends BaseBiz<LarkTaskMapper, LarkTask> {
 
     @Autowired
     private LarkTaskMapper larkTaskMapper;
@@ -57,9 +58,13 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
 
     public ObjectRestResponse<LarkTask> add(LarkTask larkTask,
                                             String memberCode, HttpServletRequest request) {
+        LarkProject larkProject = larkProjectMapper.selectByPrimaryKey(larkTask.getProjectCode());
+        if(ObjectUtils.isEmpty(larkProject)){
+            throw new ClientParameterInvalid("项目为空！");
+        }
         String userId  = request.getHeader("userId");
         if(ObjectUtils.isEmpty(larkTask)){
-            throw new BaseException("任务内容不可为空！");
+            throw new ClientParameterInvalid("任务内容不可为空！");
         }
         if(StringUtils.isEmpty(larkTask.getPcode())){
             larkTask.setPath(larkTask.getName());
@@ -74,6 +79,7 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         larkTask.setDone(TaskCommon.NUMBER_ONE);
         larkTask.setPri(TaskCommon.NUMBER_ONE);
         larkTask.setStatus("1");
+        larkTask.setTaskPrivate(larkProject.getOpenTaskPrivated());
         larkTaskMapper.insertSelective(larkTask);
         if(StringUtils.pathEquals(memberCode,userId)){
             LarkTaskMember larkTaskMember = new LarkTaskMember();
@@ -141,15 +147,15 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
     public TableResultResponse<LarkTaskDto> getTaskAndTag(Map<String, Object> map) {
         Query query = new Query(map);
         if(MapUtils.isEmpty(map)){
-            throw new BaseException("参数不可为空！");
+            throw new ClientParameterInvalid("参数不可为空！");
         }
         Object projectCode = map.get("projectCode");
         if(ObjectUtils.isEmpty(projectCode)){
-            throw new BaseException("项目id不可为空！");
+            throw new ClientParameterInvalid("项目id不可为空！");
         }
         Object taskCode = map.get("taskCode");
         if(ObjectUtils.isEmpty(map.get("taskCode"))){
-            throw new BaseException("任务id不可为空！");
+            throw new ClientParameterInvalid("任务id不可为空！");
         }
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getTaskAndTag(projectCode.toString(),taskCode.toString());
@@ -162,7 +168,7 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
      * @param larkTaskbiz
      * @return
      */
-    public ObjectRestResponse importExcel(MultipartFile file, LarkTaskbiz larkTaskbiz) {
+    public ObjectRestResponse importExcel(MultipartFile file, LarkTaskBiz larkTaskbiz) {
         //EasyExcelUtil.importExcel(file.getInputStream(),userBiz,roleUserMapMapper,positionUserMapMapper,userMapper,orgMapper);
         return new ObjectRestResponse().rel(true).msg("导入成功！");
     }
@@ -186,12 +192,15 @@ public class LarkTaskbiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         LarkProject larkProject = larkProjectMapper.selectByPrimaryKey(larkTask.getProjectCode());
         Integer autoUpdateSchedule = larkProject.getAutoUpdateSchedule();
         larkTask.setStatus(TaskCommon.NUMBER_ONE_STRING);
+        larkTask.setDone(TaskCommon.NUMBER_ZERO);
+        EntityUtils.setCreatAndUpdatInfo(larkTask);
         larkTaskMapper.updateByPrimaryKey(larkTask);
         //if 计算任务进度并更新状态
         if(autoUpdateSchedule.intValue()== TaskCommon.NUMBER_ZERO.intValue()){
             //计算完成百分比
             TaskNum taskNum = larkTaskMapper.getPercentComplete(larkTask.getProjectCode());
             larkProject.setSchedule(new BigDecimal(taskNum.getNumPercent()));
+            EntityUtils.setCreatAndUpdatInfo(larkProject);
             larkProjectMapper.updateByPrimaryKeySelective(larkProject);
         }
         return new ObjectRestResponse<>().data(larkTask).rel(true);

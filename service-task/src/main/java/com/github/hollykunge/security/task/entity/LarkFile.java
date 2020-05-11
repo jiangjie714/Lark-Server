@@ -21,6 +21,9 @@ public class LarkFile extends BaseEntity {
     @Column(name = "PATH_NAME")
     private String pathName;
 
+    @Column(name = "FOLDER_ID")
+    private String folderId;
+
     @Column(name = "TITLE")
     private String title;
 

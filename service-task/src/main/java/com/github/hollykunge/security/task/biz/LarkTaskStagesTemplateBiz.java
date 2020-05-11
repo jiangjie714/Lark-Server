@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LarkTaskStagesTemplatebiz extends BaseBiz<LarkTaskStagesTemplateMapper, LarkTaskStagesTemplate> {
+public class LarkTaskStagesTemplateBiz extends BaseBiz<LarkTaskStagesTemplateMapper, LarkTaskStagesTemplate> {
     @Override
     protected String getPageName() {
         return null;

@@ -3,10 +3,9 @@ package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
-import com.github.hollykunge.security.task.biz.LarkTaskTagbiz;
+import com.github.hollykunge.security.task.biz.LarkTaskTagBiz;
 import com.github.hollykunge.security.task.entity.LarkTaskTag;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/taskTag")
-public class TaskTagController extends BaseController<LarkTaskTagbiz,LarkTaskTag> {
+public class TaskTagController extends BaseController<LarkTaskTagBiz,LarkTaskTag> {
 
 
     /**

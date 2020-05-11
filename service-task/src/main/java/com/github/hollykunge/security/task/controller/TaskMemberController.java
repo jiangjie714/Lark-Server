@@ -2,11 +2,9 @@ package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
-import com.github.hollykunge.security.common.vo.RpcUserInfo;
-import com.github.hollykunge.security.task.biz.LarkTaskMemberbiz;
+import com.github.hollykunge.security.task.biz.LarkTaskMemberBiz;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +20,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/task_member")
-public class TaskMemberController extends BaseController<LarkTaskMemberbiz, LarkTaskMember> {
+public class TaskMemberController extends BaseController<LarkTaskMemberBiz, LarkTaskMember> {
 
     @Autowired
-    private LarkTaskMemberbiz larkTaskMemberbiz;
+    private LarkTaskMemberBiz larkTaskMemberbiz;
 
     /**
      * 重写add 新增任务执行人

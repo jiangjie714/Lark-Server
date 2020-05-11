@@ -1,23 +1,17 @@
 package com.github.hollykunge.security.task.controller;
 
 
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
-import com.github.hollykunge.security.common.util.UUIDUtils;
-import com.github.hollykunge.security.task.biz.LarkTaskStagesbiz;
-import com.github.hollykunge.security.task.dto.LarkTaskDto;
+import com.github.hollykunge.security.task.biz.LarkTaskStagesBiz;
 import com.github.hollykunge.security.task.dto.LarkTaskStagesDto;
 import com.github.hollykunge.security.task.entity.LarkTaskStages;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author fansq
@@ -26,10 +20,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/task_stages")
-public class TaskStagesController extends BaseController<LarkTaskStagesbiz, LarkTaskStages> {
+public class TaskStagesController extends BaseController<LarkTaskStagesBiz, LarkTaskStages> {
 
     @Autowired
-    private LarkTaskStagesbiz larkTaskStagesbiz;
+    private LarkTaskStagesBiz larkTaskStagesbiz;
     /**
      * 任务阶段列表
      * @param {*} data
