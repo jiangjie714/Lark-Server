@@ -1,5 +1,7 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
+import com.cxytiandi.encrypt.springboot.annotation.Encrypt;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
@@ -86,6 +88,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param entity 用户实体
      * @return 用户id
      */
+    @Decrypt
     @RequestMapping(value = "/userInfo", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<AdminUser> addUser(@RequestBody User entity,
@@ -113,6 +116,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param positions
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "userInfo", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<User> updateUser(@RequestBody User entity,
@@ -170,6 +174,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param roles  角色集（以“，”隔开的字符串）
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/role", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUserRoles(@RequestParam("userId") String userId, @RequestParam("roles") String roles) {
