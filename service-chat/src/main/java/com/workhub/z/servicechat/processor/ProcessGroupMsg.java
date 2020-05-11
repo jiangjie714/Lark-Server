@@ -69,6 +69,7 @@ public class ProcessGroupMsg extends AbstractMsgProcessor {
                         saveMsg(zzGroupMsg);
                         //存储消息信息（新）
                         String msgId = super.saveMessageInfo("GROUP",ip,msg);
+                        super.saveRecent(msgId,msg,ip,MessageType.PARAMETER_TYPE_GROUP);
                         msgSendStatusVo.setId(msgId);
                         //把前端的消息id替换成后端的id
                         String newMsg = Common.setJsonStringKeyValue(msg,"data.id",msgId);

@@ -14,7 +14,15 @@
         <result property="unreadNum" column="unread_num" jdbcType="VARCHAR"/>
         <result property="sendTime" column="send_time" jdbcType="VARCHAR"/>
     </resultMap>
-
+    <resultMap type="com.workhub.z.servicechat.entity.message.ZzRecent" id="zzRecent">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="contactId" column="contact_id" jdbcType="VARCHAR"/>
+        <result property="msgId" column="msg_id" jdbcType="VARCHAR"/>
+        <result property="top" column="top" jdbcType="VARCHAR"/>
+        <result property="at" column="at" jdbcType="VARCHAR"/>
+        <result property="unreadNum" column="unread_num" jdbcType="INTEGER"/>
+    </resultMap>
     <!--新增-->
     <insert id="saveRecent" >
         insert into ZZ_RECENT
@@ -42,10 +50,10 @@
            #{params.msgId,jdbcType = VARCHAR},
            #{params.top,jdbcType = VARCHAR},
            #{params.at,jdbcType = VARCHAR},
-           #{params.unreadNum,jdbcType = DOUBLE}
+           #{params.unreadNum,jdbcType = INTEGER}
            )
      </insert>
-    <!--修改会议-->
+    <!--修改-->
     <update id="updateRecent" >
         update ZZ_RECENT
         <set>
@@ -58,8 +66,8 @@
             <if test="params.at != null and params.at != ''">
                 at = #{params.at},
             </if>
-            <if test="params.unreadNum != null and params.unreadNum != ''">
-                unread_num = #{params.unreadNum,jdbcType = DOUBLE},
+            <if test="params.unreadNum != null">
+                unread_num = #{params.unreadNum,jdbcType = INTEGER},
             </if>
             upd_time = sysdate,
             upd_user = #{params.updUser,jdbcType = VARCHAR},
@@ -75,21 +83,35 @@
           and  contact_id= #{contactId,jdbcType = VARCHAR}
     </delete>
     <select id="listRecents" resultMap="recentVo">
-  select c.id contact_id,
-         c.name contact_name,
-         c.avartar contact_avartar,
-         m.file_type msg_type,
-         m.msg msg_content,
-         m.cancel cancel,
-         m.levels msg_level,
-         r.top top,
-         r.at at,
-         to_char(r.unread_num) unread_num,
-         to_char(m.createtime, 'yyyy-mm-dd hh24:mi:ss') send_time
-    from ZZ_RECENT r, zz_message_info m, zz_contact_inf c
-   where r.contact_id = c.id
-     and r.msg_id = m.msg_id
-     and r.user_id = #{userId,jdbcType = VARCHAR}
-
+      select c.id contact_id,
+             c.name contact_name,
+             c.avartar contact_avartar,
+             m.file_type msg_type,
+             m.msg msg_content,
+             m.cancel cancel,
+             m.levels msg_level,
+             r.top top,
+             r.at at,
+             to_char(r.unread_num) unread_num,
+             to_char(m.createtime, 'yyyy-mm-dd hh24:mi:ss') send_time
+        from ZZ_RECENT r, zz_message_info m, zz_contact_inf c
+       where r.contact_id = c.id
+         and r.msg_id = m.msg_id
+         and r.user_id = #{userId,jdbcType = VARCHAR}
+         order by r.top desc,r.at desc,m.createtime desc
+    </select>
+    <select id="getRecentData" resultMap="zzRecent">
+      select
+             r.id ,
+             r.contact_id,
+             r.top ,
+             r.at ,
+             r.unread_num,
+             r.user_id,
+             r.msg_id
+        from ZZ_RECENT r
+       where 1=1
+         and r.user_id = #{userId,jdbcType = VARCHAR}
+         and r.contact_id = #{contactId,jdbcType = VARCHAR}
     </select>
 </mapper>

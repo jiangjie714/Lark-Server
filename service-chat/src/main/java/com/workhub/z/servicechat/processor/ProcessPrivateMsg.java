@@ -105,6 +105,7 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor {
                     saveMsg(privateMsg);
                     //存储消息信息（新）
                     msgId = super.saveMessageInfo("USER", ip, msg);
+                    super.saveRecent(msgId,msg,ip,MessageType.PARAMETER_TYPE_USER);
                 }
                 if (Common.isEmpty(msgId))
                 {

@@ -194,4 +194,23 @@ public class MessageType {
     public static final String CREATE_APPROVE_GROUP = "3";
     public static final String CREATE_APPROVE_MEET = "901";
 
+    /**消息体解析**/
+    //是否at
+    public static final String UN_AT = "0";
+    public static final String AT = "1";
+    //是否置顶
+    public static final String UN_TOP = "0";
+    public static final String TOP = "1";
+    //群 会议 个人 参数
+    public static final String PARAMETER_TYPE_USER = "USER";
+    public static final String PARAMETER_TYPE_GROUP = "GROUP";
+    public static final String PARAMETER_TYPE_MEET = "MEET";
+    //消息体发送人
+    public static final String MESSAGE_BODY_SENDER = "fromId";
+    //消息体接收人
+    public static final String MESSAGE_BODY_RECEIVER = "toId";
+    //消息体发送人名称
+    public static final String MESSAGE_BODY_SENDER_NAME = "username";
+
+
 }

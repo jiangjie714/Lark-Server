@@ -24,4 +24,11 @@ public interface ZzMeetingDao  extends Mapper<ZzMeeting> {
     List<Map> getMeetRoleCodeList();
     List<GeneralCodeNameVo> getMeetFunctionCodeList();
     List<GeneralCodeNameVo> getMeetFunctionsByCodes(@Param("codes") String codes);
+
+    /**
+     * 查询会议人员列表
+     * @param meetId
+     * @return
+     */
+    List<String> listMeetUserIds (@Param("meetId") String meetId);
 }

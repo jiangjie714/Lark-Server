@@ -206,7 +206,7 @@ public class ZzDictionaryWordsController{
      * @return
      */
     @Decrypt
-    @RequestMapping("/importDictionaryWords")
+    @PostMapping("/importDictionaryWords")
     @ResponseBody
     //导入敏感词汇
     public ObjectRestResponse importDictionaryWords(@RequestParam("file") MultipartFile file) {

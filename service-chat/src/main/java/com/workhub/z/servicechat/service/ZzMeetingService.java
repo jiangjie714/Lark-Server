@@ -6,6 +6,7 @@ import com.workhub.z.servicechat.VO.MeetingVo;
 import com.workhub.z.servicechat.entity.meeting.ZzMeeting;
 import com.workhub.z.servicechat.model.MeetingDto;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,4 +58,11 @@ public interface ZzMeetingService {
      * @return
      */
      MeetingDto getMeetInf(String meetId);
+
+    /**
+     * 查询会议人员列表
+     * @param meetId
+     * @return
+     */
+     List<String> listMeetUserIds(String meetId);
 }

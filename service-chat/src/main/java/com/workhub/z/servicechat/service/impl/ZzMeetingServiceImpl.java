@@ -405,4 +405,14 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
     public MeetingDto getMeetInf(String meetId){
         return  this.zzMeetingDao.queryById(meetId);
     }
+
+    /**
+     * 查询会议人员列表
+     * @param meetId
+     * @return
+     */
+    @Override
+    public List<String> listMeetUserIds(String meetId) {
+        return  this.zzMeetingDao.listMeetUserIds(meetId);
+    }
 }

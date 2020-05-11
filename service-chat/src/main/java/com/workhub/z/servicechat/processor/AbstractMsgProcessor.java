@@ -11,6 +11,7 @@ import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;
+import com.workhub.z.servicechat.entity.message.ZzRecent;
 import com.workhub.z.servicechat.model.MeetingDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.service.*;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +54,8 @@ public class AbstractMsgProcessor {
     RabbitMqMsgProducer rabbitMqMsgProducer;
     @Autowired
     ZzContactService zzContactService;
+    @Autowired
+    ZzRecentService zzRecentService;
     // TODO: 2019/5/31 保密，关键词过滤
 
     public String messageFiltering(String msg){
@@ -117,7 +121,7 @@ public class AbstractMsgProcessor {
     *@Author: 忠
     *@date: 2019/6/12
     */
-    public void deleteNoReadMsg(String sender, String receiver, String receiverName, String senderName){
+    public void deleteNoReadMsg(String sender, String receiver, String receiverName, String senderName,String ip){
         ZzMegReadLog megReadLog = new ZzMegReadLog();
         megReadLog.setId(getUUID());
         megReadLog.setReadtime(new Date());
@@ -128,10 +132,25 @@ public class AbstractMsgProcessor {
         Common.nulToEmptyString(megReadLog);
         megReadLogService.insert(megReadLog);
         msgReadRelationService.deleteByConsumerAndSender(sender,receiver);
-        //通知发消息的人，接收人已经点开了消息的页面
-        //判断发消息和接收人是否是私人
+
         ZzContactInf senderContact = zzContactService.queryById(sender);
         ZzContactInf receiverContact = zzContactService.queryById(receiver);
+
+        /**最近联系人未读改0*/
+        ZzRecent zzRecent = new ZzRecent();
+        zzRecent.setUserId(receiver);
+        zzRecent.setContactId(sender);
+        int noUnReadMsgNum = 0 ;
+        zzRecent.setUnreadNum(noUnReadMsgNum);
+        zzRecent.setUpdHost(ip);
+        zzRecent.setUpdName(receiverName);
+        zzRecent.setUpdUser(receiver);
+        this.zzRecentService.updateRecent(zzRecent);
+
+        /**
+         * 通知发消息的人，接收人已经点开了消息的页面
+         * 判断发消息和接收人是否是私人
+         */
         if(senderContact!=null &&
                 receiverContact !=null &&
                 senderContact.getType().equals("USER") &&
@@ -433,6 +452,92 @@ public class AbstractMsgProcessor {
             throw e;
         }
         return msgId;
+    }
+
+    /**
+     * 最近联系人信息保存
+     * @param msgId 消息id
+     * @param msgJosnInf 消息体
+     * @param ip
+     * @param type USER GROUP MEET
+     * @throws Exception
+     */
+    public void saveRecent(String msgId,String msgJosnInf,String ip,String type)throws Exception{
+        JSONObject jsonObject = JSONObject.parseObject(msgJosnInf);
+        String message = jsonObject.getString("data");
+        String receiver  = Common.nulToEmptyString(Common.getJsonStringKeyValue(message,MessageType.MESSAGE_BODY_RECEIVER));
+        String sender = Common.nulToEmptyString(Common.getJsonStringKeyValue(message,MessageType.MESSAGE_BODY_SENDER));
+        String senderName = Common.nulToEmptyString(Common.getJsonStringKeyValue(message,MessageType.MESSAGE_BODY_SENDER_NAME));
+        //发送人到接收人的最近联系人 todo 是否置顶
+        setRecentInf(sender,receiver,MessageType.UN_AT,MessageType.UN_TOP,msgId,sender,senderName,ip,true);
+        //如果接收人是私聊，更新他的最近联系人
+        if(MessageType.PARAMETER_TYPE_USER.equals(type)){
+            //接收人到发送人的最近联系人 todo 是否AT todo 是否置顶
+            setRecentInf(receiver,sender,MessageType.UN_AT,MessageType.UN_TOP,msgId,sender,senderName,ip,false);
+        }else {
+            //会议和群
+            List<String> userList = new ArrayList<>();
+            if(MessageType.PARAMETER_TYPE_GROUP.equals(type)){
+                userList = zzGroupService.queryGroupUserIdListByGroupId(receiver);
+            }else {
+                userList = zzMeetingService.listMeetUserIds(receiver);
+            }
+            for(String userId : userList){
+
+                if(userId.equals(sender)){
+                    continue;
+                }
+                //todo 是否AT todo 是否置顶
+                setRecentInf(userId,receiver,MessageType.UN_AT,MessageType.UN_TOP,msgId,sender,senderName,ip,false);
+            }
+        }
+    }
+
+    /**
+     * 设置最近联系人
+     * @param userId 用户id
+     * @param contactId 联系人id
+     * @param at 是否at
+     * @param top 是否置顶
+     * @param msgId 消息id
+     * @param operator 操作人
+     * @param operatorName 操作人名字
+     * @param operatorIp 操作人ip
+     * @param senderFlg 是否发送人标记 true 发送人到接收人；false 接收人到发送人
+     */
+    private void setRecentInf(String userId,String contactId,String at,String top,String msgId,String operator,String operatorName,String operatorIp,boolean senderFlg){
+        ZzRecent recentData = this.zzRecentService.getRecentData(userId,contactId);
+        ZzRecent zzRecent = new ZzRecent();
+        zzRecent.setMsgId(msgId);
+        if(recentData==null || recentData.getId()==null){
+            zzRecent.setId(RandomId.getUUID());
+            zzRecent.setCrtName(operator);
+            zzRecent.setCrtUser(operatorName);
+            zzRecent.setCrtHost(operatorIp);
+            zzRecent.setAt(at);
+            zzRecent.setTop(top);
+            zzRecent.setUserId(userId);
+            zzRecent.setContactId(contactId);
+            zzRecent.setMsgId(msgId);
+            if(!senderFlg){
+                zzRecent.setUnreadNum(1);
+            }
+            this.zzRecentService.saveRecent(zzRecent);
+        }else{
+            zzRecent.setId(recentData.getId());
+            zzRecent.setAt(at);
+            zzRecent.setTop(top);
+            zzRecent.setMsgId(msgId);
+            zzRecent.setUpdUser(operator);
+            zzRecent.setUpdName(operatorName);
+            zzRecent.setUpdHost(operatorIp);
+            zzRecent.setUserId(userId);
+            zzRecent.setContactId(contactId);
+            if(!senderFlg){
+                zzRecent.setUnreadNum(recentData.getUnreadNum()+1);
+            }
+            this.zzRecentService.updateRecent(zzRecent);
+        }
     }
     /**
     *@Description: 应答信息

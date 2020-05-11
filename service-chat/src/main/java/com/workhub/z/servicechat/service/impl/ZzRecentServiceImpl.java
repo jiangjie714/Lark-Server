@@ -61,4 +61,15 @@ public class ZzRecentServiceImpl implements ZzRecentService {
     public List<RecentVo> listRecents(String userId) {
         return this.zzRecentDao.listRecents(userId);
     }
+
+    /**
+     * 查询单条
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    @Override
+    public ZzRecent getRecentData(String userId, String contactId) {
+        return this.zzRecentDao.getRecentData(userId,contactId);
+    }
 }

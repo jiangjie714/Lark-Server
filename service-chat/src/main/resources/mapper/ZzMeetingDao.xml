@@ -211,5 +211,8 @@
         where 1=1
         and id = #{meetId}
     </select>
+    <select id="listMeetUserIds" resultType="string">
+        select user_id from zz_meeting_user where meeting_id = #{meetId}
+    </select>
 
 </mapper>

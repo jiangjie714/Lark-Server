@@ -62,7 +62,7 @@ public class ProcessMsg extends AbstractMsgProcessor {
                     break;
                 case MSG_EDIT_READ:
                     JSONObject temp = JSONObject.parseObject(message);
-                    super.deleteNoReadMsg(temp.getString("sender"),temp.getString("reviser"),temp.getString("reviserName"),temp.getString("senderName"));
+                    super.deleteNoReadMsg(temp.getString("sender"),temp.getString("reviser"),temp.getString("reviserName"),temp.getString("senderName"),ip);
                     break;
                 default:
                     // TODO: 2020/2/22 消息类型未知错误
