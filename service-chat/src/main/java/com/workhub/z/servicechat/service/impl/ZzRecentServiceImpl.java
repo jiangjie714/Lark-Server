@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.service.impl;
 
+import com.workhub.z.servicechat.VO.NoReadVo;
 import com.workhub.z.servicechat.VO.RecentVo;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.dao.ZzRecentDao;
@@ -71,5 +72,25 @@ public class ZzRecentServiceImpl implements ZzRecentService {
     @Override
     public ZzRecent getRecentData(String userId, String contactId) {
         return this.zzRecentDao.getRecentData(userId,contactId);
+    }
+
+    /**
+     * 查询当前人未读消息
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<NoReadVo> listNoReadMsgsByUserId(String userId) {
+        return this.zzRecentDao.listNoReadMsgsByUserId(userId);
+    }
+    /**
+     * 查询未读消息条数
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    @Override
+    public int getNoReadMsgNum(String userId, String contactId){
+        return  this.zzRecentDao.getNoReadMsgNum(userId,contactId);
     }
 }

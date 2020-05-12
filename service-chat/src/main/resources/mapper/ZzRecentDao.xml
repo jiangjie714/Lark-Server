@@ -23,6 +23,13 @@
         <result property="at" column="at" jdbcType="VARCHAR"/>
         <result property="unreadNum" column="unread_num" jdbcType="INTEGER"/>
     </resultMap>
+    <resultMap id="noReadVo" type="com.workhub.z.servicechat.VO.NoReadVo">
+        <result property="sender" column="SENDER" jdbcType="VARCHAR"></result>
+        <result property="sendType" column="SEND_TYPE" jdbcType="VARCHAR"></result>
+        <result property="receiver" column="CONSUMER" jdbcType="VARCHAR"></result>
+        <result property="msgCount" column="MSG_COUNT" jdbcType="INTEGER"></result>
+    </resultMap>
+
     <!--新增-->
     <insert id="saveRecent" >
         insert into ZZ_RECENT
@@ -111,6 +118,21 @@
              r.msg_id
         from ZZ_RECENT r
        where 1=1
+         and r.user_id = #{userId,jdbcType = VARCHAR}
+         and r.contact_id = #{contactId,jdbcType = VARCHAR}
+    </select>
+    <select id="listNoReadMsgsByUserId" resultMap="noReadVo">
+        select contact_id as sender,
+           user_id as consumer,
+           '1' as send_type,--旧接口写死的，不知道有没有用
+           unread_num as msg_count
+      from zz_recent r
+     where r.user_id = #{userId,jdbcType = VARCHAR}
+     and r.unread_num > 0
+    </select>
+    <select id="getNoReadMsgNum" resultType="int">
+         select r.unread_num from zz_recent r
+         where 1=1
          and r.user_id = #{userId,jdbcType = VARCHAR}
          and r.contact_id = #{contactId,jdbcType = VARCHAR}
     </select>

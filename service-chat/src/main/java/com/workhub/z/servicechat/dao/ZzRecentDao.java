@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.dao;
 
+import com.workhub.z.servicechat.VO.NoReadVo;
 import com.workhub.z.servicechat.VO.RecentVo;
 import com.workhub.z.servicechat.entity.message.ZzRecent;
 import org.apache.ibatis.annotations.Param;
@@ -44,5 +45,20 @@ public interface ZzRecentDao  extends Mapper<ZzRecent> {
      * @return
      */
     ZzRecent getRecentData(@Param("userId") String userId,@Param("contactId") String contactId);
+
+    /**
+     * 查询当前人未读消息
+     * @param userId
+     * @return
+     */
+    List<NoReadVo> listNoReadMsgsByUserId(@Param("userId") String userId);
+
+    /**
+     * 查询未读消息条数
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    int getNoReadMsgNum(@Param("userId") String userId,@Param("contactId") String contactId);
 
 }

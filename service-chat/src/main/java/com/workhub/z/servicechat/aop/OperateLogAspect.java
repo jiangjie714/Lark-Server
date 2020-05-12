@@ -37,7 +37,6 @@ public class OperateLogAspect {
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMessageInfoServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupStatusServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMegReadLogServiceImpl.*(..)) " +
-            "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzMsgReadRelationServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupApproveLogServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzRequireApproveAuthorityServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzDictionaryWordsServiceImpl.getSecretWordList40(..)) " +

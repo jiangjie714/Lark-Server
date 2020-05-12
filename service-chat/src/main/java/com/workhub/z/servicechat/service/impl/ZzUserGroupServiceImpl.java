@@ -20,7 +20,7 @@ import com.workhub.z.servicechat.redis.RedisListUtil;
 import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzGroupService;
-import com.workhub.z.servicechat.service.ZzMsgReadRelationService;
+import com.workhub.z.servicechat.service.ZzRecentService;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
 import jodd.util.StringUtil;
 import org.slf4j.Logger;
@@ -51,10 +51,9 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
     private ZzUserGroupDao zzUserGroupDao;
 
     @Autowired
-    private ZzMsgReadRelationService zzMsgReadRelationService;
-
-    @Autowired
     private ZzGroupService zzGroupService;
+    @Autowired
+    private ZzRecentService zzRecentService;
 
     @Autowired
     private AdminUserService iUserService;
@@ -225,7 +224,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
             e.printStackTrace();
         }*/
         //mq添加消息发送 开发测试用end
-        List<NoReadVo> noReadVos = zzMsgReadRelationService.queryNoReadCountList(id);
+        //List<NoReadVo> noReadVos = zzRecentService.listNoReadMsgsByUserId(id);
         if(userNewMsgList == null|| userNewMsgList.isEmpty()){ return list;}
         userNewMsgList.stream().forEach(n ->{
             ContactVO contactVO = new ContactVO();
@@ -259,7 +258,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                     e.printStackTrace();
                 }
                 contactVO.setIsGroup(n.getTableType().equals("GROUP"));
-                contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(group.getGroupId(),id));
+                contactVO.setUnreadNum(zzRecentService.getNoReadMsgNum(id,group.getGroupId()));
             } else if ("USER".equals(n.getTableType())) {
                 ChatAdminUserVo userInfo = iUserService.getUserInfo(n.getMsgSener());
                 contactVO.setId(n.getMsgSener());
@@ -278,7 +277,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 contactVO.setIsMute(false);
                 contactVO.setIsGroup(n.getTableType().equals("GROUP"));
                 contactVO.setSecretLevel(Integer.parseInt(userInfo.getSecretLevel()));
-                contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(n.getMsgSener(),n.getMsgReceiver()));
+                contactVO.setUnreadNum(zzRecentService.getNoReadMsgNum(n.getMsgReceiver(),n.getMsgSener()));
             }
 //            for (int j = 0; j < noReadVos.size(); j++) {
 //                if (noReadVos.get(j).getSender() == n.getMsgSener()){
@@ -335,7 +334,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
             e.printStackTrace();
         }*/
         //mq添加消息发送 开发测试用end
-        List<NoReadVo> noReadVos = zzMsgReadRelationService.queryNoReadCountList(id);
+        //List<NoReadVo> noReadVos = zzRecentService.listNoReadMsgsByUserId(id);
         if(userNewMsgList == null|| userNewMsgList.isEmpty()){ return list;}
         userNewMsgList.stream().forEach(n ->{
             ContactVO contactVO = new ContactVO();
@@ -381,7 +380,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                     e.printStackTrace();
                 }
                 contactVO.setIsGroup(n.getType().equals("GROUP"));
-                contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(group.getGroupId(),id));
+                contactVO.setUnreadNum(zzRecentService.getNoReadMsgNum(id,group.getGroupId()));
             } else if ("USER".equals(n.getType())) {
                 contactVO.setId(n.getSenderid());
                 MessageContent content = new MessageContent();
@@ -413,7 +412,7 @@ public class ZzUserGroupServiceImpl implements ZzUserGroupService {
                 contactVO.setIsMute(false);
                 contactVO.setIsGroup(n.getType().equals("GROUP"));
                 contactVO.setSecretLevel(Integer.parseInt(n.getSenderlevels()));
-                contactVO.setUnreadNum(zzMsgReadRelationService.queryNoReadMsgBySenderAndReceiver(n.getSenderid(),n.getReceiverid()));
+                contactVO.setUnreadNum(zzRecentService.getNoReadMsgNum(n.getReceiverid(),n.getSenderid()));
             }
             list.add(contactVO);
         });

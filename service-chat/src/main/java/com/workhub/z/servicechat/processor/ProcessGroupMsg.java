@@ -66,7 +66,6 @@ public class ProcessGroupMsg extends AbstractMsgProcessor {
                             msgSendStatusVo.setContent("消息不能发送，超过最大字数限制300");
                             return msgSendStatusVo;
                         }
-                        saveMsg(zzGroupMsg);
                         //存储消息信息（新）
                         String msgId = super.saveMessageInfo("GROUP",ip,msg);
                         super.saveRecent(msgId,msg,ip,MessageType.PARAMETER_TYPE_GROUP);
@@ -117,16 +116,5 @@ public class ProcessGroupMsg extends AbstractMsgProcessor {
             throw e;
         }
         return msgSendStatusVo;
-    }
-
-    public void saveMsg(ZzGroupMsg zzGroupMsg){
-        //groupMsgService.insert(zzGroupMsg);
-        List<String> userList = groupService.queryGroupUserIdListByGroupId(zzGroupMsg.getMsgReceiver());
-        if(userList == null|| userList.isEmpty()) {
-            return;
-        }
-        for (int i = 0; i < userList.size() ; i++) {
-            super.saveNoReadMsg(zzGroupMsg.getMsgReceiver(),userList.get(i));
-        }
     }
 }

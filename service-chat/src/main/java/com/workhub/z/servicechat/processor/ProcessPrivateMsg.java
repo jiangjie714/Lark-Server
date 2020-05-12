@@ -102,7 +102,6 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor {
                     //在线客服消息id都是999999
                     msgId = MessageType.ONLINE_MSG_ID;
                 }else{//聊天消息
-                    saveMsg(privateMsg);
                     //存储消息信息（新）
                     msgId = super.saveMessageInfo("USER", ip, msg);
                     super.saveRecent(msgId,msg,ip,MessageType.PARAMETER_TYPE_USER);
@@ -186,10 +185,5 @@ public class ProcessPrivateMsg extends AbstractMsgProcessor {
             throw e;
         }
         return msgSendStatusVo;
-    }
-
-    public void saveMsg(ZzPrivateMsg privateMsg){
-        //privateMsgService.insert(privateMsg);
-        super.saveNoReadMsg(privateMsg.getMsgSender(),privateMsg.getMsgReceiver());
     }
 }

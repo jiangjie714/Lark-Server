@@ -10,7 +10,6 @@ import com.workhub.z.servicechat.entity.group.ZzGroupFile;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
-import com.workhub.z.servicechat.entity.message.ZzMsgReadRelation;
 import com.workhub.z.servicechat.entity.message.ZzRecent;
 import com.workhub.z.servicechat.model.MeetingDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
@@ -36,8 +35,6 @@ public class AbstractMsgProcessor {
     private Logger logger = LoggerFactory.getLogger(AbstractMsgProcessor.class);
     @Autowired
     ZzDictionaryWordsService dictionaryWordsService;
-    @Autowired
-    ZzMsgReadRelationService msgReadRelationService;
     @Autowired
     ZzMessageInfoService messageInfoService;
     @Autowired
@@ -99,22 +96,6 @@ public class AbstractMsgProcessor {
     }
 
     /**
-    *@Description: 存储未读消息
-    *@Param:
-    *@return:
-    *@Author: 忠
-    *@date: 2019/6/12
-    */
-    public void saveNoReadMsg(String sender, String receiver){
-        ZzMsgReadRelation msgReadRelation = new ZzMsgReadRelation();
-        msgReadRelation.setId(getUUID());
-        msgReadRelation.setReceiver(receiver);
-        msgReadRelation.setSender(sender);
-        msgReadRelation.setSendType("1");
-        msgReadRelationService.insert(msgReadRelation);
-    }
-
-    /**
     *@Description: 清除未读消息
     *@Param:
     *@return:
@@ -131,7 +112,6 @@ public class AbstractMsgProcessor {
         megReadLog.setSenderName(senderName);
         Common.nulToEmptyString(megReadLog);
         megReadLogService.insert(megReadLog);
-        msgReadRelationService.deleteByConsumerAndSender(sender,receiver);
 
         ZzContactInf senderContact = zzContactService.queryById(sender);
         ZzContactInf receiverContact = zzContactService.queryById(receiver);

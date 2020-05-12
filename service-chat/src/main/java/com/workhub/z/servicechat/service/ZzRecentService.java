@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.service;
 
+import com.workhub.z.servicechat.VO.NoReadVo;
 import com.workhub.z.servicechat.VO.RecentVo;
 import com.workhub.z.servicechat.entity.message.ZzRecent;
 
@@ -42,4 +43,17 @@ public interface ZzRecentService {
      * @return
      */
     ZzRecent getRecentData(String userId,String contactId);
+    /**
+     * 查询当前人未读消息
+     * @param userId
+     * @return
+     */
+    List<NoReadVo> listNoReadMsgsByUserId(String userId);
+    /**
+     * 查询未读消息条数
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    int getNoReadMsgNum(String userId, String contactId);
 }
