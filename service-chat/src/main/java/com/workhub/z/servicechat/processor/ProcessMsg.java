@@ -48,21 +48,8 @@ public class ProcessMsg extends AbstractMsgProcessor {
                 case MEET_MSG:
                     sendStatusVo =  processMeetMsg.sendMsg(msg,ip);
                    break;
-                case MEETING_ADD:
-                    sendStatusVo =  processMeetMsg.meetUserChange(userId,msg);
-                    break;
                 case PRIVATE_MSG:
                     sendStatusVo =   processPrivateMsg.sendMsg(msg,ip);
-                    break;
-                case GROUP_EDIT:
-                    sendStatusVo =   processEditGroup.processManage(userId,message);
-                    break;
-                case GROUP_CREATE:
-                    sendStatusVo =    processEditGroup.createGroup(userId,msg);
-                    break;
-                case MSG_EDIT_READ:
-                    JSONObject temp = JSONObject.parseObject(message);
-                    super.deleteNoReadMsg(temp.getString("sender"),temp.getString("reviser"),temp.getString("reviserName"),temp.getString("senderName"),ip);
                     break;
                 default:
                     // TODO: 2020/2/22 消息类型未知错误

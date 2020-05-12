@@ -65,4 +65,11 @@ public interface ZzMeetingService {
      * @return
      */
      List<String> listMeetUserIds(String meetId);
+
+    /**
+     * 会议审批通过后
+     * @param userId
+     * @param msg
+     */
+    void socketMeetCreate(String userId, String msg) throws Exception;
 }

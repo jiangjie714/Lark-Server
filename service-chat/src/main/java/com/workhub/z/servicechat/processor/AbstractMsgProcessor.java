@@ -42,8 +42,6 @@ public class AbstractMsgProcessor {
     @Autowired
     ZzGroupService zzGroupService;
     @Autowired
-    ZzMegReadLogService megReadLogService;
-    @Autowired
     ZzMeetingService zzMeetingService;
     @Autowired
     ZzGroupFileService zzGroupFileService;
@@ -94,63 +92,6 @@ public class AbstractMsgProcessor {
         boolean isOnline = checkChannelContext != null && !checkChannelContext.isClosed;
         return isOnline;
     }
-
-    /**
-    *@Description: 清除未读消息
-    *@Param:
-    *@return:
-    *@Author: 忠
-    *@date: 2019/6/12
-    */
-    public void deleteNoReadMsg(String sender, String receiver, String receiverName, String senderName,String ip){
-        ZzMegReadLog megReadLog = new ZzMegReadLog();
-        megReadLog.setId(getUUID());
-        megReadLog.setReadtime(new Date());
-        megReadLog.setReviser(receiver);
-        megReadLog.setSender(sender);
-        megReadLog.setReviserName(receiverName);
-        megReadLog.setSenderName(senderName);
-        Common.nulToEmptyString(megReadLog);
-        megReadLogService.insert(megReadLog);
-
-        ZzContactInf senderContact = zzContactService.queryById(sender);
-        ZzContactInf receiverContact = zzContactService.queryById(receiver);
-
-        /**最近联系人未读改0*/
-        ZzRecent zzRecent = new ZzRecent();
-        zzRecent.setUserId(receiver);
-        zzRecent.setContactId(sender);
-        int noUnReadMsgNum = 0 ;
-        zzRecent.setUnreadNum(noUnReadMsgNum);
-        zzRecent.setUpdHost(ip);
-        zzRecent.setUpdName(receiverName);
-        zzRecent.setUpdUser(receiver);
-        this.zzRecentService.updateRecent(zzRecent);
-
-        /**
-         * 通知发消息的人，接收人已经点开了消息的页面
-         * 判断发消息和接收人是否是私人
-         */
-        if(senderContact!=null &&
-                receiverContact !=null &&
-                senderContact.getType().equals("USER") &&
-                receiverContact.getType().equals("USER")){
-            SocketMsgVo msgVo = new SocketMsgVo();
-            msgVo.setCode(SocketMsgTypeEnum.SINGLE_MSG);
-            msgVo.setSender(receiver);
-            msgVo.setReceiver(sender);
-            SocketMsgReaderVo readerVo = new SocketMsgReaderVo();
-            readerVo.setReaderId(receiver);
-            readerVo.setSenderId(sender);
-            SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
-            detailVo.setData(readerVo);
-            detailVo.setCode(SocketMsgDetailTypeEnum.PRIVATE_RECEIVER_OPEN_BOARD);
-            msgVo.setMsg(detailVo);
-            rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
-        }
-
-    }
-
     /**
     *@Description: 存储消息
     *@Param: sender，receiver，createtime，content，levels,megid

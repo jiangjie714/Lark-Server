@@ -13,6 +13,7 @@ import com.workhub.z.servicechat.config.*;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.model.GroupEditDto;
 import com.workhub.z.servicechat.model.GroupEditUserList;
+import com.workhub.z.servicechat.processor.ProcessEditGroup;
 import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzGroupService;
@@ -57,6 +58,8 @@ public class ZzGroupController  {
     private AdminUserService iUserService;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private ProcessEditGroup processEditGroup;
     /**
      * 成功
      */
@@ -470,5 +473,47 @@ public class ZzGroupController  {
         objectRestResponse.data(groupAllInfo);
 
         return objectRestResponse;
+    }
+    /**
+     *  群编辑前后端配合通信
+     * @param messageInf
+     * @return
+     */
+    @Decrypt
+    @PostMapping("socketEditGroup")
+    public ObjectRestResponse socketEditGroup(@RequestBody String messageInf){
+        ObjectRestResponse res = new ObjectRestResponse();
+        res.rel(true);
+        res.msg("200");
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        try {
+            this.processEditGroup.processManage(userId,messageInf);
+        } catch (Exception e) {
+            log.error(Common.getExceptionMessage(e));
+            res.msg("500");
+            res.rel(false);
+        }
+        return  res;
+    }
+    /**
+     *  群审批通过前后端配合通信
+     * @param messageInf
+     * @return
+     */
+    @Decrypt
+    @PostMapping("socketEditCreate")
+    public ObjectRestResponse socketEditCreate(@RequestBody String messageInf){
+        ObjectRestResponse res = new ObjectRestResponse();
+        res.rel(true);
+        res.msg("200");
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        try {
+            this.processEditGroup.createGroup(userId,messageInf);
+        } catch (Exception e) {
+            log.error(Common.getExceptionMessage(e));
+            res.msg("500");
+            res.rel(false);
+        }
+        return  res;
     }
 }

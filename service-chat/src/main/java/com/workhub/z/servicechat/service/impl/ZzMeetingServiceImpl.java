@@ -415,4 +415,44 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
     public List<String> listMeetUserIds(String meetId) {
         return  this.zzMeetingDao.listMeetUserIds(meetId);
     }
+
+    /**
+     * 会议审批通过以后
+     * @param userId
+     * @param msg
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void socketMeetCreate(String userId, String msg) throws Exception {
+        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
+
+        JSONObject jsonObject = JSONObject.parseObject(msg);
+        String message = jsonObject.getString("data");
+        String meetId = Common.getJsonStringKeyValue(message,"id").toString();
+
+        SocketMsgVo msgVo = new SocketMsgVo();
+        //todo 改成socket代码规范
+        msgVo.setCode(SocketMsgTypeEnum.BIND_USER);
+        msgVo.setSender("");
+        msgVo.setReceiver("");
+        SocketTeamBindVo socketTeamBindVo  = new SocketTeamBindVo();
+        socketTeamBindVo.setTeamId(meetId);
+        List userList = new ArrayList();
+        userList.add(userId);
+        socketTeamBindVo.setUserList(userList);
+        SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
+        detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
+        detailVo.setData(socketTeamBindVo);
+        msgVo.setMsg(detailVo);
+        /*//校验消息
+        CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
+        if(!cRes.getRes()){
+            msgSendStatusVo.setStatus(false);
+            msgSendStatusVo.setContent("群体绑定消息不合法");
+            return msgSendStatusVo;
+        }*/
+        //todo SocketDetailMsgVo加密
+        rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
+    }
 }

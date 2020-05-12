@@ -7,11 +7,17 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.*;
 import com.workhub.z.servicechat.dao.ZzMessageInfoDao;
+import com.workhub.z.servicechat.entity.ZzContactInf;
+import com.workhub.z.servicechat.entity.message.ZzMegReadLog;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
+import com.workhub.z.servicechat.entity.message.ZzRecent;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
 import com.workhub.z.servicechat.model.RawMessageDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
+import com.workhub.z.servicechat.service.ZzContactService;
+import com.workhub.z.servicechat.service.ZzMegReadLogService;
 import com.workhub.z.servicechat.service.ZzMessageInfoService;
+import com.workhub.z.servicechat.service.ZzRecentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,7 @@ import java.util.*;
 
 import static com.workhub.z.servicechat.config.Common.aggregation;
 import static com.workhub.z.servicechat.config.Common.putEntityNullToEmptyString;
+import static com.workhub.z.servicechat.config.RandomId.getUUID;
 
 /**
  * 消息存储(ZzMessageInfo)表服务实现类
@@ -38,6 +45,12 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
     private ZzMessageInfoDao zzMessageInfoDao;
     @Autowired
     private RabbitMqMsgProducer rabbitMqMsgProducer;
+    @Autowired
+    ZzMegReadLogService megReadLogService;
+    @Autowired
+    ZzRecentService zzRecentService;
+    @Autowired
+    ZzContactService zzContactService;
     /**
      * 新增数据
      *
@@ -689,6 +702,7 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
      * @param type
      * @return
      */
+    @Override
     public int msgCancel(String msgId,String receiver,String type,String user){
         ZzMessageInfo zzMessageInfo = this.zzMessageInfoDao.queryById(msgId);
         if(zzMessageInfo==null || zzMessageInfo.getMsgId()==null){
@@ -728,6 +742,16 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
 
         return  i;
     }
+
+    /**
+     * 导出消息
+     * @param userId 登录人
+     * @param contactId 聊天对象
+     * @param beginDate 开始日期
+     * @param endDate 结束日期
+     * @param type 类型 user meet group
+     * @param httpServletResponse
+     */
     @Override
     public void exportHistoryMessageForSingle(String userId, String contactId, String beginDate, String endDate, String type, HttpServletResponse httpServletResponse){
         List<ExportMsgVo> dataList = null;
@@ -748,5 +772,63 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
         colTitle.add(new String[]{"sendTime", "发送时间"});
         colTitle.add(new String[]{"levels", "消息密级"});
         ExcelUtil.exportExcel("消息导出",false, "消息通信记录",6, dataList, colTitle, httpServletResponse);
+    }
+
+    /**
+     * 打开消息面板
+     * @param sender
+     * @param receiver
+     * @param receiverName
+     * @param senderName
+     * @param ip
+     */
+    @Override
+    public void openMsgBoard(String sender, String senderName,String receiver, String receiverName, String ip){
+        ZzMegReadLog megReadLog = new ZzMegReadLog();
+        megReadLog.setId(getUUID());
+        megReadLog.setReadtime(new Date());
+        megReadLog.setReviser(receiver);
+        megReadLog.setSender(sender);
+        megReadLog.setReviserName(receiverName);
+        megReadLog.setSenderName(senderName);
+        Common.nulToEmptyString(megReadLog);
+        megReadLogService.insert(megReadLog);
+
+        ZzContactInf senderContact = zzContactService.queryById(sender);
+        ZzContactInf receiverContact = zzContactService.queryById(receiver);
+
+        /**最近联系人未读改0*/
+        ZzRecent zzRecent = new ZzRecent();
+        zzRecent.setUserId(receiver);
+        zzRecent.setContactId(sender);
+        int noUnReadMsgNum = 0 ;
+        zzRecent.setUnreadNum(noUnReadMsgNum);
+        zzRecent.setUpdHost(ip);
+        zzRecent.setUpdName(receiverName);
+        zzRecent.setUpdUser(receiver);
+        this.zzRecentService.updateRecent(zzRecent);
+
+        /**
+         * 通知发消息的人，接收人已经点开了消息的页面
+         * 判断发消息和接收人是否是私人
+         */
+        if(senderContact!=null &&
+                receiverContact !=null &&
+                senderContact.getType().equals("USER") &&
+                receiverContact.getType().equals("USER")){
+            SocketMsgVo msgVo = new SocketMsgVo();
+            msgVo.setCode(SocketMsgTypeEnum.SINGLE_MSG);
+            msgVo.setSender(receiver);
+            msgVo.setReceiver(sender);
+            SocketMsgReaderVo readerVo = new SocketMsgReaderVo();
+            readerVo.setReaderId(receiver);
+            readerVo.setSenderId(sender);
+            SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
+            detailVo.setData(readerVo);
+            detailVo.setCode(SocketMsgDetailTypeEnum.PRIVATE_RECEIVER_OPEN_BOARD);
+            msgVo.setMsg(detailVo);
+            rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
+        }
+
     }
 }

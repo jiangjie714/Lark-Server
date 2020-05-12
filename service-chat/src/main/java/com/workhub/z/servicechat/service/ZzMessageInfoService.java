@@ -84,4 +84,14 @@ public interface ZzMessageInfoService {
      * @return 1成功 其他失败
      */
     void exportHistoryMessageForSingle(String userId, String contactId, String beginDate, String endDate, String type, HttpServletResponse httpServletResponse);
+
+    /**
+     * 打开消息面板
+     * @param sender
+     * @param senderName
+     * @param receiver
+     * @param receiverName
+     * @param ip
+     */
+    void openMsgBoard(String sender, String senderName,String receiver, String receiverName, String ip);
 }
