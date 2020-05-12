@@ -1,8 +1,6 @@
 package com.github.hollykunge.security.gate.filter;
 
 import com.github.hollykunge.security.admin.api.authority.FrontPermission;
-import com.github.hollykunge.security.admin.api.log.LogInfo;
-import com.github.hollykunge.security.admin.api.service.AdminLogServiceFeignClient;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.constant.CommonConstants;
@@ -10,7 +8,7 @@ import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.util.ClientUtil;
 import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
 import com.github.hollykunge.security.gate.dto.LogInfoDto;
-import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
+import com.github.hollykunge.security.gate.feign.LarkLogFeign;
 import com.github.hollykunge.security.gate.utils.DBLog;
 import com.github.hollykunge.security.gate.utils.GateLogUtils;
 import com.netflix.zuul.ZuulFilter;
@@ -35,7 +33,7 @@ public class GateLogCollectionFilter extends ZuulFilter {
 
     @Autowired
     @Lazy
-    private ILarkSearchFeign larkSearchFeign;
+    private LarkLogFeign larkLogFeign;
     @Autowired
     private GateLogUtils gateLogUtils;
     @Autowired
@@ -105,7 +103,7 @@ public class GateLogCollectionFilter extends ZuulFilter {
             if (pm != null && user != null) {
                 LogInfoDto logInfo = new LogInfoDto(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
                         new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo,user.getOrgPathCode());
-                DBLog.getInstance().setLogService(larkSearchFeign).offerQueue(logInfo);
+                DBLog.getInstance().setLogService(larkLogFeign).offerQueue(logInfo);
             }
         }catch (Exception e){
             log.info("日志采集失败...");
@@ -115,7 +113,7 @@ public class GateLogCollectionFilter extends ZuulFilter {
             if (pm != null && user != null) {
                 LogInfoDto logInfo = new LogInfoDto(pm.getTitle(),opt, ctx.getRequest().getRequestURI(),
                         new Date(), user.getId(), user.getName(), host, isSuccess,user.getUniqueName(),optinfo,user.getOrgPathCode());
-                DBLog.getInstance().setLogService(larkSearchFeign).offerQueue(logInfo);
+                DBLog.getInstance().setLogService(larkLogFeign).offerQueue(logInfo);
             }
         }
     }
