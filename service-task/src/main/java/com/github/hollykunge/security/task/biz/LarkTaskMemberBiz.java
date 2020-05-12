@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LarkTaskMemberbiz extends BaseBiz<LarkTaskMemberMapper, LarkTaskMember> {
+public class LarkTaskMemberBiz extends BaseBiz<LarkTaskMemberMapper, LarkTaskMember> {
 
     @Autowired
     private LarkTaskMemberMapper larkTaskMemberMapper;
@@ -43,5 +43,16 @@ public class LarkTaskMemberbiz extends BaseBiz<LarkTaskMemberMapper, LarkTaskMem
         objects.add(projectUsers);
         objects.add(taskUsers);
         return new ObjectRestResponse<>().data(objects).rel(true);
+    }
+
+    /**
+     * 更新任务执行人
+     * @param modifyMemberId
+     * @param modifiedMemberId
+     * @return
+     */
+    public ObjectRestResponse<LarkTaskMember> updateTaskMember(String modifyMemberId, String modifiedMemberId) {
+        larkTaskMemberMapper.updateTaskMember(modifyMemberId,modifiedMemberId);
+        return new ObjectRestResponse<>().rel(true);
     }
 }

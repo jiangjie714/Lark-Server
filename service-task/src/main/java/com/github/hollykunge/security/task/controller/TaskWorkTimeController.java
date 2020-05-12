@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.rest.BaseController;
-import com.github.hollykunge.security.task.biz.LarkTaskWorkTimebiz;
+import com.github.hollykunge.security.task.biz.LarkTaskWorkTimeBiz;
 import com.github.hollykunge.security.task.entity.LarkTaskWorkTime;
 
 /**
@@ -9,5 +9,5 @@ import com.github.hollykunge.security.task.entity.LarkTaskWorkTime;
  * @since 20-4-24
  * @deprecation 任务工时
  */
-public class TaskWorkTimeController extends BaseController<LarkTaskWorkTimebiz, LarkTaskWorkTime> {
+public class TaskWorkTimeController extends BaseController<LarkTaskWorkTimeBiz, LarkTaskWorkTime> {
 }

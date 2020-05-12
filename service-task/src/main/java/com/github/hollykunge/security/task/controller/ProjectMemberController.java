@@ -1,12 +1,13 @@
 package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.task.biz.LarkProjectMemberbiz;
+import com.github.hollykunge.security.task.biz.LarkProjectMemberBiz;
 import com.github.hollykunge.security.task.entity.LarkProjectMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -22,10 +23,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/project_member")
-public class ProjectMemberController extends BaseController<LarkProjectMemberbiz,LarkProjectMember> {
+public class ProjectMemberController extends BaseController<LarkProjectMemberBiz,LarkProjectMember> {
 
     @Autowired
-    private LarkProjectMemberbiz larkProjectMemberbiz;
+    private LarkProjectMemberBiz larkProjectMemberbiz;
 
     /**
      * todo 不需要了
@@ -83,13 +84,13 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberbiz
                                     @RequestParam("roleCode") String roleCode,
                                     @RequestParam("projectCode") String code){
         if(StringUtils.isEmpty(memberCode)){
-            throw new BaseException("成员不可为空！");
+            throw new ClientParameterInvalid("成员不可为空！");
         }
         if(StringUtils.isEmpty(code)){
-            throw new BaseException("项目不可为空！");
+            throw new ClientParameterInvalid("项目不可为空！");
         }
         if(StringUtils.isEmpty(roleCode)){
-            throw new BaseException("成员角色不可为空！");
+            throw new ClientParameterInvalid("成员角色不可为空！");
         }
         LarkProjectMember larkProjectMember = new LarkProjectMember();
         larkProjectMember.setProjectCode(code);
@@ -110,10 +111,10 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberbiz
     @RequestMapping(value = "/removeMember",method = RequestMethod.POST)
     public ObjectRestResponse<LarkProjectMember> removeMember(@RequestParam("memberCode") String memberCode, @RequestParam("projectCode") String code){
         if(StringUtils.isEmpty(memberCode)){
-            throw  new BaseException("成员id不可为空！");
+            throw  new ClientParameterInvalid("成员id不可为空！");
         }
         if(StringUtils.isEmpty(code)){
-            throw  new BaseException("项目id不可为空！");
+            throw  new ClientParameterInvalid("项目id不可为空！");
         }
         return larkProjectMemberbiz.deleteUserForProject(memberCode,code);
 

@@ -5,7 +5,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.task.biz.LarkTaskFilebiz;
+import com.github.hollykunge.security.task.biz.LarkTaskFileBiz;
 import com.github.hollykunge.security.task.entity.LarkFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +22,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/file")
-public class FileController extends BaseController<LarkTaskFilebiz, LarkFile> {
+public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
 
     @Autowired
-    private LarkTaskFilebiz larkTaskFilebiz;
+    private LarkTaskFileBiz larkTaskFilebiz;
 
     /**
      * 上传task任务关联文件
@@ -51,6 +51,7 @@ public class FileController extends BaseController<LarkTaskFilebiz, LarkFile> {
     }
 
     /**
+     * @deprecated 移动到文件夹获取了
      * 文件列表
      * @param {}} data
      *  export function list(data) {

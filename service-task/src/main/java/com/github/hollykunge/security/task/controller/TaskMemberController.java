@@ -2,11 +2,9 @@ package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
-import com.github.hollykunge.security.common.vo.RpcUserInfo;
-import com.github.hollykunge.security.task.biz.LarkTaskMemberbiz;
+import com.github.hollykunge.security.task.biz.LarkTaskMemberBiz;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +20,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/task_member")
-public class TaskMemberController extends BaseController<LarkTaskMemberbiz, LarkTaskMember> {
+public class TaskMemberController extends BaseController<LarkTaskMemberBiz, LarkTaskMember> {
 
     @Autowired
-    private LarkTaskMemberbiz larkTaskMemberbiz;
+    private LarkTaskMemberBiz larkTaskMemberbiz;
 
     /**
      * 重写add 新增任务执行人
@@ -39,6 +37,19 @@ public class TaskMemberController extends BaseController<LarkTaskMemberbiz, Lark
         return super.add(larkTaskMember);
     }
 
+    /**
+     * 更新任务执行人
+     * @param modifyMemberId 修改后的执行人id
+     * @param modifiedMemberId 修改前的执行人id
+     * @return 修改结果
+     */
+    @RequestMapping(value = "/updateTaskMember",method = RequestMethod.PUT)
+    @ResponseBody
+    public ObjectRestResponse<LarkTaskMember> updateTaskMember(
+            @RequestParam("modifyMemberId") String modifyMemberId,
+            @RequestParam("modifiedMemberId") String modifiedMemberId){
+        return larkTaskMemberbiz.updateTaskMember(modifyMemberId,modifiedMemberId);
+    }
     /**
      * 拆分请求第三步 getTasksByProjectId
      * 获取任务成员列表

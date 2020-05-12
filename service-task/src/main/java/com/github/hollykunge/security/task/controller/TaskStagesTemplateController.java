@@ -4,7 +4,7 @@ import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.task.biz.LarkTaskStagesTemplatebiz;
+import com.github.hollykunge.security.task.biz.LarkTaskStagesTemplateBiz;
 import com.github.hollykunge.security.task.entity.LarkTaskStagesTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +19,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/task_stages_template")
-public class TaskStagesTemplateController extends BaseController<LarkTaskStagesTemplatebiz, LarkTaskStagesTemplate> {
+public class TaskStagesTemplateController extends BaseController<LarkTaskStagesTemplateBiz, LarkTaskStagesTemplate> {
 
     @Autowired
-    private LarkTaskStagesTemplatebiz larkTaskStagesTemplatebiz;
+    private LarkTaskStagesTemplateBiz larkTaskStagesTemplatebiz;
     /**
      * 任务阶段模版列表
      * @param {*} data

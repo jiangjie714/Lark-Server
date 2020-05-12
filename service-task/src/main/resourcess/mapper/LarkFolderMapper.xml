@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hollykunge.security.task.mapper.LarkFolderMapper" >
+  <resultMap id="BaseResultMap" type="com.github.hollykunge.security.task.entity.LarkFolder" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
+    <result column="TASK_CODE" property="taskCode" jdbcType="VARCHAR" />
+    <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="DELETED" property="deleted" jdbcType="VARCHAR" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+    <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
+    <result column="UPD_DATE" property="updDate" jdbcType="TIMESTAMP" />
+    <result column="UPD_USER" property="updUser" jdbcType="VARCHAR" />
+    <result column="UPD_NAME" property="updName" jdbcType="VARCHAR" />
+    <result column="UPD_HOST" property="updHost" jdbcType="VARCHAR" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="GetTaskFileList" type="com.github.hollykunge.security.task.dto.LarkFolderDto"
+             extends="BaseResultMap">
+      <collection property="larkFiles" ofType="com.github.hollykunge.security.task.entity.LarkFile">
+        <id column="FILE_ID" property="id" jdbcType="VARCHAR" />
+        <result column="FILE_CODE" property="code" jdbcType="VARCHAR" />
+        <result column="FILE_PATH_NAME" property="pathName" jdbcType="VARCHAR" />
+        <result column="FILE_FOLDER_ID" property="folderId" jdbcType="VARCHAR" />
+        <result column="FILE_TITLE" property="title" jdbcType="VARCHAR" />
+        <result column="FILE_EXTENSION" property="extension" jdbcType="VARCHAR" />
+        <result column="FILE_FILE_SIZE" property="fileSize" jdbcType="INTEGER" />
+        <result column="FILE_OBJECT_TYPE" property="objectType" jdbcType="VARCHAR" />
+        <result column="FILE_ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
+        <result column="FILE_TASK_CODE" property="taskCode" jdbcType="VARCHAR" />
+        <result column="FILE_PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
+        <result column="FILE_CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+        <result column="FILE_CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+        <result column="FILE_DOWNLOADS" property="downloads" jdbcType="INTEGER" />
+        <result column="FILE_EXTRA" property="extra" jdbcType="VARCHAR" />
+        <result column="FILE_DELETED" property="deleted" jdbcType="VARCHAR" />
+        <result column="FILE_FILE_URL" property="fileUrl" jdbcType="VARCHAR" />
+        <result column="FILE_FILE_TYPE" property="fileType" jdbcType="VARCHAR" />
+        <result column="FILE_DELETED_TIME" property="deletedTime" jdbcType="VARCHAR" />
+        <result column="FILE_CRT_NAME" property="crtName" jdbcType="VARCHAR" />
+      </collection>
+  </resultMap>
+  <select id="getTaskFileList" resultMap="GetTaskFileList">
+    select lfo.*,
+    lfi.id FILE_ID ,lfi.title FILE_TITLE,
+    lfi.code FILE_CODE,lfi.path_name FILE_PATH_NAME,
+    lfi.folder_id FILE_FOLDER_ID,lfi.extension FILE_EXTENSION,
+    lfi.file_size FILE_FILE_SIZE,lfi.object_type FILE_OBJECT_TYPE,lfi.organization_code FILE_ORGANIZATION_CODE,
+    lfi.task_code FILE_TASK_CODE,lfi.project_code FILE_PROJECT_CODE,lfi.create_by FILE_CREATE_BY,
+    lfi.downloads FILE_DOWNLOADS,lfi.extra FILE_EXTRA,lfi.deleted FILE_DELETED,
+    lfi.file_url FILE_FILE_URL,lfi.file_type FILE_FILE_TYPE,lfi.deleted_time FILE_DELETED_TIME,
+    lfi.crt_name FILE_CRT_NAME,lfi.crt_time FILE_CRT_TIME
+    from
+    lark_folder lfo
+    left join
+    lark_file lfi
+    on
+    lfo.id = lfi.folder_id
+    　<trim prefix="WHERE" prefixOverrides ="AND">
+    　　　　<if test="projectCode != null and projectCode != ''">
+             lfo.project_code=#{projectCode}
+           </if>
+    　　　　<if test="taskCode != null and taskCode != ''">
+            lfo.task_code=#{taskCode}
+           </if>
+    　</trim>
+      and
+    lfo.deleted='1'
+    and
+    lfi.deleted='0'
+  </select>
+</mapper>

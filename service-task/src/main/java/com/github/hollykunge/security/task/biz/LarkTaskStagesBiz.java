@@ -18,7 +18,7 @@ import java.util.List;
  * @deprecation 任务列表表 通过stage_code 和lark_task 任务具体信息表关联
  */
 @Service
-public class LarkTaskStagesbiz extends BaseBiz<LarkTaskStagesMapper, LarkTaskStages> {
+public class LarkTaskStagesBiz extends BaseBiz<LarkTaskStagesMapper, LarkTaskStages> {
 
     @Autowired
     private LarkTaskStagesMapper larkTaskStagesMapper;

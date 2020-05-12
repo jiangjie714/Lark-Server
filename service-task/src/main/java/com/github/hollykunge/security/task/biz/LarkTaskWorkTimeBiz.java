@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LarkTaskWorkTimebiz extends BaseBiz<LarkTaskWorkTimeMapper, LarkTaskWorkTime> {
+public class LarkTaskWorkTimeBiz extends BaseBiz<LarkTaskWorkTimeMapper, LarkTaskWorkTime> {
     @Override
     protected String getPageName() {
         return null;

@@ -1,26 +1,21 @@
 package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
-import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
-import com.github.hollykunge.security.task.biz.LarkTaskMemberbiz;
-import com.github.hollykunge.security.task.biz.LarkTaskToTagbiz;
-import com.github.hollykunge.security.task.biz.LarkTaskbiz;
+import com.github.hollykunge.security.task.biz.LarkTaskMemberBiz;
+import com.github.hollykunge.security.task.biz.LarkTaskToTagBiz;
+import com.github.hollykunge.security.task.biz.LarkTaskBiz;
 import com.github.hollykunge.security.task.dto.LarkTaskDto;
 import com.github.hollykunge.security.task.entity.LarkTask;
-import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import com.github.hollykunge.security.task.entity.LarkTaskToTag;
 import com.github.hollykunge.security.task.vo.LarkTaskVO;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,16 +30,16 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/task")
-public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
+public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
 
     @Autowired
-    private LarkTaskbiz larkTaskbiz;
+    private LarkTaskBiz larkTaskbiz;
 
     @Autowired
-    private LarkTaskMemberbiz larkTaskMemberbiz;
+    private LarkTaskMemberBiz larkTaskMemberbiz;
 
     @Autowired
-    private LarkTaskToTagbiz larkTaskToTagbiz;
+    private LarkTaskToTagBiz larkTaskToTagbiz;
 
     /**
      * 重写add 在新建任务时
@@ -60,6 +55,16 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
         return larkTaskbiz.add(larkTask,memberCode,request);
     }
 
+    /**
+     * done更新任务完成状态  完成状态和 status执行状态不是一回事  因为要计算项目完成进度
+     * @param larkTask
+     * @return
+     */
+    @RequestMapping(value = "/updateTaskStatus",method = RequestMethod.PUT)
+    @ResponseBody
+    public ObjectRestResponse<LarkTask> updateTaskStatus(@RequestBody LarkTask larkTask){
+        return larkTaskbiz.updateTaskStatus(larkTask);
+    }
     /**
      * 排序
      * @param larkTasks
@@ -99,7 +104,7 @@ public class TaskController extends BaseController<LarkTaskbiz, LarkTask> {
     @ResponseBody
     public TableResultResponse<LarkTaskDto> getTaskByUserIdAndDone(@RequestBody Map<String,Object> map){
         if(MapUtils.isEmpty(map)){
-            throw new BaseException("参数不可为空！");
+            throw new ClientParameterInvalid("参数不可为空！");
         }
         return larkTaskbiz.getTaskByUserIdAndDone(map);
     }

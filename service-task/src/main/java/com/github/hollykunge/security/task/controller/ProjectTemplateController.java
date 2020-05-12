@@ -6,7 +6,7 @@ import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
-import com.github.hollykunge.security.task.biz.LarkProjectTemplatebiz;
+import com.github.hollykunge.security.task.biz.LarkProjectTemplateBiz;
 import com.github.hollykunge.security.task.dto.LarkProjectTemplateDto;
 import com.github.hollykunge.security.task.entity.LarkProjectTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/project_template")
-public class ProjectTemplateController extends BaseController<LarkProjectTemplatebiz, LarkProjectTemplate> {
+public class ProjectTemplateController extends BaseController<LarkProjectTemplateBiz, LarkProjectTemplate> {
 
     @Autowired
-    private LarkProjectTemplatebiz larkProjectTemplatebiz;
+    private LarkProjectTemplateBiz larkProjectTemplatebiz;
 
     /**
      * 项目模版列表

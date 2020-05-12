@@ -30,6 +30,7 @@
     <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
     <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
     <result column="AUTO_UPDATE_SCHEDULE" property="autoUpdateSchedule" jdbcType="INTEGER" />
+    <result column="SECRET_LEVEL" property="secretLevel" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
     <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
@@ -49,7 +50,7 @@
     pro.TEMPLATE_CODE,pro.SCHEDULE,pro.CRT_TIME,pro.ORGANIZATION_CODE,pro.DELETED_TIME,pro.PRIVATED,pro.PREFIX,pro.OPEN_PREFIX,
     pro.ARCHIVE,pro.ARCHIVE_TIME,pro.OPEN_BEGIN_TIME,pro.OPEN_TASK_PRIVATED,pro.TASK_BOARD_THEME,pro.BEGIN_TIME,
     pro.END_TIME,pro.AUTO_UPDATE_SCHEDULE,pro.CRT_USER,pro.CRT_NAME,pro.CRT_HOST,pro.UPD_TIME,pro.UPD_USER,pro.UPD_NAME,pro.UPD_HOST,
-    pro.ATTR1,pro.ATTR2,pro.ATTR3,pro.ATTR4
+    pro.SECRET_LEVEL,pro.ATTR1,pro.ATTR2,pro.ATTR3,pro.ATTR4
     FROM
     lark_project pro
     inner join

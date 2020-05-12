@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LarkTaskTagbiz extends BaseBiz<LarkTaskTagMapper, LarkTaskTag> {
+public class LarkTaskTagBiz extends BaseBiz<LarkTaskTagMapper, LarkTaskTag> {
 
     @Autowired
     private LarkTaskTagMapper larkTaskTagMapper;

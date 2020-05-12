@@ -42,4 +42,11 @@ public interface LarkTaskMapper extends Mapper<LarkTask> {
      * @return
      */
     List<LarkTaskDto> getTaskAndTag(String projectCode, String taskCode);
+
+    /**
+     * 通过任务完成的计算百分比
+     * @param projectCode
+     * @return
+     */
+    TaskNum getPercentComplete(@Param("projectCode") String projectCode);
 }

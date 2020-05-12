@@ -50,4 +50,7 @@
         ltm.id=#{taskCode}
   </select>
 
+  <update id="updateTaskMember">
+      update lark_task_member set memeber_code=#{modifyMemberId} where memeber_code=#{modifiedMemberId};
+  </update>
 </mapper>
