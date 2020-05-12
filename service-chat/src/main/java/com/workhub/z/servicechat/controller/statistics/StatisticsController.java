@@ -95,4 +95,19 @@ public class StatisticsController {
         List<StatisticsGroupOrgVo> dataList = this.statisticsService.groupOrgStatistics(groupId);
         return new ObjectRestResponse<>().rel(true).msg("200").data(dataList);
     }
+
+    /**
+     * 获取参加的所有群组信息
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("getGroupAndMeetIdByUserId")
+    public ObjectRestResponse getGroupAndMeetIdByUserId(String userId){
+        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
+        List<String> ids = this.statisticsService.getGroupAndMeetIdByUserId(userId);
+        objectRestResponse.msg("200");
+        objectRestResponse.data(ids);
+        return objectRestResponse;
+    }
 }

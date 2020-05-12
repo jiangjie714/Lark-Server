@@ -200,6 +200,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return res;
     }
+
+    @Override
+    public List<String> getGroupAndMeetIdByUserId(String userId) {
+        return this.statisticsDao.getGroupAndMeetIdByUserId(userId);
+    }
+
     /**
      * 数据转换为chat需要的格式
      * @param oriDatas

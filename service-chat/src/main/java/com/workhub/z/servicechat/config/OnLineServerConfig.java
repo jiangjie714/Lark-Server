@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class OnLineServerConfig {
     //在线客服的id，逗号分隔
-    private static final  String ONLINE_SERVER_IDS = "YE016KXb,123457,123458";
+    private static final  String ONLINE_SERVER_IDS = "SGqsLJmC";
     //客服默认id
     private static  String defaultUserId ;
     @Value("${online-server-id}")

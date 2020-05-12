@@ -349,4 +349,19 @@
         order by g.group_id
     </select>
 
+
+    <select id="getGroupAndMeetIdByUserId" resultType="String">
+        SELECT
+            t.MEETING_ID AS id
+        FROM
+            ZZ_MEETING_USER t
+        WHERE
+            t.USER_ID = #{userId} UNION ALL
+        SELECT
+            g.GROUP_ID AS id
+        FROM
+            ZZ_USER_GROUP g
+        WHERE
+            g.USER_ID = #{userId}
+    </select>
 </mapper>

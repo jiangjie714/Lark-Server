@@ -39,4 +39,12 @@ public interface StatisticsDao {
     List<StatisticsChartDto> getXLabel(@Param("orgCode")String orgCode);
     List<StatisticsGroupUserDto> groupUserStatistics(@Param("groupId")String groupId);
     List<StatisticsGroupOrgDto> groupOrgStatistics(@Param("groupId")String groupId);
+
+    /**
+     * 获取群组会议id集合
+     * @param userId
+     * @return
+     */
+
+    List<String> getGroupAndMeetIdByUserId(@Param("userId") String userId);
 }

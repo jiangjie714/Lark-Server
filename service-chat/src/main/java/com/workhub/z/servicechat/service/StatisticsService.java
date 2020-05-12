@@ -42,4 +42,10 @@ public interface StatisticsService {
      * @return
      */
     List<StatisticsGroupOrgVo> groupOrgStatistics(String groupId);
+
+    /**
+     * 群org统计
+     * @return
+     */
+    List<String> getGroupAndMeetIdByUserId(String userId);
 }
