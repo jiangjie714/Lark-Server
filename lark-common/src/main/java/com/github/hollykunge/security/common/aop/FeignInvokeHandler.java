@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.common.aop;
 
 
+import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.exception.server.FeignExecutException;
 import com.github.hollykunge.security.common.msg.FeignResponse;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -18,7 +19,7 @@ public class FeignInvokeHandler implements MethodInterceptor {
         if(feignResult instanceof FeignResponse){
             FeignResponse response = (FeignResponse) feignResult;
             int status = response.getStatus();
-            if(status == 500){
+            if(status == HttpReponseStatusEnum.SYSTEM_ERROR.value()){
                 throw new FeignExecutException(response.getMessage());
             }
         }
