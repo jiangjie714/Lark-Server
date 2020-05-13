@@ -2,8 +2,8 @@ package com.github.hollykunge.security.gate.feign.hystrix;
 
 import com.github.hollykunge.security.admin.api.authority.FrontPermission;
 import com.github.hollykunge.security.common.feign.BaseFeignFactory;
+import com.github.hollykunge.security.common.msg.FeignListResponse;
 import com.github.hollykunge.security.gate.feign.AdminUserFeign;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import java.util.List;
 public class AdminUserHystrix extends BaseFeignFactory<AdminUserHystrix> implements AdminUserFeign {
 
     @Override
-    public List<FrontPermission> getPermissionByUserId(String userId) {
-        return Lists.newArrayList();
+    public FeignListResponse<List<FrontPermission>> getPermissionByUserId(String userId) {
+        return getHystrixListResponse();
     }
 }

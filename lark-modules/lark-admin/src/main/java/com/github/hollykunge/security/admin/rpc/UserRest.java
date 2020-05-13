@@ -13,6 +13,7 @@ import com.github.hollykunge.security.admin.dto.biz.ChangeUserPwdDto;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
+import com.github.hollykunge.security.common.msg.FeignListResponse;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.beans.BeanUtils;
@@ -73,8 +74,9 @@ public class UserRest {
      */
     @RequestMapping(value = "/user/un/{userId}/permissions", method = RequestMethod.GET)
     @ResponseBody
-    public List<FrontPermission> getPermissionByUserId(@PathVariable("userId") String userId) {
-        return permissionService.getPermissionByUserId(userId);
+    public FeignListResponse<List<FrontPermission>> getPermissionByUserId(@PathVariable("userId") String userId) {
+        List<FrontPermission> permissions = permissionService.getPermissionByUserId(userId);
+        return new FeignListResponse("查询成功",permissions.size(),permissions);
     }
     /**
      * 验证用户名密码
