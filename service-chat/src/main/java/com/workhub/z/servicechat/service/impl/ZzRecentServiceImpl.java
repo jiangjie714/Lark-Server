@@ -91,6 +91,7 @@ public class ZzRecentServiceImpl implements ZzRecentService {
      */
     @Override
     public int getNoReadMsgNum(String userId, String contactId){
-        return  this.zzRecentDao.getNoReadMsgNum(userId,contactId);
+        Integer res = this.zzRecentDao.getNoReadMsgNum(userId,contactId);
+        return  res==null?0:res;
     }
 }

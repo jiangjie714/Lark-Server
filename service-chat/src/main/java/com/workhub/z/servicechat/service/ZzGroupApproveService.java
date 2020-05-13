@@ -13,9 +13,22 @@ import java.util.Map;
  * date:2019/9/11 16:14
  **/
 public interface ZzGroupApproveService {
-    //新增
-    int add(ZzGroupApprove zzGroupApprove);
-    //审批
+    /**
+     * 新增
+     * @param msg
+     * @param userId
+     * @param userName
+     * @param userNo
+     * @param userIp
+     * @return
+     */
+    int saveApprove(String msg,String userId,String userName,String userNo,String userIp);
+
+    /**
+     * 审批
+     * @param params
+     * @return
+     */
     Map<String,String>  approve(Map params);
     //审批列表查询
     TableResultResponse<GroupApproveVo> getApproveList(Map params) throws Exception;

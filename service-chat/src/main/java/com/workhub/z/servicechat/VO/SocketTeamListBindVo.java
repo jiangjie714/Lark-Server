@@ -11,8 +11,12 @@ import java.util.List;
  **/
 @Data
 public class SocketTeamListBindVo {
-    //群体的id列表（如会议、群组等等）
+    /**
+     * 群体的id列表（如会议、群组等等）
+     */
     private List<String> teamList;
-    //绑定群体的人员
+    /**
+     * 绑定群体的人员
+     */
     private String userId;
 }

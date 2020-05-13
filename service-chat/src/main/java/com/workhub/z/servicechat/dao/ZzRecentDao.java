@@ -59,6 +59,6 @@ public interface ZzRecentDao  extends Mapper<ZzRecent> {
      * @param contactId
      * @return
      */
-    int getNoReadMsgNum(@Param("userId") String userId,@Param("contactId") String contactId);
+    Integer getNoReadMsgNum(@Param("userId") String userId,@Param("contactId") String contactId);
 
 }

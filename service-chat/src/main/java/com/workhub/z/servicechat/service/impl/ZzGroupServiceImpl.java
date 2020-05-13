@@ -638,7 +638,6 @@ public class ZzGroupServiceImpl implements ZzGroupService {
 
             this.insert(zzGroupInfo);//创建讨论组
             //创建群end
-
             List<UserListDto> userList = new ArrayList<UserListDto>();
             //遍历用户begin
             for (int i = 0; i < userJsonArray.size(); i++) {
@@ -657,18 +656,6 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                 this.zzUserGroupService.insert(userGroup);
                 //遍历用户end
                 //返回创建结果
-                //redis 缓存处理 把用户的群列表缓存更新
-                try {
-                    String key = CacheConst.userGroupIds+":"+userJson.getString("userId");
-                    boolean keyExist = RedisUtil.isKeyExist(key);
-                    //如果key存在更新缓存，把最新的数据加入进去
-                    if(keyExist){
-                        RedisListUtil.putSingleWithoutDup(key,zzGroupInfo.getGroupId());
-                    }
-                } catch (Exception e) {
-                    log.error("创建群redis报错！！！");
-                    log.error(Common.getExceptionMessage(e));
-                }
             }
             // TODO: 2019/6/3 群头像生成
 
@@ -679,16 +666,6 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             res.data("系统出错");
             /*//手动回滚事务*/
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            for (int i = 0; i < userJsonArray.size(); i++) {
-            JSONObject userJson = JSONObject.parseObject(userJsonArray.getString(i));
-            String key = CacheConst.userGroupIds+":"+userJson.getString("userId");
-            boolean keyExist = RedisUtil.isKeyExist(key);
-            //如果key存在更新缓存，把脏数据删除
-            if(keyExist){
-                RedisUtil.remove(key);
-            }
-
-            }
         }
         return res;
     }
