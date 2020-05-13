@@ -1,11 +1,13 @@
 package com.github.hollykunge.security.common.msg;
 
+import java.io.Serializable;
+
 /**
  * @author: zhhongyu
  * @description: feign统一返回
  * @since: Create in 10:46 2020/4/28
  */
-public class FeignResponse {
+public class FeignResponse implements Serializable {
     private int status = 200;
     private String message;
     private String timestamp = System.currentTimeMillis()+"";

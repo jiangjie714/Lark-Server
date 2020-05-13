@@ -1,13 +1,13 @@
 package com.github.hollykunge.security.common.msg;
 
-import org.apache.poi.ss.formula.functions.T;
+
 
 /**
  * @author: zhhongyu
  * @description: 全局feign统一object类型
  * @since: Create in 10:41 2020/4/28
  */
-public class FeignObjectReponse extends BaseResponse{
+public class FeignObjectReponse<T> extends FeignResponse{
     T result;
     boolean rel;
 

@@ -6,25 +6,29 @@ package com.github.hollykunge.security.common.msg;
  * @description: feign返回list类型数据
  * @since: Create in 10:44 2020/4/28
  */
-public class FeignListResponse<T> extends BaseResponse {
+public class FeignListResponse<T> extends FeignResponse {
     String msg;
-    ListData<T> result;
-    public ListData<T> getResult() {
+    FeignListData<T> result;
+    public FeignListData<T> getResult() {
         return result;
+    }
+    public FeignListResponse(){
+
     }
 
     public FeignListResponse(String msg, int count, T data){
         this.setMessage(msg);
         this.msg = msg;
-        this.result = new ListData<>(data,count);
+        this.result = new FeignListData<>(data,count);
     }
-    public class ListData<T>{
+    public class FeignListData<T>{
         private T data;
         private int count;
-        public ListData(T data,int count){
+        public FeignListData(T data,int count){
             this.data = data;
             this.count = count;
         }
+        public FeignListData(){}
         public T getData() {
             return data;
         }
