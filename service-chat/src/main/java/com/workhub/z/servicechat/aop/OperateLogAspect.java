@@ -45,6 +45,7 @@ public class OperateLogAspect {
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupServiceImpl.queryGroupUserIdListByGroupId(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupServiceImpl.queryById(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzGroupServiceImpl.getGroupUserList(..)) " +
+            "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzContactServiceImpl.*(..)) " +
             "&& !execution(public * com.workhub.z.servicechat.service.impl.ZzAtServiceImpl.*(..)) "
     )
 

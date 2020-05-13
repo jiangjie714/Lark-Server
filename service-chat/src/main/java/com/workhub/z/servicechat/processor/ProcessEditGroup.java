@@ -42,13 +42,11 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
     @Autowired
     private AdminUserService iUserService;
     @Autowired
-    private ZzGroupStatusService zzGroupStatusService;
-    @Autowired
     RabbitMqMsgProducer rabbitMqMsgProducer;
     @Autowired
     RedisTemplate redisTemplate;
     // TODO: 2019/6/4 分类处理群组编辑
-    public MsgSendStatusVo processManage(String userId, String message) throws IOException {
+    public void processManage(String userId, String message) throws IOException {
 
 //        GroupTaskDto groupTaskDto = toGroupTaskDto(message);
         GroupTaskDto groupTaskDto = JSONObject.parseObject(message, GroupTaskDto.class);
@@ -57,7 +55,8 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
                 // TODO: 2019/6/4 处理加入群组消息，1绑定用户到群组
 //                Tio.bindGroup(channelContext,groupTaskDto.getGroupId());
                 try {
-                     return joinGroup(userId,groupTaskDto);
+                      joinGroup(userId,groupTaskDto);
+                      return;
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -68,7 +67,8 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
                 // TODO: 2019/6/4  1.存入数据库 2.生成群组头像 3.向用户分发加入群组消息
 //                createGroup(channelContext,message);
                 try {
-                    return joinGroup(userId,groupTaskDto);
+                    joinGroup(userId,groupTaskDto);
+                    return;
 //                    createGroupHeadsImg(groupTaskDto.getGroupId());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -80,12 +80,9 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
             case GROUP_CLOSE_MSG:
                 break;
         }
-        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
-        return msgSendStatusVo;
     }
 
-    public MsgSendStatusVo joinGroup(String userId, GroupTaskDto<ZzGroup> groupTaskDto) throws Exception{
-        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
+    public void joinGroup(String userId, GroupTaskDto<ZzGroup> groupTaskDto) throws Exception{
         //如果是加入：人员列表只有一个用户，他们自己；如果是邀请，人员列表可能多个
 //        for ( UserListDto userInfo:groupTaskDto.getUserList()){
             ZzUserGroup userGroup = new ZzUserGroup();
@@ -140,7 +137,6 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
             String msg = JSON.toJSONString(groupEditVO);
             Tio.sendToUser(channelContext.getGroupContext(),userInfo.getUserId(),this.getWsResponse(msg));
         }*/
-        return msgSendStatusVo;
     }
     //生成群头像九宫格
     public boolean createGroupHeadsImg(String groupId) throws Exception{
@@ -163,8 +159,7 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
 
     //群创建
     @Transactional
-    public MsgSendStatusVo createGroup(String userId, String msg) throws IOException {
-        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
+    public void createGroup(String userId, String msg) throws IOException {
         ZzGroup zzGroupInfo = new ZzGroup();
         JSONObject jsonObject = JSONObject.parseObject(msg);
         String message = jsonObject.getString("data");
@@ -278,6 +273,5 @@ public class ProcessEditGroup extends AbstractMsgProcessor {
         ImageUtil.generate(picUrls, newPath);
         zzGroup.setGroupImg(newPath);*/
         // TODO: 2019/6/3 群头像生成
-        return msgSendStatusVo;
     }
 }

@@ -419,16 +419,12 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
     /**
      * 会议审批通过以后
      * @param userId
-     * @param msg
+     * @param message
      * @return
      * @throws Exception
      */
     @Override
-    public void socketMeetCreate(String userId, String msg) throws Exception {
-        MsgSendStatusVo msgSendStatusVo = new MsgSendStatusVo();
-
-        JSONObject jsonObject = JSONObject.parseObject(msg);
-        String message = jsonObject.getString("data");
+    public void socketMeetCreate(String userId, String message) throws Exception {
         String meetId = Common.getJsonStringKeyValue(message,"id").toString();
 
         SocketMsgVo msgVo = new SocketMsgVo();

@@ -19,13 +19,9 @@ public class ProcessMsg extends AbstractMsgProcessor {
     @Autowired
     private ProcessPrivateMsg processPrivateMsg;
     @Autowired
-    private ProcessEditGroup processEditGroup;
-    @Autowired
     private ProcessGroupMsg processGroupMsg;
     @Autowired
     private ProcessMeetMsg processMeetMsg;
-    @Autowired
-    private ZzGroupFileService zzGroupFileService;
     @Autowired
     RabbitMqMsgProducer rabbitMqMsgProducer;
     private static Logger log = LoggerFactory.getLogger(ProcessMsg.class);
@@ -58,7 +54,7 @@ public class ProcessMsg extends AbstractMsgProcessor {
             }
         }catch (Exception e){
             // TODO: 2020/2/22   消息解析错误 向前端返回错误信息
-            System.out.println("别提了又错了"+ e.getMessage());
+            log.error("别提了又错了"+ e.getMessage());
             if(sendStatusVo==null){
                 sendStatusVo = new MsgSendStatusVo();
             }
