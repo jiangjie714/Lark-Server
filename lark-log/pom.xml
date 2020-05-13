@@ -11,17 +11,11 @@
     <packaging>pom</packaging>
     <description>云雀日志服务</description>
     <modules>
-        <module>lark-log-api</module>
         <module>lark-log-server</module>
+        <module>lark-log-dto</module>
     </modules>
 
     <artifactId>lark-log</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-    </dependencies>
 
 
 </project>

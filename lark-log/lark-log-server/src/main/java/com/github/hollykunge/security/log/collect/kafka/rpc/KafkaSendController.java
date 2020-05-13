@@ -2,15 +2,13 @@ package com.github.hollykunge.security.log.collect.kafka.rpc;
 
 import com.alibaba.excel.util.StringUtils;
 import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.log.api.dto.TopicDto;
-import com.github.hollykunge.security.log.api.kafka.KafkaSendWebApi;
-import com.github.hollykunge.security.log.api.response.LogObjectRestResponse;
+import com.github.hollykunge.security.common.msg.FeignListResponse;
+import com.github.hollykunge.security.common.msg.FeignObjectReponse;
 import com.github.hollykunge.security.log.collect.kafka.service.MessageSendService;
 import com.github.hollykunge.security.log.collect.kafka.service.MongoDBService;
+import com.github.hollykunge.security.log.dto.kafka.TopicDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * kafka发送消息接口
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "kafka")
-public class KafkaSendController implements KafkaSendWebApi {
+public class KafkaSendController {
 
     @Autowired
     private MessageSendService messageService;
@@ -31,15 +29,18 @@ public class KafkaSendController implements KafkaSendWebApi {
      * @return
      * @throws Exception
      */
-    @Override
-    public LogObjectRestResponse sendKafka(@RequestBody TopicDto topic) throws Exception{
+    @RequestMapping(value = "/send",method = RequestMethod.POST)
+    @ResponseBody
+    public FeignObjectReponse<Boolean> sendKafka(@RequestBody TopicDto topic) throws Exception{
         if(StringUtils.isEmpty(topic.getTopicName())){
+            //todo 需要定义为feign调用参数异常
             throw new BaseException("主题名称不能为空...");
         }
         if(topic.getMessage() == null || StringUtils.isEmpty(topic.getMessage().getMessage())){
+            //todo 需要定义为feign调用参数异常
             throw new BaseException("发送的消息不能为空...");
         }
         messageService.sendMessage(topic.getTopicName(),topic.getMessage().getMessage());
-        return new LogObjectRestResponse().data(true).rel(true);
+        return new FeignObjectReponse().data(true).rel(true);
     }
 }

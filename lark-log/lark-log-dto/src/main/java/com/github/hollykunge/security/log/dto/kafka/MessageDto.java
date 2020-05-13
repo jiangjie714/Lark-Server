@@ -1,4 +1,4 @@
-package com.github.hollykunge.security.log.api.dto;
+package com.github.hollykunge.security.log.dto.kafka;
 
 import lombok.Data;
 
