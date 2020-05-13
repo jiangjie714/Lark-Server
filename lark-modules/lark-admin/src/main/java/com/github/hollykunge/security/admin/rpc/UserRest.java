@@ -14,6 +14,7 @@ import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
 import com.github.hollykunge.security.common.msg.FeignListResponse;
+import com.github.hollykunge.security.common.msg.FeignObjectReponse;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.beans.BeanUtils;
@@ -87,8 +88,9 @@ public class UserRest {
      */
     @RequestMapping(value = "/user/validate", method = RequestMethod.POST)
     @ResponseBody
-    public AdminUser validate(String pid, String password) {
-        return permissionService.validate(pid, password);
+    public FeignObjectReponse<AdminUser> validate(String pid, String password) {
+        AdminUser validate = permissionService.validate(pid, password);
+        return new FeignObjectReponse<>().data(validate);
     }
     /**
      * 根据身份证号获取用户信息
