@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.gate.feign.hystrix;
 
+import com.github.hollykunge.security.common.feign.BaseFeignFactory;
 import com.github.hollykunge.security.gate.feign.LarkLogFeign;
 import com.github.hollykunge.security.log.api.dto.TopicDto;
 import com.github.hollykunge.security.log.api.response.LogObjectRestResponse;

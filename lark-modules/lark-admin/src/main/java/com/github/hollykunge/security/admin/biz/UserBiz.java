@@ -2,8 +2,8 @@ package com.github.hollykunge.security.admin.biz;
 
 import com.ace.cache.annotation.CacheClear;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
-import com.github.hollykunge.security.admin.api.dto.ChangeUserPwdDto;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
+import com.github.hollykunge.security.admin.dto.biz.ChangeUserPwdDto;
 import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.PositionUserMapMapper;
