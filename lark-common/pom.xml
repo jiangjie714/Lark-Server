@@ -26,6 +26,7 @@
         <mapper.version>3.4.1</mapper.version>
         <javax.validation.vsersion>2.0.1.Final</javax.validation.vsersion>
         <feign-hystrix.core.version>9.5.1</feign-hystrix.core.version>
+        <hutool.version>5.1.0</hutool.version>
     </properties>
     <dependencies>
         <dependency>
@@ -138,6 +139,12 @@
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-hystrix</artifactId>
             <version>${feign-hystrix.core.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
 
     </dependencies>
