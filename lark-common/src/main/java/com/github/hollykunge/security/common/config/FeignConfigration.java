@@ -7,14 +7,12 @@ import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author: zhhongyu
  * @description: feign定制组件
  * @since: Create in 9:18 2020/5/13
  */
-@Configuration
 public class FeignConfigration {
     @Value("${feign.aop}")
     private String pointcut;
