@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.admin.mapper;
 
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.User;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;

@@ -1,10 +1,10 @@
 package com.github.hollykunge.security.admin.rest;
 
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
 import com.github.hollykunge.security.admin.biz.RoleBiz;
 import com.github.hollykunge.security.admin.biz.UserBiz;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.Position;
 import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.entity.User;

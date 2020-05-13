@@ -2,14 +2,14 @@ package com.github.hollykunge.security.admin.rpc;
 
 import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.admin.api.dto.OrgUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
 import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.dto.biz.ChangeUserPwdDto;
+import com.github.hollykunge.security.admin.dto.biz.OrgUser;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;

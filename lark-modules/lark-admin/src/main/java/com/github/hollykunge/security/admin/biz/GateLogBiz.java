@@ -2,7 +2,7 @@ package com.github.hollykunge.security.admin.biz;
 
 import com.ace.cache.annotation.Cache;
 import com.alibaba.fastjson.JSONArray;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.GateLogMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
