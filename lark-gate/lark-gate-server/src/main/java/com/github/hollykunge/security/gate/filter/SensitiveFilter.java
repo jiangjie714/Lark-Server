@@ -68,6 +68,9 @@ public class SensitiveFilter extends ZuulFilter {
             }
             JSONObject jsonObject = JSON.parseObject(responseBody, JSONObject.class);
             JSONObject result = jsonObject.getJSONObject("result");
+            if(result == null){
+                return result;
+            }
             JSONArray data = result.getJSONArray("data");
             //解析list或table的报文形式
             if (data != null) {

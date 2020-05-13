@@ -1,13 +1,12 @@
 package com.github.hollykunge.security.gate.feign;
 
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
 import com.github.hollykunge.security.common.msg.FeignListResponse;
 import com.github.hollykunge.security.gate.feign.hystrix.AdminUserHystrix;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -25,6 +24,5 @@ public interface AdminUserFeign {
      * @return List<FrontPermission>
      */
     @RequestMapping(value = "/user/un/{userId}/permissions", method = RequestMethod.GET)
-    @ResponseBody
     FeignListResponse<List<FrontPermission>> getPermissionByUserId(@PathVariable("userId") String userId);
 }

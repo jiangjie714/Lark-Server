@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.gate.filter;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
 import com.github.hollykunge.security.auth.client.config.ServiceAuthConfig;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.config.UserAuthConfig;

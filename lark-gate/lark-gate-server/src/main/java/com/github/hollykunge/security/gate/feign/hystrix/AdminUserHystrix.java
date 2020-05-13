@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.gate.feign.hystrix;
 
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
 import com.github.hollykunge.security.common.feign.BaseFeignFactory;
 import com.github.hollykunge.security.common.msg.FeignListResponse;
 import com.github.hollykunge.security.gate.feign.AdminUserFeign;
