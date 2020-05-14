@@ -4,7 +4,6 @@ package com.github.hollykunge.security.gate;
 import com.github.hollykunge.gate.ratelimit.EnableAceGateRateLimit;
 import com.github.hollykunge.gate.ratelimit.config.IUserPrincipal;
 import com.github.hollykunge.security.auth.client.EnableAceAuthClient;
-import com.github.hollykunge.security.common.annotation.EnableLarkFeignAspect;
 import com.github.hollykunge.security.gate.config.UserPrincipal;
 import com.github.hollykunge.security.gate.utils.DBLog;
 import org.springframework.boot.SpringApplication;
@@ -28,7 +27,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableAceAuthClient
 @EnableAceGateRateLimit
-@EnableLarkFeignAspect
 public class GateBootstrap {
     public static void main(String[] args) {
         DBLog.getInstance().start();

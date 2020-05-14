@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.auth;
 
 
-import com.github.hollykunge.security.common.annotation.EnableLarkFeignAspect;
 import com.github.hollykunge.security.common.config.DruidConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Import;
 @EnableFeignClients
 @MapperScan("com.github.hollykunge.security.auth.mapper")
 @Import(DruidConfig.class)
-@EnableLarkFeignAspect
 @EnableHystrix
 public class AuthBootstrap {
     public static void main(String[] args) {
