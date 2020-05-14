@@ -992,4 +992,68 @@
         )
         order by t.createtime asc
     </select>
+    <select id="listHistoryMsgGroup" resultType="java.lang.String">
+        select content
+        from zz_message_info mes
+        where 1 = 1
+        and receiver = #{contactId}
+        and type = 'GROUP'
+        and cancel  = '0'
+        <if test="lastMsgId!=null and lastMsgId!=''">
+            and mes.createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId})
+        </if>
+        and exists (select 1
+        from zz_user_group c
+        where 1 = 1
+        and c.user_id = #{userId}
+        and c.group_id = #{contactId}
+        and c.createtime &lt;= mes.createtime
+        )
+        order by mes.createtime desc
+    </select>
+    <select id="listHistoryMsgPrivate" resultType="java.lang.String">
+        select content from (
+        select content,createtime
+        from zz_message_info
+        where 1 = 1
+        and receiver = #{userId}
+        and sender = #{contactId}
+        and type='USER'
+        and cancel  = '0'
+        <if test="lastMsgId!=null and lastMsgId!=''">
+            and createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId})
+        </if>
+        union
+        select content,createtime
+        from zz_message_info
+        where 1 = 1
+        and receiver = #{contactId}
+        and sender = #{userId}
+        and type='USER'
+        and cancel  = '0'
+        <if test="lastMsgId!=null and lastMsgId!=''">
+            and createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId})
+        </if>
+        ) a
+        order by a.createtime desc
+    </select>
+    <select id="listHistoryMsgMeet" resultType="java.lang.String">
+        select content
+        from zz_message_info mes
+        where 1 = 1
+        and receiver = #{contactId}
+        and type = 'MEET'
+        and cancel  = '0'
+        <if test="lastMsgId!=null and lastMsgId!=''">
+            and mes.createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId})
+        </if>
+        and exists (select 1
+        from zz_meeting_user c
+        where 1 = 1
+        and c.user_id = #{userId}
+        and c.meeting_id = #{contactId}
+        and c.crt_time &lt;= mes.createtime
+        )
+        order by mes.createtime desc
+    </select>
 </mapper>

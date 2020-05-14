@@ -76,4 +76,30 @@ public interface ZzMessageInfoDao {
    List<Map<String,String>> queryAllMessagePrivate2(@Param("params")Map params);
    List<Map<String,String>> queryAllMessageGroup2(@Param("params")Map params);
    List<RawMessageDto> queryAllMessageMonitor(@Param("params")Map params);
+
+    /**
+     * 消息历史私人
+     * @param userId
+     * @param contactId
+     * @lastMsgId 最后一条消息id
+     * @return
+     */
+    List<String> listHistoryMsgPrivate(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId);
+    /**
+     * 消息历史群组
+     * @param userId
+     * @param contactId
+     * @lastMsgId 最后一条消息id
+     * @return
+     */
+    List<String> listHistoryMsgGroup(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId);
+    /**
+     * 消息历史会议
+     * @param userId
+     * @param contactId
+     * @lastMsgId 最后一条消息id
+     * @return
+     */
+    List<String> listHistoryMsgMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId);
+
 }

@@ -6,6 +6,7 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.MsgSendStatusVo;
 import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
+import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.processor.ProcessMsg;
 import com.workhub.z.servicechat.service.ZzMessageInfoService;
 import org.slf4j.Logger;
@@ -190,5 +191,31 @@ public class ZzMessageInfoController {
         String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         this.zzMessageInfoService.openMsgBoard(sender,senderName,receiver,receiverName,userIp);
         return  res;
+    }
+
+    /**
+     *历史消息
+     * @param user 用户id
+     * @param contact 联系人id
+     * @param lastMsgId 最后一条消息id
+     * @param type 联系人类型 user、group、meet
+     * @param page 页数
+     * @param size 每页几条
+     * @return
+     */
+    @GetMapping("listHistoryMsgs")
+    public TableResultResponse listHistoryMsg(
+                                           @RequestParam(name = "user",required = false) String user,
+                                           @RequestParam(name ="contact",required = false) String contact,
+                                           @RequestParam(name ="lastMsgId",required = false) String lastMsgId,
+                                           @RequestParam(name ="type",required = false,defaultValue = "user") String type,
+                                           @RequestParam(name ="page",required = false,defaultValue = "1") String page,
+                                           @RequestParam(name ="size",required = false,defaultValue = "50") String size){
+        ObjectRestResponse res = new ObjectRestResponse();
+        res.rel(true);
+        res.msg("200");
+        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        return zzMessageInfoService.listHistoryMsg(user,contact,lastMsgId,type,page,size);
     }
 }
