@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @author: fansq
@@ -21,6 +22,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @MapperScan(basePackages = "com.github.hollykunge.security.task.mapper")
 @ServletComponentScan
 @EnableAceAuthClient
+@EnableTransactionManagement
 public class ServiceTaskBootstrap {
     public static void main(String[] args) {
         SpringApplication.run(ServiceTaskBootstrap.class, args);

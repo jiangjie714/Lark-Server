@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @author  fansq
@@ -25,7 +26,7 @@ public class LarkTaskWorkTime extends BaseEntity {
     private String content;
 
     @Column(name = "BEGIN_TIME")
-    private String beginTime;
+    private Date beginTime;
 
     @Column(name = "NUM")
     private Integer num;

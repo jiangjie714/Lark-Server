@@ -9,6 +9,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 
 import java.lang.reflect.ParameterizedType;
@@ -36,14 +37,16 @@ public class LarkTaskStagesTemplateBiz extends BaseBiz<LarkTaskStagesTemplateMap
     public TableResultResponse<LarkTaskStagesTemplate> list(Query query) {
         Class<LarkTaskStagesTemplate> clazz = (Class<LarkTaskStagesTemplate>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
+        Condition condition = new Condition(clazz);
         if(query.entrySet().size()>0) {
-            Example.Criteria criteria = example.createCriteria();
+            Example.Criteria criteria = condition.createCriteria();
             for (Map.Entry<String, Object> entry : query.entrySet()) {
                 criteria.andEqualTo(entry.getKey(), entry.getValue().toString());
             }
         }
+        condition.orderBy("sort").desc();
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<LarkTaskStagesTemplate> list = mapper.selectByExample(example);
-        return new TableResultResponse<LarkTaskStagesTemplate>(result.getPageSize(), result.getPageNum() ,result.getPages(), result.getTotal(), list);
+        return new TableResultResponse<>(result.getPageSize(), result.getPageNum() ,result.getPages(), result.getTotal(), list);
     }
 }

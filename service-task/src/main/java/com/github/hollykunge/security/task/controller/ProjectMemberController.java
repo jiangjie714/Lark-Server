@@ -96,7 +96,23 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
         larkProjectMember.setProjectCode(code);
         larkProjectMember.setAuthorize(roleCode);
         larkProjectMember.setMemberCode(memberCode);
-        larkProjectMemberbiz.updateSelectiveById(larkProjectMember);
+        larkProjectMemberbiz.insertSelective(larkProjectMember);
+        return new BaseResponse(200,"成员角色已分配!");
+    }
+    @RequestMapping(value = "/updateAssignRoles",method = RequestMethod.PUT)
+    public BaseResponse UpdateAssignRoles(@RequestParam("memberCode") String memberCode,
+                                    @RequestParam("roleCode") String roleCode,
+                                    @RequestParam("projectCode") String projectCode){
+        if(StringUtils.isEmpty(memberCode)){
+            throw new ClientParameterInvalid("成员不可为空！");
+        }
+        if(StringUtils.isEmpty(projectCode)){
+            throw new ClientParameterInvalid("项目不可为空！");
+        }
+        if(StringUtils.isEmpty(roleCode)){
+            throw new ClientParameterInvalid("成员角色不可为空！");
+        }
+        larkProjectMemberbiz.updateAssignRoles(memberCode,roleCode,projectCode);
         return new BaseResponse(200,"成员角色已分配!");
     }
 

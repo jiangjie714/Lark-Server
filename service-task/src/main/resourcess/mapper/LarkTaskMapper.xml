@@ -221,7 +221,7 @@
           <result column="TAG_COLOR" property="color" jdbcType="VARCHAR"/>
       </collection>
   </resultMap>
-  <select id="getTaskAndTag">
+  <select id="getTaskAndTag" resultMap="GetTaskAndTagMap">
     select
       lt.*,
       ltt.id TAG_ID ,ltt.name TAG_NAME,ltt.color TAG_COLOR
@@ -238,20 +238,20 @@
     where
       ltt.project_code=#{projectCode}
     and
-      lttt.task_code=#{taskCode}
+      ltt.id=#{tagId}
   </select>
 
     <resultMap id="GetPercentComplete" type="com.github.hollykunge.security.task.dto.TaskNum">
-        <result column="info" property="info" jdbcType="VARCHAR"/>
-        <result column="num" property="num" jdbcType="VARCHAR"/>
-        <result column="num_percent" property="numPercent" jdbcType="VARCHAR"/>
+        <result column="INFO" property="info" jdbcType="VARCHAR"/>
+        <result column="NUM" property="num" jdbcType="VARCHAR"/>
+        <result column="NUM_PERCENT" property="numPercent" jdbcType="VARCHAR"/>
     </resultMap>
   <select id="getPercentComplete" resultMap="GetPercentComplete">
       select * from (select
         (case when done=0 then  'numDone'
-        WHEN done=1 THEN 'numNoDone' END) as info,
-        count(1) num,
-        100*round(COUNT(*)/SUM(COUNT(*)) OVER(),4)||'%' numPer
+        WHEN done=1 THEN 'numNoDone' END) as INFO,
+        count(1) NUM,
+        100*round(COUNT(*)/SUM(COUNT(*)) OVER(),4)||'%' NUM_PERCENT
         from
         lark_task
         where

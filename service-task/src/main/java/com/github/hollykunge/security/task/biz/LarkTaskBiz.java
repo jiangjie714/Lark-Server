@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.task.biz;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -14,6 +13,7 @@ import com.github.hollykunge.security.task.dto.TaskNum;
 import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
+import com.github.hollykunge.security.task.feign.LarkTaskFeign;
 import com.github.hollykunge.security.task.mapper.LarkProjectMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper;
@@ -24,7 +24,12 @@ import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,6 +56,12 @@ public class LarkTaskBiz extends BaseBiz<LarkTaskMapper, LarkTask> {
 
     @Autowired
     private LarkProjectMapper larkProjectMapper;
+
+    @Autowired
+    private LarkTaskFeign larkTaskFeign;
+
+    @Autowired
+    private PlatformTransactionManager txManager;
     @Override
     protected String getPageName() {
         return null;
@@ -80,6 +91,9 @@ public class LarkTaskBiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         larkTask.setPri(TaskCommon.NUMBER_ONE);
         larkTask.setStatus("1");
         larkTask.setTaskPrivate(larkProject.getOpenTaskPrivated());
+        if(StringUtils.isEmpty(larkTask.getPcode())){
+            larkTask.setPcode(TaskCommon.NUMBER_ZERO_STRING);
+        }
         larkTaskMapper.insertSelective(larkTask);
         if(StringUtils.pathEquals(memberCode,userId)){
             LarkTaskMember larkTaskMember = new LarkTaskMember();
@@ -153,12 +167,12 @@ public class LarkTaskBiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         if(ObjectUtils.isEmpty(projectCode)){
             throw new ClientParameterInvalid("项目id不可为空！");
         }
-        Object taskCode = map.get("taskCode");
-        if(ObjectUtils.isEmpty(map.get("taskCode"))){
-            throw new ClientParameterInvalid("任务id不可为空！");
+        Object tagId = map.get("tagId");
+        if(ObjectUtils.isEmpty(map.get("tagId"))){
+            throw new ClientParameterInvalid("标签id不可为空！");
         }
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
-        List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getTaskAndTag(projectCode.toString(),taskCode.toString());
+        List<LarkTaskDto> larkTaskDtos = larkTaskMapper.getTaskAndTag(projectCode.toString(),tagId.toString());
         return new TableResultResponse<>(result.getPageSize(), result.getPageNum(), result.getPages(), result.getTotal(), larkTaskDtos);
     }
 
@@ -180,6 +194,7 @@ public class LarkTaskBiz extends BaseBiz<LarkTaskMapper, LarkTask> {
      * todo 没想好怎么写
      */
     public ObjectRestResponse<LarkTask> copyTaskInfo(String taskId) {
+
         return null;
     }
 
@@ -189,20 +204,42 @@ public class LarkTaskBiz extends BaseBiz<LarkTaskMapper, LarkTask> {
      * @return
      */
     public ObjectRestResponse<LarkTask> updateTaskStatus(LarkTask larkTask) {
+        LarkTask task = new LarkTask();
+        task.setPcode(larkTask.getId());
+        task.setDone(TaskCommon.NUMBER_ONE);
+        if(larkTaskMapper.selectCount(task)>0){
+            throw new ClientParameterInvalid("存在未完成的子任务,请先完成子任务！");
+        }
         LarkProject larkProject = larkProjectMapper.selectByPrimaryKey(larkTask.getProjectCode());
         Integer autoUpdateSchedule = larkProject.getAutoUpdateSchedule();
         larkTask.setStatus(TaskCommon.NUMBER_ONE_STRING);
         larkTask.setDone(TaskCommon.NUMBER_ZERO);
-        EntityUtils.setCreatAndUpdatInfo(larkTask);
-        larkTaskMapper.updateByPrimaryKey(larkTask);
-        //if 计算任务进度并更新状态
-        if(autoUpdateSchedule.intValue()== TaskCommon.NUMBER_ZERO.intValue()){
-            //计算完成百分比
-            TaskNum taskNum = larkTaskMapper.getPercentComplete(larkTask.getProjectCode());
-            larkProject.setSchedule(new BigDecimal(taskNum.getNumPercent()));
-            EntityUtils.setCreatAndUpdatInfo(larkProject);
-            larkProjectMapper.updateByPrimaryKeySelective(larkProject);
+        larkTask.setDoneTime(new Date());
+        larkTaskMapper.updateByPrimaryKeySelective(larkTask);
+        if(StringUtils.pathEquals(TaskCommon.NUMBER_ZERO_STRING,larkTask.getPcode())){
+            // 计算任务进度并更新状态
+            if(autoUpdateSchedule.intValue()== TaskCommon.NUMBER_ZERO.intValue()){
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                          @Override
+                          public void afterCommit() {
+                              larkTaskFeign.autoUpdateProgress(larkProject);
+                          }
+                      }
+                );
+            }
         }
         return new ObjectRestResponse<>().data(larkTask).rel(true);
+    }
+
+    public LarkProject autoUpdateProgress(LarkProject larkProject) {
+        //计算完成百分比
+        TaskNum taskNum = larkTaskMapper.getPercentComplete(larkProject.getId());
+        if(ObjectUtils.isEmpty(taskNum)){
+            larkProject.setSchedule(TaskCommon.NUMBER_ZERO_STRING);
+        }else{
+            larkProject.setSchedule(taskNum.getNumPercent());
+        }
+        larkProjectMapper.updateByPrimaryKeySelective(larkProject);
+        return larkProject;
     }
 }

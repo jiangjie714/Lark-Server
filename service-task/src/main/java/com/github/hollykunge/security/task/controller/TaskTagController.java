@@ -6,7 +6,10 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.task.biz.LarkTaskTagBiz;
+import com.github.hollykunge.security.task.biz.LarkTaskToTagBiz;
 import com.github.hollykunge.security.task.entity.LarkTaskTag;
+import com.github.hollykunge.security.task.entity.LarkTaskToTag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +23,11 @@ import java.util.List;
 @RequestMapping(value = "/taskTag")
 public class TaskTagController extends BaseController<LarkTaskTagBiz,LarkTaskTag> {
 
+    @Autowired
+    private LarkTaskToTagBiz larkTaskToTagBiz;
 
     /**
+     * @deprecated  todo 没用了
      * 新增
      * @param {*} data
      *   export function save(data) {
@@ -46,4 +52,9 @@ public class TaskTagController extends BaseController<LarkTaskTagBiz,LarkTaskTag
         return new ObjectRestResponse<>().data(baseBiz.selectListAll()).rel(true);
     }
 
+    @RequestMapping(value = "/disassociateTaskForTag",method = RequestMethod.DELETE)
+    public ObjectRestResponse<LarkTaskToTag> disassociateTaskForTag(@RequestBody LarkTaskToTag larkTaskToTag){
+        larkTaskToTagBiz.delete(larkTaskToTag);
+        return new ObjectRestResponse<>().rel(true);
+    }
 }

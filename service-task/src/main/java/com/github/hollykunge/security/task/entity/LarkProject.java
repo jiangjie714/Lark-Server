@@ -45,7 +45,7 @@ public class LarkProject extends BaseEntity {
     private String templateCode;
 
     @Column(name = "SCHEDULE")
-    private BigDecimal schedule;
+    private String schedule;
 
     @Column(name = "ORGANIZATION_CODE")
     private String organizationCode;

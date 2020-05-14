@@ -10,6 +10,7 @@ import com.github.hollykunge.security.task.biz.LarkTaskMemberBiz;
 import com.github.hollykunge.security.task.biz.LarkTaskToTagBiz;
 import com.github.hollykunge.security.task.biz.LarkTaskBiz;
 import com.github.hollykunge.security.task.dto.LarkTaskDto;
+import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.entity.LarkTaskToTag;
 import com.github.hollykunge.security.task.vo.LarkTaskVO;
@@ -55,16 +56,40 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
         return larkTaskbiz.add(larkTask,memberCode,request);
     }
 
+
+    /**
+     * 自动更新项目进度  也可以手动调用
+     * @param larkProject
+     * @return
+     */
+    @RequestMapping(value = "/autoUpdateProgress",method = RequestMethod.POST)
+    @ResponseBody
+    public LarkProject autoUpdateProgress(@RequestBody LarkProject larkProject){
+       return larkTaskbiz.autoUpdateProgress(larkProject);
+    }
+
     /**
      * done更新任务完成状态  完成状态和 status执行状态不是一回事  因为要计算项目完成进度
      * @param larkTask
      * @return
      */
-    @RequestMapping(value = "/updateTaskStatus",method = RequestMethod.PUT)
+    @RequestMapping(value = "/taskDone",method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<LarkTask> updateTaskStatus(@RequestBody LarkTask larkTask){
         return larkTaskbiz.updateTaskStatus(larkTask);
     }
+
+    /**
+     * @deprecated 暂时不用了
+     * @param larkTask
+     * @return
+     */
+    @RequestMapping(value = "/cancelTaskDone",method = RequestMethod.PUT)
+    @ResponseBody
+    public ObjectRestResponse<LarkTask> cancelupdateTaskStatus(@RequestBody LarkTask larkTask){
+        return larkTaskbiz.updateTaskStatus(larkTask);
+    }
+
     /**
      * 排序
      * @param larkTasks
@@ -149,7 +174,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
     @RequestMapping(value = "/getTaskAndTag",method = RequestMethod.GET)
     @ResponseBody
     public TableResultResponse<LarkTaskDto> getTaskAndTag(
-            @RequestBody Map<String,Object> map){
+            @RequestParam Map<String,Object> map){
         return larkTaskbiz.getTaskAndTag(map);
     }
 

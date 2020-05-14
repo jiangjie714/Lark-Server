@@ -10,7 +10,7 @@
     <result column="MEMBER_CODE" property="memberCode" jdbcType="VARCHAR" />
     <result column="CRT_TIME" property="crtTime" jdbcType="VARCHAR" />
     <result column="CONTENT" property="content" jdbcType="VARCHAR" />
-    <result column="BEGIN_TIME" property="beginTime" jdbcType="VARCHAR" />
+    <result column="BEGIN_TIME" property="beginTime" jdbcType="TIMESTAMP" />
     <result column="NUM" property="num" jdbcType="DECIMAL" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />

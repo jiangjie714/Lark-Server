@@ -10,6 +10,7 @@ import com.github.hollykunge.security.task.biz.LarkProjectTemplateBiz;
 import com.github.hollykunge.security.task.dto.LarkProjectTemplateDto;
 import com.github.hollykunge.security.task.entity.LarkProjectTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,26 +54,43 @@ public class ProjectTemplateController extends BaseController<LarkProjectTemplat
      */
 
     @RequestMapping(value = "/save",method = RequestMethod.POST)
-    public ObjectRestResponse<LarkProjectTemplate> save(@RequestBody LarkProjectTemplate larkProjectTemplate,@RequestParam("file") MultipartFile file){
+    public ObjectRestResponse<LarkProjectTemplate> save(
+            @RequestParam("projectTemplateName") String projectTemplateName,
+            @RequestParam(value = "projectTemplateDescription",required=false) String projectTemplateDescription,
+            @RequestParam("file") MultipartFile file){
         LarkProjectTemplate projectTemplate = new LarkProjectTemplate();
         if(file!=null){
             FileInfoVO fileInfoVO = larkProjectTemplatebiz.projectTemplateCover(file);
             projectTemplate.setCover(fileInfoVO.getFullPath());
         }
-        projectTemplate.setId(UUIDUtils.generateShortUuid());
+        projectTemplate.setName(projectTemplateName);
+        projectTemplate.setDescription(projectTemplateDescription);
         baseBiz.insertSelective(projectTemplate);
+        larkProjectTemplatebiz.save(projectTemplate);
         return new ObjectRestResponse<LarkProjectTemplate>().data(projectTemplate).rel(true).msg("模板创建成功");
     }
 
     @RequestMapping(value = "/edit",method = RequestMethod.PUT)
-    public ObjectRestResponse<LarkProjectTemplate> edit(@RequestBody LarkProjectTemplate larkProjectTemplate,@RequestParam("file") MultipartFile file){
+    public ObjectRestResponse<LarkProjectTemplate> edit(
+            @RequestParam(value = "projectTemplateName",required=false) String projectTemplateName,
+            @RequestParam("projectTemplateId") String projectTemplateId,
+            @RequestParam(value = "projectTemplateDescription",required=false) String projectTemplateDescription,
+            @RequestParam(value = "file",required=false) MultipartFile file){
+        LarkProjectTemplate projectTemplate = new LarkProjectTemplate();
+        projectTemplate.setId(projectTemplateId);
+        if(!StringUtils.isEmpty(projectTemplateName)){
+            projectTemplate.setName(projectTemplateName);
+        }
+        if(!StringUtils.isEmpty(projectTemplateDescription)){
+            projectTemplate.setDescription(projectTemplateDescription);
+        }
         if(file!=null){
             FileInfoVO fileInfoVO  = larkProjectTemplatebiz.projectTemplateCover(file);
-            larkProjectTemplate.setCover(fileInfoVO.getFullPath());
-            baseBiz.updateSelectiveById(larkProjectTemplate);
+            projectTemplate.setCover(fileInfoVO.getFullPath());
+            baseBiz.updateSelectiveById(projectTemplate);
         }
-        baseBiz.updateSelectiveById(larkProjectTemplate);
-        return new ObjectRestResponse<LarkProjectTemplate>().data(larkProjectTemplate).rel(true).msg("模板修改成功");
+        baseBiz.updateSelectiveById(projectTemplate);
+        return new ObjectRestResponse<LarkProjectTemplate>().data(projectTemplate).rel(true).msg("模板修改成功");
     }
     /**
      * todo BaseController
@@ -82,6 +100,9 @@ public class ProjectTemplateController extends BaseController<LarkProjectTemplat
      *       return $http.delete('project/project_template/delete', {code: code});
      *   }
      */
+    @Override
+    public ObjectRestResponse<LarkProjectTemplate> remove(String id) {
 
-
+        return super.remove(id);
+    }
 }

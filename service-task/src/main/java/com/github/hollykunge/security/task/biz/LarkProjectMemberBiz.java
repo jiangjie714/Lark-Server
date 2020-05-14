@@ -101,4 +101,9 @@ public class LarkProjectMemberBiz extends BaseBiz<LarkProjectMemberMapper, LarkP
     protected String getPageName() {
         return null;
     }
+
+
+    public void updateAssignRoles(String memberCode, String roleCode, String projectCode) {
+        larkProjectMemberMapper.updateAssignRoles(memberCode,roleCode,projectCode);
+    }
 }

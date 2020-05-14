@@ -60,4 +60,14 @@
     lpm.id=#{projectCode};
   </select>
 
+  <update id="updateAssignRoles">
+     update
+        lark_project_member
+        set
+        authorize=#{roleCode}
+        where
+        project_code=#{projectCode}
+        and
+        member_code=#{memberCode}
+  </update>
 </mapper>

@@ -31,4 +31,7 @@ public interface LarkProjectMemberMapper extends Mapper<LarkProjectMember> {
      */
     List<LarkProjectMemberDto> getProjectUser(@Param("projectCode") String projectCode);
 
+    void updateAssignRoles(@Param("memberCode") String memberCode,
+                           @Param("roleCode")String roleCode,
+                           @Param("projectCode")String projectCode);
 }

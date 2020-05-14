@@ -15,7 +15,7 @@
     <result column="PROJECT_ORDER" property="projectOrder" jdbcType="INTEGER"/>
     <result column="DELETED" property="deleted" jdbcType="INTEGER"/>
     <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR"/>
-    <result column="SCHEDULE" property="schedule" jdbcType="DECIMAL"/>
+    <result column="SCHEDULE" property="schedule" jdbcType="VARCHAR"/>
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP"/>
     <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR"/>
     <result column="DELETED_TIME" property="deletedTime" jdbcType="VARCHAR"/>

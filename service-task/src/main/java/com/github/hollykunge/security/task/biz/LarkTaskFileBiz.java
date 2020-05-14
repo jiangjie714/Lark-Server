@@ -7,19 +7,29 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
+import com.github.hollykunge.security.task.constant.TaskCommon;
 import com.github.hollykunge.security.task.entity.LarkFile;
+import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.feign.LarkProjectFileFeign;
 import com.github.hollykunge.security.task.mapper.LarkFileMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import feign.Response;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +64,7 @@ public class LarkTaskFileBiz extends BaseBiz<LarkFileMapper, LarkFile> {
         //文件大小
         Long fileSize= file.getSize();
         LarkFile larkFile = new LarkFile();
+        larkFile.setTitle(taskFile.getFileName());
         larkFile.setId(taskFile.getFileId());
         larkFile.setFileSize(fileSize.intValue());
         larkFile.setProjectCode(projectCode);
@@ -69,16 +80,35 @@ public class LarkTaskFileBiz extends BaseBiz<LarkFileMapper, LarkFile> {
 
     /**
      * task 文件关联下载
-     * @param larkFile
+     * @param fileId
      * @return
      */
-    public void taskFileDownload(LarkFile larkFile) {
-        int count = mapper.selectCount(larkFile);
-        if(count<0){
+    public void taskFileDownload(String fileId, HttpServletResponse servletResponse) throws IOException {
+        LarkFile larkFile = mapper.selectByPrimaryKey(fileId);
+        if(ObjectUtils.isEmpty(larkFile)){
             throw new BaseException("文件不存在！");
         }
-        larkProjectFileFeign.taskFileDownload(larkFile.getId());
-        larkFile.setDownloads(larkFile.getDownloads()+1);
+        Response response = larkProjectFileFeign.taskFileDownload(larkFile.getId());
+        Response.Body body = response.body();
+        InputStream inputStream = body.asInputStream();
+        byte[] data = new byte[10240];
+        while (true) {
+            int len = inputStream.read(data);
+            if (len < 0) {
+                break;
+            }
+        }
+        inputStream.read(data);
+        servletResponse.setCharacterEncoding("UTF-8");
+        servletResponse.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(larkFile.getTitle(), "UTF-8"));
+        ServletOutputStream outputStream = servletResponse.getOutputStream();
+        IOUtils.write(data, outputStream);
+        larkFile.setId(fileId);
+        if(StringUtils.isEmpty(larkFile.getDownloads())){
+            larkFile.setDownloads(TaskCommon.NUMBER_ONE);
+        }else{
+            larkFile.setDownloads(larkFile.getDownloads()+1);
+        }
         mapper.updateByPrimaryKeySelective(larkFile);
     }
 

@@ -50,4 +50,6 @@ public class TaskCommon {
      * 数字0
      */
     public final static Integer NUMBER_ZERO = 0;
+    public final static String NUMBER_ZERO_STRING = "0";
+
 }
