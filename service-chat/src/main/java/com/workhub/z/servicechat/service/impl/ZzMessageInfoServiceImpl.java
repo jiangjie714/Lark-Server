@@ -838,30 +838,19 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
      * @param contact 联系人id
      * @param lastMsgId 最后一条消息id
      * @param type 联系人类型 user、group、meet
-     * @param page 页数
-     * @param size 每页几条
+     * @param size 每次几条
      * @return
      */
     @Override
-    public TableResultResponse listHistoryMsg(String user, String contact,String lastMsgId, String type, String page, String size){
+    public List<String> listHistoryMsg(String user, String contact,String lastMsgId, String type, String size){
         List<String> dataList = null;
-        PageHelper.startPage(Integer.valueOf(page), Integer.valueOf(size));
         if(type.equals(MessageType.PARAMETER_TYPE_USER.toLowerCase())){
-            dataList = this.zzMessageInfoDao.listHistoryMsgPrivate(user,contact,lastMsgId);
+            dataList = this.zzMessageInfoDao.listHistoryMsgPrivate(user,contact,lastMsgId,Integer.valueOf(size));
         }else if(type.equals(MessageType.PARAMETER_TYPE_GROUP.toLowerCase())){
-            dataList = this.zzMessageInfoDao.listHistoryMsgGroup(user,contact,lastMsgId);
+            dataList = this.zzMessageInfoDao.listHistoryMsgGroup(user,contact,lastMsgId,Integer.valueOf(size));
         }else if(type.equals(MessageType.PARAMETER_TYPE_MEET.toLowerCase())){
-            dataList = this.zzMessageInfoDao.listHistoryMsgMeet(user,contact,lastMsgId);
+            dataList = this.zzMessageInfoDao.listHistoryMsgMeet(user,contact,lastMsgId,Integer.valueOf(size));
         }
-        PageInfo pageInfo = new PageInfo<>(dataList);
-        TableResultResponse res = new TableResultResponse(
-                pageInfo.getPageSize(),
-                pageInfo.getPageNum(),
-                pageInfo.getPages(),
-                pageInfo.getTotal(),
-                dataList
-        );
-
-        return  res;
+        return  dataList;
     }
 }

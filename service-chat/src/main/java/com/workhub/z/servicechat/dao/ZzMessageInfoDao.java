@@ -81,25 +81,28 @@ public interface ZzMessageInfoDao {
      * 消息历史私人
      * @param userId
      * @param contactId
-     * @lastMsgId 最后一条消息id
+     * @param lastMsgId 最后一条消息id
+     * @param size 每次几条
      * @return
      */
-    List<String> listHistoryMsgPrivate(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId);
+    List<String> listHistoryMsgPrivate(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId,@Param("size")int size);
     /**
      * 消息历史群组
      * @param userId
      * @param contactId
-     * @lastMsgId 最后一条消息id
+     * @param lastMsgId 最后一条消息id
+     * @param size 每次几条
      * @return
      */
-    List<String> listHistoryMsgGroup(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId);
+    List<String> listHistoryMsgGroup(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId,@Param("size")int size);
     /**
      * 消息历史会议
      * @param userId
      * @param contactId
-     * @lastMsgId 最后一条消息id
+     * @param lastMsgId 最后一条消息id
+     * @param size 每次几条
      * @return
      */
-    List<String> listHistoryMsgMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId);
+    List<String> listHistoryMsgMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId,@Param("size")int size);
 
 }

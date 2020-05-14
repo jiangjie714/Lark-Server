@@ -4,6 +4,7 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -100,9 +101,8 @@ public interface ZzMessageInfoService {
      * @param contact 联系人id
      * @param lastMsgId 最后一条消息id
      * @param type 联系人类型 user、group、meet
-     * @param page 页数
-     * @param size 每页几条
+     * @param size 每次几条
      * @return
      */
-    TableResultResponse listHistoryMsg(String user, String contact,String lastMsgId ,String type, String page, String size);
+    List<String> listHistoryMsg(String user, String contact, String lastMsgId , String type, String size);
 }

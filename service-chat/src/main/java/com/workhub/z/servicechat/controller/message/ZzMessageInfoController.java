@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.controller.message;
 
 import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
+import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.MsgSendStatusVo;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -197,23 +199,18 @@ public class ZzMessageInfoController {
      * @param contact 联系人id
      * @param lastMsgId 最后一条消息id
      * @param type 联系人类型 user、group、meet
-     * @param page 页数
-     * @param size 每页几条
+     * @param size 每次取几条
      * @return
      */
     @GetMapping("listHistoryMsgs")
-    public TableResultResponse listHistoryMsg(
+    public ListRestResponse listHistoryMsg(
                                            @RequestParam(name = "user",required = false) String user,
                                            @RequestParam(name ="contact",required = false) String contact,
                                            @RequestParam(name ="lastMsgId",required = false) String lastMsgId,
                                            @RequestParam(name ="type",required = false,defaultValue = "user") String type,
-                                           @RequestParam(name ="page",required = false,defaultValue = "1") String page,
                                            @RequestParam(name ="size",required = false,defaultValue = "50") String size){
-        ObjectRestResponse res = new ObjectRestResponse();
-        res.rel(true);
-        res.msg("200");
-        String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-        return zzMessageInfoService.listHistoryMsg(user,contact,lastMsgId,type,page,size);
+
+        List<String> dataList = zzMessageInfoService.listHistoryMsg(user,contact,lastMsgId,type,size);
+        return new ListRestResponse("200",dataList.size(),dataList);
     }
 }
