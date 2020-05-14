@@ -1,8 +1,6 @@
-package com.github.hollykunge.security.dto;
+package com.github.hollykunge.security.portal.dto;
 
 import lombok.Data;
-
-import java.util.HashMap;
 
 @Data
 public class CommonToolsDto {

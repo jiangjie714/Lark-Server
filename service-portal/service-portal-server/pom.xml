@@ -93,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.hollykunge</groupId>
-            <artifactId>service-portal-interface</artifactId>
+            <artifactId>service-portal-dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

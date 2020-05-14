@@ -2,8 +2,8 @@ package com.github.hollykunge.security.admin.feign;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.dto.FeedBackAnswerDto;
-import com.github.hollykunge.security.dto.FeedBackDto;
+import com.github.hollykunge.security.portal.dto.FeedBackAnswerDto;
+import com.github.hollykunge.security.portal.dto.FeedBackDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package com.github.hollykunge.security.dto;
+package com.github.hollykunge.security.portal.dto;
 
 
 import lombok.Data;

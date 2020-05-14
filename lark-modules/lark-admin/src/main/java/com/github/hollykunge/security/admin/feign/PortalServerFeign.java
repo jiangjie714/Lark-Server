@@ -2,7 +2,7 @@ package com.github.hollykunge.security.admin.feign;
 
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.dto.CommonToolsDto;
+import com.github.hollykunge.security.portal.dto.CommonToolsDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

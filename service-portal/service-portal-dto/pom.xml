@@ -9,8 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>service-portal-interface</artifactId>
-    <description>门户服务对外提供接口</description>
+    <artifactId>service-portal-dto</artifactId>
 
 
 </project>
