@@ -4,7 +4,6 @@ package com.github.hollykunge.security.common.feign;
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.msg.FeignListResponse;
 import com.github.hollykunge.security.common.msg.FeignObjectReponse;
-import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
