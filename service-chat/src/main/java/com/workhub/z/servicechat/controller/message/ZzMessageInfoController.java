@@ -172,23 +172,21 @@ public class ZzMessageInfoController {
 
     /**
      *  打开了消息面板
-     * @param sender
-     * @param senderName
-     * @param receiver
-     * @param receiverName
+     * @param msg
+
      * @return
      */
     @Decrypt
-    @PutMapping("openMsgBoard")
-    public ObjectRestResponse openMsgBoard(@RequestParam("sender") String sender,
-                                           @RequestParam("senderName") String senderName,
-                                           @RequestParam("receiver") String receiver,
-                                           @RequestParam("receiverName") String receiverName){
+    @PostMapping("openMsgBoard")
+    public ObjectRestResponse openMsgBoard(@RequestBody String msg) throws Exception {
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
         String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String sender = (String) Common.getJsonStringKeyValue(msg,"sender");
+        String senderName = (String) Common.getJsonStringKeyValue(msg,"senderName");
+        String receiver = (String) Common.getJsonStringKeyValue(msg,"receiver");
+        String receiverName = (String) Common.getJsonStringKeyValue(msg,"receiverName");
         this.zzMessageInfoService.openMsgBoard(sender,senderName,receiver,receiverName,userIp);
         return  res;
     }
