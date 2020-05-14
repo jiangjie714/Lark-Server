@@ -29,11 +29,13 @@ public class BaseFeignFactory<Base extends BaseHystix> extends BaseHystix implem
         log.error("调用通信接口失败，服务已被降级处理",throwable);
         FeignListResponse feignListResponse = new FeignListResponse(throwable.getMessage(), 0, null);
         feignListResponse.setStatus(HttpReponseStatusEnum.SYSTEM_ERROR.value());
+        feignListResponse.setMessage(throwable.getMessage());
         return feignListResponse;
     }
     protected FeignObjectReponse getHystrixObjectReponse(){
         log.error("调用通信接口失败，服务已被降级处理",throwable);
         FeignObjectReponse feignObjectReponse = new FeignObjectReponse();
+        feignObjectReponse.setMessage(throwable.getMessage());
         feignObjectReponse.setStatus(HttpReponseStatusEnum.SYSTEM_ERROR.value());
         return feignObjectReponse;
     }
