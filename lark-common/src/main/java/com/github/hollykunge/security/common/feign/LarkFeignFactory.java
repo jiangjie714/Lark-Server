@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.common.feign;
 
+import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.exception.server.FeignExecutException;
 import com.github.hollykunge.security.common.msg.FeignResponse;
 
@@ -29,7 +30,7 @@ public class LarkFeignFactory {
             Object response = method.invoke(feignService, args);
             if(response instanceof FeignResponse){
                 FeignResponse feignResponse = (FeignResponse) response;
-                if(feignResponse.getStatus() == 500){
+                if(feignResponse.getStatus() == HttpReponseStatusEnum.SYSTEM_ERROR.value()){
                     throw new FeignExecutException(feignResponse.getMessage());
                 }
             }
