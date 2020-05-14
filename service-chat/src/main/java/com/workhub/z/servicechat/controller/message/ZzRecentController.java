@@ -95,8 +95,8 @@ public class ZzRecentController {
      * @return
      */
     @GetMapping("/listRecents")
-    public ListRestResponse getList(){
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+    public ListRestResponse getList(@RequestBody String userId){
+//        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         List<RecentVo> dataList = this.zzRecentService.listRecents(userId);
         return new ListRestResponse("200",dataList.size(),dataList);
     }

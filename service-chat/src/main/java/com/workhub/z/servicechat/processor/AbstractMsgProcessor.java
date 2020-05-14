@@ -173,10 +173,11 @@ public class AbstractMsgProcessor {
      */
     public String saveMessageInfo(String type,String ip,String msgJosnInf) throws Exception{
         String msgId = getUUID();//信息ID
+        String MsgInf = Common.setJsonStringKeyValue(msgJosnInf,"data.id",msgId);
         ZzMessageInfo messageInfo = new ZzMessageInfo();
         ZzContactInf zzContactInfSender = new ZzContactInf();
         ZzContactInf zzContactInfReceiver = new ZzContactInf();
-        JSONObject jsonObject = JSONObject.parseObject(msgJosnInf);
+        JSONObject jsonObject = JSONObject.parseObject(MsgInf);
         String code = jsonObject.getString("code");
         String message = jsonObject.getString("data");
         //文件上传信息更新begin
@@ -384,7 +385,8 @@ public class AbstractMsgProcessor {
      * @throws Exception
      */
     public void saveRecent(String msgId,String msgJosnInf,String ip,String type)throws Exception{
-        JSONObject jsonObject = JSONObject.parseObject(msgJosnInf);
+        String MsgInf = Common.setJsonStringKeyValue(msgJosnInf,"data.id",msgId);
+        JSONObject jsonObject = JSONObject.parseObject(MsgInf);
         String message = jsonObject.getString("data");
         String receiver  = Common.nulToEmptyString(Common.getJsonStringKeyValue(message,MessageType.MESSAGE_BODY_RECEIVER));
         String sender = Common.nulToEmptyString(Common.getJsonStringKeyValue(message,MessageType.MESSAGE_BODY_SENDER));
