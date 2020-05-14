@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.gate.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.gate.constants.GateConstants;
 import com.github.hollykunge.security.gate.dto.LogInfoDto;
 import com.github.hollykunge.security.gate.feign.LarkLogFeign;
@@ -73,7 +74,9 @@ public class DBLog extends Thread {
                             MessageDto messageDto = new MessageDto();
                             messageDto.setMessage(JSONObject.toJSONString(log));
                             topicDto.setMessage(messageDto);
-                            logFeign.sendKafka(topicDto);
+                            //使用lark-feign封装
+                            LarkLogFeign larkLogFeign = LarkFeignFactory.getInstance().loadFeign(logFeign);
+                            larkLogFeign.sendKafka(topicDto);
                         }
                     }
                 }

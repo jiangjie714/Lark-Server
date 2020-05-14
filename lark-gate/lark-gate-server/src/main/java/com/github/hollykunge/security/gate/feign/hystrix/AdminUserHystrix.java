@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.gate.feign.hystrix;
 
 import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
-import com.github.hollykunge.security.common.feign.BaseFeignFactory;
+import com.github.hollykunge.security.common.feign.BaseHystrixFactory;
 import com.github.hollykunge.security.common.msg.FeignListResponse;
 import com.github.hollykunge.security.gate.feign.AdminUserFeign;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class AdminUserHystrix extends BaseFeignFactory<AdminUserHystrix> implements AdminUserFeign {
+public class AdminUserHystrix extends BaseHystrixFactory<AdminUserHystrix> implements AdminUserFeign {
 
     @Override
     public FeignListResponse<List<FrontPermission>> getPermissionByUserId(String userId) {
