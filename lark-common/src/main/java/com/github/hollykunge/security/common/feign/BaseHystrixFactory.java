@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since: Create in 16:21 2020/4/28
  */
 @Slf4j
-public class BaseFeignFactory<Base extends BaseHystix> extends BaseHystix implements FallbackFactory<Base> {
+public class BaseHystrixFactory<Base extends BaseHystix> extends BaseHystix implements FallbackFactory<Base> {
 
     @Autowired
     private Base baseHystrix;
