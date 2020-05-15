@@ -22,6 +22,10 @@ public class RecentVo implements Serializable {
     private String msgType;
     /**消息内容*/
     private String msgContent;
+    /**消息内容發送人*/
+//    private String msgContentUser;
+    /**聯係人類型*/
+    private String contactType;
     /**消息密级*/
     private String msgLevel;
     /**发送时间*/

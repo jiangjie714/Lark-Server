@@ -13,6 +13,8 @@
         <result property="cancel" column="cancel" jdbcType="VARCHAR"/>
         <result property="unreadNum" column="unread_num" jdbcType="VARCHAR"/>
         <result property="sendTime" column="send_time" jdbcType="VARCHAR"/>
+<!--        <result property="msgContentUser" column="msgContent_User" jdbcType="VARCHAR"/>-->
+        <result property="contactType" column="contact_Type" jdbcType="VARCHAR"/>
     </resultMap>
     <resultMap type="com.workhub.z.servicechat.entity.message.ZzRecent" id="zzRecent">
         <result property="id" column="id" jdbcType="VARCHAR"/>
@@ -100,7 +102,9 @@
              r.top top,
              r.at at,
              to_char(r.unread_num) unread_num,
-             to_char(m.createtime, 'yyyy-mm-dd hh24:mi:ss') send_time
+             to_char(m.createtime, 'yyyy-mm-dd hh24:mi:ss') send_time,
+<!--             m.sender_name msgContent_User,-->
+             c.type contact_Type
         from ZZ_RECENT r, zz_message_info m, zz_contact_inf c
        where r.contact_id = c.id
          and r.msg_id = m.msg_id
