@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.task.controller;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -36,6 +37,7 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      * 上传task任务关联文件
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/upload",method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<LarkFile> taskFileUpload(
@@ -89,6 +91,7 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.post('project/file/edit', data);
      *   }
      */
+    @Decrypt
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
     public BaseResponse edit(@RequestBody Object data){
         //todo 暂时这么写
@@ -102,6 +105,7 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.get('project/file/recycle', {fileCode: fileCode});
      *   }
      */
+    @Decrypt
     @RequestMapping(value = "/recycle",method = RequestMethod.PUT)
     public ObjectRestResponse<Object> recycle(@RequestParam("fileCode") String fileCode){
         LarkFile larkFile = new LarkFile();
@@ -121,6 +125,7 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.get('project/file/recovery', {fileCode: fileCode});
      *   }
      */
+    @Decrypt
     @RequestMapping(value = "/recovery",method = RequestMethod.PUT)
     public ObjectRestResponse<Object> recovery(@RequestParam("fileCode") String fileCode){
         LarkFile larkFile = new LarkFile();

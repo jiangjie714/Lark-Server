@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.task.controller;
 
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -35,6 +36,7 @@ public class TaskStagesController extends BaseController<LarkTaskStagesBiz, Lark
      *       return $http.post('project/task_stages/sort', {preCode: preCode, nextCode: nextCode, projectCode: projectCode});
      *   }
      */
+    @Decrypt
     @RequestMapping(value = "/sort",method = RequestMethod.POST)
     public BaseResponse sort(@RequestBody List<LarkTaskStages> larkTaskStages){
         for(LarkTaskStages larkTaskStage:larkTaskStages){
@@ -51,6 +53,7 @@ public class TaskStagesController extends BaseController<LarkTaskStagesBiz, Lark
      *       return $http.post('project/task_stages/save', data);
      *   }
      */
+    @Decrypt
     @RequestMapping(value = "/operation",method = RequestMethod.POST)
     public ObjectRestResponse<LarkTaskStages> save(@RequestBody LarkTaskStages larkTaskStages){
         baseBiz.insertSelective(larkTaskStages);
@@ -65,6 +68,7 @@ public class TaskStagesController extends BaseController<LarkTaskStagesBiz, Lark
      *       return $http.post('project/task_stages/edit', data);
      *   }
      */
+    @Decrypt
     @RequestMapping(value = "/operation",method = RequestMethod.PUT)
     public BaseResponse edit(@RequestBody LarkTaskStages larkTaskStages){
         baseBiz.updateSelectiveById(larkTaskStages);

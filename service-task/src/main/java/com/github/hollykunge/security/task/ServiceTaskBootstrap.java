@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.task;
 
+import com.cxytiandi.encrypt.springboot.annotation.EnableEncrypt;
 import com.github.hollykunge.security.auth.client.EnableAceAuthClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ServletComponentScan
 @EnableAceAuthClient
 @EnableTransactionManagement
+@EnableEncrypt
 public class ServiceTaskBootstrap {
     public static void main(String[] args) {
         SpringApplication.run(ServiceTaskBootstrap.class, args);

@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.task.controller;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
@@ -48,6 +49,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * memberCode  执行人
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/operation",method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<LarkTask> add(@RequestBody LarkTask larkTask,
@@ -62,6 +64,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @param larkProject
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/autoUpdateProgress",method = RequestMethod.POST)
     @ResponseBody
     public LarkProject autoUpdateProgress(@RequestBody LarkProject larkProject){
@@ -73,6 +76,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @param larkTask
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/taskDone",method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<LarkTask> updateTaskStatus(@RequestBody LarkTask larkTask){
@@ -84,6 +88,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @param larkTask
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/cancelTaskDone",method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<LarkTask> cancelupdateTaskStatus(@RequestBody LarkTask larkTask){
@@ -95,6 +100,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @param larkTasks
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/sort",method = RequestMethod.POST)
     @ResponseBody
     public BaseResponse sort(@RequestBody List<LarkTask> larkTasks){
@@ -110,6 +116,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @param larkTasks
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/deleted",method = RequestMethod.PUT)
     @ResponseBody
     public BaseResponse deleted(@RequestBody List<LarkTask> larkTasks){
@@ -154,6 +161,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @param taskCode
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/setTagToTask",method = RequestMethod.POST)
     @ResponseBody
     public BaseResponse setTagToTask(@RequestParam("tagCode") String tagCode,@RequestParam("taskCode") String taskCode){
@@ -185,6 +193,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @return
      * @throws Exception
      */
+    @Decrypt
     @PostMapping("/upload")
     @ResponseBody
     public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{

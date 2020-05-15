@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.task.controller;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -43,6 +44,7 @@ public class TaskMemberController extends BaseController<LarkTaskMemberBiz, Lark
      * @param modifiedMemberId 修改前的执行人id
      * @return 修改结果
      */
+    @Decrypt
     @RequestMapping(value = "/updateTaskMember",method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<LarkTaskMember> updateTaskMember(
@@ -74,6 +76,7 @@ public class TaskMemberController extends BaseController<LarkTaskMemberBiz, Lark
      *       return $http.post('project/task_member/inviteMemberBatch', data);
      *   }
      */
+    @Decrypt
     @RequestMapping(value = "/inviteMemberBatch",method = RequestMethod.POST)
     public BaseResponse inviteMemberBatch(@RequestBody Object data){
         return new BaseResponse(200,"已批量邀请成员！");
@@ -84,6 +87,7 @@ public class TaskMemberController extends BaseController<LarkTaskMemberBiz, Lark
      * @param larkTaskMembers
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/updateTasksAssignTo",method = RequestMethod.POST)
     @ResponseBody
     public BaseResponse updateTasksAssignTo(@RequestBody List<LarkTaskMember> larkTaskMembers){
