@@ -1,12 +1,11 @@
 package com.github.hollykunge.security.gate.config;
 
 import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.search.web.api.response.SearchObjectRestResponse;
+import com.github.hollykunge.security.log.api.response.LogObjectRestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +31,8 @@ public class FeignLogAop {
     @AfterReturning(value = "executeService()" , returning="obj")
     public void afterAdviceReturn(Object obj){
         log.info("feign后置aop已经被执行...");
-        if(obj instanceof SearchObjectRestResponse){
-            SearchObjectRestResponse response = (SearchObjectRestResponse) obj;
+        if(obj instanceof LogObjectRestResponse){
+            LogObjectRestResponse response = (LogObjectRestResponse) obj;
             int status = response.getStatus();
             if(status == 500){
                 throw new BaseException("FEIGN 接口 调用异常...");

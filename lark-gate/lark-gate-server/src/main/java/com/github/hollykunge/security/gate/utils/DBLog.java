@@ -3,9 +3,9 @@ package com.github.hollykunge.security.gate.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.gate.constants.GateConstants;
 import com.github.hollykunge.security.gate.dto.LogInfoDto;
-import com.github.hollykunge.security.gate.feign.ILarkSearchFeign;
-import com.github.hollykunge.security.search.dto.MessageDto;
-import com.github.hollykunge.security.search.dto.TopicDto;
+import com.github.hollykunge.security.gate.feign.LarkLogFeign;
+import com.github.hollykunge.security.log.api.dto.MessageDto;
+import com.github.hollykunge.security.log.api.dto.TopicDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -24,19 +24,19 @@ public class DBLog extends Thread {
     private static DBLog dblog = null;
     private static BlockingQueue<LogInfoDto> logInfoQueue = new LinkedBlockingQueue<LogInfoDto>(1024);
 
-    public ILarkSearchFeign getLogService() {
-        return searchFeign;
+    public LarkLogFeign getLogService() {
+        return logFeign;
     }
 
-    public DBLog setLogService(ILarkSearchFeign searchFeign) {
-        if(this.searchFeign==null) {
-            this.searchFeign = searchFeign;
+    public DBLog setLogService(LarkLogFeign logFeign) {
+        if(this.logFeign==null) {
+            this.logFeign = logFeign;
         }
         return this;
     }
 
 //    private AdminLogServiceFeignClient logService;
-    private ILarkSearchFeign searchFeign;
+    private LarkLogFeign logFeign;
     public static synchronized DBLog getInstance() {
         if (dblog == null) {
             dblog = new DBLog();
@@ -73,7 +73,7 @@ public class DBLog extends Thread {
                             MessageDto messageDto = new MessageDto();
                             messageDto.setMessage(JSONObject.toJSONString(log));
                             topicDto.setMessage(messageDto);
-                            searchFeign.sendKafka(topicDto);
+                            logFeign.sendKafka(topicDto);
                         }
                     }
                 }
