@@ -768,9 +768,9 @@
         and t.sender = sender.id
         and t.receiver = receiver.id
         and t.file_id = f.file_id(+)
-        and t.type = #{params.teamType}
-        and t.file_type = '1'
-        and t.cancel  = '0'
+        <if test="params.teamType != null and params.teamType != ''">
+            and t.type = #{params.teamType}
+        </if>
         <if test="params.timeEnd != null and params.timeEnd != ''">
             and to_char(t.createtime, 'yyyy-mm-dd') &lt;= #{params.timeEnd}
         </if>

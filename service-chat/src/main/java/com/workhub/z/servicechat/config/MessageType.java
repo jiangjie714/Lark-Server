@@ -41,8 +41,6 @@ public class MessageType {
 
     //返回码 boolean
     public static final int MSG_EDIT_READ = 9;
-    //群组创建成功应答
-    public static final int CREATE_GROUP_ANS = 200204;
     //队列
     //人员、组织机构变更
 
