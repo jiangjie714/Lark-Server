@@ -3,11 +3,7 @@ package com.github.hollykunge.security.common.feign;
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.exception.server.FeignExecutException;
 import com.github.hollykunge.security.common.msg.FeignResponse;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URLDecoder;
 
 /**
  * @author: zhhongyu
