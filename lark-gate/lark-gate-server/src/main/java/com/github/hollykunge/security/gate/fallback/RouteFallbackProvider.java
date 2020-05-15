@@ -42,11 +42,18 @@ public class RouteFallbackProvider implements FallbackProvider {
 
             @Override
             public InputStream getBody() {
-                if (cause != null && cause.getMessage() != null) {
-                    log.error("调用:{} 异常：{}", getRoute(), cause.getMessage());
-                    return new ByteArrayInputStream(cause.getMessage().getBytes());
-                } else {
-                    log.error("调用:{} 异常：{}", getRoute(), "服务不可用");
+                if (cause != null) {
+                    log.error("调用服务异常，原因：{}", cause.getCause());
+                    return new ByteArrayInputStream(cause.getCause().toString().getBytes());
+                }
+                else {
+                    assert cause != null;
+                    if(cause.getMessage() != null){
+                        log.error("调用:{} 异常：{}", getRoute(), cause.getMessage());
+                    }
+                    else {
+                        log.error("调用:{} 异常：{}", getRoute(), "服务不可用");
+                    }
                     return new ByteArrayInputStream("服务不可用".getBytes());
                 }
             }

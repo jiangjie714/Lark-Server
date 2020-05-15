@@ -1,8 +1,7 @@
 package com.github.hollykunge.security.admin.rest;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
-import com.github.hollykunge.security.admin.entity.Org;
+
 import com.github.hollykunge.security.admin.entity.OrgDTO;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.feign.CardServerFeign;
@@ -11,13 +10,11 @@ import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.dto.CardDto;
-import com.github.hollykunge.security.dto.CommonToolsDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +36,7 @@ public class CardController{
 
     @Autowired
     private OrgMapper orgMapper;
-    @Decrypt
+
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<CardDto> add(@RequestBody CardDto entity) {
@@ -52,7 +49,6 @@ public class CardController{
         return cardServerFeign.page(params);
     }
 
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<CardDto> update(@RequestBody CardDto entity) throws Exception {

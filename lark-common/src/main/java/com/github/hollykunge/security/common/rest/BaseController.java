@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.common.rest;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.context.BaseContextHandler;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
@@ -29,7 +28,6 @@ public class BaseController<Biz extends BaseBiz, Entity> {
     @Autowired
     protected Biz baseBiz;
 
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Entity> add(@RequestBody Entity entity) {
@@ -45,7 +43,7 @@ public class BaseController<Biz extends BaseBiz, Entity> {
         entityObjectRestResponse.data((Entity) o).rel(true);
         return entityObjectRestResponse;
     }
-    @Decrypt
+
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<Entity> update(@RequestBody @Valid Entity entity) {

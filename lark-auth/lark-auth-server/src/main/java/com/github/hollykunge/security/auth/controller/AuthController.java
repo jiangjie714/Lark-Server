@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.auth.controller;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationRequest;
 import com.github.hollykunge.security.auth.util.user.JwtAuthenticationResponse;
@@ -32,7 +31,6 @@ public class AuthController {
     @Value("${auth.user.defaultPassword}")
     private String defaultPassword;
 
-    @Decrypt
     @RequestMapping(value = "token", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<?> createAuthenticationToken(

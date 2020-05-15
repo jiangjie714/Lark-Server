@@ -1,11 +1,9 @@
 package com.github.hollykunge.security.admin.rest;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.biz.NoticeBiz;
 
 import com.github.hollykunge.security.admin.entity.Notice;
-import com.github.hollykunge.security.common.exception.BaseException;
-import com.github.hollykunge.security.common.msg.ListRestResponse;
+
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -13,11 +11,9 @@ import com.github.hollykunge.security.common.util.Query;
 import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;
 
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +32,6 @@ public class NoticeController extends BaseController<NoticeBiz,Notice> {
      * @param notice 消息实体类必须带id
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Boolean> sendNotice(@RequestBody @Valid Notice notice){

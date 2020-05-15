@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.admin.rest;
 
 import com.alibaba.fastjson.JSON;
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
@@ -47,7 +46,6 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return 结果集
      */
     @Override
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Org> add(@RequestBody Org org) {
@@ -68,7 +66,6 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return
      */
     @Override
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<Org> update(@RequestBody Org org) {
@@ -143,7 +140,6 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @param id    组织id
      * @param users 以逗号分隔的userId
      */
-    @Decrypt
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUsers(@RequestParam("orgId") String id, @RequestParam("users") String users) {
