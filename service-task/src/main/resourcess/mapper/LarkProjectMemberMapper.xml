@@ -57,7 +57,7 @@
     on
     lpm.member_code = au.id
     where
-    lpm.id=#{projectCode};
+    lpm.project_code=#{projectCode}
   </select>
 
   <update id="updateAssignRoles">

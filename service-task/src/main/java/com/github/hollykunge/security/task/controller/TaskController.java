@@ -48,7 +48,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * memberCode  执行人
      * @return
      */
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    @RequestMapping(value = "/operation",method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<LarkTask> add(@RequestBody LarkTask larkTask,
                                             @RequestParam("memberCode") String memberCode,
@@ -110,7 +110,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
      * @param larkTasks
      * @return
      */
-    @RequestMapping(value = "/deleted",method = RequestMethod.POST)
+    @RequestMapping(value = "/deleted",method = RequestMethod.PUT)
     @ResponseBody
     public BaseResponse deleted(@RequestBody List<LarkTask> larkTasks){
         for(LarkTask larkTask:larkTasks){

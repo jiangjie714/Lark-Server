@@ -75,10 +75,6 @@ public class LarkProjectMemberBiz extends BaseBiz<LarkProjectMemberMapper, LarkP
         if(StringUtils.isEmpty(projectCode)){
             throw  new ClientParameterInvalid("项目id不可为空！");
         }
-        Object memberInfo = query.get("memberName");
-        if(!ObjectUtils.isEmpty(memberInfo)){
-
-        }
         List<LarkProjectMemberDto> larkProjectMemberDtos = new ArrayList<>();
         List<String> larkProjectMemberId = larkProjectMemberMapper.getProjectUserId(projectCode.toString());
         ObjectRestResponse<List<RpcUserInfo>> objectRestResponse = larkProjectFeign.getUserInfo(larkProjectMemberId);

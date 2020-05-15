@@ -56,4 +56,7 @@ public class LarkProjectMemberDto extends LarkProjectMember {
     private String projectUserOrgCodeName;
     private String oEmail;
     private String avatar;
+
+    private Boolean checkTrue;
+    private Boolean checkFalse;
 }

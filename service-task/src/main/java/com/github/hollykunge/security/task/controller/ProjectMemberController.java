@@ -124,7 +124,7 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
      *       return $http.post('project/project_member/removeMember', {memberCode: memberCode, projectCode: code});
      *   }
      */
-    @RequestMapping(value = "/removeMember",method = RequestMethod.POST)
+    @RequestMapping(value = "/removeMember",method = RequestMethod.DELETE)
     public ObjectRestResponse<LarkProjectMember> removeMember(@RequestParam("memberCode") String memberCode, @RequestParam("projectCode") String code){
         if(StringUtils.isEmpty(memberCode)){
             throw  new ClientParameterInvalid("成员id不可为空！");
@@ -142,7 +142,7 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
      *       return $http.get('project/project_member/index', data);
      *   }
      */
-    @RequestMapping(value = "/index",method = RequestMethod.GET)
+    @RequestMapping(value = "/memberList",method = RequestMethod.GET)
     public TableResultResponse index(@RequestParam Map<String, Object> params){
         Query query = new Query(params);
         return  larkProjectMemberbiz.selectByQueryUserInfo(query);

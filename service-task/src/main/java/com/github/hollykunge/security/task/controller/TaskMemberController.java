@@ -104,8 +104,10 @@ public class TaskMemberController extends BaseController<LarkTaskMemberBiz, Lark
      *
      * @return
      */
+    @RequestMapping(value = "/getProjectUser",method = RequestMethod.GET)
     public ObjectRestResponse<List<Object>> getProjectUser(@RequestParam("projectCode") String projectCode,
                                                            @RequestParam("taskCode") String taskCode){
         return larkTaskMemberbiz.getProjectUser(projectCode,taskCode);
     }
+
 }

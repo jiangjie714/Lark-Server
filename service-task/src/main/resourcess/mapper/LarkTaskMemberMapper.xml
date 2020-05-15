@@ -31,12 +31,7 @@
     <result column="ORG_CODE" property="orgCode" jdbcType="VARCHAR" />
     <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
     <result column="P_ID" property="pid" jdbcType="VARCHAR" />
-    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
-    <collection property="larkTaskMemberDtos" ofType="com.github.hollykunge.security.task.dto.LarkTaskMemberDto"
-                javaType="java.util.ArrayList"
-                column="{taskCode=id}"
-                select="com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper.getChildTaskUser">
-    </collection>
+    <result column="name" property="userName" jdbcType="VARCHAR" />
   </resultMap>
   <select id="getChildTaskUser" resultMap="ChildTaskUserMap">
       select ltm.*,
@@ -47,9 +42,21 @@
         on
         ltm.memeber_code = au.id
         where
-        ltm.id=#{taskCode}
+        ltm.task_code=#{taskCode}
   </select>
-
+  <select id="getTaskUser" resultType="java.lang.String">
+     select ltm.memeber_code
+      from
+      lark_task lt
+      inner join
+      lark_task_member ltm
+      on
+      lt.id=ltm.task_code
+      where
+      lt.project_code=#{projectCode}
+      AND
+      lt.id=#{taskCode}
+  </select>
   <update id="updateTaskMember">
       update lark_task_member set memeber_code=#{modifyMemberId} where memeber_code=#{modifiedMemberId};
   </update>

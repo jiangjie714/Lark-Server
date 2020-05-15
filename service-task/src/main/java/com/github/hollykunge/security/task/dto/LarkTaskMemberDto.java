@@ -17,7 +17,7 @@ public class LarkTaskMemberDto implements Serializable {
     //任务信息
     private String taskCode;
     private Integer isExecutor;
-    private String memberCode;
+    private String memeberCode;
     private Date joinTime;
     private Integer isOwner;
 

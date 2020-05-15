@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -37,10 +40,18 @@ public class LarkTaskMemberBiz extends BaseBiz<LarkTaskMemberMapper, LarkTaskMem
      * @return
      */
     public ObjectRestResponse<List<Object>> getProjectUser(String projectCode, String taskCode) {
+        List<LarkProjectMemberDto> projectUserList = new ArrayList<>();
         List<LarkProjectMemberDto> projectUsers = larkProjectMemberMapper.getProjectUser(projectCode);
         List<LarkTaskMemberDto> taskUsers = larkTaskMemberMapper.getChildTaskUser(taskCode);
+        List<String> users = larkTaskMemberMapper.getTaskUser(projectCode,taskCode);
+        projectUsers.stream().forEach(projectUser -> {
+            if (users.stream().anyMatch(userId -> projectUser.getMemberCode().equals(userId))) {
+            } else {
+                projectUserList.add(projectUser);
+            }
+        });
         List<Object> objects = new ArrayList<>();
-        objects.add(projectUsers);
+        objects.add(projectUserList);
         objects.add(taskUsers);
         return new ObjectRestResponse<>().data(objects).rel(true);
     }

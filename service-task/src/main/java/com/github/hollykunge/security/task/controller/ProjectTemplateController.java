@@ -53,7 +53,7 @@ public class ProjectTemplateController extends BaseController<LarkProjectTemplat
      *   }
      */
 
-    @RequestMapping(value = "/save",method = RequestMethod.POST)
+    @RequestMapping(value = "/operation",method = RequestMethod.POST)
     public ObjectRestResponse<LarkProjectTemplate> save(
             @RequestParam("projectTemplateName") String projectTemplateName,
             @RequestParam(value = "projectTemplateDescription",required=false) String projectTemplateDescription,
@@ -70,7 +70,7 @@ public class ProjectTemplateController extends BaseController<LarkProjectTemplat
         return new ObjectRestResponse<LarkProjectTemplate>().data(projectTemplate).rel(true).msg("模板创建成功");
     }
 
-    @RequestMapping(value = "/edit",method = RequestMethod.PUT)
+    @RequestMapping(value = "/operation",method = RequestMethod.PUT)
     public ObjectRestResponse<LarkProjectTemplate> edit(
             @RequestParam(value = "projectTemplateName",required=false) String projectTemplateName,
             @RequestParam("projectTemplateId") String projectTemplateId,
