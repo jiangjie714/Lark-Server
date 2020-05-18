@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 public class AdminAccessFilter extends ZuulFilter {
     private AdminUserFeign userService;
 
-
+    @Autowired
     public AdminAccessFilter(AdminUserFeign userService){
         this.userService = LarkFeignFactory.getInstance().loadFeign(userService);
     }
