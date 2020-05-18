@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.admin.feign;
 
-import com.github.hollykunge.security.admin.feign.hystrix.ZzMessageInfoHystrix;
+import com.github.hollykunge.security.admin.feign.hystrix.ChatServerHystrix;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.Map;
  * @description:
  * @since: Create in 15:02 2019/8/16
  */
-@FeignClient(value = "service-chat",fallbackFactory = ZzMessageInfoHystrix.class,path = "/zzMessageInfo")
+@FeignClient(value = "service-chat",path = "zzMessageInfo",fallbackFactory = ChatServerHystrix.class)
 public interface ZzMessageInfoFeign {
     /**
      * 消息监控 私聊

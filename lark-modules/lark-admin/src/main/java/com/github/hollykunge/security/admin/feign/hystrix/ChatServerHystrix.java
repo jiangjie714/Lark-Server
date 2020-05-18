@@ -13,7 +13,7 @@ import java.util.Map;
  * @since: Create in 14:56 2020/5/18
  */
 @Component
-public class ZzMessageInfoHystrix extends BaseHystrixFactory<ZzMessageInfoHystrix> implements ZzMessageInfoFeign {
+public class ChatServerHystrix extends BaseHystrixFactory<ChatServerHystrix> implements ZzMessageInfoFeign {
     @Override
     public TableResultResponse queryAllMessagePrivate(Map params) {
         return getHystrixTableReponse();
