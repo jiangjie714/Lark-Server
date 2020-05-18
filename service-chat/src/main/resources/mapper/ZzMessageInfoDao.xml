@@ -174,12 +174,12 @@
         else
         t.sender
         end) as contactsId
-        from zz_message_info t where (t.sender = #{userId} or t.receiver =  #{userId}) and t.type = 'USER' and t.cancel  = '0'
+        from zz_message_info t where (t.sender = #{userId} or t.receiver =  #{userId}) and t.type = 'USER' and (t.cancel  = '0' or t.cancel is null)
         UNION ALL
 
         select  T.TYPE,t.content,t.createtime,t.receiver as contactsId from ZZ_MESSAGE_INFO t LEFT JOIN ZZ_USER_GROUP UG ON UG.GROUP_ID=T.RECEIVER
         where t.type = 'GROUP'
-        and  t.cancel  = '0'
+        and  (t.cancel  = '0' or t.cancel is null)
         and nvl(t.createtime,to_date('1900-01-01','yyyy-mm-dd')) &gt;= nvl(ug.createtime,to_date('2099-01-01','yyyy-mm-dd'))
         AND UG.USER_ID =#{userId}
         ) t
@@ -227,7 +227,7 @@
         from  zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f
          where (t.sender = #{userId} or t.receiver =  #{userId})
          and t.type = 'USER'
-         and  t.cancel  = '0'
+         and  (t.cancel  = '0' or t.cancel is null)
          and t.sender = sender.id
          and t.receiver = receiver.id
          and t.file_id = f.file_id(+)
@@ -258,7 +258,7 @@
            t.receiver as contactsid
         from zz_message_info t,zz_contact_inf sender,zz_contact_inf receiver,zz_group_file f, ZZ_USER_GROUP UG
         where t.type = 'GROUP'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         and UG.GROUP_ID=T.RECEIVER
         and nvl(t.createtime,to_date('1900-01-01','yyyy-mm-dd')) &gt;= nvl(ug.createtime,to_date('2099-01-01','yyyy-mm-dd'))
         AND UG.USER_ID =#{userId}
@@ -297,7 +297,7 @@
                    )
                </if>
                and type='USER'
-               and cancel  = '0'
+               and (cancel  = '0' or cancel is null)
               union
               select content,createtime
               from zz_message_info
@@ -322,7 +322,7 @@
                     )
                 </if>
                and type='USER'
-               and cancel  = '0'
+               and (cancel  = '0' or cancel is null)
               ) a
          order by a.createtime desc
     </select>
@@ -391,7 +391,7 @@
             )
         </if>
         and t.type='USER'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         union
         select
         t.msg_id,
@@ -432,7 +432,7 @@
             )
         </if>
         and t.type='USER'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         ) a
         order by a.createtime desc
     </select>
@@ -460,7 +460,7 @@
             )
         </if>
         and type = 'GROUP'
-        and cancel  = '0'
+        and (cancel  = '0' or cancel is null)
         and exists (select 1
                     from zz_user_group c
                     where 1 = 1
@@ -510,7 +510,7 @@
             )
         </if>
         and t.type = 'GROUP'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         and exists (select 1
         from zz_user_group c
         where 1 = 1
@@ -544,7 +544,7 @@
             )
         </if>
         and type = 'MEET'
-        and cancel  = '0'
+        and (cancel  = '0' or cancel is null)
         and exists (select 1
         from zz_meeting_user c
         where 1 = 1
@@ -594,7 +594,7 @@
             )
         </if>
         and t.type = 'MEET'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         and exists (select 1
         from zz_meeting_user c
         where 1 = 1
@@ -622,7 +622,7 @@
             ,ZZ_MEETING g
         </if>
         where t.type = #{type}
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         <!-- 私聊 -->
         <if test="type == 'USER'">
             and ((t.receiver = #{receiver} and t.sender = #{userId})
@@ -687,7 +687,7 @@
             ,ZZ_MEETING g
         </if>
         where t.type = #{type}
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         and t.sender = sender.id
         and t.receiver = receiver.id
         and t.file_id = f.file_id(+)
@@ -717,7 +717,7 @@
         from zz_message_info
         where 1 = 1
         and type = 'USER'
-        and cancel  = '0'
+        and (cancel  = '0' or cancel is null)
         and content like '%"type":1,%'
         <if test="params.timeEnd != null and params.timeEnd != ''">
             and to_char(createtime, 'yyyy-mm-dd') &lt;= #{params.timeEnd}
@@ -820,7 +820,7 @@
         from zz_message_info
         where 1 = 1
         and type = 'GROUP'
-        and cancel  = '0'
+        and (cancel  = '0' or cancel is null)
         and content like '%"type":1,%'
         <if test="params.timeEnd != null and params.timeEnd != ''">
             and to_char(createtime, 'yyyy-mm-dd') &lt;= #{params.timeEnd}
@@ -910,7 +910,7 @@
             and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
         </if>
         and t.type='USER'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         union
         select
         t.msg_id,
@@ -949,7 +949,7 @@
             and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
         </if>
         and t.type='USER'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         ) a
         order by a.createtime asc
     </select>
@@ -974,7 +974,7 @@
             and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
         </if>
         and t.type = 'GROUP'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         and exists (select 1
         from zz_user_group c
         where 1 = 1
@@ -1005,7 +1005,7 @@
             and to_char(t.createtime,'yyyy-MM-dd') &lt;= #{endDate}
         </if>
         and t.type = 'MEET'
-        and t.cancel  = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         and exists (select 1
         from zz_meeting_user c
         where 1 = 1
@@ -1022,7 +1022,7 @@
         where 1 = 1
         and receiver = #{contactId}
         and type = 'GROUP'
-        and cancel = '0'
+        and (cancel  = '0' or cancel is null)
         <if test="lastMsgId!=null and lastMsgId!=''">
             and mes.createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId} and mes2.type = 'GROUP')
         </if>
@@ -1046,7 +1046,7 @@
         and receiver = #{userId}
         and sender = #{contactId}
         and type='USER'
-        and cancel = '0'
+        and (cancel  = '0' or cancel is null)
         <if test="lastMsgId!=null and lastMsgId!=''">
             and createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId} and mes2.type = 'USER')
         </if>
@@ -1057,8 +1057,7 @@
         and receiver = #{contactId}
         and sender = #{userId}
         and type='USER'
-        and cancel = '0'
-        or cancel is null
+        and (cancel  = '0' or cancel is null)
         <if test="lastMsgId!=null and lastMsgId!=''">
             and createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId} and mes2.type = 'USER')
         </if>
@@ -1074,7 +1073,7 @@
         where 1 = 1
         and receiver = #{contactId}
         and type = 'MEET'
-        and cancel = '0'
+        and (cancel  = '0' or cancel is null)
         <if test="lastMsgId!=null and lastMsgId!=''">
             and mes.createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId} and mes2.type = 'MEET')
         </if>
@@ -1119,7 +1118,7 @@
             zz_contact_inf  receiver,
             zz_group_file   f
             where t.type = 'GROUP'
-            and t.cancel = '0'
+            and (t.cancel  = '0' or t.cancel is null)
             and t.sender = sender.id
             and t.receiver = receiver.id
             and t.file_id = f.file_id(+)
@@ -1172,7 +1171,7 @@
                        zz_group_file   f
                  where 1 = 1
                    and t.type = 'USER'
-                   and t.cancel = '0'
+                   and (t.cancel  = '0' or t.cancel is null)
                    and t.sender = sender.id
                    and t.receiver = receiver.id
                    and t.file_id = f.file_id(+)
@@ -1214,7 +1213,7 @@
         zz_contact_inf  receiver,
         zz_group_file   f
         where t.type = 'MEET'
-        and t.cancel = '0'
+        and (t.cancel  = '0' or t.cancel is null)
         and t.sender = sender.id
         and t.receiver = receiver.id
         and t.file_id = f.file_id(+)
