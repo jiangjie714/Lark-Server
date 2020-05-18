@@ -31,7 +31,7 @@ public class DBLog extends Thread {
 
     public DBLog setLogService(LarkLogFeign logFeign) {
         if(this.logFeign==null) {
-            this.logFeign = logFeign;
+            this.logFeign = LarkFeignFactory.getInstance().loadFeign(logFeign);
         }
         return this;
     }
@@ -74,9 +74,7 @@ public class DBLog extends Thread {
                             MessageDto messageDto = new MessageDto();
                             messageDto.setMessage(JSONObject.toJSONString(log));
                             topicDto.setMessage(messageDto);
-                            //使用lark-feign封装
-                            LarkLogFeign larkLogFeign = LarkFeignFactory.getInstance().loadFeign(logFeign);
-                            larkLogFeign.sendKafka(topicDto);
+                            logFeign.sendKafka(topicDto);
                         }
                     }
                 }

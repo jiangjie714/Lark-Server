@@ -26,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
             JwtTokenUtil jwtTokenUtil,
             IUserService userService) {
         this.jwtTokenUtil = jwtTokenUtil;
-        this.userService = userService;
+        this.userService = LarkFeignFactory.getInstance().loadFeign(userService);
     }
 
     @Override
@@ -34,8 +34,7 @@ public class AuthServiceImpl implements AuthService {
         if(StringUtils.isEmpty(pid)||StringUtils.isEmpty(password)){
             throw new UserInvalidException("用户名和密码为空");
         }
-        IUserService iUserService = LarkFeignFactory.getInstance().loadFeign(userService);
-        FeignObjectReponse<AdminUser> validate = iUserService.validate(pid, password);
+        FeignObjectReponse<AdminUser> validate = userService.validate(pid, password);
         AdminUser info = validate.getResult();
         String token = "";
         if (!StringUtils.isEmpty(info.getId())) {

@@ -46,10 +46,12 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class AdminAccessFilter extends ZuulFilter {
-
-    @Autowired
-    @Lazy
     private AdminUserFeign userService;
+
+
+    public AdminAccessFilter(AdminUserFeign userService){
+        this.userService = LarkFeignFactory.getInstance().loadFeign(userService);
+    }
 
     @Value("${gate.ignore.startWith}")
     private String startWith;
@@ -202,8 +204,7 @@ public class AdminAccessFilter extends ZuulFilter {
             return null;
         }
         //根据用户id获取资源列表，包括菜单和菜单功能
-        AdminUserFeign larkFeign = LarkFeignFactory.getInstance().loadFeign(userService);
-        FeignListResponse<List<FrontPermission>> response = larkFeign.getPermissionByUserId(user.getId());
+        FeignListResponse<List<FrontPermission>> response = userService.getPermissionByUserId(user.getId());
         List<FrontPermission> permissionInfos = response.getResult().getData();
         if (permissionInfos.size() > 0) {
             checkUserPermission(requestUri, permissionInfos, ctx, user);
