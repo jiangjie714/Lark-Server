@@ -1,11 +1,14 @@
 package com.github.hollykunge.security.common.msg;
 
+import lombok.NoArgsConstructor;
+
 /**
  * 列表返回类型
  *
  * @author 协同设计小组
  * @create 2017-06-09 7:32
  */
+@NoArgsConstructor
 public class ListRestResponse<T> extends BaseResponse {
     String msg;
 
@@ -21,7 +24,7 @@ public class ListRestResponse<T> extends BaseResponse {
         this.msg = msg;
         this.result = new ListData<>(data,count);
     }
-
+    @NoArgsConstructor
     public class ListData<T>{
         private T data;
         private int count;
