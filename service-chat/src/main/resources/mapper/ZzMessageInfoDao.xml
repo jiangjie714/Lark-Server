@@ -1035,6 +1035,7 @@
         and sender = #{userId}
         and type='USER'
         and cancel = '0'
+        or cancel is null
         <if test="lastMsgId!=null and lastMsgId!=''">
             and createtime &lt; (select mes2.createtime from zz_message_info mes2 where mes2.msg_id = #{lastMsgId} and mes2.type = 'USER')
         </if>
