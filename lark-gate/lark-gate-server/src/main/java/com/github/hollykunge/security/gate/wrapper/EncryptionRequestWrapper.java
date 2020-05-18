@@ -8,13 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author LARK
  */
 public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
+
+    private final Map<String, String> customHeaders;
 
     private byte[] requestBody = new byte[0];
 
@@ -23,6 +24,7 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
     public EncryptionRequestWrapper(HttpServletRequest request) {
         super(request);
         try {
+            this.customHeaders = new HashMap<String, String>();
             requestBody = StreamUtils.copyToByteArray(request.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -67,6 +69,31 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
         this.paramMap = paramMap;
     }
 
+    public void putHeader(String name, String value){
+        this.customHeaders.put(name, value);
+    }
+    @Override
+    public String getHeader(String name) {
+        String headerValue = customHeaders.get(name);
+        if (headerValue != null){
+            return headerValue;
+        }
+        return ((HttpServletRequest) getRequest()).getHeader(name);
+    }
+    @Override
+    public Enumeration<String> getHeaderNames() {
+
+        Set<String> set = new HashSet<String>(customHeaders.keySet());
+
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
+        while (e.hasMoreElements()) {
+            String n = e.nextElement();
+            set.add(n);
+        }
+
+        return Collections.enumeration(set);
+    }
     @Override
     public String getParameter(String name) {
         return this.paramMap.get(name);
@@ -79,4 +106,5 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
         }
         return super.getParameterValues(name);
     }
+
 }

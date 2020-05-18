@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.gate.filter;
 
+import com.github.hollykunge.security.common.util.StringHelper;
 import com.github.hollykunge.security.gate.config.EncryptionConfig;
 import com.github.hollykunge.security.gate.utils.algorithm.AesEncryptAlgorithm;
 import com.github.hollykunge.security.gate.utils.algorithm.EncryptAlgorithm;
@@ -13,6 +14,7 @@ import com.netflix.zuul.exception.ZuulException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author LARK
@@ -74,7 +78,7 @@ public class SecurityFilter extends ZuulFilter {
         ctx.setRequest(requestWrapper);
         ctx.setResponse(responseWrapper);
 
-        if (encryptionConfig.isEncryptionResponse()){
+        if (encryptionConfig.isEncryptionResponse()) {
             String responseData = responseWrapper.getResponseData();
             writeEncryptContent(responseData, resp);
         }
@@ -95,6 +99,7 @@ public class SecurityFilter extends ZuulFilter {
             String decryptRequestData = encryptAlgorithm.decrypt(requestData, encryptionConfig.getKey());
             logger.debug("DecryptRequestData: {}", decryptRequestData);
             requestWrapper.setRequestData(decryptRequestData);
+            requestWrapper.putHeader("content-length", "" + decryptRequestData.length());
         } catch (Exception e) {
             logger.error("请求数据解密失败", e);
             throw new RuntimeException(e);
