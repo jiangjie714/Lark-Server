@@ -17,6 +17,11 @@ import java.util.Map;
 @RequestMapping("zzMessageInfo")
 public class ChatMessageInfoController {
     @Autowired
+    public ChatMessageInfoController(ZzMessageInfoFeign zzMessageInfoFeign){
+        this.zzMessageInfoFeign = zzMessageInfoFeign;
+    }
+
+
     private ZzMessageInfoFeign zzMessageInfoFeign;
     /**
      * todo:使用

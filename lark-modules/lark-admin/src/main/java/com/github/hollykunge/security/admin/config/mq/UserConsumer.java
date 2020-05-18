@@ -50,6 +50,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class UserConsumer {
+    @Autowired
+    public UserConsumer(RandomSelectDefaultAvatorFeign randomSelectDefaultAvatorFeign){
+        this.randomSelectDefaultAvatorFeign = randomSelectDefaultAvatorFeign;
+    }
     @Resource
     private UserMapper userMapper;
 
@@ -62,7 +66,6 @@ public class UserConsumer {
     @Resource
     private RoleUserMapMapper roleUserMapMapper;
 
-    @Resource
     private RandomSelectDefaultAvatorFeign randomSelectDefaultAvatorFeign;
     @Autowired
     private CacheAPI cacheAPI;

@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.admin.rest;
 
 import com.github.hollykunge.security.admin.feign.FeedBackAnswerFeign;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.portal.dto.FeedBackAnswerDto;
@@ -18,8 +19,11 @@ import java.util.Map;
 @Controller
 @RequestMapping("/feedBack")
 public class FeedBackAnswerController {
-
     @Autowired
+    public FeedBackAnswerController(FeedBackAnswerFeign feedBackAnswerFeign){
+        this.feedBackAnswerFeign = LarkFeignFactory.getInstance().loadFeign(feedBackAnswerFeign);
+    }
+
     private FeedBackAnswerFeign feedBackAnswerFeign;
 
     @RequestMapping(value = "/answer", method = RequestMethod.GET)

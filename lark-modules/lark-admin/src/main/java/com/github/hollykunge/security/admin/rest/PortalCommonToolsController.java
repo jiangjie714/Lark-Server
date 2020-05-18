@@ -28,10 +28,12 @@ import java.util.Map;
 @Controller
 @RequestMapping("commonTools")
 public class PortalCommonToolsController {
-    @Resource
+    @Autowired
+    public PortalCommonToolsController(PortalServerFeign portalServerFeign,UserMapper userMapper){
+        this.portalServerFeign = portalServerFeign;
+        this.userMapper = userMapper;
+    }
     private PortalServerFeign portalServerFeign;
-
-    @Resource
     private UserMapper userMapper;
 
     /**
