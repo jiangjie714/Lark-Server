@@ -4,6 +4,7 @@ import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.workhub.z.servicechat.VO.MessageHistoryVo;
 import com.workhub.z.servicechat.VO.MsgSendStatusVo;
 import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
@@ -205,13 +206,33 @@ public class ZzMessageInfoController {
      */
     @GetMapping("listHistoryMsgs")
     public ListRestResponse listHistoryMsg(
-                                           @RequestParam(name = "user",required = false) String user,
-                                           @RequestParam(name ="contact",required = false) String contact,
+                                           @RequestParam(name = "user") String user,
+                                           @RequestParam(name ="contact") String contact,
                                            @RequestParam(name ="lastMsgId",required = false) String lastMsgId,
                                            @RequestParam(name ="type",required = false,defaultValue = "user") String type,
                                            @RequestParam(name ="size",required = false,defaultValue = "50") String size){
 
         List<String> dataList = zzMessageInfoService.listHistoryMsg(user,contact,lastMsgId,type,size);
+        return new ListRestResponse("200",dataList.size(),dataList);
+    }
+    /**
+     *历史消息(非json)
+     * @param user 用户id
+     * @param contact 联系人id
+     * @param lastMsgId 最后一条消息id
+     * @param type 联系人类型 user、group、meet
+     * @param size 每次取几条
+     * @return
+     */
+    @GetMapping("listHistoryMsgsInf")
+    public ListRestResponse listHistoryMsgInf(
+            @RequestParam(name = "user") String user,
+            @RequestParam(name ="contact") String contact,
+            @RequestParam(name ="lastMsgId",required = false) String lastMsgId,
+            @RequestParam(name ="type",required = false,defaultValue = "user") String type,
+            @RequestParam(name ="size",required = false,defaultValue = "50") String size){
+
+        List<MessageHistoryVo> dataList = zzMessageInfoService.listHistoryMsgInf(user,contact,lastMsgId,type,size);
         return new ListRestResponse("200",dataList.size(),dataList);
     }
 

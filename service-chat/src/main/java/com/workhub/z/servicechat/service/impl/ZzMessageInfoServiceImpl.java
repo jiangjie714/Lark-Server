@@ -853,4 +853,25 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
         }
         return  dataList;
     }
+    /**
+     *历史消息(非json)
+     * @param user 用户id
+     * @param contact 联系人id
+     * @param lastMsgId 最后一条消息id
+     * @param type 联系人类型 user、group、meet
+     * @param size 每次几条
+     * @return
+     */
+    @Override
+    public List<MessageHistoryVo> listHistoryMsgInf(String user, String contact,String lastMsgId, String type, String size){
+        List<MessageHistoryVo> dataList = null;
+        if(type.equals(MessageType.PARAMETER_TYPE_USER.toLowerCase())){
+            dataList = this.zzMessageInfoDao.listHistoryMsgPrivateInf(user,contact,lastMsgId,Integer.valueOf(size));
+        }else if(type.equals(MessageType.PARAMETER_TYPE_GROUP.toLowerCase())){
+            dataList = this.zzMessageInfoDao.listHistoryMsgGroupInf(user,contact,lastMsgId,Integer.valueOf(size));
+        }else if(type.equals(MessageType.PARAMETER_TYPE_MEET.toLowerCase())){
+            dataList = this.zzMessageInfoDao.listHistoryMsgMeetInf(user,contact,lastMsgId,Integer.valueOf(size));
+        }
+        return  dataList;
+    }
 }

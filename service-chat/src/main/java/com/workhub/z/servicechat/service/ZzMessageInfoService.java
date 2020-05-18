@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.service;
 
 import com.github.hollykunge.security.common.msg.TableResultResponse;
+import com.workhub.z.servicechat.VO.MessageHistoryVo;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 
 import javax.servlet.http.HttpServletResponse;
@@ -105,4 +106,14 @@ public interface ZzMessageInfoService {
      * @return
      */
     List<String> listHistoryMsg(String user, String contact, String lastMsgId , String type, String size);
+    /**
+     *历史消息(非json)
+     * @param user 用户id
+     * @param contact 联系人id
+     * @param lastMsgId 最后一条消息id
+     * @param type 联系人类型 user、group、meet
+     * @param size 每次几条
+     * @return
+     */
+    List<MessageHistoryVo> listHistoryMsgInf(String user, String contact, String lastMsgId , String type, String size);
 }

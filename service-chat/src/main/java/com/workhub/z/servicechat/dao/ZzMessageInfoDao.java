@@ -1,6 +1,7 @@
 package com.workhub.z.servicechat.dao;
 
 import com.workhub.z.servicechat.VO.ExportMsgVo;
+import com.workhub.z.servicechat.VO.MessageHistoryVo;
 import com.workhub.z.servicechat.entity.message.ZzMessageInfo;
 import com.workhub.z.servicechat.model.ContactsMessageDto;
 import com.workhub.z.servicechat.model.RawMessageDto;
@@ -104,5 +105,32 @@ public interface ZzMessageInfoDao {
      * @return
      */
     List<String> listHistoryMsgMeet(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId,@Param("size")int size);
+    /**
+     * 消息历史私人
+     * @param userId
+     * @param contactId
+     * @param lastMsgId 最后一条消息id
+     * @param size 每次几条
+     * @return
+     */
+    List<MessageHistoryVo> listHistoryMsgPrivateInf(@Param("userId")String userId, @Param("contactId")String contactId, @Param("lastMsgId")String lastMsgId, @Param("size")int size);
+    /**
+     * 消息历史群组
+     * @param userId
+     * @param contactId
+     * @param lastMsgId 最后一条消息id
+     * @param size 每次几条
+     * @return
+     */
+    List<MessageHistoryVo> listHistoryMsgGroupInf(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId,@Param("size")int size);
+    /**
+     * 消息历史会议
+     * @param userId
+     * @param contactId
+     * @param lastMsgId 最后一条消息id
+     * @param size 每次几条
+     * @return
+     */
+    List<MessageHistoryVo> listHistoryMsgMeetInf(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId,@Param("size")int size);
 
 }
