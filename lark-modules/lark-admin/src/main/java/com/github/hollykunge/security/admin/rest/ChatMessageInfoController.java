@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.admin.rest;
 
 import com.github.hollykunge.security.admin.feign.ZzMessageInfoFeign;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class ChatMessageInfoController {
     @Autowired
     public ChatMessageInfoController(ZzMessageInfoFeign zzMessageInfoFeign){
-        this.zzMessageInfoFeign = zzMessageInfoFeign;
+        this.zzMessageInfoFeign = LarkFeignFactory.getInstance().loadFeign(zzMessageInfoFeign);
     }
 
 

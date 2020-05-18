@@ -6,6 +6,7 @@ import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.feign.PortalServerFeign;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.portal.dto.CommonToolsDto;
@@ -30,7 +31,7 @@ import java.util.Map;
 public class PortalCommonToolsController {
     @Autowired
     public PortalCommonToolsController(PortalServerFeign portalServerFeign,UserMapper userMapper){
-        this.portalServerFeign = portalServerFeign;
+        this.portalServerFeign = LarkFeignFactory.getInstance().loadFeign(portalServerFeign);
         this.userMapper = userMapper;
     }
     private PortalServerFeign portalServerFeign;

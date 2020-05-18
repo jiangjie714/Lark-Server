@@ -14,6 +14,7 @@ import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.util.MqSetBaseEntity;
 import com.github.hollykunge.security.common.constant.CommonConstants;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -52,7 +53,7 @@ import java.util.*;
 public class UserConsumer {
     @Autowired
     public UserConsumer(RandomSelectDefaultAvatorFeign randomSelectDefaultAvatorFeign){
-        this.randomSelectDefaultAvatorFeign = randomSelectDefaultAvatorFeign;
+        this.randomSelectDefaultAvatorFeign = LarkFeignFactory.getInstance().loadFeign(randomSelectDefaultAvatorFeign);
     }
     @Resource
     private UserMapper userMapper;
