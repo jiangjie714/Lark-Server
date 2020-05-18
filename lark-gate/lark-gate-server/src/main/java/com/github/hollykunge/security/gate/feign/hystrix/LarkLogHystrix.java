@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.gate.feign.hystrix;
 
 import com.github.hollykunge.security.common.feign.BaseHystrixFactory;
-import com.github.hollykunge.security.common.msg.FeignObjectReponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.gate.feign.LarkLogFeign;
 import com.github.hollykunge.security.log.dto.kafka.TopicDto;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class LarkLogHystrix extends BaseHystrixFactory<LarkLogHystrix> implements LarkLogFeign {
 
     @Override
-    public FeignObjectReponse sendKafka(TopicDto topic) {
+    public ObjectRestResponse sendKafka(TopicDto topic) {
         return getHystrixObjectReponse();
     }
 }

@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.gate.feign;
 
-import com.github.hollykunge.security.common.msg.FeignObjectReponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.gate.feign.hystrix.LarkLogHystrix;
 import com.github.hollykunge.security.log.dto.kafka.TopicDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -18,5 +18,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 )
 public interface LarkLogFeign {
     @RequestMapping(value = "/send",method = RequestMethod.POST)
-    FeignObjectReponse sendKafka(TopicDto topic);
+    ObjectRestResponse sendKafka(TopicDto topic);
 }

@@ -13,8 +13,6 @@ import com.github.hollykunge.security.admin.dto.biz.OrgUser;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
-import com.github.hollykunge.security.common.msg.FeignListResponse;
-import com.github.hollykunge.security.common.msg.FeignObjectReponse;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.beans.BeanUtils;
@@ -75,9 +73,9 @@ public class UserRest {
      */
     @RequestMapping(value = "/user/un/{userId}/permissions", method = RequestMethod.GET)
     @ResponseBody
-    public FeignListResponse<List<FrontPermission>> getPermissionByUserId(@PathVariable("userId") String userId) {
+    public ListRestResponse<List<FrontPermission>> getPermissionByUserId(@PathVariable("userId") String userId) {
         List<FrontPermission> permissions = permissionService.getPermissionByUserId(userId);
-        return new FeignListResponse("查询成功",permissions.size(),permissions);
+        return new ListRestResponse("查询成功",permissions.size(),permissions);
     }
     /**
      * 验证用户名密码
@@ -88,9 +86,9 @@ public class UserRest {
      */
     @RequestMapping(value = "/user/validate", method = RequestMethod.POST)
     @ResponseBody
-    public FeignObjectReponse<AdminUser> validate(String pid, String password) {
+    public ObjectRestResponse<AdminUser> validate(String pid, String password) {
         AdminUser validate = permissionService.validate(pid, password);
-        return new FeignObjectReponse<>().data(validate);
+        return new ObjectRestResponse<>().data(validate);
     }
     /**
      * 根据身份证号获取用户信息

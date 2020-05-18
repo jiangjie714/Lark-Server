@@ -2,7 +2,7 @@ package com.github.hollykunge.security.common.feign;
 
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.exception.server.FeignExecutException;
-import com.github.hollykunge.security.common.msg.FeignResponse;
+import com.github.hollykunge.security.common.msg.BaseResponse;
 import java.lang.reflect.Proxy;
 
 /**
@@ -24,8 +24,8 @@ public class LarkFeignFactory {
         Class<?> clazz = feignService.getClass();
         return (T)Proxy.newProxyInstance(clazz.getClassLoader(),clazz.getInterfaces(),(proxy,method,args)->{
             Object response = method.invoke(feignService, args);
-            if(response instanceof FeignResponse){
-                FeignResponse feignResponse = (FeignResponse) response;
+            if(response instanceof BaseResponse){
+                BaseResponse feignResponse = (BaseResponse) response;
                 if(feignResponse.getStatus() == HttpReponseStatusEnum.SYSTEM_ERROR.value()){
                     throw new FeignExecutException(feignResponse.getMessage());
                 }

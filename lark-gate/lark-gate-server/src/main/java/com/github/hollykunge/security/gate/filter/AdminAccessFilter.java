@@ -16,7 +16,7 @@ import com.github.hollykunge.security.common.exception.service.PermissionExcepti
 import com.github.hollykunge.security.common.exception.service.UserTokenException;
 import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.BaseResponse;
-import com.github.hollykunge.security.common.msg.FeignListResponse;
+import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenForbiddenResponse;
 import com.github.hollykunge.security.common.util.ClientUtil;
@@ -204,7 +204,7 @@ public class AdminAccessFilter extends ZuulFilter {
             return null;
         }
         //根据用户id获取资源列表，包括菜单和菜单功能
-        FeignListResponse<List<FrontPermission>> response = userService.getPermissionByUserId(user.getId());
+        ListRestResponse<List<FrontPermission>> response = userService.getPermissionByUserId(user.getId());
         List<FrontPermission> permissionInfos = response.getResult().getData();
         if (permissionInfos.size() > 0) {
             checkUserPermission(requestUri, permissionInfos, ctx, user);

@@ -3,7 +3,7 @@ package com.github.hollykunge.security.auth.feign;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.auth.configuration.FeignConfiguration;
 import com.github.hollykunge.security.auth.feign.hystrix.IUserHystrix;
-import com.github.hollykunge.security.common.msg.FeignObjectReponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,5 +25,5 @@ public interface IUserService {
    * @return
    */
   @RequestMapping(value = "/api/user/validate", method = RequestMethod.POST)
-  FeignObjectReponse<AdminUser> validate(@RequestParam("pid") String pid, @RequestParam("password") String password);
+  ObjectRestResponse<AdminUser> validate(@RequestParam("pid") String pid, @RequestParam("password") String password);
 }

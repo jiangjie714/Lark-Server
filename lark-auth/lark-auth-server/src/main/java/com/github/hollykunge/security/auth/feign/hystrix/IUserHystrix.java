@@ -3,7 +3,7 @@ package com.github.hollykunge.security.auth.feign.hystrix;
 import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.auth.feign.IUserService;
 import com.github.hollykunge.security.common.feign.BaseHystrixFactory;
-import com.github.hollykunge.security.common.msg.FeignObjectReponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class IUserHystrix extends BaseHystrixFactory<IUserHystrix> implements IUserService {
 
     @Override
-    public FeignObjectReponse<AdminUser> validate(String pid, String password) {
+    public ObjectRestResponse<AdminUser> validate(String pid, String password) {
         return getHystrixObjectReponse();
     }
 }

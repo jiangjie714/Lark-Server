@@ -2,8 +2,8 @@ package com.github.hollykunge.security.common.feign;
 
 
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
-import com.github.hollykunge.security.common.msg.FeignListResponse;
-import com.github.hollykunge.security.common.msg.FeignObjectReponse;
+import com.github.hollykunge.security.common.msg.ListRestResponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +24,16 @@ public class BaseHystrixFactory<Base extends BaseHystix> extends BaseHystix impl
         baseHystrix.setThrowable(throwable);
         return baseHystrix;
     }
-    protected FeignListResponse getHystrixListResponse(){
+    protected ListRestResponse getHystrixListResponse(){
         log.error("调用通信接口失败，服务已被降级处理",throwable);
-        FeignListResponse feignListResponse = new FeignListResponse(throwable.getMessage(), 0, null);
+        ListRestResponse feignListResponse = new ListRestResponse(throwable.getMessage(), 0, null);
         feignListResponse.setStatus(HttpReponseStatusEnum.SYSTEM_ERROR.value());
         feignListResponse.setMessage(throwable.getMessage());
         return feignListResponse;
     }
-    protected FeignObjectReponse getHystrixObjectReponse(){
+    protected ObjectRestResponse getHystrixObjectReponse(){
         log.error("调用通信接口失败，服务已被降级处理",throwable);
-        FeignObjectReponse feignObjectReponse = new FeignObjectReponse();
+        ObjectRestResponse feignObjectReponse = new ObjectRestResponse();
         feignObjectReponse.setMessage(throwable.getMessage());
         feignObjectReponse.setStatus(HttpReponseStatusEnum.SYSTEM_ERROR.value());
         return feignObjectReponse;

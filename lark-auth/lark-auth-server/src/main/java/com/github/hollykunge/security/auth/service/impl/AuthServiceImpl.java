@@ -7,7 +7,7 @@ import com.github.hollykunge.security.auth.service.AuthService;
 import com.github.hollykunge.security.auth.util.user.JwtTokenUtil;
 import com.github.hollykunge.security.common.exception.service.UserInvalidException;
 import com.github.hollykunge.security.common.feign.LarkFeignFactory;
-import com.github.hollykunge.security.common.msg.FeignObjectReponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
         if(StringUtils.isEmpty(pid)||StringUtils.isEmpty(password)){
             throw new UserInvalidException("用户名和密码为空");
         }
-        FeignObjectReponse<AdminUser> validate = userService.validate(pid, password);
+        ObjectRestResponse<AdminUser> validate = userService.validate(pid, password);
         AdminUser info = validate.getResult();
         String token = "";
         if (!StringUtils.isEmpty(info.getId())) {

@@ -22,7 +22,7 @@ public class ListRestResponse<T> extends BaseResponse {
         this.result = new ListData<>(data,count);
     }
 
-    class ListData<T>{
+    public class ListData<T>{
         private T data;
         private int count;
         public ListData(T data,int count){
