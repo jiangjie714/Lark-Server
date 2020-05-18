@@ -20,7 +20,7 @@ public class SocketTeamBindVo {
      */
     private String teamId;
     /**
-     * 绑定后个群体发送消息（null不发送）
+     * 绑定(解绑)某个群体发送消息（null不发送），如果是绑定消息，发给群体，如果是解绑，给每个解绑人员单独发
      */
     private SocketMsgVo msg;
 }

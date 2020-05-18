@@ -313,6 +313,12 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         return res;
     }
 
+    /**
+     * 群解散
+     * @param groupId
+     * @param userId
+     * @param userName
+     */
     @Override
     @Transactional(rollbackFor={RuntimeException.class, Exception.class})
     public void dissolveGroup(String groupId,String userId,String userName){
@@ -329,12 +335,20 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         zzGroupStatus.setId(RandomId.getUUID());
         zzGroupStatus.setOperatorName(userName);
         zzGroupStatus.setOperator(userId);
-        zzGroupStatus.setOperateType(MessageType.FLOW_DISSOLUTION);//踢出人员
+        zzGroupStatus.setOperateType(MessageType.FLOW_DISSOLUTION);
         zzGroupStatus.setGroupId(groupId);
         zzGroupStatus.setOperateTime(new Date());
         zzGroupStatus.setDescribe(zzGroupStatus.getOperatorName()+ "解散了群");
         //zzGroupStatusService.add(zzGroupStatus);
         rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
+        SocketMsgVo socketMsgVo = new SocketMsgVo();
+        socketMsgVo.setCode(SocketMsgTypeEnum.UNBIND_USER);
+        SocketMsgDetailVo socketMsgDetailVo = new SocketMsgDetailVo();
+        socketMsgDetailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
+        SocketTeamBindVo socketTeamBindVo =  new SocketTeamBindVo();
+        socketTeamBindVo.setTeamId(groupId);
+        socketTeamBindVo.setUserList(userIds);
+        socketMsgDetailVo.setData(socketTeamBindVo);
         //记录群状态变动end
         try {
             //处理缓存begin
@@ -387,26 +401,43 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         }
 
     }
-    //群编辑 1成功 -1失败 0群成员过多：秘密限制50以内，机密限制100以内
+    /**
+     *
+     * @param groupEditDto
+     * @param userId
+     * @param userName
+     * @return 群编辑 1成功 -1失败 0群成员过多：秘密限制50以内，机密限制100以内,2 解散群成功,3 校验失败 当前人必须在群组内 4 校验失败 不能删除群主
+     */
     @Override
     @Transactional(rollbackFor={RuntimeException.class, Exception.class})
     public int groupMemberEdit(GroupEditDto groupEditDto, String userId, String userName){
-
+        int success = 1,error = -1,tooManyMembers = 0, successDissolve = 2,validErrorNotInGroup = 3,validErrorDelOwner = 4;
+        int operatorNotInGroup = 0,cannotDelOwner = -1;
+        List<GroupEditUserList> userListDtos = groupEditDto.getUserList();
+        String groupId = groupEditDto.getGroupId();
+        int valid = groupMemberEditValidate(groupId,userId,userListDtos);
+        if(valid == operatorNotInGroup){
+            return  validErrorNotInGroup;
+        }else if(valid == cannotDelOwner){
+            return validErrorDelOwner;
+        }
+        //如果只有群主自己了，解散群
+        if(userListDtos.size()==1){
+            dissolveGroup(groupId,userId,userName);
+            return successDissolve;
+        }
         List<ChatAdminUserVo> addUserInfoList = null;
         List<ChatAdminUserVo> removeUserInfoList = null;
         try {
-            String groupId = groupEditDto.getGroupId();
-            List<GroupEditUserList> userListDtos = groupEditDto.getUserList();
-
             ZzGroup zzGroupNow = zzGroupDao.queryById(groupId);
             if(zzGroupNow == null){
-                return -1;
+                return error;
             }
             //秘密限制100以内，机密限制50以内
             if((userListDtos.size()>100 && zzGroupNow.getLevels().equals(MessageType.NORMAL_SECRECT_LEVEL)) ||
                     (userListDtos.size()>50 && zzGroupNow.getLevels().equals(MessageType.HIGH_SECRECT_LEVEL))
             ){
-                return 0;
+                return tooManyMembers;
             }
             List<String> userList = zzGroupDao.queryGroupUserIdListByGroupId(groupId);
             List<String> nowUserList =  new ArrayList<>();
@@ -568,9 +599,43 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                 }
 
             }
-            return  -1;
+            return  error;
         }
-        return 1;
+        return success;
+    }
+
+    /**
+     * 群编辑校验
+     * @param groupId
+     * @param userId
+     * @param userListDtos
+     * @return 1校验通过 0 操作人不在群组 -1不能删除群主
+     */
+    public int groupMemberEditValidate(String groupId,String userId,List<GroupEditUserList> userListDtos){
+        int success = 1,operatorNotInGroup = 0,cannotDelOwner = -1;
+        //邀请入群，本人必须在群组内
+        List<String>  memberList = queryGroupUserIdListByGroupId(groupId);
+        if(!memberList.contains(userId)){
+            //操作失败，操作人不在群组内
+            return operatorNotInGroup;
+        }
+        ZzGroup zzGroupNow = queryById(groupId);
+        String groupOwner = zzGroupNow.getGroupOwnerId();
+        boolean delGroupOwnerFlg = true;
+        if(userListDtos!=null){
+            for(GroupEditUserList nowUser :userListDtos){
+                //不能删除群主
+                if(nowUser.getId().equals(groupOwner)){
+                    delGroupOwnerFlg =false;
+                    break;
+                }
+            }
+        }
+        if(delGroupOwnerFlg){
+            //操作失败，不能删除群主
+            return cannotDelOwner;
+        }
+        return success;
     }
     /**
      * 创建群

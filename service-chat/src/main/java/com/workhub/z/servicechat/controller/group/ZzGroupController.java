@@ -398,7 +398,10 @@ public class ZzGroupController  {
     }*/
 
     /**
-     * 群编辑接口
+     * 群成员编辑
+     * @param groupInfo
+     * @return 1成功 -1失败 0群成员过多：秘密限制50以内，机密限制100以内,2 解散群成功,3 校验失败 当前人必须在群组内 4 校验失败 不能删除群主
+     * @throws Exception
      */
     @Decrypt
     @PostMapping("editGroup")
@@ -408,45 +411,22 @@ public class ZzGroupController  {
         objectRestResponse.msg("编辑成员成功");
         String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
-        //邀请入群，本人必须在群组内
-        List<String>  memberList = zzGroupService.queryGroupUserIdListByGroupId(groupInfo.getGroupId());
-        if(!memberList.contains(userId)){
-            objectRestResponse.rel(false);
-            objectRestResponse.msg("操作失败，操作人不在群组内");
-        }
-        ZzGroup zzGroupNow = zzGroupService.queryById(groupInfo.getGroupId());
-        String groupOwner = zzGroupNow.getGroupOwnerId();
-        List<GroupEditUserList> userListDtos = groupInfo.getUserList();
-        boolean delGroupOwnerFlg = true;
-        if(userListDtos!=null){
-            for(GroupEditUserList nowUser :userListDtos){
-                //不能删除群主
-                if(nowUser.getId().equals(groupOwner)){
-                    delGroupOwnerFlg =false;
-                    break;
-                }
-            }
-        }
-        if(delGroupOwnerFlg){
-            objectRestResponse.rel(false);
-            objectRestResponse.msg("操作失败，不能删除群主");
-        }
-        //如果只有群主自己了，解散群
-        if(userListDtos.size()==1){
-            this.zzGroupService.dissolveGroup(groupInfo.getGroupId(),userId,userName);
-            objectRestResponse.msg("群解散成功");
-            return objectRestResponse;
-        }
-
-
+        int success = 1,error = -1,tooManyMembers = 0, successDissolve = 2,validErrorNotInGroup = 3,validErrorDelOwner = 4;
         int res = zzGroupService.groupMemberEdit(groupInfo,userId,userName);
-
-        if(res==-1){
+        if(res==error){
             objectRestResponse.rel(false);
             objectRestResponse.msg("操作失败，群组可能已经不存在");
-        }else if(res==0){
+        }else if(res==tooManyMembers){
             objectRestResponse.rel(false);
             objectRestResponse.msg("人员超过上限");
+        }else if(res==successDissolve){
+            objectRestResponse.msg("解散群成功");
+        }else if(res==validErrorNotInGroup){
+            objectRestResponse.rel(false);
+            objectRestResponse.msg("当前人必须在群组内");
+        }else if(res==validErrorDelOwner){
+            objectRestResponse.rel(false);
+            objectRestResponse.msg("不能删除群主");
         }
 
         return objectRestResponse;
