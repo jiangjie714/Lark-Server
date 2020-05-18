@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.admin.feign;
 
+import com.github.hollykunge.security.admin.feign.hystrix.FeedBackAnswerHystrix;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.portal.dto.FeedBackAnswerDto;
@@ -16,7 +17,7 @@ import java.util.Map;
  * @Author: yzq
  * @Date: 创建于 2020/4/5 15:55
  */
-@FeignClient("service-portal")
+@FeignClient(value = "service-portal",fallbackFactory = FeedBackAnswerHystrix.class)
 public interface FeedBackAnswerFeign {
 
     @RequestMapping(value = "/api/feedBack/answer", method = RequestMethod.GET)
