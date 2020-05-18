@@ -7,6 +7,7 @@ import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.feign.CardServerFeign;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.portal.dto.CardDto;
@@ -29,13 +30,15 @@ import java.util.Map;
 @Controller
 @RequestMapping("/card")
 public class CardController{
-
     @Autowired
+    public CardController (CardServerFeign cardServerFeign,UserMapper userMapper,OrgMapper orgMapper){
+        this.cardServerFeign = LarkFeignFactory.getInstance().loadFeign(cardServerFeign);
+        this.userMapper = userMapper;
+        this.orgMapper = orgMapper;
+    }
+
     private CardServerFeign cardServerFeign;
-    @Autowired
     private UserMapper userMapper;
-
-    @Autowired
     private OrgMapper orgMapper;
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
