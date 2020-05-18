@@ -4,6 +4,7 @@ package com.github.hollykunge.security.common.feign;
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
+import com.github.hollykunge.security.common.msg.TableResultResponse;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,12 @@ public class BaseHystrixFactory<Base extends BaseHystix> extends BaseHystix impl
         feignObjectReponse.setMessage(throwable.getMessage());
         feignObjectReponse.setStatus(HttpReponseStatusEnum.SYSTEM_ERROR.value());
         return feignObjectReponse;
+    }
+    protected TableResultResponse getHystrixTableReponse(){
+        log.error("调用通信接口失败，服务已被降级处理",throwable);
+        TableResultResponse tableResultResponse = new TableResultResponse();
+        tableResultResponse.setMessage(throwable.getMessage());
+        tableResultResponse.setStatus(HttpReponseStatusEnum.SYSTEM_ERROR.value());
+        return tableResultResponse;
     }
 }
