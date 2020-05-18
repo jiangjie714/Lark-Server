@@ -19,16 +19,32 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
 
     private byte[] requestBody = new byte[0];
 
+    private int contentLength;
+
+    private long contentLengthLong;
+
     private Map<String, String> paramMap = new HashMap<>();
 
     public EncryptionRequestWrapper(HttpServletRequest request) {
         super(request);
         try {
             this.customHeaders = new HashMap<String, String>();
+            this.contentLength = request.getContentLength();
+            this.contentLengthLong = request.getContentLength();
             requestBody = StreamUtils.copyToByteArray(request.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int getContentLength() {
+        return this.contentLength;
+    }
+
+    @Override
+    public long getContentLengthLong() {
+        return this.contentLengthLong;
     }
 
     @Override
@@ -69,17 +85,25 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
         this.paramMap = paramMap;
     }
 
-    public void putHeader(String name, String value){
+    public void putHeader(String name, String value) {
         this.customHeaders.put(name, value);
+    }
+
+    public void setContentLength(int value){
+        this.contentLength = value;
+    }
+    public void setContentLengthLong(long value){
+        this.contentLengthLong = value;
     }
     @Override
     public String getHeader(String name) {
         String headerValue = customHeaders.get(name);
-        if (headerValue != null){
+        if (headerValue != null) {
             return headerValue;
         }
         return ((HttpServletRequest) getRequest()).getHeader(name);
     }
+
     @Override
     public Enumeration<String> getHeaderNames() {
 
@@ -94,6 +118,7 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
 
         return Collections.enumeration(set);
     }
+
     @Override
     public String getParameter(String name) {
         return this.paramMap.get(name);
@@ -102,7 +127,7 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public String[] getParameterValues(String name) {
         if (paramMap.containsKey(name)) {
-            return new String[] { getParameter(name) };
+            return new String[]{getParameter(name)};
         }
         return super.getParameterValues(name);
     }
