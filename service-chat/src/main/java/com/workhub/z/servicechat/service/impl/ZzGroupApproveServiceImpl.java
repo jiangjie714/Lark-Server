@@ -381,7 +381,9 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
                     //如果建群正常，发送socket
                     if(restResponse.isRel()){
                         teamUserList = this.zzGroupService.queryGroupUserIdListByGroupId(groupId);
-                        sendTeamBindMsgAfterCreate(groupId,teamUserList,message,SocketMsgDetailTypeEnum.GROUP_CREATE);
+                        // TODO: 2020/5/15 这里为什么要传字符串，而不是object
+                        JSONObject groupJsonObj = JSONObject.parseObject(message);
+                        sendTeamBindMsgAfterCreate(groupId,teamUserList,groupJsonObj,SocketMsgDetailTypeEnum.GROUP_CREATE);
                         addCache(teamUserList,groupId,CacheConst.userGroupIds);
                     }else{
                         res.put("res","0");
