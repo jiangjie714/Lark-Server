@@ -2,18 +2,18 @@ package com.workhub.z.servicechat.controller.group;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.vo.rpcvo.ContactVO;
-import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.*;
-import com.workhub.z.servicechat.config.*;
+import com.workhub.z.servicechat.config.CacheConst;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
+import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.model.GroupEditDto;
 import com.workhub.z.servicechat.model.GroupEditUserList;
-import com.workhub.z.servicechat.processor.ProcessEditGroup;
 import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzGroupService;
@@ -23,12 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.tio.core.ChannelContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import static com.workhub.z.servicechat.config.VoToEntity.ZzGroupToGroupInfo;
 
@@ -58,8 +60,6 @@ public class ZzGroupController  {
     private AdminUserService iUserService;
     @Autowired
     private HttpServletRequest request;
-    @Autowired
-    private ProcessEditGroup processEditGroup;
     /**
      * 成功
      */
@@ -473,47 +473,5 @@ public class ZzGroupController  {
         objectRestResponse.data(groupAllInfo);
 
         return objectRestResponse;
-    }
-    /**
-     *  群编辑前后端配合通信
-     * @param messageInf
-     * @return
-     */
-    @Decrypt
-    @PostMapping("socketEditGroup")
-    public ObjectRestResponse socketEditGroup(@RequestBody String messageInf){
-        ObjectRestResponse res = new ObjectRestResponse();
-        res.rel(true);
-        res.msg("200");
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-        try {
-            this.processEditGroup.processManage(userId,messageInf);
-        } catch (Exception e) {
-            log.error(Common.getExceptionMessage(e));
-            res.msg("500");
-            res.rel(false);
-        }
-        return  res;
-    }
-    /**
-     *  群审批通过前后端配合通信
-     * @param messageInf
-     * @return
-     */
-    @Decrypt
-    @PostMapping("socketEditCreate")
-    public ObjectRestResponse socketEditCreate(@RequestBody String messageInf){
-        ObjectRestResponse res = new ObjectRestResponse();
-        res.rel(true);
-        res.msg("200");
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-        try {
-            this.processEditGroup.createGroup(userId,messageInf);
-        } catch (Exception e) {
-            log.error(Common.getExceptionMessage(e));
-            res.msg("500");
-            res.rel(false);
-        }
-        return  res;
     }
 }

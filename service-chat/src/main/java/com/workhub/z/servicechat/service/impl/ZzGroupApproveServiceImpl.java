@@ -9,9 +9,12 @@ import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.*;
 import com.workhub.z.servicechat.dao.ZzGroupApproveDao;
+import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.entity.group.ZzGroupApprove;
 import com.workhub.z.servicechat.entity.group.ZzGroupApproveLog;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
+import com.workhub.z.servicechat.model.GroupTaskDto;
+import com.workhub.z.servicechat.model.UserListDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;
 import com.workhub.z.servicechat.redis.RedisUtil;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * author:zhuqz
@@ -381,9 +385,8 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
                     //如果建群正常，发送socket
                     if(restResponse.isRel()){
                         teamUserList = this.zzGroupService.queryGroupUserIdListByGroupId(groupId);
-                        // TODO: 2020/5/15 这里为什么要传字符串，而不是object
-                        JSONObject groupJsonObj = JSONObject.parseObject(message);
-                        sendTeamBindMsgAfterCreate(groupId,teamUserList,groupJsonObj,SocketMsgDetailTypeEnum.GROUP_CREATE);
+                        GroupTaskDto groupTaskDto = this.getSendGroupCreateInf(groupId,teamUserList);
+                        sendTeamBindMsgAfterCreate(groupId,teamUserList,groupTaskDto,SocketMsgDetailTypeEnum.GROUP_CREATE);
                         addCache(teamUserList,groupId,CacheConst.userGroupIds);
                     }else{
                         res.put("res","0");
@@ -495,6 +498,36 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
         bindDetailVo.setData(bindVo);
         bindMsgVo.setMsg(bindDetailVo);
         rabbitMqMsgProducer.sendSocketTeamBindMsg(bindMsgVo);
+    }
+
+    /**
+     * 发送群创建消息
+     * @param groupId
+     * @param userList
+     * @return
+     */
+    private GroupTaskDto  getSendGroupCreateInf(String groupId,List<String> userList){
+
+        GroupTaskDto groupTaskDto = new GroupTaskDto();
+        ZzGroup zzGroupInfo = zzGroupService.queryById(groupId);
+        List<UserListDto> groupUserList = new ArrayList<UserListDto>();
+        String ids = userList.stream().collect(Collectors.joining(","));
+        List<ChatAdminUserVo> userInfoList = iUserService.userList(ids);
+        for(ChatAdminUserVo userVo : userInfoList){
+            UserListDto user = new UserListDto();
+            user.setImg(userVo.getAvatar());
+            user.setUserId(userVo.getId());
+            user.setUserLevels(userVo.getSecretLevel());
+            groupUserList.add(user);
+        }
+        //0创建（这个字段应该没有用了）
+        groupTaskDto.setType(0);
+        groupTaskDto.setGroupId(groupId);
+        groupTaskDto.setUserList(groupUserList);
+        groupTaskDto.setTimestamp(zzGroupInfo.getCreateTime());
+        groupTaskDto.setReviser(zzGroupInfo.getCreator());
+        groupTaskDto.setZzGroup(zzGroupInfo);
+        return  groupTaskDto;
     }
 
     /**

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -212,5 +213,45 @@ public class ZzMessageInfoController {
 
         List<String> dataList = zzMessageInfoService.listHistoryMsg(user,contact,lastMsgId,type,size);
         return new ListRestResponse("200",dataList.size(),dataList);
+    }
+
+    /**
+     * 消息监控
+     * @param messageLevel 消息密级
+     * @param messageContent 消息内容
+     * @param senderName 发送人
+     * @param receiverName 接收人
+     * @param teamType user、group、meet
+     * @param timeBegin yyyy-mm-dd
+     * @param timeEnd yyyy-mm-dd
+     * @param pageSize
+     * @param pageNo
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("listMonitorMsgs")
+    public TableResultResponse listMonitorMsgs (
+            @RequestParam(name = "messageLevel",required = false) String messageLevel,
+            @RequestParam(name ="messageContent",required = false) String messageContent,
+            @RequestParam(name ="senderName",required = false) String senderName,
+            @RequestParam(name ="receiverName",required = false) String receiverName,
+            @RequestParam(name ="teamType",required = false) String teamType,
+            @RequestParam(name ="timeBegin",required = false) String timeBegin,
+            @RequestParam(name ="timeEnd",required = false) String timeEnd,
+            @RequestParam(name ="pageSize",required = false,defaultValue = "10") String pageSize,
+            @RequestParam(name ="pageNo",required = false,defaultValue = "1") String pageNo
+            ) throws Exception
+    {
+        Map<String,String> params = new HashMap<>();
+        params.put("messageLevel",Common.nulToEmptyString(messageLevel));
+        params.put("messageContent",Common.nulToEmptyString(messageContent));
+        params.put("senderName",Common.nulToEmptyString(senderName));
+        params.put("receiverName",Common.nulToEmptyString(receiverName));
+        params.put("teamType",Common.nulToEmptyString(teamType).toUpperCase());
+        params.put("timeBegin",Common.nulToEmptyString(timeBegin));
+        params.put("timeEnd",Common.nulToEmptyString(timeEnd));
+        params.put("pageSize",Common.nulToEmptyString(pageSize));
+        params.put("pageNo",Common.nulToEmptyString(pageNo));
+        return this.zzMessageInfoService.queryAllMessageMonitor(params);
     }
 }
