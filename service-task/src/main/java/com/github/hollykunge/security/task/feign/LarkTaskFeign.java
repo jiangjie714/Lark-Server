@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @since 20-5-12
  * @deprecation 调用自动更新任务进度接口  也可以使用mq
  */
-@FeignClient("service-task")
+@FeignClient(value = "service-task")
 public interface LarkTaskFeign {
 
     @RequestMapping(value = "/task/autoUpdateProgress",method = RequestMethod.POST)

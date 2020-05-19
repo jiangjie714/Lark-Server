@@ -12,6 +12,7 @@ import com.github.hollykunge.security.task.entity.LarkTaskTag;
 import com.github.hollykunge.security.task.entity.LarkTaskToTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -50,8 +51,12 @@ public class TaskTagController extends BaseController<LarkTaskTagBiz,LarkTaskTag
      */
     @RequestMapping(value = "/getAllTag",method = RequestMethod.GET)
     @ResponseBody
-    public ObjectRestResponse<List<LarkTaskTag>> getAllTag(){
-        return new ObjectRestResponse<>().data(baseBiz.selectListAll()).rel(true);
+    public ObjectRestResponse<List<LarkTaskTag>> getAllTag(@RequestParam("projectCode")String projectCode){
+        Example example = new Example(LarkTaskTag.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("projectCode",projectCode);
+        List<LarkTaskTag> taskTags = baseBiz.selectByExample(example);
+        return new ObjectRestResponse<>().data(taskTags).rel(true);
     }
 
     @RequestMapping(value = "/disassociateTaskForTag",method = RequestMethod.DELETE)
