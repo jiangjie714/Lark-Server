@@ -5,6 +5,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author LARK
  */
@@ -43,6 +47,11 @@ public class EncryptionConfig {
      * 过滤器执行顺序
      */
     private int order = 2;
+
+    /**
+     * 需要过滤的方法
+     */
+    private List<String> methods = new ArrayList<String>(Arrays.asList("GET", "POST", "DELETE", "PUT"));
 
     public EncryptionConfig(String key, String responseCharset, boolean debug) {
         super();

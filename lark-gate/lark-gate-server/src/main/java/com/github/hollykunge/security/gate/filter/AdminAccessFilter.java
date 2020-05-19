@@ -70,8 +70,10 @@ public class AdminAccessFilter extends ZuulFilter {
 
     @Autowired
     private ServiceAuthUtil serviceAuthUtil;
+
     @Autowired
     private SysAuthConfig sysAuthConfig;
+
     private final String GATEWAY_ERROR = "网关发生异常";
 
     @Override
@@ -81,7 +83,7 @@ public class AdminAccessFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -95,47 +97,47 @@ public class AdminAccessFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         final String requestUri = request.getRequestURI().substring(zuulPrefix.length());
         String errorMessage = null;
-        int responStatus = HttpReponseStatusEnum.OK.value();
+        int responseStatus = HttpReponseStatusEnum.OK.value();
         try {
             BaseContextHandler.setToken(null);
             String dnname = request.getHeader(this.dnName);
-            //获取内网网关地址
+            // 获取内网网关地址
             String clientIp = request.getHeader(this.clientIp);
             BaseContextHandler.set(CommonConstants.CLIENT_IP_ARG, clientIp);
-            //将院网关ip携带给云雀服务，供其他服务使用
+            // 将院网关ip携带给云雀服务，供其他服务使用
             if (!StringUtils.isEmpty(clientIp)) {
                 ctx.addZuulRequestHeader(this.clientIp, clientIp);
             }
-            //正常用户名密码登录
+            // 正常用户名密码登录
             if (StringUtils.isEmpty(dnname)) {
                 //此处使用null，正常用户名密码登录时，pid使用登录时的用户名
                 return authorization(requestUri, ctx, request, null);
             }
             String pId = parsingDnname(dnname);
-            //秘钥登录
+            // 秘钥登录
             return authorization(requestUri, ctx, request, pId.toLowerCase());
         } catch (ServerHandlerException clientInvalidEx) {
-            responStatus = HttpReponseStatusEnum.SYSTEM_ERROR.value();
-            //client无效异常
+            responseStatus = HttpReponseStatusEnum.SYSTEM_ERROR.value();
+            // client无效异常
             errorMessage =JSON.toJSONString(new BaseResponse(clientInvalidEx.getStatus(),GATEWAY_ERROR+clientInvalidEx.getMessage()));
         } catch (UserTokenException tokenEx) {
-            responStatus = HttpReponseStatusEnum.BIZ_RUN_ERROR.value();
-            //纯token异常
+            responseStatus = HttpReponseStatusEnum.BIZ_RUN_ERROR.value();
+            // 纯token异常
             errorMessage = JSON.toJSONString(new TokenErrorResponse(tokenEx.getMessage()));
         } catch (PermissionException permissionEx){
-            responStatus = HttpReponseStatusEnum.BIZ_RUN_ERROR.value();
-            //权限异常导致tokenerror
+            responseStatus = HttpReponseStatusEnum.BIZ_RUN_ERROR.value();
+            // 权限异常导致tokenerror
             TokenForbiddenResponse tokenForbiddenResponse = new TokenForbiddenResponse(permissionEx.getMessage());
             tokenForbiddenResponse.setStatus(permissionEx.getStatus());
             errorMessage = JSON.toJSONString(tokenForbiddenResponse);
         } catch (Exception ex){
-            responStatus = HttpReponseStatusEnum.SYSTEM_ERROR.value();
-            //其他未知异常
+            responseStatus = HttpReponseStatusEnum.SYSTEM_ERROR.value();
+            // 其他未知异常
             errorMessage =JSON.toJSONString(new BaseResponse(CommonConstants.EX_OTHER_CODE,GATEWAY_ERROR+ExceptionUtils.getMessage(ex)));
         }
-        //异常信息返回前端
+        // 异常信息返回前端
         if(!StringUtils.isEmpty(errorMessage)){
-            setFailedRequest(errorMessage, responStatus);
+            setFailedRequest(errorMessage, responseStatus);
         }
         //无业务逻辑和异常逻辑，只是网关返回null，意为该过滤器已经执行完毕
         return null;
@@ -183,7 +185,7 @@ public class AdminAccessFilter extends ZuulFilter {
             }
             if (request.getHeader(userAuthConfig.getTokenHeader()) != null) {
                 //有token的也要校验一下token后再进行分发，否则不进行权限校验的，接口随便使用了
-                getJWTUserAndsetPidHeader(request, ctx, pid);
+                getJWTUserAndSetPidHeader(request, ctx, pid);
                 ctx.addZuulRequestHeader("token",
                         request.getHeader(userAuthConfig.getTokenHeader()));
             }
@@ -192,7 +194,7 @@ public class AdminAccessFilter extends ZuulFilter {
         /**
          * 校验权限的接口实现
          */
-        IJWTInfo user = getJWTUserAndsetPidHeader(request, ctx, pid);
+        IJWTInfo user = getJWTUserAndSetPidHeader(request, ctx, pid);
         //证明并未解析到user，token有问题，不能继续了，驳回请求
         //如果为超级管理员，则直接通过
         if (Objects.equals(user.getUniqueName(), sysAuthConfig.getSysUsername())) {
@@ -241,7 +243,7 @@ public class AdminAccessFilter extends ZuulFilter {
      * @param ctx
      * @return
      */
-    private IJWTInfo getJWTUserAndsetPidHeader(HttpServletRequest request, RequestContext ctx, String pid) throws Exception {
+    private IJWTInfo getJWTUserAndSetPidHeader(HttpServletRequest request, RequestContext ctx, String pid) throws Exception {
         String authToken = request.getHeader(userAuthConfig.getTokenHeader());
         if (StringUtils.isBlank(authToken)) {
             authToken = request.getParameter("token");

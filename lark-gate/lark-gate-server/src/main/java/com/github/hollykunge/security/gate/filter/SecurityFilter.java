@@ -22,6 +22,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author LARK
@@ -44,7 +45,7 @@ public class SecurityFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -61,27 +62,30 @@ public class SecurityFilter extends ZuulFilter {
         HttpServletRequest req = ctx.getRequest();
         HttpServletResponse resp = ctx.getResponse();
 
-        // 调试模式不加解密
+        // 调试模式不加解密，默认是false
         if (encryptionConfig.isDebug()) {
             return null;
         }
 
-        EncryptionResponseWrapper responseWrapper = new EncryptionResponseWrapper(resp);
-        EncryptionRequestWrapper requestWrapper = new EncryptionRequestWrapper(req);
+        EncryptionResponseWrapper responseWrapper = null;
+        EncryptionRequestWrapper requestWrapper = null;
 
-        // 开始解密处理
-        processDecryption(requestWrapper);
-
-        ctx.setRequest(requestWrapper);
-        ctx.setResponse(responseWrapper);
-
+        // 判断方法是否需要解密，默认是GET/POST/DELETE/PUT
+        if (encryptionConfig.getMethods().contains(req.getMethod())) {
+            requestWrapper = new EncryptionRequestWrapper(req);
+            // 开始解密处理
+            processDecryption(requestWrapper);
+            ctx.setRequest(requestWrapper);
+        }
+        // 返回是否需要加密，默认不加密
         if (encryptionConfig.isEncryptionResponse()) {
+            responseWrapper = new EncryptionResponseWrapper(resp);
             String responseData = responseWrapper.getResponseData();
             writeEncryptContent(responseData, resp);
+            ctx.setResponse(responseWrapper);
         }
 
         return null;
-
     }
 
     /**
@@ -96,9 +100,6 @@ public class SecurityFilter extends ZuulFilter {
             String decryptRequestData = encryptAlgorithm.decrypt(requestData, encryptionConfig.getKey());
             logger.debug("DecryptRequestData: {}", decryptRequestData);
             requestWrapper.setRequestData(decryptRequestData);
-            requestWrapper.putHeader("content-length", "" + decryptRequestData.length());
-            requestWrapper.setContentLength(decryptRequestData.length());
-            requestWrapper.setContentLengthLong(decryptRequestData.length());
         } catch (Exception e) {
             logger.error("请求数据解密失败", e);
             throw new RuntimeException(e);

@@ -79,6 +79,8 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
 
     public void setRequestData(String requestData) {
         this.requestBody = requestData.getBytes();
+        this.contentLength = requestData.length();
+        this.contentLengthLong = requestData.length();
     }
 
     public void setParamMap(Map<String, String> paramMap) {
@@ -89,12 +91,6 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
         this.customHeaders.put(name, value);
     }
 
-    public void setContentLength(int value){
-        this.contentLength = value;
-    }
-    public void setContentLengthLong(long value){
-        this.contentLengthLong = value;
-    }
     @Override
     public String getHeader(String name) {
         String headerValue = customHeaders.get(name);
