@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.admin;
 
 import com.ace.cache.EnableAceCache;
-import com.cxytiandi.encrypt.springboot.annotation.EnableEncrypt;
 import com.github.hollykunge.security.auth.client.EnableAceAuthClient;
 import com.github.hollykunge.security.common.config.DruidConfig;
 import com.spring4all.swagger.EnableSwagger2Doc;
@@ -38,7 +37,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ServletComponentScan
 @EnableAspectJAutoProxy(exposeProxy=true)
 @EnableHystrix
-@EnableEncrypt
 public class AdminBootstrap {
     public static void main(String[] args) {
         new SpringApplicationBuilder(AdminBootstrap.class).web(true).run(args);    }

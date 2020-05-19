@@ -1,22 +1,21 @@
 package com.github.hollykunge.security.admin.rest;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.OrgDTO;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.feign.PortalServerFeign;
-import com.github.hollykunge.security.admin.mapper.OrgMapper;
+
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.dto.CommonToolsDto;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,6 @@ public class PortalCommonToolsController {
      * @param entity
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> add(@RequestBody CommonToolsDto entity) {
@@ -68,7 +66,6 @@ public class PortalCommonToolsController {
      * @return
      * @throws Exception
      */
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> update(@RequestBody CommonToolsDto entity) throws Exception {
