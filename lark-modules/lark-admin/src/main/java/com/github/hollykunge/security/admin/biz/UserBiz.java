@@ -26,9 +26,11 @@ import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.common.util.SpecialStrUtils;
 import com.github.hollykunge.security.common.util.UUIDUtils;
+import com.github.hollykunge.security.common.vo.RpcUserInfo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -374,5 +376,21 @@ public class UserBiz extends BaseBiz<UserMapper, User> {
         tempUser.setUpdUser(tokenUser.getId());
         tempUser.setUpdName(tokenUser.getName());
         userMapper.updateByPrimaryKeySelective(tempUser);
+    }
+    /**
+     * fansq
+     * admin服务给task服务提供成员信息获取
+     * @param userIdList
+     * @return
+     */
+    public ObjectRestResponse<List<RpcUserInfo>> getUserInfo(List<String> userIdList){
+        List<RpcUserInfo> rpcUserInfos = new ArrayList<>();
+        for (String userId:userIdList){
+            User user = userMapper.selectByPrimaryKey(userId);
+            RpcUserInfo rpcUserInfo = new RpcUserInfo();
+            BeanUtils.copyProperties(user,rpcUserInfo);
+            rpcUserInfos.add(rpcUserInfo);
+        }
+        return new ObjectRestResponse<>().data(rpcUserInfos);
     }
 }

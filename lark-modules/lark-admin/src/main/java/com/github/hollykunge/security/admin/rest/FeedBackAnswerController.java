@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.feign.FeedBackAnswerFeign;
 import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -34,7 +35,8 @@ public class FeedBackAnswerController {
     }
 
 
-    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @Decrypt
+    @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<FeedBackDto> getFeedBackAnswer(@RequestBody FeedBackDto feedBackDto) {
 

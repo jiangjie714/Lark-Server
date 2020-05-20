@@ -13,10 +13,10 @@
     <result column="SOURCE_CODE" property="sourceCode" jdbcType="VARCHAR" />
     <result column="ACTION_TYPE" property="actionType" jdbcType="VARCHAR" />
     <result column="TO_MEMBER_CODE" property="toMemberCode" jdbcType="VARCHAR" />
-    <result column="IS_COMMENT" property="isComment" jdbcType="DECIMAL" />
+    <result column="IS_COMMENT" property="isComment" jdbcType="INTEGER" />
     <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
     <result column="ICON" property="icon" jdbcType="VARCHAR" />
-    <result column="IS_ROBOT" property="isRobot" jdbcType="DECIMAL" />
+    <result column="IS_ROBOT" property="isRobot" jdbcType="INTEGER" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
     <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />

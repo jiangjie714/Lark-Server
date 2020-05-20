@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @author fansq
  * @since 20-3-6
- * @deprecation 角色操作controller
+ * @deprecated 角色操作controller
+ * todo 角色操作交给admin管理了
  */
 @RestController
 @RequestMapping(value = "/role")

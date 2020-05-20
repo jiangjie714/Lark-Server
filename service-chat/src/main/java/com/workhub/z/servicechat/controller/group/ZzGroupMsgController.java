@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.group;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -50,6 +51,7 @@ public class ZzGroupMsgController{
      * @param id
      * @return
      */
+    @Decrypt
     @PostMapping("/delete")
     public ObjectRestResponse delFileInfo(@RequestParam("id") String id){
        /* boolean flag = this.zzGroupMsgService.deleteById(id);
@@ -68,6 +70,7 @@ public class ZzGroupMsgController{
      * @param zzGroupMsg
      * @return
      */
+    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzGroupMsg zzGroupMsg){
         zzGroupMsg.setMsgId(RandomId.getUUID());
@@ -94,6 +97,7 @@ public class ZzGroupMsgController{
      * @param zzGroupMsg
      * @return
      */
+    @Decrypt
     @PostMapping("/update")
     public ObjectRestResponse update(@RequestBody ZzGroupMsg zzGroupMsg){
         /*Integer update = this.zzGroupMsgService.update(zzGroupMsg);

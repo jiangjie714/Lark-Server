@@ -9,7 +9,7 @@
     <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
     <result column="MEMBER_CODE" property="memberCode" jdbcType="VARCHAR" />
     <result column="JOIN_TIME" property="joinTime" jdbcType="TIMESTAMP" />
-    <result column="IS_OWNER" property="isOwner" jdbcType="DECIMAL" />
+    <result column="IS_OWNER" property="isOwner" jdbcType="INTEGER" />
     <result column="AUTHORIZE" property="authorize" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
@@ -23,4 +23,41 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+
+  <select id="getProjectUserId" resultType="String">
+        select MEMBER_CODE from LARK_PROJECT_MEMBER
+        where PROJECT_CODE=#{projectCode}
+        order by JOIN_TIME desc
+  </select>
+
+  <resultMap id="ProjectUserInfoMap" type="com.github.hollykunge.security.task.dto.LarkProjectMemberDto"
+             extends="BaseResultMap">
+    <result column="PROJECT_USER_ID" property="projectUserId" jdbcType="VARCHAR"/>
+    <result column="PROJECT_USER_NAME" property="projectUserName" jdbcType="VARCHAR"/>
+    <result column="PROJECT_USER_ORG_CODE" property="projectUserOrgCode" jdbcType="VARCHAR"/>
+    <result column="PROJECT_USER_PID" property="projectUserPid" jdbcType="VARCHAR"/>
+    <result column="PROJECT_USER_ORG_CODE_NAME" property="projectUserOrgCodeName" jdbcType="VARCHAR"/>
+    <result column="O_EMAIL" property="oEmail" jdbcType="VARCHAR"/>
+    <result column="AVATAR" property="avatar" jdbcType="VARCHAR"/>
+  </resultMap>
+  <!-- 获取项目参与人 -->
+  <select id="getProjectUser" resultMap="ProjectUserInfoMap">
+    select lpm.*,
+      au.id PROJECT_USER_ID,
+      au.name PROJECT_USER_NAME,
+      au.org_code PROJECT_USER_ORG_CODE,
+      au.org_name PROJECT_USER_ORG_CODE_NAME,
+      au.p_id PROJECT_USER_PID,
+      au.o_email,
+      au.avatar from
+    lark_project_member lpm
+    left join
+    LARK_ADMIN.admin_user au
+    on
+    lpm.member_code = au.id
+    where
+    lpm.id=#{projectCode};
+  </select>
+
 </mapper>

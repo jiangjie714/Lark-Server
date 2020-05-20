@@ -7,10 +7,10 @@
     -->
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="TASK_CODE" property="taskCode" jdbcType="VARCHAR" />
-    <result column="IS_EXECUTOR" property="isExecutor" jdbcType="DECIMAL" />
+    <result column="IS_EXECUTOR" property="isExecutor" jdbcType="INTEGER" />
     <result column="MEMEBER_CODE" property="memeberCode" jdbcType="VARCHAR" />
     <result column="JOIN_TIME" property="joinTime" jdbcType="TIMESTAMP" />
-    <result column="IS_OWNER" property="isOwner" jdbcType="DECIMAL" />
+    <result column="IS_OWNER" property="isOwner" jdbcType="INTEGER" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
@@ -24,4 +24,33 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+  <resultMap id="ChildTaskUserMap" type="com.github.hollykunge.security.task.dto.LarkTaskMemberDto"
+             extends="BaseResultMap">
+    <result column="AVATAR" property="avatar" jdbcType="VARCHAR" />
+    <result column="ORG_CODE" property="orgCode" jdbcType="VARCHAR" />
+    <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+    <result column="P_ID" property="pid" jdbcType="VARCHAR" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <collection property="larkTaskMemberDtos" ofType="com.github.hollykunge.security.task.dto.LarkTaskMemberDto"
+                javaType="java.util.ArrayList"
+                column="{taskCode=id}"
+                select="com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper.getChildTaskUser">
+    </collection>
+  </resultMap>
+  <select id="getChildTaskUser" resultMap="ChildTaskUserMap">
+      select ltm.*,
+        au.avatar,au.name,au.o_email,au.org_code,au.org_name  from
+        lark_task_member ltm
+        left join
+        LARK_ADMIN.admin_user au
+        on
+        ltm.memeber_code = au.id
+        where
+        ltm.id=#{taskCode}
+  </select>
+
+  <update id="updateTaskMember">
+      update lark_task_member set memeber_code=#{modifyMemberId} where memeber_code=#{modifiedMemberId};
+  </update>
 </mapper>

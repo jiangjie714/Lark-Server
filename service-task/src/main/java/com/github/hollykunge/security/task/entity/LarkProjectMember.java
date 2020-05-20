@@ -3,8 +3,9 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author  fansq
@@ -25,7 +26,7 @@ public class LarkProjectMember extends BaseEntity {
     private Date joinTime;
 
     @Column(name = "IS_OWNER")
-    private Long isOwner;
+    private Integer isOwner;
 
     @Column(name = "AUTHORIZE")
     private String authorize;

@@ -1,5 +1,6 @@
 package com.workhub.z.servicechat.controller.group;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.FileMonitoringVO;
@@ -60,6 +61,7 @@ public class ZzGroupFileController {
      * @return
      */
     //query 查询文件名称
+    @Decrypt
     @PostMapping("/groupfile")
     public TableResultResponse<GroupFileVo> groupFileList(@RequestParam("id")String id,
                                                           //@RequestParam("query")String query,
@@ -85,6 +87,7 @@ public class ZzGroupFileController {
      * @return
      */
     //query 查询文件名称
+    @Decrypt
     @PostMapping("/groupFileListByMe")
     public TableResultResponse<GroupFileVo> groupFileListByMe(@RequestParam("groupId")String groupId,
                                                           @RequestParam("userId")String userId,
@@ -109,6 +112,7 @@ public class ZzGroupFileController {
      * @return
      */
     //query 查询文件名称
+    @Decrypt
     @PostMapping("/groupFileListByOwner")
     public TableResultResponse<GroupFileVo> groupFileListByOwner(@RequestParam("groupId")String groupId,
                                                           @RequestParam("userId")String userId,
@@ -132,6 +136,7 @@ public class ZzGroupFileController {
      * @return
      */
     //query 查询文件名称
+    @Decrypt
     @PostMapping("/groupFileListByPass")
     public TableResultResponse<GroupFileVo> groupFileListByPass(@RequestParam("groupId")String groupId,
                                                           @RequestParam("userId")String userId,
@@ -155,6 +160,7 @@ public class ZzGroupFileController {
      *  page size ：页数页码；groupId 会议id ；userId 用户id；isGroup 文件类型： 0 私聊 1群 905 会议
      * @return
      */
+    @Decrypt
     @PostMapping ("/getGroupFileList")
     public TableResultResponse<GroupFileVo> getGroupFileList(@RequestParam Map<String,String> params){
         String userId=common.nulToEmptyString(request.getHeader("userId"));
@@ -172,6 +178,7 @@ public class ZzGroupFileController {
      * @param id
      * @return
      */
+    @Decrypt
     @PostMapping("/delete")
     public ObjectRestResponse delFileInfo(@RequestParam("id") String id){
         //boolean flag = this.zzGroupFileService.deleteById(id);
@@ -190,6 +197,7 @@ public class ZzGroupFileController {
      * @param zzGroupFile
      * @return
      */
+    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzGroupFile zzGroupFile){
         zzGroupFile.setFileId(RandomId.getUUID());
@@ -220,6 +228,7 @@ public class ZzGroupFileController {
      * @param zzGroupFile
      * @return
      */
+    @Decrypt
     @PostMapping("/update")
     public ObjectRestResponse update(@RequestBody ZzGroupFile zzGroupFile){
         String userId=common.nulToEmptyString(request.getHeader("userId"));
@@ -244,6 +253,7 @@ public class ZzGroupFileController {
      * fileName文件名称 level密级
      * @return
      */
+    @Decrypt
     @PostMapping("/fileMonitoring")
     public TableResultResponse<FileMonitoringVO> fileMonitoring(@RequestParam Map<String,Object> params){
         TableResultResponse<FileMonitoringVO> pageInfo = null;
@@ -262,6 +272,7 @@ public class ZzGroupFileController {
      *@Author: zhuqz
      *@date: 2019/10/15
      */
+    @Decrypt
     @PostMapping("saveFileInfByJson")
     public ObjectRestResponse saveFileInfByJson(@RequestBody String msg) throws Exception{
 

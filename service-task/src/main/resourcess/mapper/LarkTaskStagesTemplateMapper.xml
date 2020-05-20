@@ -9,7 +9,7 @@
     <result column="NAME" property="name" jdbcType="VARCHAR" />
     <result column="PROJECT_TEMPLATE_CODE" property="projectTemplateCode" jdbcType="VARCHAR" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
-    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />

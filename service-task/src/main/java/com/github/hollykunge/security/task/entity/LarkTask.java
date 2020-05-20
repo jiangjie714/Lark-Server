@@ -3,8 +3,10 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author  fansq
@@ -25,7 +27,7 @@ public class LarkTask extends BaseEntity {
     private String name;
 
     @Column(name = "PRI")
-    private Short pri;
+    private Integer pri;
 
     @Column(name = "EXECUTE_STATUS")
     private String executeStatus;
@@ -40,7 +42,7 @@ public class LarkTask extends BaseEntity {
     private String assignTo;
 
     @Column(name = "DELETED")
-    private Short deleted;
+    private Integer deleted;
 
     @Column(name = "STAG_CODE")
     private String stagCode;
@@ -49,7 +51,7 @@ public class LarkTask extends BaseEntity {
     private String taskTag;
 
     @Column(name = "DONE")
-    private Short done;
+    private Integer done;
 
     @Column(name = "BEGIN_TIME")
     private Date beginTime;
@@ -64,7 +66,7 @@ public class LarkTask extends BaseEntity {
     private String pcode;
 
     @Column(name = "SORT")
-    private Long sort;
+    private Integer sort;
 
     @Column(name = "TASK_LIKE")
     private Integer taskLike;
@@ -73,16 +75,16 @@ public class LarkTask extends BaseEntity {
     private Integer star;
 
     @Column(name = "DELETED_TIME")
-    private String deletedTime;
+    private Date deletedTime;
 
     @Column(name = "TASK_PRIVATE")
-    private Short taskPrivate;
+    private Integer taskPrivate;
 
     @Column(name = "ID_NUM")
-    private Integer idNum;
+    private String idNum;
 
     @Column(name = "SCHEDULE")
-    private Short schedule;
+    private BigDecimal schedule;
 
     @Column(name = "VERSION_CODE")
     private String versionCode;

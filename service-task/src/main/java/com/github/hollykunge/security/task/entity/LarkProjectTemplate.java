@@ -3,8 +3,8 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
-import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Table;
 
 /**
  * @author  fansq
@@ -19,7 +19,7 @@ public class LarkProjectTemplate extends BaseEntity {
     private String name;
 
     @Column(name = "SORT")
-    private Short sort;
+    private Integer sort;
 
     @Column(name = "CODE")
     private String code;
@@ -34,7 +34,7 @@ public class LarkProjectTemplate extends BaseEntity {
     private String memberCode;
 
     @Column(name = "IS_SYSTEM")
-    private Short isSystem;
+    private Integer isSystem;
 
     @Column(name = "DESCRIPTION")
     private String description;

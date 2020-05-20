@@ -2,10 +2,15 @@ package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.Query;
+import com.github.hollykunge.security.task.biz.LarkTaskStagesTemplateBiz;
+import com.github.hollykunge.security.task.entity.LarkTaskStagesTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author fansq
@@ -14,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/task_stages_template")
-public class TaskStagesTemplateController {
+public class TaskStagesTemplateController extends BaseController<LarkTaskStagesTemplateBiz, LarkTaskStagesTemplate> {
 
+    @Autowired
+    private LarkTaskStagesTemplateBiz larkTaskStagesTemplatebiz;
     /**
      * 任务阶段模版列表
      * @param {*} data
@@ -23,9 +30,10 @@ public class TaskStagesTemplateController {
      *       return $http.get('project/task_stages_template', data);
      *   }
      */
-    @RequestMapping(value = "/",method = RequestMethod.GET)
-    public TableResultResponse list(@RequestBody Object data){
-        // todo 暂时返回空 任务成员列表
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    public TableResultResponse<List<LarkTaskStagesTemplate>> list(@RequestParam Map<String,Object> params){
+        Query query = new Query(params);
+        larkTaskStagesTemplatebiz.list(query);
         return new TableResultResponse();
     }
 
