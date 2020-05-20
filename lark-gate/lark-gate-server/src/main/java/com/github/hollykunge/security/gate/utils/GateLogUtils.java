@@ -36,12 +36,11 @@ public class GateLogUtils {
             //此处判断不为空，供网关服务降级时
             if (respones != null) {
                 String count = respones.getJSONObject("result").getString("count");
-                String opt = resolvUri(requestURI);
+                String opt = resolveUri(requestURI);
                 optInfo = "查询" + opt + count + " 条";
                 return optInfo;
             }
-            String opt = resolvUri(requestURI);
-            return opt;
+            return resolveUri(requestURI);
         }
         //分页
         if (requestURI.toLowerCase().contains(CommonConstants.GET_GATE_LOG_REQUEST_PAGE)) {
@@ -49,24 +48,22 @@ public class GateLogUtils {
             if (respones != null) {
                 String pageNo = respones.getJSONObject("result").getString("pageNo");
                 String pageSize = respones.getJSONObject("result").getString("pageSize");
-                String opt = resolvUri(requestURI);
+                String opt = resolveUri(requestURI);
                 optInfo = opt + "查询列表集第 " + pageNo + " 页中 " + pageSize + " 条数据";
                 return optInfo;
             }
-            String opt = resolvUri(requestURI);
-            return opt;
+            return resolveUri(requestURI);
         }
         //导出
         if (requestURI.toLowerCase().contains(CommonConstants.GET_GATE_LOG_REQUEST_EXPORT)) {
-            String opt = resolvUri(requestURI);
-            return opt;
+            return resolveUri(requestURI);
         }
         //剩下的查询单个
         JSONObject respones = resolvResponse(ctx);
         if (respones != null) {
             respones = respones.getJSONObject("result");
             String name = getName(respones);
-            String opt = resolvUri(requestURI);
+            String opt = resolveUri(requestURI);
             return "查询" + opt + name;
         }
         return "查询信息";
@@ -77,7 +74,7 @@ public class GateLogUtils {
         log.info("请求方式:POST");
         log.info("请求uri为：" + requestUri);
         JSONObject jsonObject = resolvRequest(ctx);
-        String opt = resolvUri(requestUri);
+        String opt = resolveUri(requestUri);
         return "新增" + opt + getName(jsonObject);
     }
 
@@ -87,22 +84,13 @@ public class GateLogUtils {
         log.info("请求uri为：" + requestURI);
         int count = requestURI.split("/").length;
         //为一级uri
-//        if (count == 2) {
         JSONObject jsonObject = resolvRequest(ctx);
-//        String name = getName(jsonObject);
-        String opt = resolvUri(requestURI);
+        String opt = resolveUri(requestURI);
         String jsonBody = "";
         if(jsonObject != null){
             jsonBody = jsonObject.toJSONString();
         }
         return "修改" + opt + jsonBody;
-//        }
-        //为2级uri
-//        if (count == 3) {
-//            String opt = resolvUri(requestURI);
-//            return opt;
-//        }
-//        return "";
     }
 
     public String requestDelete(RequestContext ctx) throws Exception {
@@ -111,7 +99,7 @@ public class GateLogUtils {
         if (response != null) {
             JSONObject responseBody = response.getJSONObject("result");
             String name = getName(responseBody);
-            String opt = resolvUri(requestUri);
+            String opt = resolveUri(requestUri);
             return opt + "删除" + name;
         }
         return "删除信息";
@@ -181,7 +169,7 @@ public class GateLogUtils {
         return null;
     }
 
-    public String resolvUri(String requestUri) {
+    public String resolveUri(String requestUri) {
         //先解析特殊接口
         if (requestUri.contains(CommonConstants.GET_GATE_LOG_REQUEST_FEIGN)) {
             requestUri = requestUri.substring(0, CommonConstants.GET_GATE_LOG_REQUEST_FEIGN.length());

@@ -45,7 +45,7 @@ public class SecurityFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SecurityFilter extends ZuulFilter {
         if (encryptionConfig.getMethods().contains(req.getMethod())) {
             requestWrapper = new EncryptionRequestWrapper(req);
             // 开始解密处理
-            processDecryption(requestWrapper);
+            processDecryption(requestWrapper, req);
             ctx.setRequest(requestWrapper);
         }
         // 返回是否需要加密，默认不加密
@@ -93,7 +93,7 @@ public class SecurityFilter extends ZuulFilter {
      *
      * @param requestWrapper
      */
-    private void processDecryption(EncryptionRequestWrapper requestWrapper) {
+    private void processDecryption(EncryptionRequestWrapper requestWrapper, HttpServletRequest req) {
         String requestData = requestWrapper.getRequestData();
         logger.debug("RequestData: {}", requestData);
         try {
