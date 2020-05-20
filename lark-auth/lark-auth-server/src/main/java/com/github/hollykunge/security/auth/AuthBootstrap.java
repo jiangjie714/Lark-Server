@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients({"com.github.hollykunge.security.auth","com.github.hollykunge.security.common"})
 @MapperScan("com.github.hollykunge.security.auth.mapper")
 @Import(DruidConfig.class)
 @EnableHystrix
