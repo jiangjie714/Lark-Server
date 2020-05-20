@@ -57,7 +57,7 @@ public class ErrorMessageHandler {
                     //执行发送adminjob
                     executorService.execute(new SendAdminMessageTask(adminFeign,errorMessageEntity));
                 } catch (InterruptedException e) {
-                    //todo 第二个过程报错处理，线程池没有执行成功
+                    //考虑着在等待过程被打断，应该不会影响消息发布，因为在等待时没有消息
                 }
             }
         });

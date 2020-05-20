@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.common.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.exception.BaseException;
@@ -11,8 +10,6 @@ import com.github.hollykunge.security.common.feign.ErrorLogFeign;
 import com.github.hollykunge.security.common.feign.ErrorMessageEntity;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.util.WebToolUtils;
-import com.github.hollykunge.security.log.dto.kafka.MessageDto;
-import com.github.hollykunge.security.log.dto.kafka.TopicDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletResponse;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 /**
  * 全局异常处理器
@@ -121,20 +115,27 @@ public class GlobalExceptionHandler {
     }
 
     private void sendError(Exception ex, String error) {
+        ErrorMessageEntity errorMessage = null;
         try {
             ErrorMessageHandler errorInstance = ErrorMessageHandler.getInstance(errorLogFeign, adminErrorFeign);
-            errorInstance.push(getErrorMessage(ex,error));
+            errorMessage = getErrorMessage(ex, error);
+            errorInstance.push(errorMessage);
             logger.info("服务器发生错误，错误日志开始发送到kafka进行统一采集");
         } catch (Exception e) {
-            //todo 第一个过程报错处理，push 到 队列报异常，需要保存到数据库中做持久化，或者用日志记录错误
+            //处理第一个过程报错，高并发情况下，可能队列满了。并没有推送到并发队列中
+            logger.error("并发队列容器已满，不能再进行push操作");
+            logger.error("系统产生的错误为，{}", errorMessage.toString());
         }
     }
 
     private ErrorMessageEntity getErrorMessage(Exception ex,
-                                               String errorMessage) throws Exception {
+                                               String errorMessage){
         ErrorMessageEntity errorMessageEntity = new ErrorMessageEntity();
         errorMessageEntity.setPort(port);
-        errorMessageEntity.setIp(WebToolUtils.getLocalIP());
+        try {
+            errorMessageEntity.setIp(WebToolUtils.getLocalIP());
+        } catch (Exception e) {
+        }
         StackTraceElement[] stackTraces = ex.getStackTrace();
         StackTraceElement firstError = stackTraces[0];
         errorMessageEntity.setErrorClass(firstError.getClassName());
