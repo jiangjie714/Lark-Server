@@ -30,6 +30,8 @@ public enum SocketMsgDetailTypeEnum {
     GROUP_QUIT(MessageType.GROUP_QUIT+""),
     //群编辑200203
     GROUP_EDIT(MessageType.GROUP_EDIT+""),
+    //群解散200205
+    GROUP_DISSOVLE(MessageType.GROUP_DISSOLVE+""),
 
     //会议200300
     MEET_MSG(MessageType.MEET_MSG+""),

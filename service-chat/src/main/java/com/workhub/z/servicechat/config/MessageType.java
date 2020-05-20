@@ -30,6 +30,8 @@ public class MessageType {
     public static final int GROUP_QUIT = 200202;
     //群组操作
     public static final int GROUP_EDIT = 200203;
+    //群解散
+    public static final int GROUP_DISSOLVE = 200205;
     //加入群组
     public static final int GROUP_JOIN_MSG = 5;
     //邀请加入群组

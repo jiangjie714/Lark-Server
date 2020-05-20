@@ -120,46 +120,14 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         SocketMsgVo socketMsgVo =  new SocketMsgVo();
         socketMsgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
         socketMsgVo.setReceiver(zzGroup.getGroupId());
-
         SocketMsgDetailVo addVo = new SocketMsgDetailVo();
-        addVo.setCode(SocketMsgDetailTypeEnum.GROUP_EDIT);//消息类型群编辑
-        GroupTaskDto addDto = new GroupTaskDto();
-        addDto.setType(GROUP_JOIN_MSG);//群编辑类型：加入群
-        addDto.setGroupId(zzGroup.getGroupId());
-        addDto.setTimestamp(new Date());
-        addDto.setReviser(zzGroup.getGroupOwnerId());//
+        addVo.setCode(SocketMsgDetailTypeEnum.GROUP_EDIT);
         List<String> userList = zzGroupDao.queryGroupUserIdListByGroupId(zzGroup.getGroupId());
-        String addUserIds = "";
-        for(int i=0;i<userList.size();i++){
-            if(i==0){
-                addUserIds = userList.get(i);
-            }else {
-                addUserIds += ","+userList.get(i);
-            }
-        }
-        List<UserListDto> addUserList = new ArrayList<>();
-        List<ChatAdminUserVo> addUserInfoList = null;
-        if(!addUserIds.equals("")) {
-            addUserInfoList = iUserService.userList(addUserIds);
-            for (ChatAdminUserVo userInfo : addUserInfoList) {
-                UserListDto userListDto = new UserListDto();
-                userListDto.setUserId(userInfo.getId());
-                userListDto.setImg(userInfo.getAvatar());
-                userListDto.setUserLevels(userInfo.getSecretLevel());
-                addUserList.add(userListDto);
-            }
-        }
-        addDto.setUserList(addUserList);
-        addDto.setZzGroup(zzGroup);
+        int groupEditType = 5;
+        GroupTaskDto addDto = getSendSocketGroupInf(zzGroup.getGroupId(),userList,groupEditType);
         addVo.setData(addDto);
         socketMsgVo.setMsg(addVo);
-        /*//校验消息
-        CheckSocketMsgVo cRes = Common.checkSocketMsg(socketMsgVo);
-        //只有消息合法才去绑定socket通信频道
-        if(cRes.getRes()){
-            rabbitMqMsgProducer.sendSocketTeamMsg(socketMsgVo);
-        }*/
-        rabbitMqMsgProducer.sendSocketTeamMsg(socketMsgVo);
+        rabbitMqMsgProducer.sendSocketMsg(socketMsgVo);
         return update;
     }
 
@@ -341,14 +309,27 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         zzGroupStatus.setDescribe(zzGroupStatus.getOperatorName()+ "解散了群");
         //zzGroupStatusService.add(zzGroupStatus);
         rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
-        SocketMsgVo socketMsgVo = new SocketMsgVo();
-        socketMsgVo.setCode(SocketMsgTypeEnum.UNBIND_USER);
-        SocketMsgDetailVo socketMsgDetailVo = new SocketMsgDetailVo();
-        socketMsgDetailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
-        SocketTeamBindVo socketTeamBindVo =  new SocketTeamBindVo();
-        socketTeamBindVo.setTeamId(groupId);
-        socketTeamBindVo.setUserList(userIds);
-        socketMsgDetailVo.setData(socketTeamBindVo);
+        //发送解绑消息
+        SocketMsgVo unBindVo = new SocketMsgVo();
+        unBindVo.setCode(SocketMsgTypeEnum.UNBIND_USER);
+        SocketMsgDetailVo unBindDetailVo = new SocketMsgDetailVo();
+        unBindDetailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
+        SocketTeamBindVo teamAndUsersInf =  new SocketTeamBindVo();
+        teamAndUsersInf.setTeamId(groupId);
+        teamAndUsersInf.setUserList(userIds);
+        //解绑后给每个人发消息
+        SocketMsgDetailVo afterUnBindDetailVo = new SocketMsgDetailVo();
+        afterUnBindDetailVo.setCode(SocketMsgDetailTypeEnum.GROUP_DISSOVLE);
+        SocketGroupDissolveVo socketGroupDissolveVo = new SocketGroupDissolveVo();
+        socketGroupDissolveVo.setGroupId(groupId);
+        afterUnBindDetailVo.setData(socketGroupDissolveVo);
+        teamAndUsersInf.setMsg(afterUnBindDetailVo);
+        //解散群，全量发送即可
+        teamAndUsersInf.setWholeFlg(true);
+
+        unBindDetailVo.setData(teamAndUsersInf);
+        unBindVo.setMsg(unBindDetailVo);
+        rabbitMqMsgProducer.sendSocketMsg(unBindVo);
         //记录群状态变动end
         try {
             //处理缓存begin
@@ -447,8 +428,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             TeamMemberChangeListVo memberChangeListVo = Common.teamMemberChangeInf(userList,nowUserList);
             List<String> addUserList = memberChangeListVo.getAddList();
             List<String> delUserList = memberChangeListVo.getDelList();
-            //处理群成员begin
-            //添加
+            List<String> noMoveList = memberChangeListVo.getNoMoveList();
             if(addUserList!=null && addUserList.size()!=0){
                 List<ZzUserGroup> userGroupList = new ArrayList<>();
                 for(int i=0;i<addUserList.size();i++){
@@ -460,150 +440,249 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                 }
                 this.zzUserGroupDao.addMemeberList(groupId,userId,userGroupList) ;
             }
-            //删除
             if(delUserList!=null && delUserList.size()!=0){
                 this.zzUserGroupDao.deleteByGroupIdAndUserIdList(groupId,delUserList) ;
             }
-            //处理群成员end
             ZzGroup zzGroup = zzGroupDao.queryById(groupId);
-
             //如果有新增人员 发送消息
-            List msgUserList = new ArrayList();
-            if(addUserList!=null  && addUserList.size()!=0 ){
-                addUserInfoList = iUserService.userList(Joiner.on(",").join(addUserList));
-                String userNames = "";
-                String userIds = "";
-                for (ChatAdminUserVo userInfo:addUserInfoList){
-                    msgUserList.add(userInfo.getId());
-                    userNames += ","+userInfo.getName();
-                    userIds += ","+userInfo.getId();
-                    //redis 缓存处理 把用户的群列表缓存更新
-                    String key = CacheConst.userGroupIds+":"+userInfo.getId();
-                    boolean keyExist = RedisUtil.isKeyExist(key);
-                    //如果key存在更新缓存，把最新的数据加入进去
-                    if(keyExist){
-                        RedisListUtil.putSingleWithoutDup(key,groupId);
-                    }
-
-                }
-                SocketMsgVo msgVo = new SocketMsgVo();
-                msgVo.setCode(SocketMsgTypeEnum.BIND_USER);
-                msgVo.setSender("");
-                msgVo.setReceiver("");
-                SocketTeamBindVo socketTeamBindVo  = new SocketTeamBindVo();
-                socketTeamBindVo.setTeamId(groupId);
-                socketTeamBindVo.setUserList(msgUserList);
-                SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
-                detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
-                detailVo.setData(socketTeamBindVo);
-                msgVo.setMsg(detailVo);
-                rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
-                //记录群状态变动begin
-                if(!userNames.equals("")){
-                    userNames = userNames.substring(1);
-                    userIds = userIds.substring(1);
-                }
-                ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
-                zzGroupStatus.setId(RandomId.getUUID());
-                zzGroupStatus.setOperatorName(userName);
-                zzGroupStatus.setOperator(userId);
-                zzGroupStatus.setOperateTime(new Date());
-                zzGroupStatus.setOperateType(MessageType.FLOW_ADD_MEMBER);//添加人员
-                zzGroupStatus.setGroupId(zzGroup.getGroupId());
-                String describe = zzGroupStatus.getOperatorName()+
-                        "邀请以下人员加入群："+userNames+"；人员id："+userIds;
-                zzGroupStatus.setDescribe(describe);
-                //zzGroupStatusService.add(zzGroupStatus);
-                log.info("发出群变更消息："+ JSONObject.toJSONString(zzGroupStatus));
-                rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
-                //记录群状态变动end
+            if(addUserList!=null  && !addUserList.isEmpty() ){
+                String[] addCacheInfBack = dealRedisCacheAdd(groupId,addUserInfoList,addUserList);
+                String addIds = addCacheInfBack[0];
+                String addNames = addCacheInfBack[1];
+                //发送群绑定消息
+                sendSocketMsgAdd(groupId,addUserList,nowUserList);
+                //发送群流水消息
+                sendGroupAddUserInf(groupId,userId,userName,addIds,addNames);
             }
-
-
             //如果有删除人员发送消息
-            List msgUserList2 = new ArrayList();
-            if(delUserList!=null && delUserList.size()!=0){
-                removeUserInfoList = iUserService.userList(Joiner.on(",").join(delUserList));
-                String userNames = "";
-                String userIds = "";
-                for (ChatAdminUserVo userInfo:removeUserInfoList){
-                    msgUserList2.add(userInfo.getId());
-                    userNames += ","+userInfo.getName();
-                    userIds += ","+userInfo.getId();
-                    //redis 缓存处理 把用户的群列表缓存更新
-                    String key = CacheConst.userGroupIds+":"+userInfo.getId();
-                    boolean keyExist = RedisUtil.isKeyExist(key);
-                    //如果key存在更新缓存，把最新的数据加入进去
-                    if(keyExist){
-                        RedisListUtil.removeSingle(key,groupId);
-                    }
-
-                }
-                SocketMsgVo msgVo2 = new SocketMsgVo();
-                msgVo2.setCode(SocketMsgTypeEnum.UNBIND_USER);
-                msgVo2.setSender("");
-                msgVo2.setReceiver("");
-                SocketTeamBindVo socketTeamBindVo2  = new SocketTeamBindVo();
-                socketTeamBindVo2.setTeamId(groupId);
-                socketTeamBindVo2.setUserList(msgUserList2);
-                SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
-                detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
-                detailVo.setData(socketTeamBindVo2);
-                msgVo2.setMsg(detailVo);
-                rabbitMqMsgProducer.sendSocketTeamUnBindMsg(msgVo2);
-                //记录群状态变动begin
-                if(!userNames.equals("")){
-                    userNames = userNames.substring(1);
-                    userIds = userIds.substring(1);
-                }
-                ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
-                zzGroupStatus.setId(RandomId.getUUID());
-                zzGroupStatus.setOperatorName(userName);
-                zzGroupStatus.setOperator(userId);
-                zzGroupStatus.setOperateType(MessageType.FLOW_DELETE_MEMBER);//踢出人员
-                zzGroupStatus.setGroupId(zzGroup.getGroupId());
-                String describe = zzGroupStatus.getOperatorName()+
-                        "从群里删除以下人员："+userNames+"；人员id："+userIds;
-                zzGroupStatus.setDescribe(describe);
-                zzGroupStatus.setOperateTime(new Date());
-                //zzGroupStatusService.add(zzGroupStatus);
-                log.info("发出群变更消息："+ JSONObject.toJSONString(zzGroupStatus));
-                rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
-                //记录群状态变动end
+            if(delUserList!=null && !delUserList.isEmpty()){
+                String[] delCacheInfBack = dealRedisCacheDelete(groupId,removeUserInfoList,delUserList);
+                String delIds = delCacheInfBack[0];
+                String delNames = delCacheInfBack[1];
+                //发送群绑定消息
+                sendSocketMsgDelete(groupId,delUserList);
+                //发送群流水消息
+                sendGroupDeleteUserInf(groupId,userId,userName,delIds,delNames);
+            }
+            if((addUserList!=null  && !addUserList.isEmpty()) || (delUserList!=null && !delUserList.isEmpty())){
+                //发送给未移动人员，通知群变动
+                sendSocketMsgNoMove(groupId,noMoveList,nowUserList);
             }
         } catch (Exception e) {
             log.error("编辑群组人员出错！！！");
             log.error(Common.getExceptionMessage(e));
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             if(addUserInfoList!=null){
-                for (ChatAdminUserVo userInfo:addUserInfoList){
-                    //redis 缓存处理 把用户脏数据删除
-                    String key = CacheConst.userGroupIds+":"+userInfo.getId();
-                    boolean keyExist = RedisUtil.isKeyExist(key);
-                    if(keyExist){
-                        RedisUtil.remove(key);
-                    }
-
-                }
+                deleteDirtyCacheIfError(addUserInfoList);
             }
             if(removeUserInfoList!=null){
-
-            }
-            for (ChatAdminUserVo userInfo:removeUserInfoList){
-                //redis 缓存处理 把脏数据删除
-                String key = CacheConst.userGroupIds+":"+userInfo.getId();
-                boolean keyExist = RedisUtil.isKeyExist(key);
-                //如果key存在更新缓存，把最新的数据加入进去
-                if(keyExist){
-                    RedisUtil.remove(key);
-                }
-
+                deleteDirtyCacheIfError(removeUserInfoList);
             }
             return  error;
         }
         return success;
     }
+    /**
+     * 给未移动的人员发送群变更消息
+     * @param groupId
+     * @param users
+     */
+    private void sendSocketMsgNoMove(String groupId,List<String> users,List<String> nowUserList){
+        //因为要区分出新加人员、未移动人员的消息，避免重复收到消息，这里不能使用群体消息,需要变量未移动人员，发单条消息
+        SocketMsgVo groupEditSocketVo = new SocketMsgVo();
+        groupEditSocketVo.setCode(SocketMsgTypeEnum.SINGLE_MSG);
+        SocketMsgDetailVo groupDetailVo = new SocketMsgDetailVo();
+        groupDetailVo.setCode(SocketMsgDetailTypeEnum.GROUP_EDIT);
+        int groupEditType = 5;
+        GroupTaskDto groupTaskDto = getSendSocketGroupInf(groupId,nowUserList,groupEditType);
+        groupDetailVo.setData(groupTaskDto);
+        groupEditSocketVo.setMsg(groupDetailVo);
 
+        for(String user:users){
+            groupEditSocketVo.setReceiver(user);
+            rabbitMqMsgProducer.sendSocketMsg(groupEditSocketVo);
+        }
+
+    }
+    /**
+     * 添加群人员处理缓存
+     * @param groupId
+     * @param addUserInfoList
+     * @param addUserList
+     * @return
+     */
+    private String[] dealRedisCacheAdd(String groupId,List<ChatAdminUserVo> addUserInfoList,List<String> addUserList){
+            addUserInfoList = iUserService.userList(Joiner.on(",").join(addUserList));
+            String userNames = "";
+            String userIds = "";
+            for (ChatAdminUserVo userInfo:addUserInfoList){
+                userNames += ","+userInfo.getName();
+                userIds += ","+userInfo.getId();
+                //redis 缓存处理 把用户的群列表缓存更新
+                String key = CacheConst.userGroupIds+":"+userInfo.getId();
+                boolean keyExist = RedisUtil.isKeyExist(key);
+                //如果key存在更新缓存，把最新的数据加入进去
+                if(keyExist){
+                    RedisListUtil.putSingleWithoutDup(key,groupId);
+                }
+
+            }
+            if(!userNames.equals("")){
+                userNames = userNames.substring(1);
+                userIds = userIds.substring(1);
+            }
+            return  new String[]{userIds,userNames};
+    }
+
+    /**
+     * 添加群成员给添加群成员的人发送消息
+     * @param groupId
+     * @param users
+     */
+    private void sendSocketMsgAdd(String groupId,List<String> users,List<String> nowUserList){
+        SocketMsgVo msgVo = new SocketMsgVo();
+        msgVo.setCode(SocketMsgTypeEnum.BIND_USER);
+        msgVo.setSender("");
+        msgVo.setReceiver("");
+        SocketTeamBindVo socketTeamBindVo  = new SocketTeamBindVo();
+        socketTeamBindVo.setTeamId(groupId);
+        socketTeamBindVo.setUserList(users);
+        SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
+        detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
+
+        //绑定完成后发送新建群的消息给新加入的人
+        SocketMsgDetailVo groupDetailVo = new SocketMsgDetailVo();
+        groupDetailVo.setCode(SocketMsgDetailTypeEnum.GROUP_CREATE);
+        int groupCreateType = 0;
+        GroupTaskDto groupTaskDto = getSendSocketGroupInf(groupId,nowUserList,groupCreateType);
+        groupDetailVo.setData(groupTaskDto);
+        socketTeamBindVo.setMsg(groupDetailVo);
+        //需要增量发送，因为群里有些人是不动的，不能都给他们发群创建消息
+        socketTeamBindVo.setWholeFlg(false);
+
+        detailVo.setData(socketTeamBindVo);
+        msgVo.setMsg(detailVo);
+        rabbitMqMsgProducer.sendSocketMsg(msgVo);
+    }
+
+    /**
+     * 群编辑成员，增加时候，记录群流水
+     * @param groupId
+     * @param operator
+     * @param operatorName
+     * @param addIs
+     * @param addNames
+     */
+    private void sendGroupAddUserInf(String groupId,String operator,String operatorName,String addIs,String addNames){
+        ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
+        zzGroupStatus.setId(RandomId.getUUID());
+        zzGroupStatus.setOperatorName(operatorName);
+        zzGroupStatus.setOperator(operator);
+        zzGroupStatus.setOperateTime(new Date());
+        zzGroupStatus.setOperateType(MessageType.FLOW_ADD_MEMBER);//添加人员
+        zzGroupStatus.setGroupId(groupId);
+        String describe = zzGroupStatus.getOperatorName()+
+                "邀请以下人员加入群："+addNames+"；人员id："+addIs;
+        zzGroupStatus.setDescribe(describe);
+        //zzGroupStatusService.add(zzGroupStatus);
+        log.info("发出群变更消息："+ JSONObject.toJSONString(zzGroupStatus));
+        rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
+    }
+    /**
+     * 删除群人员处理缓存
+     * @param groupId
+     * @param delUserInfoList
+     * @param delUserList
+     * @return
+     */
+    private String[] dealRedisCacheDelete(String groupId,List<ChatAdminUserVo> delUserInfoList,List<String> delUserList){
+        delUserInfoList = iUserService.userList(Joiner.on(",").join(delUserList));
+        String userNames = "";
+        String userIds = "";
+        for (ChatAdminUserVo userInfo:delUserInfoList){
+            userNames += ","+userInfo.getName();
+            userIds += ","+userInfo.getId();
+            //redis 缓存处理 把用户的群列表缓存更新
+            String key = CacheConst.userGroupIds+":"+userInfo.getId();
+            boolean keyExist = RedisUtil.isKeyExist(key);
+            //如果key存在更新缓存，把最新的数据加入进去
+            if(keyExist){
+                RedisListUtil.removeSingle(key,groupId);
+            }
+
+        }
+        if(!userNames.equals("")){
+            userNames = userNames.substring(1);
+            userIds = userIds.substring(1);
+        }
+        return  new String[]{userIds,userNames};
+    }
+
+    /**
+     * 删除群成员给添加群成员的人发送消息
+     * @param groupId
+     * @param users
+     */
+    private void sendSocketMsgDelete(String groupId,List<String> users){
+        SocketMsgVo msgVo2 = new SocketMsgVo();
+        msgVo2.setCode(SocketMsgTypeEnum.UNBIND_USER);
+        SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
+        detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
+        SocketTeamBindVo socketTeamBindVo2  = new SocketTeamBindVo();
+        socketTeamBindVo2.setTeamId(groupId);
+        socketTeamBindVo2.setUserList(users);
+        //给每一个被踢出的人发消息，告知被踢出了
+        SocketMsgDetailVo outDetailSocketVo = new SocketMsgDetailVo();
+        outDetailSocketVo.setCode(SocketMsgDetailTypeEnum.GROUP_QUIT);
+        SocketGroupDeleteMemberVo socketGroupDeleteMemberVo = new SocketGroupDeleteMemberVo();
+        socketGroupDeleteMemberVo.setGroupId(groupId);
+        outDetailSocketVo.setData(socketGroupDeleteMemberVo);
+        socketTeamBindVo2.setMsg(outDetailSocketVo);
+        //增量发送，因为踢出人员，还有其他人员在群里，不可能发送全量告诉所有人被t了
+        socketTeamBindVo2.setWholeFlg(false);
+        detailVo.setData(socketTeamBindVo2);
+        msgVo2.setMsg(detailVo);
+        rabbitMqMsgProducer.sendSocketMsg(msgVo2);
+    }
+
+    /**
+     * 群编辑成员，删除时候，记录群流水
+     * @param groupId
+     * @param operator
+     * @param operatorName
+     * @param delIs
+     * @param delNames
+     */
+    private void sendGroupDeleteUserInf(String groupId,String operator,String operatorName,String delIs,String delNames){
+        ZzGroupStatus zzGroupStatus = new ZzGroupStatus();
+        zzGroupStatus.setId(RandomId.getUUID());
+        zzGroupStatus.setOperatorName(operatorName);
+        zzGroupStatus.setOperator(operator);
+        zzGroupStatus.setOperateType(MessageType.FLOW_DELETE_MEMBER);
+        zzGroupStatus.setGroupId(groupId);
+        String describe = zzGroupStatus.getOperatorName()+
+                "从群里删除以下人员："+delNames+"；人员id："+delIs;
+        zzGroupStatus.setDescribe(describe);
+        zzGroupStatus.setOperateTime(new Date());
+        //zzGroupStatusService.add(zzGroupStatus);
+        log.info("发出群变更消息："+ JSONObject.toJSONString(zzGroupStatus));
+        rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
+    }
+
+    /**
+     * 群编辑如果失败，删除可能的脏数据
+     * @param userInfos
+     */
+    private void deleteDirtyCacheIfError(List<ChatAdminUserVo> userInfos){
+        for (ChatAdminUserVo userInfo:userInfos){
+            //redis 缓存处理 把用户脏数据删除
+            String key = CacheConst.userGroupIds+":"+userInfo.getId();
+            boolean keyExist = RedisUtil.isKeyExist(key);
+            if(keyExist){
+                RedisUtil.remove(key);
+            }
+        }
+    }
     /**
      * 群编辑校验
      * @param groupId
@@ -721,5 +800,36 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return res;
+    }
+
+    /**
+     * 获取群创建或者编辑信息给前端推送
+     * @param groupId 群id
+     * @param userList 用户列表
+     * @param type 编辑类型 0 创建 1 编辑（该参数目前应该没用）
+     * @return
+     */
+    @Override
+    public GroupTaskDto  getSendSocketGroupInf(String groupId,List<String> userList,int type){
+
+        GroupTaskDto groupTaskDto = new GroupTaskDto();
+        ZzGroup zzGroupInfo = queryById(groupId);
+        List<UserListDto> groupUserList = new ArrayList<UserListDto>();
+        String ids = userList.stream().collect(Collectors.joining(","));
+        List<ChatAdminUserVo> userInfoList = iUserService.userList(ids);
+        for(ChatAdminUserVo userVo : userInfoList){
+            UserListDto user = new UserListDto();
+            user.setImg(userVo.getAvatar());
+            user.setUserId(userVo.getId());
+            user.setUserLevels(userVo.getSecretLevel());
+            groupUserList.add(user);
+        }
+        groupTaskDto.setType(type);
+        groupTaskDto.setGroupId(groupId);
+        groupTaskDto.setUserList(groupUserList);
+        groupTaskDto.setTimestamp(zzGroupInfo.getCreateTime());
+        groupTaskDto.setReviser(zzGroupInfo.getCreator());
+        groupTaskDto.setZzGroup(zzGroupInfo);
+        return  groupTaskDto;
     }
 }

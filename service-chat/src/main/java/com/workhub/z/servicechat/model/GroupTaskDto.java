@@ -15,7 +15,7 @@ public class GroupTaskDto<T> {
     //修改人
     private String reviser;
 
-    //操作类型，1，加入群组；2，退出群组；3.关闭群组；4.删除群组
+    //操作类型，0群创建，1，加入群组；2，退出群组；3.关闭群组；4.删除群组；5群编辑
     private int type;
 
     // 用户列表

@@ -385,7 +385,8 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
                     //如果建群正常，发送socket
                     if(restResponse.isRel()){
                         teamUserList = this.zzGroupService.queryGroupUserIdListByGroupId(groupId);
-                        GroupTaskDto groupTaskDto = this.getSendGroupCreateInf(groupId,teamUserList);
+                        int groupCreateType = 0;
+                        GroupTaskDto groupTaskDto = this.zzGroupService.getSendSocketGroupInf(groupId,teamUserList,groupCreateType);
                         sendTeamBindMsgAfterCreate(groupId,teamUserList,groupTaskDto,SocketMsgDetailTypeEnum.GROUP_CREATE);
                         addCache(teamUserList,groupId,CacheConst.userGroupIds);
                     }else{
@@ -473,8 +474,6 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
         //绑定消息体
         SocketMsgVo bindMsgVo = new SocketMsgVo();
         bindMsgVo.setCode(SocketMsgTypeEnum.BIND_USER);
-        bindMsgVo.setSender("");
-        bindMsgVo.setReceiver("");
         //绑定详细vo
         SocketMsgDetailVo bindDetailVo = new SocketMsgDetailVo();
         bindDetailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
@@ -484,52 +483,19 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
         bindVo.setUserList(userList);
 
         //绑定完成后发送消息
-        SocketMsgVo teamMsgVo = new SocketMsgVo();
-        teamMsgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
-        teamMsgVo.setSender("");
-        teamMsgVo.setReceiver(teamId);
         SocketMsgDetailVo teamDetailVo = new SocketMsgDetailVo();
         teamDetailVo.setCode(msgCode);
         //成员接收的消息
         teamDetailVo.setData(message);
-        teamMsgVo.setMsg(teamDetailVo);
+        bindVo.setMsg(teamDetailVo);
+        //绑定完成后全量发送
+        bindVo.setWholeFlg(true);
+
         //绑定后发送消息给群成员
-        bindVo.setMsg(teamMsgVo);
         bindDetailVo.setData(bindVo);
         bindMsgVo.setMsg(bindDetailVo);
-        rabbitMqMsgProducer.sendSocketTeamBindMsg(bindMsgVo);
+        rabbitMqMsgProducer.sendSocketMsg(bindMsgVo);
     }
-
-    /**
-     * 发送群创建消息
-     * @param groupId
-     * @param userList
-     * @return
-     */
-    private GroupTaskDto  getSendGroupCreateInf(String groupId,List<String> userList){
-
-        GroupTaskDto groupTaskDto = new GroupTaskDto();
-        ZzGroup zzGroupInfo = zzGroupService.queryById(groupId);
-        List<UserListDto> groupUserList = new ArrayList<UserListDto>();
-        String ids = userList.stream().collect(Collectors.joining(","));
-        List<ChatAdminUserVo> userInfoList = iUserService.userList(ids);
-        for(ChatAdminUserVo userVo : userInfoList){
-            UserListDto user = new UserListDto();
-            user.setImg(userVo.getAvatar());
-            user.setUserId(userVo.getId());
-            user.setUserLevels(userVo.getSecretLevel());
-            groupUserList.add(user);
-        }
-        //0创建（这个字段应该没有用了）
-        groupTaskDto.setType(0);
-        groupTaskDto.setGroupId(groupId);
-        groupTaskDto.setUserList(groupUserList);
-        groupTaskDto.setTimestamp(zzGroupInfo.getCreateTime());
-        groupTaskDto.setReviser(zzGroupInfo.getCreator());
-        groupTaskDto.setZzGroup(zzGroupInfo);
-        return  groupTaskDto;
-    }
-
     /**
      * 添加缓存
      * @param userList

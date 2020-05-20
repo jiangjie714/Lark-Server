@@ -7,6 +7,7 @@ import com.workhub.z.servicechat.VO.GroupUserListVo;
 import com.workhub.z.servicechat.VO.GroupVo;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.model.GroupEditDto;
+import com.workhub.z.servicechat.model.GroupTaskDto;
 
 import java.util.List;
 import java.util.Map;
@@ -124,4 +125,12 @@ public interface ZzGroupService {
      * @return
      */
     ObjectRestResponse createGroup(String groupJsonStr);
+    /**
+     * 获取群创建或者编辑信息给前端推送
+     * @param groupId 群id
+     * @param userList 用户列表
+     * @param type 编辑类型 0 创建 5 编辑（该参数目前应该没用）
+     * @return
+     */
+     GroupTaskDto getSendSocketGroupInf(String groupId, List<String> userList, int type);
 }

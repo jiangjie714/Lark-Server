@@ -33,7 +33,7 @@ public class SystemMessage {
         if(cRes.getRes()){
             rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
         }*/
-        rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
+        rabbitMqMsgProducer.sendSocketMsg(msgVo);
     }
 
 }

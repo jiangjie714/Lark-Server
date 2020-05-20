@@ -779,7 +779,7 @@ public class Common {
     }
 
     /**
-     * 群或者会议，返回人员增加或者删除列表
+     * 群或者会议，返回人员增加,删除和未移动人员列表
      * @param oriList 原来人员列表
      * @param nowList 最新人员列表
      */
@@ -787,6 +787,7 @@ public class Common {
         TeamMemberChangeListVo vo = new TeamMemberChangeListVo();
         List<String> addList = new ArrayList<>();
         List<String> delList = new ArrayList<>();
+        List<String> noMoveList = new ArrayList<>();
         //新增判断
         for(String now:nowList){
             boolean addFlg = true;//该人员是新增的
@@ -814,8 +815,18 @@ public class Common {
                 delList.add(temp);
             }
         }
+        //未移动人员判断
+        for(String temp: oriList){
+            for(String now : nowList){
+                if(temp.equals(now)){
+                    noMoveList.add(temp);
+                    break;
+                }
+            }
+        }
         vo.setAddList(addList);
         vo.setDelList(delList);
+        vo.setNoMoveList(noMoveList);
         return vo;
     }
 

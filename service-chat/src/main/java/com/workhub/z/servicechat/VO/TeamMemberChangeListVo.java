@@ -15,4 +15,6 @@ public class TeamMemberChangeListVo {
     private List<String> addList;
     //删除的人员
     private List<String> delList;
+    //未移动的人员
+    private List<String> noMoveList;
 }

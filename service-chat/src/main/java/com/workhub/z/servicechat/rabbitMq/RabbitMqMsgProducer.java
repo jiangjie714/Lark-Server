@@ -1,6 +1,8 @@
 package com.workhub.z.servicechat.rabbitMq;
 
+import com.workhub.z.servicechat.VO.SocketMsgVo;
 import com.workhub.z.servicechat.config.RandomId;
+import com.workhub.z.servicechat.config.SocketMsgTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -32,7 +34,6 @@ public class RabbitMqMsgProducer  implements RabbitTemplate.ReturnCallback, Rabb
         //把消息放入ROUTINGKEY_A对应的队列当中去，对应的是队列A
         rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_CONTACT, RabbitConfig.ROUTINGKEY_CONTACT, obj, correlationId);
     }
-
     //群变动消息记录
     public void sendMsgGroupChange(Object obj) {
         CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
@@ -44,34 +45,39 @@ public class RabbitMqMsgProducer  implements RabbitTemplate.ReturnCallback, Rabb
         rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_CONTACT, RabbitConfig.ROUTINGKEY_GROUPAPPROVELOG, obj, correlationId);
     }
 
-    /**socket 消息begin*/
-    /*群体（群 会议 系统通知）消息*/
-    public void sendSocketTeamMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_MSG, obj, correlationId);
+    /**
+     * 发送socket消息
+     * @param msgVo
+     * @return
+     */
+    public boolean sendSocketMsg(SocketMsgVo msgVo){
+          String scode = msgVo.getCode();
+          if(scode==null){
+              logger.error("socket 消息错误 没有一级编码");
+             return false;
+          }
+          CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
+          if(scode.equals(SocketMsgTypeEnum.SINGLE_MSG.getCode())){
+              //单人消息
+              rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_PRIVATE_MSG, msgVo, correlationId);
+          }else if(scode.equals(SocketMsgTypeEnum.TEAM_MSG.getCode())){
+              //群体消息
+              rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_MSG, msgVo, correlationId);
+          }else if(scode.equals(SocketMsgTypeEnum.BIND_USER.getCode())){
+              //绑定
+              rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_BIND, msgVo, correlationId);
+          }else if(scode.equals(SocketMsgTypeEnum.UNBIND_USER.getCode())){
+              //解绑
+              rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_UNBIND, msgVo, correlationId);
+          } else if(scode.equals(SocketMsgTypeEnum.BIND_LIST.getCode())){
+              //群体列表绑定
+              rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAMLIST_BIND, msgVo, correlationId);
+          }else {
+              logger.error("socket 消息错误 一级编码无法识别");
+              return false;
+          }
+          return  true;
     }
-    /*私聊消息*/
-    public void sendSocketPrivateMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_PRIVATE_MSG, obj, correlationId);
-    }
-    /*绑定群体消息*/
-    public void sendSocketTeamBindMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_BIND, obj, correlationId);
-    }
-    /*绑定群体列表消息*/
-    public void sendSocketTeamListBindMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAMLIST_BIND, obj, correlationId);
-    }
-    /*解除绑定群体消息*/
-    public void sendSocketTeamUnBindMsg(Object obj) {
-        CorrelationData correlationId = new CorrelationData(RandomId.getUUID());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_SOCKET, RabbitConfig.ROUTINGKEY_SOCKET_TEAM_UNBIND, obj, correlationId);
-    }
-    /**socket 消息end*/
-
     /**
      * 消息是否到交换机中都有callback
      */
