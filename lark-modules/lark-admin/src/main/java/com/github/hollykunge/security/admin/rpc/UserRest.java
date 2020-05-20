@@ -87,6 +87,7 @@ public class UserRest {
     @RequestMapping(value = "/user/validate", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<AdminUser> validate(String pid, String password) {
+        int i = 1/0;
         AdminUser validate = permissionService.validate(pid, password);
         return new ObjectRestResponse<>().data(validate);
     }
