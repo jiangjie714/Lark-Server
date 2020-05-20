@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.task.biz;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
@@ -10,7 +9,6 @@ import com.github.hollykunge.security.common.vo.RpcUserInfo;
 import com.github.hollykunge.security.task.config.TaskProduceSend;
 import com.github.hollykunge.security.task.dto.LarkProjectMemberDto;
 import com.github.hollykunge.security.task.entity.LarkProject;
-import com.github.hollykunge.security.task.dto.LarkProjectDto;
 import com.github.hollykunge.security.task.entity.LarkProjectMember;
 import com.github.hollykunge.security.task.feign.LarkProjectFeign;
 import com.github.hollykunge.security.task.mapper.LarkProjectMapper;
@@ -20,7 +18,6 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 

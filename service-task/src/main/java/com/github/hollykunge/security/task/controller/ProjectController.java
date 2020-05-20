@@ -1,7 +1,5 @@
 package com.github.hollykunge.security.task.controller;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -55,7 +53,6 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *      return $http.post(url, data);
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/operation",method = RequestMethod.POST)
     public ObjectRestResponse<LarkProject> createProject(@RequestBody LarkProject project, HttpServletRequest request){
        return larkProjectBiz.createProject(project,request);
@@ -92,7 +89,6 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *       return $http.post(url, data);
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/operation",method = RequestMethod.PUT)
     public ObjectRestResponse<LarkProject> edit(@RequestBody LarkProject project){
         if(StringUtils.isEmpty(project.getId())){
@@ -106,7 +102,6 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      * 封面存储
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/editCover",method = RequestMethod.POST)
     public FileInfoVO projectTemplateCover(@RequestParam("file") MultipartFile file){
         ObjectRestResponse<FileInfoVO> objectRestResponse= larkProjectTemplateFeign.projectTemplateCover(file);
@@ -147,7 +142,6 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *       return $http.post('project/project/recycle', {projectCode: code});
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/recycle",method = RequestMethod.POST)
     public BaseResponse recycle(@RequestParam("projectCode") String projectCode){
         if(StringUtils.isEmpty(projectCode)){
@@ -168,7 +162,6 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *       return $http.post('project/project/recovery', {projectCode: code});
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/recovery",method = RequestMethod.POST)
     public BaseResponse recovery(@RequestParam("projectCode") String projectCode){
         if(StringUtils.isEmpty(projectCode)){
@@ -190,7 +183,6 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *       return $http.post('project/project/archive', {projectCode: code});
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/archive",method = RequestMethod.POST)
     public ObjectRestResponse<LarkProject> archive(@RequestParam("projectCode") String projectCode){
         LarkProject larkProject = new LarkProject();
@@ -207,7 +199,6 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *    return $http.post('project/project/recoveryArchive', {projectCode: code});
      * }
      */
-    @Decrypt
     @RequestMapping(value = "/recoveryArchive",method = RequestMethod.POST)
     public BaseResponse recoveryArchive(@RequestParam("projectCode") String projectCode){
         LarkProject larkProject = new LarkProject();

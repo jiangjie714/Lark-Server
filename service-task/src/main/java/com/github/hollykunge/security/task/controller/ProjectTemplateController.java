@@ -1,11 +1,9 @@
 package com.github.hollykunge.security.task.controller;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.task.biz.LarkProjectTemplateBiz;
 import com.github.hollykunge.security.task.dto.LarkProjectTemplateDto;
@@ -53,7 +51,6 @@ public class ProjectTemplateController extends BaseController<LarkProjectTemplat
      *       return $http.post(url, data);
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/operation",method = RequestMethod.POST)
     public ObjectRestResponse<LarkProjectTemplate> save(
             @RequestParam("projectTemplateName") String projectTemplateName,
@@ -70,7 +67,6 @@ public class ProjectTemplateController extends BaseController<LarkProjectTemplat
         larkProjectTemplatebiz.save(projectTemplate);
         return new ObjectRestResponse<LarkProjectTemplate>().data(projectTemplate).rel(true).msg("模板创建成功");
     }
-    @Decrypt
     @RequestMapping(value = "/operation",method = RequestMethod.PUT)
     public ObjectRestResponse<LarkProjectTemplate> edit(
             @RequestParam(value = "projectTemplateName",required=false) String projectTemplateName,

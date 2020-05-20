@@ -1,7 +1,5 @@
 package com.github.hollykunge.security.task.controller;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -50,7 +48,6 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
      *       return $http.post('project/project_member/inviteMember', {memberCode: memberCode, projectCode: code});
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/inviteMember",method = RequestMethod.POST)
     public BaseResponse inviteMember(
             @RequestBody List<String> memberCodes,
@@ -81,7 +78,6 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
      * 	]
      * }
      */
-    @Decrypt
     @RequestMapping(value = "/assignRoles",method = RequestMethod.POST)
     public BaseResponse assignRoles(@RequestParam("memberCode") String memberCode,
                                     @RequestParam("roleCode") String roleCode,
@@ -102,7 +98,6 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
         larkProjectMemberbiz.insertSelective(larkProjectMember);
         return new BaseResponse(200,"成员角色已分配!");
     }
-    @Decrypt
     @RequestMapping(value = "/updateAssignRoles",method = RequestMethod.PUT)
     public BaseResponse UpdateAssignRoles(@RequestParam("memberCode") String memberCode,
                                     @RequestParam("roleCode") String roleCode,

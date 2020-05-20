@@ -3,14 +3,17 @@ package com.github.hollykunge.security.task.biz;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.vo.RpcUserInfo;
+import com.github.hollykunge.security.task.constant.TaskCommon;
 import com.github.hollykunge.security.task.dto.LarkProjectMemberDto;
 import com.github.hollykunge.security.task.dto.LarkTaskMemberDto;
+import com.github.hollykunge.security.task.dto.TaskNum;
 import com.github.hollykunge.security.task.entity.LarkTaskMember;
 import com.github.hollykunge.security.task.mapper.LarkProjectMemberMapper;
 import com.github.hollykunge.security.task.mapper.LarkTaskMemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,5 +68,24 @@ public class LarkTaskMemberBiz extends BaseBiz<LarkTaskMemberMapper, LarkTaskMem
     public ObjectRestResponse<LarkTaskMember> updateTaskMember(String modifyMemberId, String modifiedMemberId) {
         larkTaskMemberMapper.updateTaskMember(modifyMemberId,modifiedMemberId);
         return new ObjectRestResponse<>().rel(true);
+    }
+
+
+    public void inviteMemberBatch(List<String> memberIdList, String taskCode) {
+
+        for(String memberId:memberIdList){
+            Example example = new Example(LarkTaskMember.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("memeberCode",memberId);
+            criteria.andEqualTo("taskCode",taskCode);
+            if(larkTaskMemberMapper.selectCountByExample(example)> TaskCommon.NUMBER_ZERO){
+                LarkTaskMember larkTaskMember = new LarkTaskMember();
+                larkTaskMember.setTaskCode(taskCode);
+                larkTaskMember.setMemeberCode(memberId);
+                larkTaskMemberMapper.delete(larkTaskMember);
+            }else{
+
+            }
+        }
     }
 }

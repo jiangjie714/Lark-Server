@@ -105,11 +105,7 @@
       <version>11.2.0.3</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.cxytiandi</groupId>
-      <artifactId>monkey-api-encrypt-core</artifactId>
-      <version>1.2.RELEASE</version>
-    </dependency>
+
     <dependency>
       <groupId>com.github.pagehelper</groupId>
       <artifactId>pagehelper-spring-boot-starter</artifactId>

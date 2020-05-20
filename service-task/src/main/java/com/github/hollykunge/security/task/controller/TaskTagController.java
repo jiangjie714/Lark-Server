@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.task.controller;
 
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -36,7 +35,6 @@ public class TaskTagController extends BaseController<LarkTaskTagBiz,LarkTaskTag
      *       return $http.post('project/task_tag/save', data);
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/save",method = RequestMethod.POST)
     public BaseResponse save(@RequestBody LarkTaskTag larkTaskTag){
         larkTaskTag.setId(UUIDUtils.generateShortUuid());

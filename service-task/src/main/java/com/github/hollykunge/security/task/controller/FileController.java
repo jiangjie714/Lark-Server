@@ -1,11 +1,9 @@
 package com.github.hollykunge.security.task.controller;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
-import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.task.biz.LarkTaskFileBiz;
 import com.github.hollykunge.security.task.constant.TaskCommon;
@@ -17,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 
@@ -37,7 +34,6 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      * 上传task任务关联文件
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/upload",method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<LarkFile> taskFileUpload(
@@ -91,7 +87,6 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.post('project/file/edit', data);
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
     public BaseResponse edit(@RequestBody Object data){
         //todo 暂时这么写
@@ -105,7 +100,6 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.get('project/file/recycle', {fileCode: fileCode});
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/recycle",method = RequestMethod.PUT)
     public ObjectRestResponse<Object> recycle(@RequestParam("fileCode") String fileCode){
         LarkFile larkFile = new LarkFile();
@@ -125,7 +119,6 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.get('project/file/recovery', {fileCode: fileCode});
      *   }
      */
-    @Decrypt
     @RequestMapping(value = "/recovery",method = RequestMethod.PUT)
     public ObjectRestResponse<Object> recovery(@RequestParam("fileCode") String fileCode){
         LarkFile larkFile = new LarkFile();

@@ -5,11 +5,9 @@ import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.task.constant.TaskCommon;
 import com.github.hollykunge.security.task.entity.LarkFile;
-import com.github.hollykunge.security.task.entity.LarkTask;
 import com.github.hollykunge.security.task.feign.LarkProjectFileFeign;
 import com.github.hollykunge.security.task.mapper.LarkFileMapper;
 import com.github.pagehelper.Page;
@@ -21,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
