@@ -6,16 +6,16 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
  * @author LARK
  */
 public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
-
-    private final Map<String, String> customHeaders;
 
     private byte[] requestBody = new byte[0];
 
@@ -28,13 +28,24 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
     public EncryptionRequestWrapper(HttpServletRequest request) {
         super(request);
         try {
-            this.customHeaders = new HashMap<String, String>();
-            this.contentLength = request.getContentLength();
-            this.contentLengthLong = request.getContentLength();
             requestBody = StreamUtils.copyToByteArray(request.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getRequestData() {
+        return new String(requestBody);
+    }
+
+    public void setRequestData(String requestData) {
+        this.requestBody = requestData.getBytes();
+        this.contentLength = requestData.getBytes().length;
+        this.contentLengthLong = requestData.getBytes().length;
+    }
+
+    public void setParamMap(Map<String, String> paramMap) {
+        this.paramMap = paramMap;
     }
 
     @Override
@@ -45,6 +56,11 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public long getContentLengthLong() {
         return this.contentLengthLong;
+    }
+
+    @Override
+    public BufferedReader getReader() throws IOException {
+        return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 
     @Override
@@ -71,48 +87,6 @@ public class EncryptionRequestWrapper extends HttpServletRequestWrapper {
 
             }
         };
-    }
-
-    public String getRequestData() {
-        return new String(requestBody);
-    }
-
-    public void setRequestData(String requestData) {
-        this.requestBody = requestData.getBytes();
-        this.contentLength = requestData.length();
-        this.contentLengthLong = requestData.length();
-    }
-
-    public void setParamMap(Map<String, String> paramMap) {
-        this.paramMap = paramMap;
-    }
-
-    public void putHeader(String name, String value) {
-        this.customHeaders.put(name, value);
-    }
-
-    @Override
-    public String getHeader(String name) {
-        String headerValue = customHeaders.get(name);
-        if (headerValue != null) {
-            return headerValue;
-        }
-        return ((HttpServletRequest) getRequest()).getHeader(name);
-    }
-
-    @Override
-    public Enumeration<String> getHeaderNames() {
-
-        Set<String> set = new HashSet<String>(customHeaders.keySet());
-
-        @SuppressWarnings("unchecked")
-        Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
-        while (e.hasMoreElements()) {
-            String n = e.nextElement();
-            set.add(n);
-        }
-
-        return Collections.enumeration(set);
     }
 
     @Override

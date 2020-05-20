@@ -7,7 +7,8 @@ import org.springframework.context.ApplicationContextAware;
 
 public final class SpringUtils implements ApplicationContextAware {
 
-    private static ApplicationContext applicationContext; // Spring应用上下文环境
+    // Spring应用上下文环境
+    private static ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
