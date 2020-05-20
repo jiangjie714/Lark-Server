@@ -13,7 +13,6 @@ import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.config.MessageType;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.model.GroupEditDto;
-import com.workhub.z.servicechat.model.GroupEditUserList;
 import com.workhub.z.servicechat.redis.RedisUtil;
 import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzGroupService;
@@ -400,7 +399,7 @@ public class ZzGroupController  {
     /**
      * 群成员编辑
      * @param groupInfo
-     * @return 1成功 -1失败 0群成员过多：秘密限制50以内，机密限制100以内,2 解散群成功,3 校验失败 当前人必须在群组内 4 校验失败 不能删除群主
+     * @return 1成功 -1失败 0群成员过多：秘密限制50以内，机密限制100以内,2 解散群成功,3 校验失败 当前人必须在群组内 4 校验失败 不能删除群主 5 解散群失败，只有群主可以
      * @throws Exception
      */
     @Decrypt
@@ -411,7 +410,7 @@ public class ZzGroupController  {
         objectRestResponse.msg("编辑成员成功");
         String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
-        int success = 1,error = -1,tooManyMembers = 0, successDissolve = 2,validErrorNotInGroup = 3,validErrorDelOwner = 4;
+        int success = 1,error = -1,tooManyMembers = 0, successDissolve = 2,validErrorNotInGroup = 3,validErrorDelOwner = 4,errorDissolve = 5;
         int res = zzGroupService.groupMemberEdit(groupInfo,userId,userName);
         if(res==error){
             objectRestResponse.rel(false);
@@ -427,11 +426,36 @@ public class ZzGroupController  {
         }else if(res==validErrorDelOwner){
             objectRestResponse.rel(false);
             objectRestResponse.msg("不能删除群主");
+        }else if(res==errorDissolve){
+            objectRestResponse.rel(false);
+            objectRestResponse.msg("只有群主可以解散群");
         }
 
         return objectRestResponse;
     }
 
+    /**
+     * 群解散
+     * @param groupId
+     * @return
+     * @throws Exception
+     */
+    @Decrypt
+    @PutMapping("dissolveGroup")
+    public ObjectRestResponse dissolveGroup(@RequestParam("groupId") String groupId) throws Exception{
+        String userId= Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
+        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
+        objectRestResponse.rel(true);
+        objectRestResponse.msg("操作成功");
+        int success = 1;
+        int res = this.zzGroupService.dissolveGroup(groupId,userId,userName);
+        if(res!=success){
+            objectRestResponse.rel(false);
+            objectRestResponse.msg("操作失败，只有群主可以解散群");
+        }
+        return objectRestResponse;
+    }
     /**
      * 获取全部群组信息，包括人员
      * @param groupId

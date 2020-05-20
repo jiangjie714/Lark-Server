@@ -286,10 +286,16 @@ public class ZzGroupServiceImpl implements ZzGroupService {
      * @param groupId
      * @param userId
      * @param userName
+     * @return 1成功0校验失败，只有群主可以解散群
      */
     @Override
     @Transactional(rollbackFor={RuntimeException.class, Exception.class})
-    public void dissolveGroup(String groupId,String userId,String userName){
+    public int dissolveGroup(String groupId,String userId,String userName){
+        int success = 1,validateError = 0;
+        int validateSuccss = 1;
+        if(validDissolveGroup(groupId,userId)!=validateSuccss){
+            return validateError;
+        }
         List<String> userIds = this.zzGroupDao.queryGroupUserIdListByGroupId(groupId);
         zzUserGroupDao.deleteByGroupId(groupId);
         ZzGroup group = new ZzGroup();
@@ -347,10 +353,24 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             log.error("解散取处理redis缓存报错！！！");
             log.error(Common.getExceptionMessage(e));
         }
-
         //处理缓存end
+        return success;
     }
 
+    /**
+     * 群解散校验
+     * @param groupId
+     * @param userId
+     * @return
+     */
+    private int validDissolveGroup(String groupId,String userId){
+        int success = 1,error = 0;
+        ZzGroup zzGroup = this.zzGroupDao.queryById(groupId);
+        if(zzGroup!=null && zzGroup.getGroupOwnerId().equals(userId)){
+            return success;
+        }
+        return error;
+    }
     @Override
     public void removeMember(String groupId, String userId){
         if (zzUserGroupDao.deleteByGroupIdAndUserId(groupId, userId)>0){
@@ -387,12 +407,12 @@ public class ZzGroupServiceImpl implements ZzGroupService {
      * @param groupEditDto
      * @param userId
      * @param userName
-     * @return 群编辑 1成功 -1失败 0群成员过多：秘密限制50以内，机密限制100以内,2 解散群成功,3 校验失败 当前人必须在群组内 4 校验失败 不能删除群主
+     * @return 群编辑 1成功 -1失败 0群成员过多：秘密限制50以内，机密限制100以内,2 解散群成功,3 校验失败 当前人必须在群组内 4 校验失败 不能删除群主 5 解散群失败
      */
     @Override
     @Transactional(rollbackFor={RuntimeException.class, Exception.class})
     public int groupMemberEdit(GroupEditDto groupEditDto, String userId, String userName){
-        int success = 1,error = -1,tooManyMembers = 0, successDissolve = 2,validErrorNotInGroup = 3,validErrorDelOwner = 4;
+        int success = 1,error = -1,tooManyMembers = 0, successDissolve = 2,validErrorNotInGroup = 3,validErrorDelOwner = 4,errorDissolve = 5;
         int operatorNotInGroup = 0,cannotDelOwner = -1;
         List<GroupEditUserList> userListDtos = groupEditDto.getUserList();
         String groupId = groupEditDto.getGroupId();
@@ -404,7 +424,11 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         }
         //如果只有群主自己了，解散群
         if(userListDtos.size()==1){
-            dissolveGroup(groupId,userId,userName);
+            int successDisslove = 1;
+            int dissolveRes = dissolveGroup(groupId,userId,userName);
+            if(successDisslove!=dissolveRes){
+                return errorDissolve;
+            }
             return successDissolve;
         }
         List<ChatAdminUserVo> addUserInfoList = null;

@@ -93,10 +93,12 @@ public interface ZzGroupService {
 
     /**
      * 解散研讨组
-     * @author dd
      * @param groupId
+     * @param userId
+     * @param userName
+     * @return
      */
-    void dissolveGroup(String groupId,String userId,String userName);
+    int dissolveGroup(String groupId,String userId,String userName);
 
     /**
      * 移除研讨组成员
@@ -115,7 +117,11 @@ public interface ZzGroupService {
     void addMember(String groupId, String userId);
 
     /**
-     * 群编辑接口
+     * 群成员编辑
+     * @param groupEditDto
+     * @param userId
+     * @param userName
+     * @return
      */
     int groupMemberEdit(GroupEditDto groupEditDto, String userId, String userName);
 
