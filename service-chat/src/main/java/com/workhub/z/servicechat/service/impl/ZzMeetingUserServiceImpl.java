@@ -296,7 +296,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 if(cRes.getRes()){
                     rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
                 }*/
-                rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
+                rabbitMqMsgProducer.sendSocketMsg(msgVo);
                 //记录群状态变动begin
                 if(!userNames.equals("")){
                     userNames = userNames.substring(1);
@@ -356,7 +356,7 @@ public class ZzMeetingUserServiceImpl implements ZzMeetingUserService {
                 if(cRes.getRes()){
                     rabbitMqMsgProducer.sendSocketTeamUnBindMsg(msgVo2);
                 }*/
-                rabbitMqMsgProducer.sendSocketTeamUnBindMsg(msgVo2);
+                rabbitMqMsgProducer.sendSocketMsg(msgVo2);
                 //记录群状态变动begin
                 if(!userNames.equals("")){
                     userNames = userNames.substring(1);

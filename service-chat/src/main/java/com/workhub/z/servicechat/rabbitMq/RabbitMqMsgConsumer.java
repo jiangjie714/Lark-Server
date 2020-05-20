@@ -168,7 +168,7 @@ public class RabbitMqMsgConsumer {
             if(Common.checkSocketMsg(vo).getRes()){
                 rabbitMqMsgProducer.sendSocketTeamListBindMsg(vo2);
             }*/
-            rabbitMqMsgProducer.sendSocketTeamListBindMsg(vo2);
+            rabbitMqMsgProducer.sendSocketMsg(vo2);
         }catch (Exception e){
             logger.error("人员群体信息绑定消息处理报错");
             logger.error(Common.getExceptionMessage(e));

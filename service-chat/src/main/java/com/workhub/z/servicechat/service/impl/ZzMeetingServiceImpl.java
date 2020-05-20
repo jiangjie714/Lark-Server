@@ -339,7 +339,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             if(cRes.getRes()){
                 rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
             }*/
-            rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
+            rabbitMqMsgProducer.sendSocketMsg(msgVo);
         }catch (Exception e){
             logger.error("会议变更推送前端报错！");
             logger.error(Common.getExceptionMessage(e));
@@ -449,6 +449,6 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             return msgSendStatusVo;
         }*/
         //todo SocketDetailMsgVo加密
-        rabbitMqMsgProducer.sendSocketTeamBindMsg(msgVo);
+        rabbitMqMsgProducer.sendSocketMsg(msgVo);
     }
 }

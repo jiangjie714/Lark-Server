@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class SocketTeamBindVo {
     /**
-     * 绑定群体的人员列表
+     * 绑定（解绑）群体的人员列表
      */
     private List<String> userList;
     /**
@@ -20,7 +20,16 @@ public class SocketTeamBindVo {
      */
     private String teamId;
     /**
-     * 绑定(解绑)某个群体发送消息（null不发送），如果是绑定消息，发给群体，如果是解绑，给每个解绑人员单独发
+     * 绑定(解绑)某个群体后发送消息
      */
-    private SocketMsgVo msg;
+    private SocketMsgDetailVo msg;
+    /**
+     * 绑定（解绑）后，全量发送还是增量发送
+     * 该变量只有在msg不为空才有意义 true全量，false增量
+     * 对于绑定 如果wholeFlg = true ，那么绑定后，会给绑定teamId发送群体消息 msg
+     * 对于绑定 如果wholeFlg = false ，那么绑定后，会遍历userList发送单人消息 msg
+     * 对于解绑 如果wholeFlg = true, 那么在解绑前，会先给teamId发送群体消息msg，然后解绑
+     * 对于解绑 如果wholeFlg = false,那么解绑后，会遍历userList发送单人消息msg
+     */
+    private boolean wholeFlg = true;
 }

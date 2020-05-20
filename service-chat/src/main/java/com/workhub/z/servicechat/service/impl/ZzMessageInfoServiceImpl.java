@@ -733,10 +733,10 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
         //私聊撤销
         if(type.equals(MessageType.MESSAGE_CANCEL_TYPE_PRIVATE)){
             socketMsgVo.setCode(SocketMsgTypeEnum.SINGLE_MSG);
-            rabbitMqMsgProducer.sendSocketPrivateMsg(socketMsgVo);
+            rabbitMqMsgProducer.sendSocketMsg(socketMsgVo);
         }else  if(type.equals(MessageType.MESSAGE_CANCEL_TYPE_GROUP) || type.equals(MessageType.MESSAGE_CANCEL_TYPE_MEET)){//会议或者群
             socketMsgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
-            rabbitMqMsgProducer.sendSocketTeamMsg(socketMsgVo);
+            rabbitMqMsgProducer.sendSocketMsg(socketMsgVo);
         }
 
 
@@ -827,7 +827,7 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
             detailVo.setData(readerVo);
             detailVo.setCode(SocketMsgDetailTypeEnum.PRIVATE_RECEIVER_OPEN_BOARD);
             msgVo.setMsg(detailVo);
-            rabbitMqMsgProducer.sendSocketPrivateMsg(msgVo);
+            rabbitMqMsgProducer.sendSocketMsg(msgVo);
         }
 
     }
