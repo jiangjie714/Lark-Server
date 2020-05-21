@@ -25,13 +25,11 @@ public class MessageType {
     public static final int MEET_MSG = 200300;
 
     //群创建
-    public static final int GROUP_CREATE = 200201;
+    public static final int GROUP_CREATE = 200204;
     //退群
     public static final int GROUP_QUIT = 200202;
     //群组操作
     public static final int GROUP_EDIT = 200203;
-    //群组创建成功反馈
-    public static final int GROUP_CREATE_ACK = 200204;
     //群解散
     public static final int GROUP_DISSOLVE = 200205;
     //加入群组

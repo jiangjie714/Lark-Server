@@ -387,7 +387,7 @@ public class ZzGroupApproveServiceImpl implements ZzGroupApproveService {
                         teamUserList = this.zzGroupService.queryGroupUserIdListByGroupId(groupId);
                         int groupCreateType = 0;
                         GroupTaskDto groupTaskDto = this.zzGroupService.getSendSocketGroupInf(groupId,teamUserList,groupCreateType);
-                        sendTeamBindMsgAfterCreate(groupId,teamUserList,groupTaskDto,SocketMsgDetailTypeEnum.GROUP_CREATE_ACK);
+                        sendTeamBindMsgAfterCreate(groupId,teamUserList,groupTaskDto,SocketMsgDetailTypeEnum.GROUP_CREATE);
                         addCache(teamUserList,groupId,CacheConst.userGroupIds);
                     }else{
                         res.put("res","0");

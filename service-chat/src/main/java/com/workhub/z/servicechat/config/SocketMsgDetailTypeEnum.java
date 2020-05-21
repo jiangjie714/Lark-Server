@@ -24,14 +24,12 @@ public enum SocketMsgDetailTypeEnum {
 
     //群聊200200
     GROUP_MSG(MessageType.GROUP_MSG+""),
-    //群创建200201
+    //群创建200204
     GROUP_CREATE(MessageType.GROUP_CREATE+""),
     //退群200202
     GROUP_QUIT(MessageType.GROUP_QUIT+""),
     //群编辑200203
     GROUP_EDIT(MessageType.GROUP_EDIT+""),
-    //群编辑200203
-    GROUP_CREATE_ACK(MessageType.GROUP_CREATE_ACK+""),
     //群解散200205
     GROUP_DISSOVLE(MessageType.GROUP_DISSOLVE+""),
 
