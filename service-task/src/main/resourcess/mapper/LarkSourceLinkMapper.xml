@@ -14,7 +14,7 @@
     <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
-    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
     <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
     <result column="UPD_TIME" property="updTime" jdbcType="TIMESTAMP" />

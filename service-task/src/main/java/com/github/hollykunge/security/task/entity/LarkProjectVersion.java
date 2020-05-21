@@ -3,8 +3,10 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author  fansq
@@ -34,10 +36,10 @@ public class LarkProjectVersion extends BaseEntity {
     private Date startTime;
 
     @Column(name = "STATUS")
-    private Short status;
+    private Integer status;
 
     @Column(name = "SCHEDULE")
-    private Short schedule;
+    private BigDecimal schedule;
 
     @Column(name = "PLAN_PUBLISH_TIME")
     private Date planPublishTime;

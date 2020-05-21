@@ -1,5 +1,8 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
+import com.cxytiandi.encrypt.springboot.annotation.Encrypt;
+import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
 import com.github.hollykunge.security.admin.biz.RoleBiz;
@@ -16,6 +19,7 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
+import com.github.hollykunge.security.common.vo.RpcUserInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,6 +90,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param entity 用户实体
      * @return 用户id
      */
+    @Decrypt
     @RequestMapping(value = "/userInfo", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<AdminUser> addUser(@RequestBody User entity,
@@ -113,6 +118,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param positions
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "userInfo", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<User> updateUser(@RequestBody User entity,
@@ -170,6 +176,7 @@ public class UserController extends BaseController<UserBiz, User> {
      * @param roles  角色集（以“，”隔开的字符串）
      * @return
      */
+    @Decrypt
     @RequestMapping(value = "/role", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUserRoles(@RequestParam("userId") String userId, @RequestParam("roles") String roles) {
@@ -272,5 +279,19 @@ public class UserController extends BaseController<UserBiz, User> {
     @ResponseBody
     public ObjectRestResponse importExcel(@RequestParam("file") MultipartFile file) throws Exception{
         return userBiz.importExcel(file,userBiz);
+    }
+
+    /**
+     * todo 暂时不用
+     * fansq
+     * 20-4-16
+     * admin服务给task服务提供成员信息获取
+     * @param userIdList
+     * @return
+     */
+    @RequestMapping(value = "/getUserInfo",method = RequestMethod.POST)
+    @ResponseBody
+    public ObjectRestResponse<List<RpcUserInfo>> getUserInfo(@RequestBody List<String> userIdList){
+        return userBiz.getUserInfo(userIdList);
     }
 }

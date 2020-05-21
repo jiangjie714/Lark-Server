@@ -149,6 +149,11 @@
             <artifactId>lark-log-dto</artifactId>
             <version>2.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.cxytiandi</groupId>
+            <artifactId>monkey-api-encrypt-core</artifactId>
+            <version>1.2.RELEASE</version>
+        </dependency>
 
     </dependencies>
 

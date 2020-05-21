@@ -7,13 +7,13 @@
     -->
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="NAME" property="name" jdbcType="VARCHAR" />
-    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
     <result column="COVER" property="cover" jdbcType="VARCHAR" />
     <result column="MEMBER_CODE" property="memberCode" jdbcType="VARCHAR" />
-    <result column="IS_SYSTEM" property="isSystem" jdbcType="DECIMAL" />
+    <result column="IS_SYSTEM" property="isSystem" jdbcType="INTEGER" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
     <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />
@@ -27,4 +27,23 @@
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
     <result column="DESCRIPTION" property="description" jdbcType="CLOB" />
   </resultMap>
+
+  <resultMap id="ProjectTemplateListBaseResultMap"
+             type="com.github.hollykunge.security.task.dto.LarkProjectTemplateDto"
+             extends="BaseResultMap">
+     <collection property="larkTaskStagesDtos" ofType="com.github.hollykunge.security.task.dto.LarkTaskStagesDto">
+       <result column="STAGES_NAME" property="name" jdbcType="VARCHAR"/>
+       <result column="STAGES_SORT" property="sort" jdbcType="INTEGER"/>
+     </collection>
+  </resultMap>
+  <select id="getProjectTemplateList" resultMap="ProjectTemplateListBaseResultMap">
+    select lpt.*,ltst.name STAGES_NAME,ltst.sort STAGES_SORT
+      from
+      lark_project_template lpt
+      left join
+      lark_task_stages_template ltst
+      on
+      lpt.id = ltst.project_template_code
+      order by ltst.sort
+  </select>
 </mapper>

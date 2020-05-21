@@ -16,12 +16,12 @@ import javax.validation.constraints.NotBlank;
 public class UserCommonTools {
     @Id
     @Column(name = "ID")
-    @NotBlank(message = "用户常用工具id不能为空")
     private String id;
 
     @Column(name = "USER_ID")
     private String userId;
 
     @Column(name = "TOOL_ID")
+    @NotBlank(message = "用户常用工具id不能为空")
     private String toolId;
 }

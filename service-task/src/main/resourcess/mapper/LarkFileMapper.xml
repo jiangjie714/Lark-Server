@@ -8,16 +8,17 @@
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="PATH_NAME" property="pathName" jdbcType="VARCHAR" />
-    <result column="TITLE" property="title" jdbcType="CHAR" />
-    <result column="EXTENSION" property="extension" jdbcType="CHAR" />
-    <result column="FILE_SIZE" property="fileSize" jdbcType="DECIMAL" />
-    <result column="OBJECT_TYPE" property="objectType" jdbcType="CHAR" />
+    <result column="FOLDER_ID" property="folderId" jdbcType="VARCHAR" />
+    <result column="TITLE" property="title" jdbcType="VARCHAR" />
+    <result column="EXTENSION" property="extension" jdbcType="VARCHAR" />
+    <result column="FILE_SIZE" property="fileSize" jdbcType="INTEGER" />
+    <result column="OBJECT_TYPE" property="objectType" jdbcType="VARCHAR" />
     <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
     <result column="TASK_CODE" property="taskCode" jdbcType="VARCHAR" />
     <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
     <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
-    <result column="DOWNLOADS" property="downloads" jdbcType="DECIMAL" />
+    <result column="DOWNLOADS" property="downloads" jdbcType="INTEGER" />
     <result column="EXTRA" property="extra" jdbcType="VARCHAR" />
     <result column="DELETED" property="deleted" jdbcType="VARCHAR" />
     <result column="FILE_URL" property="fileUrl" jdbcType="VARCHAR" />
@@ -35,4 +36,19 @@
     <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
     <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
   </resultMap>
+
+  <select id="getTaskFileList" resultMap="BaseResultMap">
+        select * from
+        lark_file
+    　<trim prefix="WHERE" prefixOverrides ="AND |OR">
+    　　　　<if test="projectCode != null and projectCode != ''">
+                AND project_code=#{projectCode}
+           </if>
+    　　　　<if test="taskCode != null and taskCode != ''">
+               AND task_code=#{taskCode}
+           </if>
+    　　</trim>
+    and
+    deleted='0'
+  </select>
 </mapper>

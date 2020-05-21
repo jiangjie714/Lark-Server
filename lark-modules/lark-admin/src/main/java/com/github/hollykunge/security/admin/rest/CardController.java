@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.admin.rest;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.OrgDTO;
@@ -40,7 +41,8 @@ public class CardController{
     private CardServerFeign cardServerFeign;
     private UserMapper userMapper;
     private OrgMapper orgMapper;
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @Decrypt
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<CardDto> add(@RequestBody CardDto entity) {
         return cardServerFeign.add(returnParam(entity));
@@ -52,7 +54,8 @@ public class CardController{
         return cardServerFeign.page(params);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @Decrypt
+    @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<CardDto> update(@RequestBody CardDto entity) throws Exception {
         return cardServerFeign.update(returnParam(entity));

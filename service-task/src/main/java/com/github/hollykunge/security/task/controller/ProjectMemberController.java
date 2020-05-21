@@ -1,10 +1,20 @@
 package com.github.hollykunge.security.task.controller;
 
+import com.github.hollykunge.security.common.exception.BaseException;
+import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
+import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.task.service.ProjectMemberService;
+import com.github.hollykunge.security.common.rest.BaseController;
+import com.github.hollykunge.security.common.util.Query;
+import com.github.hollykunge.security.task.biz.LarkProjectMemberBiz;
+import com.github.hollykunge.security.task.entity.LarkProjectMember;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author fansq
@@ -13,11 +23,13 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(value = "/project_member")
-public class ProjectMemberController {
+public class ProjectMemberController extends BaseController<LarkProjectMemberBiz,LarkProjectMember> {
 
     @Autowired
-    private ProjectMemberService projectMemberService;
+    private LarkProjectMemberBiz larkProjectMemberbiz;
+
     /**
+     * todo 不需要了
      * 查询邀请成员
      * @param {*} keyword
      * @param {*} code
@@ -27,12 +39,10 @@ public class ProjectMemberController {
      */
     @RequestMapping(value = "/searchInviteMember",method = RequestMethod.GET)
     public TableResultResponse<Object> searchInviteMember(@RequestParam("keyword") String keyword, @RequestParam("projectCode") String code){
-        // todo 暂时返回空 应该分页显示信息
         return new TableResultResponse();
     }
     /**
-     * 20-3-6 修改
-     * 邀请成员
+     * 邀请成员  通过mq发送邀请消息
      * @param {*} memberCode
      * @param {*} code
      *   export function inviteMember(memberCode, code) {
@@ -40,8 +50,10 @@ public class ProjectMemberController {
      *   }
      */
     @RequestMapping(value = "/inviteMember",method = RequestMethod.POST)
-    public BaseResponse inviteMember(@RequestParam("memberCode") String memberCode, @RequestParam("projectCode") String code){
-        projectMemberService.inviteMember(memberCode,code);
+    public BaseResponse inviteMember(
+            @RequestBody List<String> memberCodes,
+            @RequestParam("projectCode") String code){
+        larkProjectMemberbiz.sendInviteMemberMessage(code);
         return new BaseResponse(200,"已发送邀请");
     }
 
@@ -71,7 +83,20 @@ public class ProjectMemberController {
     public BaseResponse assignRoles(@RequestParam("memberCode") String memberCode,
                                     @RequestParam("roleCode") String roleCode,
                                     @RequestParam("projectCode") String code){
-        projectMemberService.assignRoles(memberCode,roleCode,code);
+        if(StringUtils.isEmpty(memberCode)){
+            throw new ClientParameterInvalid("成员不可为空！");
+        }
+        if(StringUtils.isEmpty(code)){
+            throw new ClientParameterInvalid("项目不可为空！");
+        }
+        if(StringUtils.isEmpty(roleCode)){
+            throw new ClientParameterInvalid("成员角色不可为空！");
+        }
+        LarkProjectMember larkProjectMember = new LarkProjectMember();
+        larkProjectMember.setProjectCode(code);
+        larkProjectMember.setAuthorize(roleCode);
+        larkProjectMember.setMemberCode(memberCode);
+        larkProjectMemberbiz.updateSelectiveById(larkProjectMember);
         return new BaseResponse(200,"成员角色已分配!");
     }
 
@@ -84,8 +109,15 @@ public class ProjectMemberController {
      *   }
      */
     @RequestMapping(value = "/removeMember",method = RequestMethod.POST)
-    public BaseResponse removeMember(@RequestParam("memberCode") String memberCode, @RequestParam("projectCode") String code){
-        return new BaseResponse(200,"成员已移除！");
+    public ObjectRestResponse<LarkProjectMember> removeMember(@RequestParam("memberCode") String memberCode, @RequestParam("projectCode") String code){
+        if(StringUtils.isEmpty(memberCode)){
+            throw  new ClientParameterInvalid("成员id不可为空！");
+        }
+        if(StringUtils.isEmpty(code)){
+            throw  new ClientParameterInvalid("项目id不可为空！");
+        }
+        return larkProjectMemberbiz.deleteUserForProject(memberCode,code);
+
     }
     /**
      * 成员列表
@@ -95,10 +127,9 @@ public class ProjectMemberController {
      *   }
      */
     @RequestMapping(value = "/index",method = RequestMethod.GET)
-    public TableResultResponse index(@RequestBody Object data){
-        //new TableResultResponse(); 文件列表分页
-        // todo 暂时返回空
-        return new TableResultResponse();
+    public TableResultResponse index(@RequestParam Map<String, Object> params){
+        Query query = new Query(params);
+        return  larkProjectMemberbiz.selectByQueryUserInfo(query);
     }
 
 }

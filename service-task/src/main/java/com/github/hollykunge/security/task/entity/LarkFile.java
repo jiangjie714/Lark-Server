@@ -3,8 +3,8 @@ package com.github.hollykunge.security.task.entity;
 import com.github.hollykunge.security.common.entity.BaseEntity;
 import lombok.Data;
 
-import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Table;
 
 /**
  * @author  fansq
@@ -21,6 +21,9 @@ public class LarkFile extends BaseEntity {
     @Column(name = "PATH_NAME")
     private String pathName;
 
+    @Column(name = "FOLDER_ID")
+    private String folderId;
+
     @Column(name = "TITLE")
     private String title;
 
@@ -28,7 +31,7 @@ public class LarkFile extends BaseEntity {
     private String extension;
 
     @Column(name = "FILE_SIZE")
-    private Short fileSize;
+    private Integer fileSize;
 
     @Column(name = "OBJECT_TYPE")
     private String objectType;
@@ -46,7 +49,7 @@ public class LarkFile extends BaseEntity {
     private String createBy;
 
     @Column(name = "DOWNLOADS")
-    private Short downloads;
+    private Integer downloads;
 
     @Column(name = "EXTRA")
     private String extra;

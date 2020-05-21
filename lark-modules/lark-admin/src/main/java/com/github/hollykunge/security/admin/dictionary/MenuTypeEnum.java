@@ -6,5 +6,5 @@ package com.github.hollykunge.security.admin.dictionary;
  * @since: Create in 10:32 2019/12/3
  */
 public enum MenuTypeEnum {
-    base,biz,system;
+    base,biz,system,task;
 }
