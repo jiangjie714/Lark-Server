@@ -266,4 +266,85 @@
         info='numDone'
   </select>
 
+    <resultMap id="GetTaskInfoByIdBaseResultMap" type="com.github.hollykunge.security.task.dto.LarkTaskDto" extends="BaseResultMap">
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="AVATAR" property="avatar" jdbcType="VARCHAR" />
+        <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+        <collection property="larkTaskTagList" ofType="com.github.hollykunge.security.task.dto.LarkTaskTagDto"
+                    javaType="java.util.ArrayList">
+            <id column="TAG_ID" property="id" jdbcType="VARCHAR" />
+            <result column="TAG_NAME" property="name" jdbcType="VARCHAR"/>
+            <result column="TAG_COLOR" property="color" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="larkTaskWorkTimeDtoList" ofType="com.github.hollykunge.security.task.dto.LarkTaskWorkTimeDto"
+                    javaType="java.util.ArrayList">
+            <id column="work_time_id" property="id" jdbcType="VARCHAR"/>
+            <result column="work_time_member_code" property="memberCode" jdbcType="VARCHAR"/>
+            <result column="work_time_crt_time" property="crtTime" jdbcType="TIMESTAMP"/>
+            <result column="work_time_content" property="content" jdbcType="VARCHAR"/>
+            <result column="work_time_begin_time" property="beginTime" jdbcType="TIMESTAMP"/>
+            <result column="work_time_num" property="num" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="taskNum" ofType="com.github.hollykunge.security.task.dto.TaskNum"
+                    select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getTotalAndComoleted"
+                    column="id">
+        </collection>
+        <collection property="nums" ofType="java.lang.String"
+                    select="com.github.hollykunge.security.task.mapper.LarkTaskMapper.getNums"
+                    column="{taskCode=id}">
+        </collection>
+    </resultMap>
+    <select id="getTaskInfoById" resultMap="GetTaskInfoByIdBaseResultMap">
+        select lt.* ,au.id USER_ID,au.name USER_NAME,au.avatar AVATAR,ltt.name TAG_NAME,ltt.color TAG_COLOR,ltt.id TAG_ID,
+        ltwt.id work_time_id ,ltwt.member_code work_time_member_code,
+        ltwt.crt_time work_time_crt_time ,ltwt.content work_time_content,
+        ltwt.begin_time work_time_begin_time,ltwt.num work_time_num
+        from
+        lark_task lt
+        LEFT join
+        LARK_ADMIN.ADMIN_USER au
+        on
+        lt.crt_user = au.id
+        LEFT join
+        lark_task_to_tag lttt
+        on
+        lt.id = lttt.task_code
+        LEFT join
+        lark_task_tag ltt
+        on
+        lttt.tag_code = ltt.id
+        left join
+        lark_task_work_time ltwt
+        on
+        lt.id = ltwt.task_code
+        where
+        lt.id=#{taskId}
+        and
+        lt.deleted=0
+    </select>
+
+    <resultMap id="GetChildTaskInfoByIdBaseResultMap" type="com.github.hollykunge.security.task.dto.LarkTaskDto" extends="BaseResultMap">
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="AVATAR" property="avatar" jdbcType="VARCHAR" />
+        <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getChildTaskInfoById" resultMap="GetChildTaskInfoByIdBaseResultMap">
+        select s.*,ltm.memeber_code from(
+        select lt.* ,au.id USER_ID,au.name USER_NAME,au.avatar AVATAR
+        from
+        lark_task lt
+        LEFT join
+        LARK_ADMIN.ADMIN_USER au
+        on
+        lt.crt_user = au.id
+        where
+        lt.pcode=#{taskId}
+        and
+        lt.deleted=0
+        ) s
+        inner join
+        lark_task_member ltm
+        on
+        s.id = ltm.task_code
+    </select>
 </mapper>

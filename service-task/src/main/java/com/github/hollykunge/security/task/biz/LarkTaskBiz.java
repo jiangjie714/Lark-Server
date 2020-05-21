@@ -239,4 +239,16 @@ public class LarkTaskBiz extends BaseBiz<LarkTaskMapper, LarkTask> {
         larkProjectMapper.updateByPrimaryKeySelective(larkProject);
         return larkProject;
     }
+
+    /**
+     * 获取任务信息
+     * @param taskId
+     * @return
+     */
+    public ObjectRestResponse<LarkTaskDto> getTaskInfoById(String taskId) {
+        LarkTaskDto larkTaskDto = larkTaskMapper.getTaskInfoById(taskId);
+        List<LarkTaskDto> larkTaskDtos= larkTaskMapper.getChildTaskInfoById(taskId);
+        larkTaskDto.setLarkTaskList(larkTaskDtos);
+        return new ObjectRestResponse<>().data(larkTaskDto).rel(true);
+    }
 }

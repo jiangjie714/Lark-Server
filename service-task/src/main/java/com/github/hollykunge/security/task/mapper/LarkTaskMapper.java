@@ -49,4 +49,18 @@ public interface LarkTaskMapper extends Mapper<LarkTask> {
      * @return
      */
     TaskNum getPercentComplete(@Param("projectCode") String projectCode);
+
+    /**
+     * 任务id获取任务信息
+     * @param taskId
+     * @return
+     */
+    LarkTaskDto getTaskInfoById(@Param("taskId") String taskId);
+
+    /**
+     * 任务id获取子任务信息
+     * @param taskId
+     * @return
+     */
+    List<LarkTaskDto> getChildTaskInfoById(@Param("taskId") String taskId);
 }

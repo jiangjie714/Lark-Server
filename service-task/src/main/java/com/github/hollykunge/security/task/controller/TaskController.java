@@ -55,6 +55,17 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
         return larkTaskbiz.add(larkTask,memberCode,request);
     }
 
+    /**
+     * 根据任务id获取任务信息
+     * @param taskId
+     * @return
+     */
+    @RequestMapping(value = "/operation",method = RequestMethod.GET)
+    @ResponseBody
+    public ObjectRestResponse<LarkTaskDto> getTaskInfoById(@RequestParam("taskId")String taskId) {
+        return larkTaskbiz.getTaskInfoById(taskId);
+    }
+
 
     /**
      * 自动更新项目进度  也可以手动调用
@@ -146,6 +157,7 @@ public class TaskController extends BaseController<LarkTaskBiz, LarkTask> {
             ){
         return larkTaskbiz.getLarkTaskList(larkTaskVO);
     }
+
 
     /**
      * 给任务设置标签
