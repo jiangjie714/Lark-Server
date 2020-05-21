@@ -1,0 +1,112 @@
+/* 系统错误日志数据采集之前的es业务建模 (索引 system_error_topic 类型 system_error) */
+/*
+ * 数据建模分析过程
+ */
+//  /* 应用集群的ip地址，keyword类型,需要检索 */
+//  "ip":"",
+//  /* 错误详细信息，分词类型（text类型），需要检索 */
+//  "errorMessage":"",
+//  /* 错误的代码行数，数值类型，需要检索 */
+//  "errorLine":"",
+//  /* 发生错误的代码方法，keyword类型。需要检索 */
+//  "errorMethod":"",
+//  /* 发生错误的代码类，分词类型，自定义切分类型，需要检索 */
+//  "errorClass":"",
+//  /* 消息可靠存在mongodb中的集 keyword类型，可关闭index */
+//  "mongodbCollection":"",
+//  /* 发生错误集群应用的端口，数值类型，需要检索 */
+//  "port":"",
+//  /* 错误发生的时间。日期类型，需要排序 */
+//  "errorTime":""
+/*
+ * 自定义分析器，切割类路径splitPoint(以 "." 进行切割)
+ */
+//PUT system_error_topic
+//{
+//  "settings": {
+//    "analysis": {
+//      "analyzer": {
+//        "splitPoint": {
+//          "tokenizer": "class_path_tokenizer"
+//        }
+//      },
+//      "tokenizer": {
+//        "class_path_tokenizer": {
+//          "type": "path_hierarchy",
+//          "delimiter": ".",
+//          "skip": 0,
+//          "reverse": true
+//        }
+//      }
+//    }
+//  }
+//}
+/*
+ * errorMessage 使用默认的英文标准分词，按单词边界分词
+ */
+
+//删除索引
+DELETE /system_error_topic
+//添加索引，并设置字段属性
+/**
+ *  其中keyword字段类型不能进行math 模糊匹配。查询时最好使用term精确查找
+ *  text字段可以做分词，可以使用math进行模糊匹配
+ */
+PUT /system_error_topic
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "splitPoint": {
+          "tokenizer": "class_path_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "class_path_tokenizer": {
+          "type": "path_hierarchy",
+          "delimiter": ".",
+          "skip": 0,
+          "reverse": true
+        }
+      }
+    }
+  },
+  "mappings":{
+    "system_error":{
+      "properties":{
+        "ip":{
+          "type": "keyword"
+        },
+        "errorMessage":{
+          "type": "text",
+          //想用中文分词器，将系统所有的500异常，整理为词库
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "errorLine":{
+          "type": "integer"
+        },
+        "errorMethod":{
+          "type": "keyword"
+        },
+        "errorClass":{
+          "type": "text",
+          "analyzer":  "splitPoint"
+        },
+        "mongodbCollection":{
+          "type": "keyword",
+          "index": false
+        },
+        "port":{
+          "type": "integer"
+        },
+        "errorTime":{
+          "type": "date",
+          "format": [
+            "yyyy-MM-dd HH:mm:ss"
+          ]
+        }
+      }
+    }
+  }
+}
