@@ -1,11 +1,12 @@
 package com.github.hollykunge.security.gate.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.gate.constants.GateConstants;
 import com.github.hollykunge.security.gate.dto.LogInfoDto;
 import com.github.hollykunge.security.gate.feign.LarkLogFeign;
-import com.github.hollykunge.security.log.api.dto.MessageDto;
-import com.github.hollykunge.security.log.api.dto.TopicDto;
+import com.github.hollykunge.security.log.dto.kafka.MessageDto;
+import com.github.hollykunge.security.log.dto.kafka.TopicDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class DBLog extends Thread {
 
     public DBLog setLogService(LarkLogFeign logFeign) {
         if(this.logFeign==null) {
-            this.logFeign = logFeign;
+            this.logFeign = LarkFeignFactory.getInstance().loadFeign(logFeign);
         }
         return this;
     }

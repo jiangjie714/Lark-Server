@@ -1,8 +1,14 @@
 package com.github.hollykunge.security.gate.feign;
 
-import com.github.hollykunge.security.admin.api.rest.AdminUserRpcRest;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
+import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.gate.feign.hystrix.AdminUserHystrix;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * @author: zhhongyu
@@ -10,5 +16,13 @@ import org.springframework.cloud.openfeign.FeignClient;
  * @since: Create in 13:11 2020/4/28
  */
 @FeignClient(value = "lark-admin",path = "api",fallbackFactory = AdminUserHystrix.class)
-public interface AdminUserFeign extends AdminUserRpcRest {
+public interface AdminUserFeign {
+    /**
+     * 根据userId获取用户权限列表
+     *
+     * @param userId 用户id
+     * @return List<FrontPermission>
+     */
+    @RequestMapping(value = "/user/un/{userId}/permissions", method = RequestMethod.GET)
+    ListRestResponse<List<FrontPermission>> getPermissionByUserId(@PathVariable("userId") String userId);
 }

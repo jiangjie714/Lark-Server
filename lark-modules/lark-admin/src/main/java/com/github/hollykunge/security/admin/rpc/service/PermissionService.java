@@ -1,10 +1,10 @@
 package com.github.hollykunge.security.admin.rpc.service;
 
-import com.github.hollykunge.security.admin.api.authority.ActionEntitySet;
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.*;
 import com.github.hollykunge.security.admin.config.mq.ProduceSenderConfig;
+import com.github.hollykunge.security.admin.dto.authority.ActionEntitySet;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.util.PassWordEncoderUtil;
 import com.github.hollykunge.security.admin.vo.*;

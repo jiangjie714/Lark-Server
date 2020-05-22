@@ -2,15 +2,14 @@ package com.github.hollykunge.security.admin.rpc;
 
 import com.alibaba.fastjson.JSONArray;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.admin.api.dto.ChangeUserPwdDto;
-import com.github.hollykunge.security.admin.api.dto.OrgUser;
-import com.github.hollykunge.security.admin.api.rest.AdminUserRpcRest;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
 import com.github.hollykunge.security.admin.biz.UserBiz;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
+import com.github.hollykunge.security.admin.dto.biz.ChangeUserPwdDto;
+import com.github.hollykunge.security.admin.dto.biz.OrgUser;
 import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.rpc.service.PermissionService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
@@ -38,7 +37,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api")
-public class UserRest implements AdminUserRpcRest {
+public class UserRest {
 
     @Autowired
     private PermissionService permissionService;
@@ -55,23 +54,51 @@ public class UserRest implements AdminUserRpcRest {
     @Autowired
     private PositionBiz positionBiz;
 
-    @Override
-
+    /**
+     * 获取所有的权限列表
+     *
+     * @return List<FrontPermission>
+     */
+    @RequestMapping(value = "/permissions", method = RequestMethod.GET)
+    @ResponseBody
     public List<FrontPermission> getAllPermission() {
         return permissionService.getAllPermission();
     }
 
-    @Override
-    public List<FrontPermission> getPermissionByUserId(@PathVariable("userId") String userId) {
-        return permissionService.getPermissionByUserId(userId);
+    /**
+     * 根据userId获取用户权限列表
+     *
+     * @param userId 用户id
+     * @return List<FrontPermission>
+     */
+    @RequestMapping(value = "/user/un/{userId}/permissions", method = RequestMethod.GET)
+    @ResponseBody
+    public ListRestResponse<List<FrontPermission>> getPermissionByUserId(@PathVariable("userId") String userId) {
+        List<FrontPermission> permissions = permissionService.getPermissionByUserId(userId);
+        return new ListRestResponse("查询成功",permissions.size(),permissions);
     }
-
-    @Override
-    public AdminUser validate(String pid, String password) {
-        return permissionService.validate(pid, password);
+    /**
+     * 验证用户名密码
+     *
+     * @param pid      身份证号
+     * @param password 密码
+     * @return AdminUser
+     */
+    @RequestMapping(value = "/user/validate", method = RequestMethod.POST)
+    @ResponseBody
+    public ObjectRestResponse<AdminUser> validate(String pid, String password) {
+        int i = 1/0;
+        AdminUser validate = permissionService.validate(pid, password);
+        return new ObjectRestResponse<>().data(validate);
     }
-
-    @Override
+    /**
+     * 根据身份证号获取用户信息
+     *
+     * @param pid 身份证号
+     * @return AdminUser
+     */
+    @RequestMapping(value = "/user/pid/{id}/info", method = RequestMethod.GET)
+    @ResponseBody
     public AdminUser getUserInfoByPid(@PathVariable("id") String pid) {
         User user = userBiz.getUserByUserPid(pid);
         AdminUser info = new AdminUser();
@@ -82,8 +109,14 @@ public class UserRest implements AdminUserRpcRest {
         info.setId(user.getId());
         return info;
     }
-
-    @Override
+    /**
+     * 根据userId获取用户信息
+     *
+     * @param userId 用户id
+     * @return AdminUser
+     */
+    @RequestMapping(value = "/user/userId/{id}/info", method = RequestMethod.GET)
+    @ResponseBody
     public AdminUser getUserInfoByUserId(@PathVariable("id") String userId) {
         User user = userBiz.getUserByUserId(userId);
         AdminUser info = new AdminUser();
@@ -94,8 +127,14 @@ public class UserRest implements AdminUserRpcRest {
         info.setId(user.getId());
         return info;
     }
-
-    @Override
+    /**
+     * 根据ids获取用户信息，ids可为pid或userId
+     *
+     * @param userIds 根据人员userIds（由逗号拼接）获取人员集（带缓存）
+     * @return List<AdminUser>
+     */
+    @RequestMapping(value = "/user/{ids}/list", method = RequestMethod.GET)
+    @ResponseBody
     @FilterByDeletedAndOrderHandler
     public List<AdminUser> getUserListByIds(@PathVariable("ids") String userIds) {
         List<AdminUser> userInfos = new ArrayList<AdminUser>();
@@ -109,8 +148,15 @@ public class UserRest implements AdminUserRpcRest {
         }
         return userInfos;
     }
-
-    @Override
+    /**
+     * 根据岗位id和密级获取人员列表
+     *
+     * @param positionId  岗位id
+     * @param secretLevel 密级
+     * @return List<AdminUser>
+     */
+    @RequestMapping(value = "/user/{positionId}/{secretLevel}/list", method = RequestMethod.GET)
+    @ResponseBody
     public List<AdminUser> getUserListByPosAndSec(@PathVariable("positionId") String positionId, @PathVariable("secretLevel") String secretLevel) {
         return positionBiz.getPositionUsersBySecret(positionId, secretLevel);
     }

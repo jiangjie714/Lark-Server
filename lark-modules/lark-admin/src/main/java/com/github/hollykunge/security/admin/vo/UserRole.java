@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.admin.vo;
 
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
 import lombok.Data;
 
 import java.util.List;

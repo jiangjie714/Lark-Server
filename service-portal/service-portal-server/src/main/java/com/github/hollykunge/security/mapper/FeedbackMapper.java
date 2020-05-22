@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.mapper;
 
-import com.github.hollykunge.security.dto.FeedBackAnswerDto;
 import com.github.hollykunge.security.entity.Feedback;
+import com.github.hollykunge.security.portal.dto.FeedBackAnswerDto;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
 

@@ -13,6 +13,6 @@
 
     <modules>
         <module>lark-admin</module>
-        <module>lark-admin-server-api</module>
+        <module>lark-admin-dto</module>
     </modules>
 </project>

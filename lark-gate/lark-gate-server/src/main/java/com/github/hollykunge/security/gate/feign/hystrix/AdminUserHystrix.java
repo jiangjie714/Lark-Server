@@ -1,7 +1,8 @@
 package com.github.hollykunge.security.gate.feign.hystrix;
 
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
+import com.github.hollykunge.security.common.feign.BaseHystrixFactory;
+import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.gate.feign.AdminUserFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,46 +16,10 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class AdminUserHystrix extends BaseFeignFactory<AdminUserHystrix> implements AdminUserFeign {
-    @Override
-    public List<FrontPermission> getPermissionByUserId(String userId) {
-        log.error("ERROR LARK INVOKE: {}, {}", "getPermissionByUserId", userId);
-        return null;
-    }
+public class AdminUserHystrix extends BaseHystrixFactory<AdminUserHystrix> implements AdminUserFeign {
 
     @Override
-    public List<FrontPermission> getAllPermission() {
-        log.error("ERROR LARK INVOKE: {}", "getPermissionByUsername");
-        return null;
-    }
-
-    @Override
-    public AdminUser getUserInfoByUserId(String userId) {
-        log.error("ERROR LARK INVOKE: {}, {}", "getUserInfoByUserId", userId);
-        return null;
-    }
-
-    @Override
-    public AdminUser getUserInfoByPid(String pid) {
-        log.error("ERROR LARK INVOKE: {}, {}", "getUserInfoByPid", pid);
-        return null;
-    }
-
-    @Override
-    public AdminUser validate(String pid, String password) {
-        log.error("ERROR LARK INVOKE: {}, {}, {}", "validate", pid, password);
-        return null;
-    }
-
-    @Override
-    public List<AdminUser> getUserListByIds(String ids) {
-        log.error("ERROR LARK INVOKE: {}, {}", "getPermissionByUsername", ids);
-        return null;
-    }
-
-    @Override
-    public List<AdminUser> getUserListByPosAndSec(String positionId, String secretLevel) {
-        log.error("ERROR LARK INVOKE: {}, {}, {}", "getPermissionByUsername", positionId, secretLevel);
-        return null;
+    public ListRestResponse<List<FrontPermission>> getPermissionByUserId(String userId) {
+        return getHystrixListResponse();
     }
 }

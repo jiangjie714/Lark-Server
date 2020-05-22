@@ -2,10 +2,11 @@ package com.github.hollykunge.security.admin.rest;
 
 import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.admin.feign.FeedBackAnswerFeign;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.dto.FeedBackAnswerDto;
-import com.github.hollykunge.security.dto.FeedBackDto;
+import com.github.hollykunge.security.portal.dto.FeedBackAnswerDto;
+import com.github.hollykunge.security.portal.dto.FeedBackDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,11 @@ import java.util.Map;
 @Controller
 @RequestMapping("/feedBack")
 public class FeedBackAnswerController {
-
     @Autowired
+    public FeedBackAnswerController(FeedBackAnswerFeign feedBackAnswerFeign){
+        this.feedBackAnswerFeign = LarkFeignFactory.getInstance().loadFeign(feedBackAnswerFeign);
+    }
+
     private FeedBackAnswerFeign feedBackAnswerFeign;
 
     @RequestMapping(value = "/answer", method = RequestMethod.GET)

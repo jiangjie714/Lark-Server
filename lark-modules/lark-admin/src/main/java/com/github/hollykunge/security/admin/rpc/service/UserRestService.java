@@ -2,8 +2,8 @@ package com.github.hollykunge.security.admin.rpc.service;
 
 import com.ace.cache.annotation.Cache;
 import com.alibaba.fastjson.JSONObject;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.redisKey.IAdminRpcUserKey;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;

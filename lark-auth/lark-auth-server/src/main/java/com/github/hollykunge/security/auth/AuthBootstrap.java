@@ -7,6 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
 
@@ -15,9 +16,10 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients({"com.github.hollykunge.security.auth","com.github.hollykunge.security.common"})
 @MapperScan("com.github.hollykunge.security.auth.mapper")
 @Import(DruidConfig.class)
+@EnableHystrix
 @EnableEncrypt
 public class AuthBootstrap {
     public static void main(String[] args) {

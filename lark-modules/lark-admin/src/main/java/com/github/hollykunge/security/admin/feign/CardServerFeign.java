@@ -1,8 +1,9 @@
 package com.github.hollykunge.security.admin.feign;
 
+import com.github.hollykunge.security.admin.feign.hystrix.CardServerHystrix;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.dto.CardDto;
+import com.github.hollykunge.security.portal.dto.CardDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  * @author fansq
  * @since 19-12-23
  */
-@FeignClient("service-portal")
+@FeignClient(value = "service-portal",path = "/api/card",fallbackFactory = CardServerHystrix.class)
 public interface CardServerFeign {
 
     /**
@@ -21,7 +22,7 @@ public interface CardServerFeign {
      * @param hashMap
      * @return
      */
-    @RequestMapping(value = "/api/card/add",method = RequestMethod.POST)
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
     ObjectRestResponse<CardDto> add(@RequestBody HashMap<String,Object> hashMap);
 
     /**
@@ -29,7 +30,7 @@ public interface CardServerFeign {
      * @param params
      * @return
      */
-    @RequestMapping(value = "/api/card/page",method = RequestMethod.POST)
+    @RequestMapping(value = "/page",method = RequestMethod.POST)
     TableResultResponse<CardDto> page(@RequestBody Map<String, Object> params);
 
     /**
@@ -37,7 +38,7 @@ public interface CardServerFeign {
      * @param hashMap
      * @return
      */
-    @RequestMapping(value = "/api/card/update",method = RequestMethod.POST)
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
     ObjectRestResponse<CardDto> update(@RequestBody HashMap<String,Object> hashMap);
 
     /**
@@ -45,6 +46,6 @@ public interface CardServerFeign {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/api/card/remove",method = RequestMethod.GET)
+    @RequestMapping(value = "/remove",method = RequestMethod.GET)
     ObjectRestResponse<CardDto> remove(@RequestParam("id") String id);
 }

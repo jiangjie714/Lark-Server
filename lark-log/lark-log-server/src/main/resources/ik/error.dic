@@ -1,0 +1,16 @@
+Client is Forbidden!
+ERROR LARK: Client is Forbidden, class=ServiceAuthRestInterceptor.
+Client token expired!
+Client token signature error!
+Client token is null or empty!
+ERROR LARK: FeignExceptionErrorHandler is error
+消费消息中没有最后一条消息实体类
+消费工作热力图消息，用户id不能为空...
+ERROR LARK: dnname transfer error, class=AdminAccessFilter.
+用户token刷新失败。
+ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.
+ERROR LARK: Client not found or Client secret is error, class=DBAuthClientService.
+获取requestbody实体类基本参数规则没有在常量池中定义...
+request must be not null...
+request no request uri ..
+ERROR LARK: Return type is error.
