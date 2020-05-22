@@ -42,7 +42,7 @@ public class PortalCommonToolsController {
      * @param entity
      * @return
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> add(@RequestBody CommonToolsDto entity) {
         return portalServerFeign.add(returnParam(entity));
@@ -66,7 +66,7 @@ public class PortalCommonToolsController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> update(@RequestBody CommonToolsDto entity) throws Exception {
         return portalServerFeign.update(returnParam(entity));

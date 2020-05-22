@@ -1,6 +1,5 @@
 package com.github.hollykunge.security;
 
-import com.cxytiandi.encrypt.springboot.annotation.EnableEncrypt;
 import com.github.hollykunge.security.common.config.DruidConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.core.AcknowledgeMode;
@@ -25,7 +24,6 @@ import org.springframework.context.annotation.Import;
 @EnableFeignClients
 @MapperScan("com.github.hollykunge.security.mapper")
 @Import(DruidConfig.class)
-@EnableEncrypt
 public class PortalBootStrap {
 
     public static void main(String[] args) {

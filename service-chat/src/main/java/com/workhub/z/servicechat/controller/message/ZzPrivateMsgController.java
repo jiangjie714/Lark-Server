@@ -1,6 +1,5 @@
 package com.workhub.z.servicechat.controller.message;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.VO.PrivateFileVO;
@@ -50,7 +49,6 @@ public class ZzPrivateMsgController{
      * @param id
      * @return
      */
-    @Decrypt
     @PostMapping("/delete")
     public ObjectRestResponse delFileInfo(@RequestParam("id") String id){
         boolean flag = this.zzPrivateMsgService.deleteById(id);
@@ -66,7 +64,6 @@ public class ZzPrivateMsgController{
      * @param zzPrivateMsg
      * @return
      */
-    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzPrivateMsg zzPrivateMsg){
         zzPrivateMsg.setMsgId(RandomId.getUUID());
@@ -96,7 +93,6 @@ public class ZzPrivateMsgController{
      * @param zzPrivateMsg
      * @return
      */
-    @Decrypt
     @PostMapping("/update")
     public ObjectRestResponse update(@RequestBody ZzPrivateMsg zzPrivateMsg){
         try{
@@ -186,7 +182,6 @@ public class ZzPrivateMsgController{
      * @return
      */
     //query 查询文件名称
-    @Decrypt
     @PostMapping("/privateFile")
     public TableResultResponse<PrivateFileVO> getFileList(@RequestParam("userId")String userId,
                                                           @RequestParam("receiver")String receiver,

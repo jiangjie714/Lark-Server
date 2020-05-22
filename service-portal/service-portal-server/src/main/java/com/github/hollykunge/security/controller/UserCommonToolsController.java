@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.controller;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.exception.service.DatabaseDataException;
 import com.github.hollykunge.security.common.msg.BaseResponse;
@@ -59,7 +58,6 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
      * @return
      */
     @Override
-    @Decrypt
     @RequestMapping(value = "/myself", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<UserCommonTools> add(@RequestBody @Valid UserCommonTools userCommonTools) {

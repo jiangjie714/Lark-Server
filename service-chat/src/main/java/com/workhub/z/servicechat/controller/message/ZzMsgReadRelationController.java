@@ -1,6 +1,5 @@
 package com.workhub.z.servicechat.controller.message;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.NoReadVo;
@@ -47,7 +46,6 @@ public class ZzMsgReadRelationController {
         return res;
     }
 
-    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzMsgReadRelation zzMsgReadRelation){
         zzMsgReadRelation.setId(RandomId.getUUID());
@@ -82,7 +80,6 @@ public class ZzMsgReadRelationController {
         return objectRestResponse;
     }
 
-    @Decrypt
     @PostMapping("/querynoreadcount")
     public ObjectRestResponse queryNoReadCount(@RequestParam("consumer")String consumer){
         Long count = this.zzMsgReadRelationService.queryNoReadCount(consumer);
@@ -93,7 +90,6 @@ public class ZzMsgReadRelationController {
         return res;
     }
 
-    @Decrypt
     @PostMapping("/querynoreadcountlist")
     public ListRestResponse queryNoReadCountList(@RequestParam("consumer")String consumer){
         List<NoReadVo> list = this.zzMsgReadRelationService.queryNoReadCountList(consumer);
@@ -106,7 +102,6 @@ public class ZzMsgReadRelationController {
     *@Author: 忠
     *@date: 2019/6/12
     */
-    @Decrypt
     @PostMapping("/deleteBySender")
     public ObjectRestResponse deleteBySender(@RequestParam("sender")String sender,@RequestParam("receiver") String receiver){
         this.zzMsgReadRelationService.deleteByConsumerAndSender(sender,receiver);
