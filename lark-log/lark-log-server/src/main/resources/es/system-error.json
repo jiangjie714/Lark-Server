@@ -45,16 +45,21 @@
  * errorMessage 使用默认的英文标准分词，按单词边界分词
  */
 
-//删除索引
-DELETE /system_error_topic
 //添加索引，并设置字段属性
 /**
  *  其中keyword字段类型不能进行math 模糊匹配。查询时最好使用term精确查找
  *  text字段可以做分词，可以使用math进行模糊匹配
  */
-PUT /system_error_topic
+//删除索引模板
+DELETE /_template/sys-logs
+//创建索引模板 创建一个名为 my_logs 的模板。
+//详细配置setting 参照 https://elasticsearch.cn/article/335
+PUT /_template/sys-logs
 {
+  "template": "sys-log-*",
+  "order": 1,
   "settings": {
+    "number_of_shards": 1,
     "analysis": {
       "analyzer": {
         "splitPoint": {
@@ -71,36 +76,40 @@ PUT /system_error_topic
       }
     }
   },
-  "mappings":{
-    "system_error":{
-      "properties":{
-        "ip":{
+  "mappings": {
+    "_default_": {
+      "_all": {
+        "enabled": false
+      }
+    },
+    "log": {
+      "properties": {
+        "ip": {
           "type": "keyword"
         },
-        "errorMessage":{
+        "errorMessage": {
           "type": "text",
-          //想用中文分词器，将系统所有的500异常，整理为词库
           "analyzer": "ik_max_word",
           "search_analyzer": "ik_smart"
         },
-        "errorLine":{
+        "errorLine": {
           "type": "integer"
         },
-        "errorMethod":{
+        "errorMethod": {
           "type": "keyword"
         },
-        "errorClass":{
+        "errorClass": {
           "type": "text",
-          "analyzer":  "splitPoint"
+          "analyzer": "splitPoint"
         },
-        "mongodbCollection":{
+        "mongodbCollection": {
           "type": "keyword",
           "index": false
         },
-        "port":{
+        "port": {
           "type": "integer"
         },
-        "errorTime":{
+        "errorTime": {
           "type": "date",
           "format": [
             "yyyy-MM-dd HH:mm:ss"
@@ -108,5 +117,8 @@ PUT /system_error_topic
         }
       }
     }
+  },
+  "aliases": {
+    "last_3_months": {}
   }
 }
