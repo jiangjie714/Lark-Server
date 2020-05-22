@@ -136,17 +136,18 @@ public class ZzMessageInfoController {
 */
     /**
      * 消息撤销
-     * @param msg msgId 消息id；receiver 接收人；type：类型0私聊1群2会议
+     * @param msgId 消息id；
      * @return
      */
     @Decrypt
     @PutMapping("msgCancel")
-    public ObjectRestResponse msgCancel(@RequestBody Map msg){
+    public ObjectRestResponse msgCancel(@RequestParam String msgId){
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-      int i = this.zzMessageInfoService.msgCancel(Common.nulToEmptyString(msg.get("msgId")),Common.nulToEmptyString(msg.get("receiver")),Common.nulToEmptyString(msg.get("type")),userId);
+//        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        String userId = "yanzhenqing";
+      int i = this.zzMessageInfoService.msgCancel(Common.nulToEmptyString(msgId),userId);
       if(i==0){
           res.rel(false);
           res.msg("500");

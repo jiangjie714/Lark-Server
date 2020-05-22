@@ -70,11 +70,9 @@ public interface ZzMessageInfoService {
     /**
      * 消息撤销
      * @param msgId
-     * @param receiver
-     * @param type
      * @return
      */
-    int msgCancel(String msgId,String receiver,String type,String user);
+    int msgCancel(String msgId,String user);
 
     /**
      * 导出聊天历史记录

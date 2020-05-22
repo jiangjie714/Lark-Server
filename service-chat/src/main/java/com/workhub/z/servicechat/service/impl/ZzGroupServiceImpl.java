@@ -12,6 +12,7 @@ import com.workhub.z.servicechat.VO.*;
 import com.workhub.z.servicechat.config.*;
 import com.workhub.z.servicechat.dao.ZzGroupDao;
 import com.workhub.z.servicechat.dao.ZzUserGroupDao;
+import com.workhub.z.servicechat.entity.ZzContactInf;
 import com.workhub.z.servicechat.entity.group.ZzGroup;
 import com.workhub.z.servicechat.entity.group.ZzGroupStatus;
 import com.workhub.z.servicechat.entity.group.ZzUserGroup;
@@ -22,10 +23,7 @@ import com.workhub.z.servicechat.model.UserListDto;
 import com.workhub.z.servicechat.rabbitMq.RabbitMqMsgProducer;
 import com.workhub.z.servicechat.redis.RedisListUtil;
 import com.workhub.z.servicechat.redis.RedisUtil;
-import com.workhub.z.servicechat.service.AdminUserService;
-import com.workhub.z.servicechat.service.ZzGroupService;
-import com.workhub.z.servicechat.service.ZzGroupStatusService;
-import com.workhub.z.servicechat.service.ZzUserGroupService;
+import com.workhub.z.servicechat.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +63,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
     private ZzGroupStatusService zzGroupStatusService;
     @Autowired
     private ZzUserGroupService zzUserGroupService;
+    @Autowired
+    private ZzContactService zzContactService;
     /**
      * 通过ID查询单条数据
      *
@@ -116,6 +116,14 @@ public class ZzGroupServiceImpl implements ZzGroupService {
     @Transactional
     public Integer update(ZzGroup zzGroup) {
         int update = this.zzGroupDao.update(zzGroup);
+//        更新联系数据
+        ZzContactInf contactInf = this.zzContactService.queryById(zzGroup.getGroupId());
+        contactInf.setId(zzGroup.getGroupId());
+        contactInf.setLevels(zzGroup.getLevels());
+        contactInf.setName(zzGroup.getGroupName());
+//        contactInf.setType('GROUP');
+        contactInf.setGroupOwner(zzGroup.getGroupOwnerId());
+        this.zzContactService.update(contactInf);
        //通知前端更新
         SocketMsgVo socketMsgVo =  new SocketMsgVo();
         socketMsgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
