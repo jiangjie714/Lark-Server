@@ -29,7 +29,7 @@ public class FeedBackAnswerController {
         return feedBackAnswerFeign.getFeedBackAnswer(params);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<FeedBackDto> getFeedBackAnswer(@RequestBody FeedBackDto feedBackDto) {
 

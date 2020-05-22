@@ -46,7 +46,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return 结果集
      */
     @Override
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Org> add(@RequestBody Org org) {
         org.setDeleted(AdminCommonConstant.ORG_DELETED_CODE);
@@ -66,7 +66,7 @@ public class OrgController extends BaseController<OrgBiz, Org> {
      * @return
      */
     @Override
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<Org> update(@RequestBody Org org) {
         String parentPathName = org.getPathName();

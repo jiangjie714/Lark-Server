@@ -1,6 +1,5 @@
 package com.workhub.z.servicechat.controller.meeting;
 
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.workhub.z.servicechat.config.common;
@@ -36,7 +35,6 @@ public class ZzCodeMeetingRoleController {
      * @Author: zhuqz
      * @Date: 2019/9/20
      **/
-    @Decrypt
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzCodeMeetingRole zzCodeMeetingRole) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -71,7 +69,6 @@ public class ZzCodeMeetingRoleController {
      * @Author: zhuqz
      * @Date: 2019/9/20
      **/
-    @Decrypt
     @PutMapping("update")
     public  ObjectRestResponse update(@RequestBody ZzCodeMeetingRole zzCodeMeetingRole) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();

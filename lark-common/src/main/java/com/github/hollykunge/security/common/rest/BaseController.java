@@ -28,7 +28,7 @@ public class BaseController<Biz extends BaseBiz, Entity> {
     @Autowired
     protected Biz baseBiz;
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Entity> add(@RequestBody Entity entity) {
         baseBiz.insertSelective(entity);
@@ -44,7 +44,7 @@ public class BaseController<Biz extends BaseBiz, Entity> {
         return entityObjectRestResponse;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<Entity> update(@RequestBody @Valid Entity entity) {
         baseBiz.updateSelectiveById(entity);

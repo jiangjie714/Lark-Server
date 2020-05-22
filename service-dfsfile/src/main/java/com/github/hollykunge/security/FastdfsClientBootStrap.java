@@ -1,7 +1,6 @@
 package com.github.hollykunge.security;
 
 import com.ace.cache.EnableAceCache;
-import com.cxytiandi.encrypt.springboot.annotation.EnableEncrypt;
 import com.github.hollykunge.security.auth.client.EnableAceAuthClient;
 import com.github.tobato.fastdfs.FdfsClientConfig;
 import org.mybatis.spring.annotation.MapperScan;
@@ -31,7 +30,6 @@ import org.springframework.jmx.support.RegistrationPolicy;
 @EnableAspectJAutoProxy(exposeProxy=true)
 @EnableFeignClients({"com.github.hollykunge.security.auth.client.feign"})
 @ServletComponentScan
-@EnableEncrypt
 public class FastdfsClientBootStrap {
 
     public static void main(String[] args) {

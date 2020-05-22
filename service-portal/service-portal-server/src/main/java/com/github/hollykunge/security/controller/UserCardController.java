@@ -1,7 +1,6 @@
 package com.github.hollykunge.security.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -41,7 +40,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
      * @return
      */
     @Override
-    @Decrypt
     @RequestMapping(value = "/collection", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<UserCard> add(@RequestBody UserCard userCard) {
@@ -98,7 +96,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
      *
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/myself/move", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUserCards(@RequestParam String data, HttpServletRequest request) {

@@ -133,11 +133,6 @@
             <artifactId>validation-api</artifactId>
             <version>${javax.validation.vsersion}</version>
         </dependency>
-        <dependency>
-            <groupId>com.cxytiandi</groupId>
-            <artifactId>monkey-api-encrypt-core</artifactId>
-            <version>1.2.RELEASE</version>
-        </dependency>
 
     </dependencies>
 
