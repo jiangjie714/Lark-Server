@@ -698,12 +698,10 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
     /**
      * 消息撤销
      * @param msgId
-     * @param receiver
-     * @param type
      * @return
      */
     @Override
-    public int msgCancel(String msgId,String receiver,String type,String user){
+    public int msgCancel(String msgId,String user){
         ZzMessageInfo zzMessageInfo = this.zzMessageInfoDao.queryById(msgId);
         if(zzMessageInfo==null || zzMessageInfo.getMsgId()==null){
             return 0;
@@ -719,22 +717,22 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
         int i = this.zzMessageInfoDao.update(zzMessageInfo0);
 
         SocketMsgVo socketMsgVo = new SocketMsgVo();
-        socketMsgVo.setReceiver(receiver);
+        socketMsgVo.setReceiver(zzMessageInfo.getReceiver());
         socketMsgVo.setSender(user);
         SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
         detailVo.setCode(SocketMsgDetailTypeEnum.MSG_DELTET);
         MsgCancelVo cancelVo = new MsgCancelVo();
         cancelVo.setMsgId(msgId);
-        cancelVo.setReceiver(receiver);
-        cancelVo.setType(type);
+        cancelVo.setReceiver(zzMessageInfo.getReceiver());
+        cancelVo.setType(zzMessageInfo.getType());
         cancelVo.setCancelUser(user);
         detailVo.setData(cancelVo);
         socketMsgVo.setMsg(detailVo);
         //私聊撤销
-        if(type.equals(MessageType.MESSAGE_CANCEL_TYPE_PRIVATE)){
+        if(zzMessageInfo.getType().equals(MessageType.PARAMETER_TYPE_USER)){
             socketMsgVo.setCode(SocketMsgTypeEnum.SINGLE_MSG);
             rabbitMqMsgProducer.sendSocketMsg(socketMsgVo);
-        }else  if(type.equals(MessageType.MESSAGE_CANCEL_TYPE_GROUP) || type.equals(MessageType.MESSAGE_CANCEL_TYPE_MEET)){//会议或者群
+        }else  if(zzMessageInfo.getType().equals(MessageType.PARAMETER_TYPE_GROUP) || zzMessageInfo.getType().equals(MessageType.PARAMETER_TYPE_MEET)){//会议或者群
             socketMsgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
             rabbitMqMsgProducer.sendSocketMsg(socketMsgVo);
         }
