@@ -2,7 +2,6 @@ package com.github.hollykunge.security.admin.rest;
 
 import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.cxytiandi.encrypt.springboot.annotation.Encrypt;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.OrgBiz;
 import com.github.hollykunge.security.admin.biz.PositionBiz;
 import com.github.hollykunge.security.admin.biz.RoleBiz;
