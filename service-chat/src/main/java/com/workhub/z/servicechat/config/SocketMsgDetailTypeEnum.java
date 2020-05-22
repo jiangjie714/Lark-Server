@@ -39,7 +39,8 @@ public enum SocketMsgDetailTypeEnum {
     MEET_CHANGE(MessageType.MEET_CHANGE+""),
     //会议添加(审批通过)200301
     MEETING_ADD(MessageType.MEETING_ADD+""),
-
+    //会议剔除人员200303
+    MEETING_QUIT(MessageType.MEETING_QUIT+""),
     //人员上线或者离线700100
     USER_LINE(MessageType.LINESTATUS+""),
 

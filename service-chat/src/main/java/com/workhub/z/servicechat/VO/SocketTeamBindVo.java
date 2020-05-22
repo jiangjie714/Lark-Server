@@ -20,7 +20,7 @@ public class SocketTeamBindVo {
      */
     private String teamId;
     /**
-     * 绑定(解绑)某个群体后发送消息
+     * 绑定(解绑)某个群体后发送消息,如果不为空，不发送，只是单纯的绑定（解绑）
      */
     private SocketMsgDetailVo msg;
     /**

@@ -185,32 +185,24 @@ public class ZzMeetingUserController {
     @Decrypt
     @PutMapping("editMeetUser")
     public ObjectRestResponse  editMeetUser(@RequestBody MeetingVo meetingVo) throws Exception{
-        ObjectRestResponse res = new ObjectRestResponse();
-        res.rel(true);
-        res.msg("200");
-        res.data("操作成功");
+        ObjectRestResponse objectRestResponse = new ObjectRestResponse();
+        objectRestResponse.rel(true);
+        objectRestResponse.msg("200");
+        objectRestResponse.data("操作成功");
         String operateId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
         String userName = URLDecoder.decode(Common.nulToEmptyString(request.getHeader(userNameInHeaderRequest)),"UTF-8");
         String userNo = Common.nulToEmptyString(request.getHeader(pidInHeaderRequest));
         String userIp = Common.nulToEmptyString(request.getHeader(clientIpInHeaderRequest));
-        //只有会议人员可以邀请其他人员
-        List<String> memberList = zzMeetingUserService.getMeetingByUserId(meetingVo.getId());
-        if(!memberList.contains(operateId)){
-            res.rel(false);
-            res.data("操作失败，操作人不在会议内");
+        int success = 1,error = -1,validErrorNotInGroup = 3;
+        int res = this.zzMeetingUserService.editMeetUser(meetingVo,operateId,userName,userNo,userIp);
+        if(res==error){
+            objectRestResponse.rel(false);
+            objectRestResponse.msg("操作出错，会议可能已经不存在");
+        }else if(res==validErrorNotInGroup){
+            objectRestResponse.rel(false);
+            objectRestResponse.msg("操作失败，操作人不在会议内");
         }
-        try {
-            int i = this.zzMeetingUserService.editMeetUser(meetingVo,operateId,userName,userNo,userIp);
-            if(i!=1){
-                res.rel(false);
-                res.data("操作出错，会议可能已经不存在");
-            }
-        }catch (Exception e){
-            logger.error(Common.getExceptionMessage(e));
-            res.rel(false);
-            res.data("系统出错");
-        }
-        return  res;
+        return  objectRestResponse;
     }
 
     /**
@@ -223,4 +215,15 @@ public class ZzMeetingUserController {
         List<UserCurrentDayMeetJobVo> data = this.zzMeetingUserService.getUserCurrentDayMeetJob(userId);
         return new ListRestResponse("200",data.size(),data);
     }*/
+
+    /**
+     * 查询用户仍在进行中的会议
+     * @return
+     */
+    @GetMapping("/listUserStartingMeetIds")
+    public ListRestResponse listUserStartingMeetIds(){
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        List<String> meetIdList = this.zzMeetingUserService.listUserStartingMeetIds(userId);
+        return new ListRestResponse("200",meetIdList.size(),meetIdList);
+    }
 }

@@ -53,6 +53,13 @@ public interface ZzMeetingService {
     ObjectRestResponse pushNewMeetInfToSocket(String userId,String meetingId);
 
     /**
+     * 会议解绑消息
+     * @param userId
+     * @param meetingId
+     * @return
+     */
+    ObjectRestResponse pushUnBindMeetInfToSocket(String userId,String meetingId);
+    /**
      * 获取会议信息，不包括人员，供内部接口调用
      * @param meetId
      * @return
@@ -65,11 +72,4 @@ public interface ZzMeetingService {
      * @return
      */
      List<String> listMeetUserIds(String meetId);
-
-    /**
-     * 会议审批通过后
-     * @param userId
-     * @param msg
-     */
-    void socketMeetCreate(String userId, String msg) throws Exception;
 }

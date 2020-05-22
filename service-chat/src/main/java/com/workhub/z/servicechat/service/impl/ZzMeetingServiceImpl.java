@@ -243,6 +243,7 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
     @Override
 //    public ObjectRestResponse changeMeetStatus(String meetingId,String code,String userId,String userName,String userNo,String userIp) {
     public ObjectRestResponse changeMeetAgenda(Map params) {
+        ObjectRestResponse res = null;
         String userId = params.get("userId").toString();
         String meetingId = params.get("meetingId").toString();
         //会议议程下标 从1开始
@@ -275,12 +276,17 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
         //最后一个议程
         if(Integer.parseInt(code)==progressLeng){
             //会议结束
-            // todo 会议结束是否需要解绑socket通道
             meetOver = true;
             meeting.setMeetStatus(MessageType.CLOSE_MEETING+"");
         }
         this.zzMeetingDao.update(meeting);
-        ObjectRestResponse res = this.pushNewMeetInfToSocket(userId,meetingId);
+        //如果会议议程结束，发送解绑消息
+        if(meetOver){
+             res = this.pushUnBindMeetInfToSocket(userId,meetingId);
+        }else {
+             res = this.pushNewMeetInfToSocket(userId,meetingId);
+        }
+
         return res;
     }
 
@@ -328,26 +334,61 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
             SocketMsgDetailVo answerToFrontReponse = new SocketMsgDetailVo();
             answerToFrontReponse.setCode(SocketMsgDetailTypeEnum.MEET_CHANGE);
             answerToFrontReponse.setData(resMeeting);
-            // TODO: 2019/10/14 通知会议所有人员JSON.toJSONString(data)
             SocketMsgVo msgVo = new SocketMsgVo();
             msgVo.setCode(SocketMsgTypeEnum.TEAM_MSG);
             msgVo.setReceiver(meetingId);
             msgVo.setMsg(answerToFrontReponse);
-            /*//校验消息
-            CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
-            //只有消息合法才去绑定socket通信频道
-            if(cRes.getRes()){
-                rabbitMqMsgProducer.sendSocketTeamMsg(msgVo);
-            }*/
             rabbitMqMsgProducer.sendSocketMsg(msgVo);
         }catch (Exception e){
             logger.error("会议变更推送前端报错！");
             logger.error(Common.getExceptionMessage(e));
-            return new ObjectRestResponse().data("操作失败").msg("200").rel(false);
+            return new ObjectRestResponse().data("操作失败").msg("500").rel(false);
         }
         return new ObjectRestResponse().data("操作成功").msg("200").rel(true);
     }
 
+    /**
+     * 会议议程结束，解绑通道
+     * @param userId
+     * @param meetingId
+     * @return
+     */
+    @Override
+    public ObjectRestResponse pushUnBindMeetInfToSocket(String userId,String meetingId){
+        try {
+            SocketMsgVo msgVo = new SocketMsgVo();
+            SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
+            SocketTeamBindVo socketTeamBindVo =  new SocketTeamBindVo();
+            //解绑后，告知所有人员会议状态变了消息
+            SocketMsgDetailVo meetDetailVo = new SocketMsgDetailVo();
+            MeetingVo resMeeting = this.queryById(meetingId);
+            meetDetailVo.setCode(SocketMsgDetailTypeEnum.MEET_CHANGE);
+            meetDetailVo.setData(resMeeting);
+
+            List<String> userList = this.zzMeetingDao.listMeetUserIds(meetingId);
+            //全量发送
+            socketTeamBindVo.setWholeFlg(true);
+            //被通知的人员
+            socketTeamBindVo.setUserList(userList);
+            //群体id
+            socketTeamBindVo.setTeamId(meetingId);
+            //解绑后所有人员收到变更消息
+            socketTeamBindVo.setMsg(meetDetailVo);
+
+            detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
+            detailVo.setData(socketTeamBindVo);
+
+            msgVo.setCode(SocketMsgTypeEnum.UNBIND_USER);
+            msgVo.setSender(userId);
+            msgVo.setMsg(detailVo);
+            rabbitMqMsgProducer.sendSocketMsg(msgVo);
+        }catch (Exception e){
+            logger.error("会议解绑通道报错！");
+            logger.error(Common.getExceptionMessage(e));
+            return new ObjectRestResponse().data("操作失败").msg("500").rel(false);
+        }
+        return new ObjectRestResponse().data("操作成功").msg("200").rel(true);
+    }
     /**
      * 处理会议议程
      * @param meetingVo
@@ -416,39 +457,4 @@ public class ZzMeetingServiceImpl implements ZzMeetingService {
         return  this.zzMeetingDao.listMeetUserIds(meetId);
     }
 
-    /**
-     * 会议审批通过以后
-     * @param userId
-     * @param message
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public void socketMeetCreate(String userId, String message) throws Exception {
-        String meetId = Common.getJsonStringKeyValue(message,"id").toString();
-
-        SocketMsgVo msgVo = new SocketMsgVo();
-        //todo 改成socket代码规范
-        msgVo.setCode(SocketMsgTypeEnum.BIND_USER);
-        msgVo.setSender("");
-        msgVo.setReceiver("");
-        SocketTeamBindVo socketTeamBindVo  = new SocketTeamBindVo();
-        socketTeamBindVo.setTeamId(meetId);
-        List userList = new ArrayList();
-        userList.add(userId);
-        socketTeamBindVo.setUserList(userList);
-        SocketMsgDetailVo detailVo = new SocketMsgDetailVo();
-        detailVo.setCode(SocketMsgDetailTypeEnum.DEFAULT);
-        detailVo.setData(socketTeamBindVo);
-        msgVo.setMsg(detailVo);
-        /*//校验消息
-        CheckSocketMsgVo cRes = Common.checkSocketMsg(msgVo);
-        if(!cRes.getRes()){
-            msgSendStatusVo.setStatus(false);
-            msgSendStatusVo.setContent("群体绑定消息不合法");
-            return msgSendStatusVo;
-        }*/
-        //todo SocketDetailMsgVo加密
-        rabbitMqMsgProducer.sendSocketMsg(msgVo);
-    }
 }

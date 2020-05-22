@@ -18,6 +18,13 @@ public interface ZzMeetingUserDao extends Mapper<ZzMeetingUser> {
     int delUser(@Param("meetId") String meetId,@Param("userId") String userId);
     List<Map> getMeetAllUsers (@Param("meetId") String meetId);
     List<String> getMeetingByUserId (@Param("userId") String userId);
+
+    /**
+     * 查询用户未结束的会议
+     * @param userId
+     * @return
+     */
+    List<String> listUserStartingMeetIds (@Param("userId") String userId);
     int updateUser(@Param("params") ZzMeetingUser zzMeetingUser);
     int addListUsers(@Param("users") List<ZzMeetingUser> users);
 

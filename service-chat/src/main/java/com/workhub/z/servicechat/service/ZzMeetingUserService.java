@@ -49,4 +49,11 @@ public interface ZzMeetingUserService {
      * @return
      */
     List<UserCurrentDayMeetJobVo> getUserCurrentDayMeetJob(String userId);
+
+    /**
+     * 查询用户未结束的会议id列表
+     * @param userId
+     * @return
+     */
+    List<String> listUserStartingMeetIds(String userId);
 }

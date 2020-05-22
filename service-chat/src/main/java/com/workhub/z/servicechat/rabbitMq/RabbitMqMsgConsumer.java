@@ -153,7 +153,7 @@ public class RabbitMqMsgConsumer {
 
             String userId = vo.getMsg().getData().toString();
             List<String> groupList = zzUserGroupService.getGroupByUserId(userId);
-            groupList.addAll(zzMeetingUserService.getMeetingByUserId(userId));
+            groupList.addAll(zzMeetingUserService.listUserStartingMeetIds(userId));
             SocketMsgVo vo2 = new SocketMsgVo();
             vo2.setCode(SocketMsgTypeEnum.BIND_LIST);
 

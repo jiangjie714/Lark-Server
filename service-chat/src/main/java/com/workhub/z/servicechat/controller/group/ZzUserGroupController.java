@@ -7,13 +7,17 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.pagehelper.PageInfo;
 import com.workhub.z.servicechat.VO.GroupListVo;
 import com.workhub.z.servicechat.VO.UserNewMsgVo;
+import com.workhub.z.servicechat.config.Common;
+import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.config.RandomId;
 import com.workhub.z.servicechat.entity.group.ZzUserGroup;
 import com.workhub.z.servicechat.model.RawMessageDto;
 import com.workhub.z.servicechat.service.ZzUserGroupService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +35,13 @@ public class ZzUserGroupController{
      */
     @Resource
     private ZzUserGroupService zzUserGroupService;
-
+    @Autowired
+    private HttpServletRequest request;
+    //gate请求属性
+    static String pidInHeaderRequest = GateRequestHeaderParamConfig.getPid();
+    static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
+    static String userIdInHeaderRequest = GateRequestHeaderParamConfig.getUserId();
+    static String userNameInHeaderRequest = GateRequestHeaderParamConfig.getUserName();
     /* *//**
      * 通过主键查询单条数据
      *
@@ -200,4 +210,10 @@ public class ZzUserGroupController{
     public void testGetContactVOList(@RequestParam("userId")String userId){
         this.zzUserGroupService.getContactVOList(userId);
     }*/
+   @GetMapping("/listUserGroupIds")
+    public ListRestResponse listUserGroupIds(){
+       String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
+        List<String> groupIdList = this.zzUserGroupService.getGroupByUserId(userId);
+        return new ListRestResponse("200",groupIdList.size(),groupIdList);
+    }
 }

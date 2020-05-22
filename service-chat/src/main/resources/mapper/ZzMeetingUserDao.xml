@@ -128,6 +128,13 @@
     <select id="getMeetingByUserId" resultType="string">
         select t.Meeting_Id from ZZ_MEETING_USER t WHERE T.USER_ID = #{userId}
     </select>
+    <select id="listUserStartingMeetIds" resultType="string">
+        select distinct (t.meeting_id) meeting_id
+          from ZZ_MEETING_USER t, zz_meeting m
+         WHERE t.meeting_id = m.id
+           and m.meet_status != '902'
+           and T.USER_ID = #{userId}
+    </select>
     <update id="updateUserList">
         <foreach collection="users" item="item" open="begin" separator=";" close=";end;">
             update zz_meeting_user

@@ -97,6 +97,8 @@ public class MessageType {
     public static final int MEETING_APPROVE_PASS = 906;
     /**新增会议*/
     public static final int MEETING_ADD = 200301;
+    /**会议剔除人员*/
+    public static final int MEETING_QUIT = 200303;
     /**会议进行中*/
     public static final int MEETING_GOING_ON = 908;
 

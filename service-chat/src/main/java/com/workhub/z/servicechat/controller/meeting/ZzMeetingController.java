@@ -4,11 +4,9 @@ import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.workhub.z.servicechat.VO.MeetingVo;
-import com.workhub.z.servicechat.VO.MsgSendStatusVo;
 import com.workhub.z.servicechat.config.Common;
 import com.workhub.z.servicechat.config.GateRequestHeaderParamConfig;
 import com.workhub.z.servicechat.entity.meeting.ZzMeeting;
-import com.workhub.z.servicechat.service.AdminUserService;
 import com.workhub.z.servicechat.service.ZzMeetingService;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -34,8 +32,6 @@ public class ZzMeetingController {
     private ZzMeetingService zzMeetingService;
     @Resource
     private HttpServletRequest request;
-    @Resource
-    private AdminUserService iUserService;
     //gate请求属性
     static String pidInHeaderRequest = GateRequestHeaderParamConfig.getPid();
     static String clientIpInHeaderRequest = GateRequestHeaderParamConfig.getClientIp();
@@ -285,28 +281,5 @@ public class ZzMeetingController {
         List<UserInfo> list = this.iUserService.getUserListBySecret(id,secretLevel);
         return new ListRestResponse("200",list.size(),list);
     }*/
-
-    /**
-     * 会议审批通过以后，前端进行通知，后端通知信息中心绑定
-     * @param messageInf
-     * @return
-     */
-    @Decrypt
-    @PostMapping("socketMeetCreate")
-    public ObjectRestResponse socketMeetCreate(@RequestBody String messageInf){
-        ObjectRestResponse res = new ObjectRestResponse();
-        res.rel(true);
-        res.msg("200");
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-
-        try {
-            this.zzMeetingService.socketMeetCreate(userId,messageInf);
-        } catch (Exception e) {
-            logger.error(Common.getExceptionMessage(e));
-            res.msg("500");
-            res.rel(false);
-        }
-        return  res;
-    }
 }
 

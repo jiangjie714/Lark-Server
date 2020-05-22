@@ -470,7 +470,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             ZzGroup zzGroup = zzGroupDao.queryById(groupId);
             //如果有新增人员 发送消息
             if(addUserList!=null  && !addUserList.isEmpty() ){
-                String[] addCacheInfBack = dealRedisCacheAdd(groupId,addUserInfoList,addUserList);
+                addUserInfoList = iUserService.userList(Joiner.on(",").join(addUserList));
+                String[] addCacheInfBack = dealRedisCacheAdd(groupId,addUserInfoList);
                 String addIds = addCacheInfBack[0];
                 String addNames = addCacheInfBack[1];
                 //发送群绑定消息
@@ -480,7 +481,8 @@ public class ZzGroupServiceImpl implements ZzGroupService {
             }
             //如果有删除人员发送消息
             if(delUserList!=null && !delUserList.isEmpty()){
-                String[] delCacheInfBack = dealRedisCacheDelete(groupId,removeUserInfoList,delUserList);
+                removeUserInfoList = iUserService.userList(Joiner.on(",").join(delUserList));
+                String[] delCacheInfBack = dealRedisCacheDelete(groupId,removeUserInfoList);
                 String delIds = delCacheInfBack[0];
                 String delNames = delCacheInfBack[1];
                 //发送群绑定消息
@@ -510,6 +512,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
      * 给未移动的人员发送群变更消息
      * @param groupId
      * @param users
+     * @param nowUserList
      */
     private void sendSocketMsgNoMove(String groupId,List<String> users,List<String> nowUserList){
         //因为要区分出新加人员、未移动人员的消息，避免重复收到消息，这里不能使用群体消息,需要变量未移动人员，发单条消息
@@ -535,8 +538,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
      * @param addUserList
      * @return
      */
-    private String[] dealRedisCacheAdd(String groupId,List<ChatAdminUserVo> addUserInfoList,List<String> addUserList){
-            addUserInfoList = iUserService.userList(Joiner.on(",").join(addUserList));
+    private String[] dealRedisCacheAdd(String groupId,List<ChatAdminUserVo> addUserInfoList){
             String userNames = "";
             String userIds = "";
             for (ChatAdminUserVo userInfo:addUserInfoList){
@@ -608,19 +610,15 @@ public class ZzGroupServiceImpl implements ZzGroupService {
         String describe = zzGroupStatus.getOperatorName()+
                 "邀请以下人员加入群："+addNames+"；人员id："+addIs;
         zzGroupStatus.setDescribe(describe);
-        //zzGroupStatusService.add(zzGroupStatus);
-        log.info("发出群变更消息："+ JSONObject.toJSONString(zzGroupStatus));
         rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
     }
     /**
      * 删除群人员处理缓存
      * @param groupId
      * @param delUserInfoList
-     * @param delUserList
      * @return
      */
-    private String[] dealRedisCacheDelete(String groupId,List<ChatAdminUserVo> delUserInfoList,List<String> delUserList){
-        delUserInfoList = iUserService.userList(Joiner.on(",").join(delUserList));
+    private String[] dealRedisCacheDelete(String groupId,List<ChatAdminUserVo> delUserInfoList){
         String userNames = "";
         String userIds = "";
         for (ChatAdminUserVo userInfo:delUserInfoList){
@@ -643,7 +641,7 @@ public class ZzGroupServiceImpl implements ZzGroupService {
     }
 
     /**
-     * 删除群成员给添加群成员的人发送消息
+     * 删除群成员发送消息
      * @param groupId
      * @param users
      */
@@ -688,8 +686,6 @@ public class ZzGroupServiceImpl implements ZzGroupService {
                 "从群里删除以下人员："+delNames+"；人员id："+delIs;
         zzGroupStatus.setDescribe(describe);
         zzGroupStatus.setOperateTime(new Date());
-        //zzGroupStatusService.add(zzGroupStatus);
-        log.info("发出群变更消息："+ JSONObject.toJSONString(zzGroupStatus));
         rabbitMqMsgProducer.sendMsgGroupChange(zzGroupStatus);
     }
 
