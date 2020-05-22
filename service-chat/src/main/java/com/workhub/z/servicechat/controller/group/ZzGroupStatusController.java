@@ -27,7 +27,7 @@ public class ZzGroupStatusController {
     ZzGroupStatusService zzGroupStatusService;
     @Autowired
     private HttpServletRequest request;
-    @Decrypt
+
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzGroupStatus zzGroupStatus) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -53,7 +53,6 @@ public class ZzGroupStatusController {
     timeEnd 结束时间
     all 如果有次参数且是1 那么查询全部
     */
-    @Decrypt
     @PostMapping("query")
     public TableResultResponse<GroupStatusVo> query(@RequestParam Map params) throws Exception{
         String userId = common.nulToEmptyString(request.getHeader("userId"));

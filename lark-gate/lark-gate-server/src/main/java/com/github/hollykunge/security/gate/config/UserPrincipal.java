@@ -10,7 +10,9 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by 协同设计小组 on 2017/9/23.
+ *
+ * @author 协同设计小组
+ * @date 2017/9/23
  */
 
 public class UserPrincipal implements IUserPrincipal {

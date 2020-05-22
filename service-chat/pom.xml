@@ -156,11 +156,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.cxytiandi</groupId>
-            <artifactId>monkey-api-encrypt-core</artifactId>
-            <version>1.2.RELEASE</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -34,7 +34,6 @@ public class MenuController extends BaseController<MenuBiz, Menu> {
      * @return
      */
     @Override
-    @Decrypt
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Menu> add(@RequestBody Menu menu) {
@@ -60,7 +59,6 @@ public class MenuController extends BaseController<MenuBiz, Menu> {
      * 给menu添加element或修改element
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/element",method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyMenuElement(@RequestBody Map<String,Object> map){

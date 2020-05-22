@@ -30,8 +30,6 @@ public class FeedBackAnswerController {
         return feedBackAnswerFeign.getFeedBackAnswer(params);
     }
 
-
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<FeedBackDto> getFeedBackAnswer(@RequestBody FeedBackDto feedBackDto) {

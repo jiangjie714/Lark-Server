@@ -30,7 +30,6 @@ public class ZzGroupApproveLogController {
     @Resource
     ZzGroupApproveLogService zzGroupApproveLogService;
     //新增接口
-    @Decrypt
     @PostMapping("/add")
     public ObjectRestResponse add(@RequestBody ZzGroupApproveLog zzGroupApproveLog) throws Exception{
         String userId = common.nulToEmptyString(request.getHeader("userId"));

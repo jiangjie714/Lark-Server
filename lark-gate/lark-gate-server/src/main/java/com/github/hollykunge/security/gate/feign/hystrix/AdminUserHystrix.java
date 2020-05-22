@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class AdminUserHystrix extends BaseFeignFactory<AdminUserHystrix> implements AdminUserFeign {
+public class AdminUserHystrix implements AdminUserFeign {
     @Override
     public List<FrontPermission> getPermissionByUserId(String userId) {
         log.error("ERROR LARK INVOKE: {}, {}", "getPermissionByUserId", userId);

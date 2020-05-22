@@ -40,7 +40,6 @@ public class ZzAtController{
         return new ObjectRestResponse().data(this.zzAtService.queryById(id)).msg("200").rel(true);
     }
 
-    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzAt zzAt){
         zzAt.setId(RandomId.getUUID());
@@ -62,7 +61,6 @@ public class ZzAtController{
         return objectRestResponse;
     }
 
-    @Decrypt
     @PostMapping("/update")
     public ObjectRestResponse update(@RequestBody ZzAt zzAt, @RequestParam("token")String token){
         Integer update = this.zzAtService.update(zzAt);

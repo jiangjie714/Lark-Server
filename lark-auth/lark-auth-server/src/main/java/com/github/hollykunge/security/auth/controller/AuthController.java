@@ -33,7 +33,6 @@ public class AuthController {
     @Value("${auth.user.defaultPassword}")
     private String defaultPassword;
 
-    @Decrypt
     @RequestMapping(value = "token", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<?> createAuthenticationToken(

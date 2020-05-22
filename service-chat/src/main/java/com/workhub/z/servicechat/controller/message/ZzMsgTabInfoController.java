@@ -50,7 +50,6 @@ public class ZzMsgTabInfoController {
         return res;
     }
 
-    @Decrypt
     @PostMapping("/create")
     @Transactional(rollbackFor = Exception.class)
     //TODO 下面方法处理需要开启事务 后续开发请注意改造后注意事务传播 会牵扯到多事务

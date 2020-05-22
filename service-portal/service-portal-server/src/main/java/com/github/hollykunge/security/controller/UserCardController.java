@@ -41,7 +41,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
      * @return
      */
     @Override
-    @Decrypt
     @RequestMapping(value = "/collection", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<UserCard> add(@RequestBody UserCard userCard) {
@@ -98,7 +97,6 @@ public class UserCardController extends BaseController<UserCardService, UserCard
      *
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/myself/move", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUserCards(@RequestParam String data, HttpServletRequest request) {

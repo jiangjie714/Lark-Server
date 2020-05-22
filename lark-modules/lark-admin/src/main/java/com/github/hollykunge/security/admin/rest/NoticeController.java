@@ -36,7 +36,6 @@ public class NoticeController extends BaseController<NoticeBiz,Notice> {
      * @param notice 消息实体类必须带id
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<Boolean> sendNotice(@RequestBody @Valid Notice notice){

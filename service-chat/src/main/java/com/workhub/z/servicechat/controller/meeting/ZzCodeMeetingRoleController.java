@@ -36,7 +36,6 @@ public class ZzCodeMeetingRoleController {
      * @Author: zhuqz
      * @Date: 2019/9/20
      **/
-    @Decrypt
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzCodeMeetingRole zzCodeMeetingRole) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -71,7 +70,6 @@ public class ZzCodeMeetingRoleController {
      * @Author: zhuqz
      * @Date: 2019/9/20
      **/
-    @Decrypt
     @PutMapping("update")
     public  ObjectRestResponse update(@RequestBody ZzCodeMeetingRole zzCodeMeetingRole) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();

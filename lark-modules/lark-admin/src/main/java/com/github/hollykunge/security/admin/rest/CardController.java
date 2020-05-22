@@ -39,7 +39,7 @@ public class CardController{
 
     @Autowired
     private OrgMapper orgMapper;
-    @Decrypt
+
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<CardDto> add(@RequestBody CardDto entity) {
@@ -52,7 +52,6 @@ public class CardController{
         return cardServerFeign.page(params);
     }
 
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<CardDto> update(@RequestBody CardDto entity) throws Exception {

@@ -32,7 +32,6 @@ public class ZzUserGroupMsgTagController{
      * @author zhuqz
      * @since 2019-06-11
      */
-    @Decrypt
     @PostMapping("/addUserGroupMsgTag")
     public ObjectRestResponse addUserGroupMsgTag(@RequestParam("userId") String userId,
                                                  @RequestParam("groupId") String groupId,
@@ -71,7 +70,6 @@ public class ZzUserGroupMsgTagController{
      * @author zhuqz
      * @since 2019-06-11
      */
-    @Decrypt
     @PostMapping("/delUserGroupMsgTagById")
     public ObjectRestResponse delUserGroupMsgTagById(@RequestParam("id") String id){
 
@@ -101,7 +99,6 @@ public class ZzUserGroupMsgTagController{
      * @author zhuqz
      * @since 2019-06-11
      */
-    @Decrypt
     @PostMapping("/delUserGroupMsgTagByConditions")
     public ObjectRestResponse delUserGroupMsgTagByConditions(@RequestParam("userId") String userId,
                                                              @RequestParam("groupId") String groupId,

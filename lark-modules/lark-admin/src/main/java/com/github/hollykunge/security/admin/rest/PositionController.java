@@ -39,7 +39,6 @@ public class PositionController extends BaseController<PositionBiz, Position> {
      * todo:使用
      * 批量修改岗位用户
      */
-    @Decrypt
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUsers(@RequestBody Map<String,Object> map) {
@@ -54,7 +53,6 @@ public class PositionController extends BaseController<PositionBiz, Position> {
      * 19-11-27
      * 新建用户指定多个岗位
      */
-    @Decrypt
     @RequestMapping(value = "/userPosition" ,method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse insertUserPosition(@RequestBody Map<String,Object> map){

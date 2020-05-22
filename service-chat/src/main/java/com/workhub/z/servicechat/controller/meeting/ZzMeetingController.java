@@ -44,7 +44,6 @@ public class ZzMeetingController {
  * @Author: zhuqz
  * @Date: 2019/9/20
 **/
-@Decrypt
     @PostMapping("add")
     public ObjectRestResponse add(@RequestBody ZzMeeting zzMeeting) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -99,7 +98,6 @@ public class ZzMeetingController {
      * @Author: zhuqz
      * @Date: 2019/9/20
     **/
-    @Decrypt
     @PutMapping("update")
     public  ObjectRestResponse update(@RequestBody ZzMeeting zzMeeting) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -145,7 +143,6 @@ public class ZzMeetingController {
      * @Author: zhuqz
      * @Date: 2019/9/24
     **/
-    @Decrypt
     @PostMapping("createMeeting")
     public ObjectRestResponse createMeeting(@RequestBody String meetingJson) throws Exception{
 
@@ -213,7 +210,6 @@ public class ZzMeetingController {
     *@Author: 忠
     *@date: 2019/10/14
     */
-    @Decrypt
     @PutMapping("changeMeetAgenda")
     public ObjectRestResponse changeMeetAgenda(@RequestBody Map params) throws UnsupportedEncodingException {
         params.put("userId",common.nulToEmptyString(request.getHeader("userId")));
@@ -231,7 +227,6 @@ public class ZzMeetingController {
      * @return
      * @throws UnsupportedEncodingException
      */
-    @Decrypt
     @PutMapping("changeMeetAgendaList")
     public ObjectRestResponse changeMeetAgendaList(@RequestBody ZzMeeting zzMeeting) throws UnsupportedEncodingException {
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();

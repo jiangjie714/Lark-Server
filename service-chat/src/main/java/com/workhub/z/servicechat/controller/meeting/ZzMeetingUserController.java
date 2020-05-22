@@ -39,7 +39,6 @@ public class ZzMeetingUserController {
  * @Author: zhuqz
  * @Date: 2019/9/20
 **/
-    @Decrypt
     @PostMapping("addUser")
     public ObjectRestResponse addUser(@RequestBody ZzMeetingUser zzMeetingUser) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -111,7 +110,6 @@ public class ZzMeetingUserController {
      * @Author: zhuqz
      * @Date: 2019/9/20
     **/
-    @Decrypt
     @PutMapping("updateUser")
     public ObjectRestResponse  updateUser(@RequestBody  ZzMeetingUser meetingUser) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -144,7 +142,6 @@ public class ZzMeetingUserController {
      * @Author: zhuqz
      * @Date: 2019/10/21
     **/
-    @Decrypt
     @PutMapping("updateUserList")
     public ObjectRestResponse  updateUserList(@RequestBody List<ZzMeetingUser> meetingUsers) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();
@@ -177,7 +174,6 @@ public class ZzMeetingUserController {
      * @return
      * @throws Exception
      */
-    @Decrypt
     @PutMapping("editMeetUser")
     public ObjectRestResponse  editMeetUser(@RequestBody MeetingVo meetingVo) throws Exception{
         ObjectRestResponse res = new ObjectRestResponse();

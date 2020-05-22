@@ -25,7 +25,6 @@ import org.springframework.web.context.request.RequestContextListener;
 @MapperScan("com.workhub.z.servicechat.dao")
 @EnableTransactionManagement
 @EnableCaching
-@EnableEncrypt
 public class ServiceChatApplication {
     static Logger logger = LoggerFactory.getLogger(ServiceChatApplication.class);
     //是否清理缓存

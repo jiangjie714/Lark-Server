@@ -43,7 +43,6 @@ public class PortalCommonToolsController {
      * @param entity
      * @return
      */
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> add(@RequestBody CommonToolsDto entity) {
@@ -68,7 +67,6 @@ public class PortalCommonToolsController {
      * @return
      * @throws Exception
      */
-    @Decrypt
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse<CommonToolsDto> update(@RequestBody CommonToolsDto entity) throws Exception {

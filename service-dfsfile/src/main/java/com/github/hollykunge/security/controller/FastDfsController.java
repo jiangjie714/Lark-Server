@@ -243,7 +243,6 @@ public class FastDfsController extends BaseController<FileInfoBiz, FileInfoEntit
      * @return 最后一块文件时返回文件基本信息实体，供前端使用
      * @throws Exception
      */
-    @Decrypt
     @ResponseBody
     @RequestMapping(value = "/appendUploadFile",method = RequestMethod.POST)
 //    @HystrixCommand(

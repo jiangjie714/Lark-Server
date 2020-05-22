@@ -39,7 +39,7 @@ spring:
 #          username: root
         native:
           #file 如果为相对路径 就是相对于本项目  classpath：为相对路径就是从resource下寻找文件 默认为file
-          search-locations: file:/Users/dd/Documents/GitHub/lark-config/config-file
+          search-locations: file:C:/lark-config/config-files
 #        health:
 #          repositories:
 #            check:

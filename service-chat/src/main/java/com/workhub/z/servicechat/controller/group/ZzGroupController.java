@@ -87,7 +87,6 @@ public class ZzGroupController  {
         objectRestResponse.data(groupInfo);
         return objectRestResponse;
     }
-    @Decrypt
     @PostMapping("/create")
     public ObjectRestResponse insert(@RequestBody ZzGroup zzGroup,@RequestParam("token")String token) throws Exception{
         zzGroup.setGroupId(RandomId.getUUID());
@@ -120,7 +119,6 @@ public class ZzGroupController  {
         return objectRestResponse;
     }
 
-    @Decrypt
     @PostMapping("/update")
     public ObjectRestResponse update(@RequestBody ZzGroup zzGroup){
         String userId = common.nulToEmptyString(request.getHeader("userId"));
@@ -164,7 +162,6 @@ public class ZzGroupController  {
     *@Author: 忠
     *@date: 2019/6/11
     */
-    @Decrypt
     @PostMapping("/querygroupuser")
     public TableResultResponse queryGroupUserList(@RequestParam("id")String id,
                                                   @RequestParam(value = "page",defaultValue = "1")Integer page,
@@ -248,7 +245,6 @@ public class ZzGroupController  {
      * @author zhuqz
      * @since 2019-06-11
      */
-    @Decrypt
     @PostMapping("/deleteGroupLogic")
     public ObjectRestResponse deleteGroupLogic(@RequestParam("groupId")String groupId,@RequestParam("delFlg")String delFlg) {
         ObjectRestResponse objectRestResponse = new ObjectRestResponse();
@@ -377,7 +373,6 @@ public class ZzGroupController  {
      * todo:使用
      * 群编辑接口
      */
-    @Decrypt
     @PostMapping("editGroup")
     public ObjectRestResponse groupMemberEdit(@RequestBody GroupEditDto groupInfo) throws Exception{
 //    public ObjectRestResponse groupMemberEdit(@RequestBody GroupEditDto groupEditDto) throws Exception{

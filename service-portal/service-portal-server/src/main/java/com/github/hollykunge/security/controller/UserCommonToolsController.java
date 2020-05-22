@@ -59,7 +59,6 @@ public class UserCommonToolsController extends BaseController<UserCommonToolsSer
      * @return
      */
     @Override
-    @Decrypt
     @RequestMapping(value = "/myself", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<UserCommonTools> add(@RequestBody @Valid UserCommonTools userCommonTools) {

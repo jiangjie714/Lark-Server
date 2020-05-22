@@ -48,7 +48,6 @@ public class RoleController extends BaseController<RoleBiz, Role> {
      * todo:使用
      * 批量修改角色用户
      */
-    @Decrypt
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyUsers(@RequestBody Map<String,Object> map) {
@@ -63,7 +62,6 @@ public class RoleController extends BaseController<RoleBiz, Role> {
      * 批量修改角色菜单
      * @param permissionMap  包含 角色id和权限list
      */
-    @Decrypt
     @RequestMapping(value = "/permission", method = RequestMethod.PUT)
     @ResponseBody
     public ObjectRestResponse modifyMenuAuthority(@RequestBody Map<String,Object> permissionMap) {
