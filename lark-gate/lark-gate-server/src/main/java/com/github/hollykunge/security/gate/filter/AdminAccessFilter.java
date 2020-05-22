@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.gate.filter;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
 import com.github.hollykunge.security.auth.client.config.ServiceAuthConfig;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.client.config.UserAuthConfig;
@@ -14,7 +14,9 @@ import com.github.hollykunge.security.common.dictionary.HttpReponseStatusEnum;
 import com.github.hollykunge.security.common.exception.server.ServerHandlerException;
 import com.github.hollykunge.security.common.exception.service.PermissionException;
 import com.github.hollykunge.security.common.exception.service.UserTokenException;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.BaseResponse;
+import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenErrorResponse;
 import com.github.hollykunge.security.common.msg.auth.TokenForbiddenResponse;
 import com.github.hollykunge.security.common.util.ClientUtil;
@@ -44,10 +46,12 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class AdminAccessFilter extends ZuulFilter {
+    private AdminUserFeign userService;
 
     @Autowired
-    @Lazy
-    private AdminUserFeign userService;
+    public AdminAccessFilter(AdminUserFeign userService){
+        this.userService = LarkFeignFactory.getInstance().loadFeign(userService);
+    }
 
     @Value("${gate.ignore.startWith}")
     private String startWith;
@@ -200,7 +204,8 @@ public class AdminAccessFilter extends ZuulFilter {
             return null;
         }
         //根据用户id获取资源列表，包括菜单和菜单功能
-        List<FrontPermission> permissionInfos = userService.getPermissionByUserId(user.getId());
+        ListRestResponse<List<FrontPermission>> response = userService.getPermissionByUserId(user.getId());
+        List<FrontPermission> permissionInfos = response.getResult().getData();
         if (permissionInfos.size() > 0) {
             checkUserPermission(requestUri, permissionInfos, ctx, user);
         }

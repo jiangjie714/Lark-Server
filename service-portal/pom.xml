@@ -12,8 +12,8 @@
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
-        <module>service-portal-interface</module>
         <module>service-portal-server</module>
+        <module>service-portal-dto</module>
     </modules>
     <name>service-portal</name>
     <description>门户服务</description>

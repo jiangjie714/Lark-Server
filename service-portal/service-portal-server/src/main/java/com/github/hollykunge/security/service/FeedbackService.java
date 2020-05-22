@@ -3,10 +3,10 @@ package com.github.hollykunge.security.service;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.dto.FeedBackAnswerDto;
-import com.github.hollykunge.security.dto.FeedBackDto;
 import com.github.hollykunge.security.entity.Feedback;
 import com.github.hollykunge.security.mapper.FeedbackMapper;
+import com.github.hollykunge.security.portal.dto.FeedBackAnswerDto;
+import com.github.hollykunge.security.portal.dto.FeedBackDto;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -33,7 +33,7 @@ public class FeedbackService extends BaseBiz<FeedbackMapper, Feedback> {
         return null;
     }
 
-    public TableResultResponse<FeedBackAnswerDto> selectByQueryToAnswer(Query query,String crtTime) {
+    public TableResultResponse<FeedBackAnswerDto> selectByQueryToAnswer(Query query, String crtTime) {
         Page<Object> result = PageHelper.startPage(query.getPageNo(), query.getPageSize());
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date;

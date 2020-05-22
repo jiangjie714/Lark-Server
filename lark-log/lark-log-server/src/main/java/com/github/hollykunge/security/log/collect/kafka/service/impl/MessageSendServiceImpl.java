@@ -2,10 +2,10 @@ package com.github.hollykunge.security.log.collect.kafka.service.impl;
 
 import com.alibaba.excel.util.StringUtils;
 import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
-import com.github.hollykunge.security.log.api.exception.LogException;
 import com.github.hollykunge.security.log.collect.kafka.handler.KafkaSendHandler;
 import com.github.hollykunge.security.log.collect.kafka.service.MessageSendService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.logging.LogException;
 import org.springframework.stereotype.Service;
 
 /**

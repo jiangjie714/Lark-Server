@@ -7,9 +7,10 @@ import com.github.hollykunge.security.admin.entity.User;
 import com.github.hollykunge.security.admin.feign.PortalServerFeign;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
-import com.github.hollykunge.security.dto.CommonToolsDto;
+import com.github.hollykunge.security.portal.dto.CommonToolsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,12 @@ import java.util.Map;
 @Controller
 @RequestMapping("commonTools")
 public class PortalCommonToolsController {
-    @Resource
+    @Autowired
+    public PortalCommonToolsController(PortalServerFeign portalServerFeign,UserMapper userMapper){
+        this.portalServerFeign = LarkFeignFactory.getInstance().loadFeign(portalServerFeign);
+        this.userMapper = userMapper;
+    }
     private PortalServerFeign portalServerFeign;
-
-    @Resource
     private UserMapper userMapper;
 
     /**

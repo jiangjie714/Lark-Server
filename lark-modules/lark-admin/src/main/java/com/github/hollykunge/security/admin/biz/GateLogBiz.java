@@ -2,8 +2,7 @@ package com.github.hollykunge.security.admin.biz;
 
 import com.ace.cache.annotation.Cache;
 import com.alibaba.fastjson.JSONArray;
-import com.github.hollykunge.security.admin.api.authority.*;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.*;
 import com.github.hollykunge.security.admin.mapper.GateLogMapper;
 import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
@@ -11,6 +10,7 @@ import com.github.hollykunge.security.admin.redisKey.StatisticsKeyGenerator;
 import com.github.hollykunge.security.admin.rpc.ignore.service.IgnoreService;
 import com.github.hollykunge.security.admin.rpc.service.UserRestService;
 import com.github.hollykunge.security.admin.util.ListUtil;
+import com.github.hollykunge.security.admin.vo.*;
 import com.github.hollykunge.security.common.biz.BaseBiz;
 import com.github.hollykunge.security.common.constant.CommonConstants;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;

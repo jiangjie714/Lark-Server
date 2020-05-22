@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
-import com.github.hollykunge.security.admin.api.dto.OrgUser;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
+import com.github.hollykunge.security.admin.dto.biz.OrgUser;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.OrgUserMap;
 import com.github.hollykunge.security.admin.entity.User;
@@ -170,21 +170,21 @@ public class OrgBiz extends BaseBiz<OrgMapper, Org> {
         return result;
     }
 
-    private List<com.github.hollykunge.security.admin.api.dto.OrgUser> setOrgUserList(List<com.github.hollykunge.security.admin.api.dto.OrgUser> orgUserList,
+    private List<com.github.hollykunge.security.admin.dto.biz.OrgUser> setOrgUserList(List<com.github.hollykunge.security.admin.dto.biz.OrgUser> orgUserList,
                                 List<Org> orgs,
                                 List<User> users){
         if(orgs != null){
-            orgUserList = JSONArray.parseArray(JSONObject.toJSONString(orgs),com.github.hollykunge.security.admin.api.dto.OrgUser.class);
+            orgUserList = JSONArray.parseArray(JSONObject.toJSONString(orgs),com.github.hollykunge.security.admin.dto.biz.OrgUser.class);
             setUserOrOrgFlag(orgUserList,AdminCommonConstant.CONTACT_FLAG_ORGNODE);
         }
         if(users != null){
-            orgUserList = JSONArray.parseArray(JSONObject.toJSONString(users),com.github.hollykunge.security.admin.api.dto.OrgUser.class);
+            orgUserList = JSONArray.parseArray(JSONObject.toJSONString(users),com.github.hollykunge.security.admin.dto.biz.OrgUser.class);
             setUserOrOrgFlag(orgUserList,AdminCommonConstant.CONTACT_FLAG_USERNODE);
         }
         return orgUserList;
     }
 
-    private void setUserOrOrgFlag(List<com.github.hollykunge.security.admin.api.dto.OrgUser> orgUserList,
+    private void setUserOrOrgFlag(List<com.github.hollykunge.security.admin.dto.biz.OrgUser> orgUserList,
                                   String flag){
         orgUserList.stream().forEach(orgUser ->{
             orgUser.setScopedSlotsTitle(flag);

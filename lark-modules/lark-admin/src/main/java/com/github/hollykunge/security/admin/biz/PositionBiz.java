@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.admin.biz;
 
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.entity.Position;
 import com.github.hollykunge.security.admin.entity.PositionUserMap;

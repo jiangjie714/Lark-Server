@@ -1,6 +1,6 @@
 package com.github.hollykunge.security.gate.filter;
 
-import com.github.hollykunge.security.admin.api.authority.FrontPermission;
+import com.github.hollykunge.security.admin.dto.authority.FrontPermission;
 import com.github.hollykunge.security.auth.client.config.SysAuthConfig;
 import com.github.hollykunge.security.auth.common.util.jwt.IJWTInfo;
 import com.github.hollykunge.security.common.constant.CommonConstants;

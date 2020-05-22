@@ -1,7 +1,7 @@
 package com.github.hollykunge.security.admin.mapper;
 
 
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -2,10 +2,10 @@ package com.github.hollykunge.security.admin.rpc.service;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hollykunge.security.admin.annotation.FilterByDeletedAndOrderHandler;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
 import com.github.hollykunge.security.admin.dictionary.OrgComponentEnum;
 import com.github.hollykunge.security.admin.dictionary.OrgLevelEnum;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.Org;
 import com.github.hollykunge.security.admin.mapper.OrgMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;

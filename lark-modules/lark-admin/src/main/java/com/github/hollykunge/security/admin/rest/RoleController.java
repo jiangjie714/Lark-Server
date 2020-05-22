@@ -2,9 +2,9 @@ package com.github.hollykunge.security.admin.rest;
 
 import com.alibaba.fastjson.JSON;
 import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
-import com.github.hollykunge.security.admin.api.dto.AdminUser;
 import com.github.hollykunge.security.admin.biz.RoleBiz;
 import com.github.hollykunge.security.admin.constant.AdminCommonConstant;
+import com.github.hollykunge.security.admin.dto.biz.AdminUser;
 import com.github.hollykunge.security.admin.entity.Role;
 import com.github.hollykunge.security.admin.vo.AdminPermission;
 import com.github.hollykunge.security.admin.vo.RoleTree;

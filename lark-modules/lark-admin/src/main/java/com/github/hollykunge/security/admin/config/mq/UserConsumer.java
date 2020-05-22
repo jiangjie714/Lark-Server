@@ -14,6 +14,7 @@ import com.github.hollykunge.security.admin.mapper.RoleUserMapMapper;
 import com.github.hollykunge.security.admin.mapper.UserMapper;
 import com.github.hollykunge.security.admin.util.MqSetBaseEntity;
 import com.github.hollykunge.security.common.constant.CommonConstants;
+import com.github.hollykunge.security.common.feign.LarkFeignFactory;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.util.ExceptionCommonUtil;
 import com.github.hollykunge.security.common.util.UUIDUtils;
@@ -50,6 +51,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class UserConsumer {
+    @Autowired
+    public UserConsumer(RandomSelectDefaultAvatorFeign randomSelectDefaultAvatorFeign){
+        this.randomSelectDefaultAvatorFeign = LarkFeignFactory.getInstance().loadFeign(randomSelectDefaultAvatorFeign);
+    }
     @Resource
     private UserMapper userMapper;
 
@@ -62,7 +67,6 @@ public class UserConsumer {
     @Resource
     private RoleUserMapMapper roleUserMapMapper;
 
-    @Resource
     private RandomSelectDefaultAvatorFeign randomSelectDefaultAvatorFeign;
     @Autowired
     private CacheAPI cacheAPI;

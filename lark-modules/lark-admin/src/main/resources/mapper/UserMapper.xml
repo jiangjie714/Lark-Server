@@ -75,7 +75,7 @@
     select * from ADMIN_USER t where (t.REFA || t.REFB || t.NAME) like '%'||LOWER(#{nameLike})||'%'
   </select>
 
-  <select id="selectUsersByPositionIdAndOrgCode" resultType="com.github.hollykunge.security.admin.api.dto.AdminUser">
+  <select id="selectUsersByPositionIdAndOrgCode" resultType="com.github.hollykunge.security.admin.dto.biz.AdminUser">
     select <include refid="userAndOrg" />
     from ADMIN_USER u
     inner join ADMIN_POSITIONUSERMAP APU on u.ID = APU.USER_ID
@@ -90,7 +90,7 @@
     order by u.ORDER_ID asc
   </select>
 
-  <select id="findBySecretsAndNotPidLikeOrgCode" resultType="com.github.hollykunge.security.admin.api.dto.AdminUser">
+  <select id="findBySecretsAndNotPidLikeOrgCode" resultType="com.github.hollykunge.security.admin.dto.biz.AdminUser">
     select
     <include refid="userAndOrg" />
     from ADMIN_USER u
@@ -112,7 +112,7 @@
     </if>
     order by org.ORDER_ID asc,u.ORDER_ID asc
   </select>
-  <select id="findByUserIdOrPid" resultType="com.github.hollykunge.security.admin.api.dto.AdminUser">
+  <select id="findByUserIdOrPid" resultType="com.github.hollykunge.security.admin.dto.biz.AdminUser">
     select distinct <include refid="userAndOrgAndRole" />
     from ADMIN_USER u
     LEFT JOIN ADMIN_ORG org
