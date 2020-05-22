@@ -215,15 +215,4 @@ public class ZzMeetingUserController {
         List<UserCurrentDayMeetJobVo> data = this.zzMeetingUserService.getUserCurrentDayMeetJob(userId);
         return new ListRestResponse("200",data.size(),data);
     }*/
-
-    /**
-     * 查询用户仍在进行中的会议
-     * @return
-     */
-    @GetMapping("/listUserStartingMeetIds")
-    public ListRestResponse listUserStartingMeetIds(){
-        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-        List<String> meetIdList = this.zzMeetingUserService.listUserStartingMeetIds(userId);
-        return new ListRestResponse("200",meetIdList.size(),meetIdList);
-    }
 }

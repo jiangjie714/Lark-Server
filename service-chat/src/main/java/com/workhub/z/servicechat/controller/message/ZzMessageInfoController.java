@@ -145,8 +145,7 @@ public class ZzMessageInfoController {
         ObjectRestResponse res = new ObjectRestResponse();
         res.rel(true);
         res.msg("200");
-//        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-        String userId = "yanzhenqing";
+        String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
       int i = this.zzMessageInfoService.msgCancel(Common.nulToEmptyString(msgId),userId);
       if(i==0){
           res.rel(false);

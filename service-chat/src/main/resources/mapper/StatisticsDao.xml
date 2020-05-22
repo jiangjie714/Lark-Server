@@ -351,17 +351,17 @@
 
 
     <select id="getGroupAndMeetIdByUserId" resultType="String">
-        SELECT
-            t.MEETING_ID AS id
-        FROM
-            ZZ_MEETING_USER t
-        WHERE
-            t.USER_ID = #{userId} UNION ALL
-        SELECT
-            g.GROUP_ID AS id
-        FROM
-            ZZ_USER_GROUP g
-        WHERE
-            g.USER_ID = #{userId}
+    SELECT t.MEETING_ID AS id
+      FROM ZZ_MEETING_USER t, ZZ_MEETING m
+     WHERE t.MEETING_ID = m.ID
+       and m.MEET_STATUS != '902'
+       and t.USER_ID = #{userId}
+    UNION ALL
+    SELECT g.GROUP_ID AS id
+      FROM ZZ_USER_GROUP g,zz_group y
+     WHERE g.group_id = y.group_id
+     and y.isclose = '0'
+     and y.isdelete = '0'
+     and g.USER_ID = #{userId}
     </select>
 </mapper>

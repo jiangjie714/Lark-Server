@@ -210,10 +210,4 @@ public class ZzUserGroupController{
     public void testGetContactVOList(@RequestParam("userId")String userId){
         this.zzUserGroupService.getContactVOList(userId);
     }*/
-   @GetMapping("/listUserGroupIds")
-    public ListRestResponse listUserGroupIds(){
-       String userId = Common.nulToEmptyString(request.getHeader(userIdInHeaderRequest));
-        List<String> groupIdList = this.zzUserGroupService.getGroupByUserId(userId);
-        return new ListRestResponse("200",groupIdList.size(),groupIdList);
-    }
 }
