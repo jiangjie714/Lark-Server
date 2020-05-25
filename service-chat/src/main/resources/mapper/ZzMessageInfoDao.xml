@@ -1110,7 +1110,7 @@
             t.levels levels,
             t.front_id frontid,
             t.file_type filetype,
-            t.msg msg,
+            decode(t.cancel,'1','消息已撤销',t.msg) msg,
             to_char(t.createtime, 'yyyy-mm-dd HH24:MI:SS') createtime,
             t.receiver as contactsid
             from zz_message_info t,
@@ -1157,7 +1157,7 @@
                        t.levels levels,
                        t.front_id frontid,
                        t.file_type filetype,
-                       t.msg msg,
+                       decode(t.cancel,'1','消息已撤销',t.msg) msg,
                        to_char(t.createtime, 'yyyy-mm-dd HH24:MI:SS') createtime,
                        (case
                          when t.sender = #{userId} then
@@ -1205,7 +1205,7 @@
         t.levels levels,
         t.front_id frontid,
         t.file_type filetype,
-        t.msg msg,
+        decode(t.cancel,'1','消息已撤销',t.msg) msg,
         to_char(t.createtime, 'yyyy-mm-dd HH24:MI:SS') createtime,
         t.receiver as contactsid
         from zz_message_info t,
@@ -1230,5 +1230,16 @@
         )
         order by t.createtime desc)
         where rownum  &lt;= #{size}
+    </select>
+    <select id="getMsgCancelValidRes" resultType="string">
+        select case
+                 when (ROUND(TO_NUMBER(sysdate - createtime) * 24 * 60 * 60) -
+                      (3 * 60) &gt; 0) then
+                  '0'
+                 else
+                  '1'
+               end
+          from zz_message_info
+         where msg_id = #{msgId}
     </select>
 </mapper>

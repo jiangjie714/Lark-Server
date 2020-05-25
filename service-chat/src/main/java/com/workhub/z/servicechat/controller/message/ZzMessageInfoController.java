@@ -152,6 +152,11 @@ public class ZzMessageInfoController {
           res.msg("500");
           res.data("消息不存在或者当前用户不是发送人");
           return res;
+      }else if(i==2){
+          res.rel(false);
+          res.msg("500");
+          res.data("超过三分钟不能撤销");
+          return res;
       }
         return res;
     }

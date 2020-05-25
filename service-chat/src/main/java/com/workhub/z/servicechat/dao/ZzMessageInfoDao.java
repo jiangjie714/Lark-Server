@@ -133,4 +133,10 @@ public interface ZzMessageInfoDao {
      */
     List<MessageHistoryVo> listHistoryMsgMeetInf(@Param("userId")String userId,@Param("contactId")String contactId,@Param("lastMsgId")String lastMsgId,@Param("size")int size);
 
+    /**
+     * 获取消息是否可以撤销校验（3分钟）
+     * @param msgId
+     * @return
+     */
+    String getMsgCancelValidRes(@Param("msgId") String msgId);
 }

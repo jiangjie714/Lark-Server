@@ -96,7 +96,7 @@
              c.name contact_name,
              c.avartar contact_avartar,
              m.file_type msg_type,
-             m.msg msg_content,
+            decode(m.cancel,'1','消息已撤销',m.msg) msg_content,
              m.cancel cancel,
              m.levels msg_level,
              r.top top,

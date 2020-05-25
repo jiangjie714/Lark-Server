@@ -702,13 +702,18 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
      */
     @Override
     public int msgCancel(String msgId,String user){
+        int success = 1,fail = 0,overTime = 2;
         ZzMessageInfo zzMessageInfo = this.zzMessageInfoDao.queryById(msgId);
         if(zzMessageInfo==null || zzMessageInfo.getMsgId()==null){
-            return 0;
+            return fail;
         }
         //必须发送人自己撤销
         if(!zzMessageInfo.getSender().equals(user)){
-            return 0;
+            return fail;
+        }
+        String msgOverTime = "0";
+        if(msgOverTime.equals(this.zzMessageInfoDao.getMsgCancelValidRes(msgId))){
+            return overTime;
         }
 
         ZzMessageInfo zzMessageInfo0 = new ZzMessageInfo();
@@ -738,7 +743,7 @@ public class ZzMessageInfoServiceImpl implements ZzMessageInfoService {
         }
 
 
-        return  i;
+        return  success;
     }
 
     /**
