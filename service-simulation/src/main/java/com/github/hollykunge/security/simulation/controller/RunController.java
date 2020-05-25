@@ -1,6 +1,7 @@
 package com.github.hollykunge.security.simulation.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.simulation.biz.RunBiz;
 import com.github.hollykunge.security.simulation.biz.SystemBiz;
@@ -55,6 +56,7 @@ public class RunController {
     /**
      * 系统准备
      */
+    @Decrypt
     @RequestMapping(value = "/ready", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse systemReady(
@@ -89,6 +91,7 @@ public class RunController {
     /**
      * 系统开始
      */
+    @Decrypt
     @RequestMapping(value = "/start", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse systemStart(@RequestParam("systemId") String systemId) {
@@ -121,6 +124,7 @@ public class RunController {
     /**
      * 系统暂停及继续
      */
+    @Decrypt
     @RequestMapping(value = "/pause", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse systemPause(@RequestParam("systemId") String systemId) {
@@ -149,6 +153,7 @@ public class RunController {
     /**
      * 系统结束
      */
+    @Decrypt
     @RequestMapping(value = "/end", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse systemEnd(@RequestParam("systemId") String systemId) {
@@ -172,6 +177,7 @@ public class RunController {
         }
     }
 
+    @Decrypt
     @RequestMapping(value = "/getOnlineNodes", method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse getOnlineNodes(@RequestParam("systemId") String systemId) {

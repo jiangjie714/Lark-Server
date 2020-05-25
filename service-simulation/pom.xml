@@ -77,6 +77,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.cxytiandi</groupId>
+            <artifactId>monkey-api-encrypt-core</artifactId>
+            <version>1.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.sun.jna</groupId>
             <artifactId>jna</artifactId>
             <version>3.0.9</version>

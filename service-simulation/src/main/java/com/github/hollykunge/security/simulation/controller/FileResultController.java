@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.simulation.controller;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.simulation.biz.FileResultBiz;
@@ -20,6 +21,7 @@ public class FileResultController extends BaseController<FileResultBiz, SystemIn
     /**
      * 增加
      */
+    @Decrypt
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse create(@RequestBody SystemInfo entity) throws Exception {
@@ -35,6 +37,7 @@ public class FileResultController extends BaseController<FileResultBiz, SystemIn
     /**
      * 更新
      */
+    @Decrypt
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse update(@RequestBody SystemInfo entity) {
@@ -50,6 +53,7 @@ public class FileResultController extends BaseController<FileResultBiz, SystemIn
     /**
      * 配置文件生成及下载
      */
+    @Decrypt
     @RequestMapping(value = "/getConfig", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse getConfig(@RequestBody SystemInfoVo entity) {

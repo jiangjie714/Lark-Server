@@ -1,5 +1,6 @@
 package com.github.hollykunge.security.simulation.controller;
 
+import com.cxytiandi.encrypt.springboot.annotation.Decrypt;
 import com.github.hollykunge.security.common.msg.ListRestResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
@@ -46,6 +47,7 @@ public class HistoryController extends BaseController<HistoryBiz, SystemInfo> {
         return new ObjectRestResponse().rel(true).data(hi);
     }
 
+    @Decrypt
     @RequestMapping(value = "/deleteOneHistory", method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse deleteOneHistory(@RequestParam("historyName") String historyName) {
@@ -53,6 +55,7 @@ public class HistoryController extends BaseController<HistoryBiz, SystemInfo> {
         return new ObjectRestResponse().rel(ret).msg("");
     }
 
+    @Decrypt
     @RequestMapping(value = "/downloadTopicData", method = RequestMethod.POST)
     @ResponseBody
     public void downloadTopicData(
@@ -68,6 +71,7 @@ public class HistoryController extends BaseController<HistoryBiz, SystemInfo> {
         IOUtils.write(content, outputStream);
     }
 
+    @Decrypt
     @RequestMapping(value = "/downloadPackage", method = RequestMethod.POST)
     @ResponseBody
     public void downloadPackage(
