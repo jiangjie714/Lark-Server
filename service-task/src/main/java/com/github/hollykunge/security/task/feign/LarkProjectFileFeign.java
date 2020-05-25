@@ -3,6 +3,7 @@ package com.github.hollykunge.security.task.feign;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.vo.FileInfoVO;
 import com.github.hollykunge.security.task.config.FeignMultipartFileConfig;
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -42,5 +43,5 @@ public interface LarkProjectFileFeign {
     @RequestMapping(value ="/fdfs/file/sensitiveDownload2",method = RequestMethod.GET,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
             )
-    void taskFileDownload(@RequestPart String fileId);
+    Response taskFileDownload(@RequestParam String fileId);
 }

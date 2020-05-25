@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.task.controller;
 
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -54,9 +53,14 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *      return $http.post(url, data);
      *   }
      */
-    @RequestMapping(value = "/save",method = RequestMethod.POST)
+    @RequestMapping(value = "/operation",method = RequestMethod.POST)
     public ObjectRestResponse<LarkProject> createProject(@RequestBody LarkProject project, HttpServletRequest request){
        return larkProjectBiz.createProject(project,request);
+    }
+
+    @Override
+    public ObjectRestResponse<LarkProject> add(LarkProject larkProject) {
+        return super.add(larkProject);
     }
 
     /**
@@ -66,7 +70,7 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *       return $http.delete('project/project/delete', {projectCode: code});
      *  }
      */
-    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/operation",method = RequestMethod.DELETE)
     public ObjectRestResponse<LarkProject> delete(@RequestParam("projectCode") String projectCode){
         if(StringUtils.isEmpty(projectCode)){
            throw  new ClientParameterInvalid("项目编码不可为空！");
@@ -85,7 +89,7 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *       return $http.post(url, data);
      *   }
      */
-    @RequestMapping(value = "/edit",method = RequestMethod.POST)
+    @RequestMapping(value = "/operation",method = RequestMethod.PUT)
     public ObjectRestResponse<LarkProject> edit(@RequestBody LarkProject project){
         if(StringUtils.isEmpty(project.getId())){
             throw new ClientParameterInvalid("更新项目id不可为空！");
@@ -125,7 +129,7 @@ public class ProjectController extends BaseController<LarkProjectBiz, LarkProjec
      *       return $http.get('project/project/read', {projectCode: code});
      *   }
      */
-    @RequestMapping(value = "/read",method = RequestMethod.GET)
+    @RequestMapping(value = "/operation",method = RequestMethod.GET)
     public ObjectRestResponse read(@RequestParam("projectCode") String projectCode){
         return larkProjectBiz.getProjectUser(projectCode);
     }

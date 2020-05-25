@@ -75,7 +75,9 @@ public class TaskMemberController extends BaseController<LarkTaskMemberBiz, Lark
      *   }
      */
     @RequestMapping(value = "/inviteMemberBatch",method = RequestMethod.POST)
-    public BaseResponse inviteMemberBatch(@RequestBody Object data){
+    public BaseResponse inviteMemberBatch(@RequestBody List<String> memberIdList,
+                                          @RequestParam("taskCode")String taskCode){
+        larkTaskMemberbiz.inviteMemberBatch(memberIdList,taskCode);
         return new BaseResponse(200,"已批量邀请成员！");
     }
 
@@ -104,8 +106,10 @@ public class TaskMemberController extends BaseController<LarkTaskMemberBiz, Lark
      *
      * @return
      */
+    @RequestMapping(value = "/getProjectUser",method = RequestMethod.GET)
     public ObjectRestResponse<List<Object>> getProjectUser(@RequestParam("projectCode") String projectCode,
                                                            @RequestParam("taskCode") String taskCode){
         return larkTaskMemberbiz.getProjectUser(projectCode,taskCode);
     }
+
 }

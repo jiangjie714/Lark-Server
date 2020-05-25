@@ -39,7 +39,7 @@ public class LarkProjectDto implements Serializable {
 
     private String templateCode;
 
-    private BigDecimal schedule;
+    private String schedule;
 
     private String organizationCode;
 

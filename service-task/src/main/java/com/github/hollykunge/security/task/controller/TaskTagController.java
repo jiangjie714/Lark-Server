@@ -6,8 +6,12 @@ import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.task.biz.LarkTaskTagBiz;
+import com.github.hollykunge.security.task.biz.LarkTaskToTagBiz;
 import com.github.hollykunge.security.task.entity.LarkTaskTag;
+import com.github.hollykunge.security.task.entity.LarkTaskToTag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -20,8 +24,11 @@ import java.util.List;
 @RequestMapping(value = "/taskTag")
 public class TaskTagController extends BaseController<LarkTaskTagBiz,LarkTaskTag> {
 
+    @Autowired
+    private LarkTaskToTagBiz larkTaskToTagBiz;
 
     /**
+     * @deprecated  todo 没用了
      * 新增
      * @param {*} data
      *   export function save(data) {
@@ -42,8 +49,17 @@ public class TaskTagController extends BaseController<LarkTaskTagBiz,LarkTaskTag
      */
     @RequestMapping(value = "/getAllTag",method = RequestMethod.GET)
     @ResponseBody
-    public ObjectRestResponse<List<LarkTaskTag>> getAllTag(){
-        return new ObjectRestResponse<>().data(baseBiz.selectListAll()).rel(true);
+    public ObjectRestResponse<List<LarkTaskTag>> getAllTag(@RequestParam("projectCode")String projectCode){
+        Example example = new Example(LarkTaskTag.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("projectCode",projectCode);
+        List<LarkTaskTag> taskTags = baseBiz.selectByExample(example);
+        return new ObjectRestResponse<>().data(taskTags).rel(true);
     }
 
+    @RequestMapping(value = "/disassociateTaskForTag",method = RequestMethod.DELETE)
+    public ObjectRestResponse<LarkTaskToTag> disassociateTaskForTag(@RequestBody LarkTaskToTag larkTaskToTag){
+        larkTaskToTagBiz.delete(larkTaskToTag);
+        return new ObjectRestResponse<>().rel(true);
+    }
 }

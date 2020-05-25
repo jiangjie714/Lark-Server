@@ -9,7 +9,6 @@ import com.github.hollykunge.security.task.entity.LarkTaskStagesTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,17 +23,16 @@ public class TaskStagesTemplateController extends BaseController<LarkTaskStagesT
     @Autowired
     private LarkTaskStagesTemplateBiz larkTaskStagesTemplatebiz;
     /**
-     * 任务阶段模版列表
+     * 任务模版列表
      * @param {*} data
      *   export function list(data) {
      *       return $http.get('project/task_stages_template', data);
      *   }
      */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public TableResultResponse<List<LarkTaskStagesTemplate>> list(@RequestParam Map<String,Object> params){
+    public TableResultResponse<LarkTaskStagesTemplate> list(@RequestParam Map<String,Object> params){
         Query query = new Query(params);
-        larkTaskStagesTemplatebiz.list(query);
-        return new TableResultResponse();
+        return larkTaskStagesTemplatebiz.list(query);
     }
 
     /**

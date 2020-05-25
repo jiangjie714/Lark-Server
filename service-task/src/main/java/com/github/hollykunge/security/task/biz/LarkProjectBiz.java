@@ -1,13 +1,11 @@
 package com.github.hollykunge.security.task.biz;
 
 import com.github.hollykunge.security.common.biz.BaseBiz;
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
 import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.util.EntityUtils;
 import com.github.hollykunge.security.common.util.Query;
-import com.github.hollykunge.security.common.util.UUIDUtils;
 import com.github.hollykunge.security.common.vo.RpcUserInfo;
 import com.github.hollykunge.security.task.entity.LarkProject;
 import com.github.hollykunge.security.task.dto.LarkProjectDto;
@@ -25,7 +23,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -129,8 +126,6 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
      * @param request
      */
     public LarkProject noTemplate(LarkProject project,HttpServletRequest request){
-        //String projectId = UUIDUtils.generateShortUuid();
-        //project.setId(projectId);
         EntityUtils.setCreatAndUpdatInfo(project);
         project.setCode(project.getId());
         larkProjectMapper.insertSelective(project);
@@ -142,7 +137,6 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
         larkTaskStages.setDeleted(0);
         larkTaskStages.setSort(1);
         larkTaskStages.setDescrption("默认任务列表");
-        //larkTaskStages.setId(UUIDUtils.generateShortUuid());
         EntityUtils.setCreatAndUpdatInfo(larkTaskStages);
         larkTaskStagesMapper.insertSelective(larkTaskStages);
         //进行中
@@ -152,7 +146,6 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
         larkTask.setDeleted(0);
         larkTask.setSort(1);
         larkTask.setDescrption("默认任务列表");
-        //larkTask.setId(UUIDUtils.generateShortUuid());
         EntityUtils.setCreatAndUpdatInfo(larkTask);
         larkTaskStagesMapper.insertSelective(larkTask);
         //已完成
@@ -162,13 +155,11 @@ public class LarkProjectBiz extends BaseBiz<LarkProjectMapper, LarkProject> {
         TaskStages.setDeleted(0);
         TaskStages.setSort(1);
         TaskStages.setDescrption("默认任务列表");
-        //TaskStages.setId(UUIDUtils.generateShortUuid());
         EntityUtils.setCreatAndUpdatInfo(TaskStages);
         larkTaskStagesMapper.insertSelective(TaskStages);
 
         LarkProjectMember larkProjectMember = new LarkProjectMember();
         EntityUtils.setCreatAndUpdatInfo(larkProjectMember);
-        //larkProjectMember.setId(UUIDUtils.generateShortUuid());
         larkProjectMember.setProjectCode(project.getId());
         String userId  = request.getHeader("userId");
         larkProjectMember.setMemberCode("68yHX85Z");

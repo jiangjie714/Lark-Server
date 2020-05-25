@@ -38,10 +38,10 @@ public interface LarkTaskMapper extends Mapper<LarkTask> {
     /**
      * 标签页面 数据显示接口拆分 第二步
      * @param projectCode
-     * @param taskCode
+     * @param tagId
      * @return
      */
-    List<LarkTaskDto> getTaskAndTag(String projectCode, String taskCode);
+    List<LarkTaskDto> getTaskAndTag(@Param("projectCode") String projectCode, @Param("tagId") String tagId);
 
     /**
      * 通过任务完成的计算百分比
@@ -49,4 +49,18 @@ public interface LarkTaskMapper extends Mapper<LarkTask> {
      * @return
      */
     TaskNum getPercentComplete(@Param("projectCode") String projectCode);
+
+    /**
+     * 任务id获取任务信息
+     * @param taskId
+     * @return
+     */
+    LarkTaskDto getTaskInfoById(@Param("taskId") String taskId);
+
+    /**
+     * 任务id获取子任务信息
+     * @param taskId
+     * @return
+     */
+    List<LarkTaskDto> getChildTaskInfoById(@Param("taskId") String taskId);
 }

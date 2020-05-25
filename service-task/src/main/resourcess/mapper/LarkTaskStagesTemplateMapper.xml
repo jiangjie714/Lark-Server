@@ -11,6 +11,8 @@
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="SORT" property="sort" jdbcType="INTEGER" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="DELETED" property="deleted" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
     <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
     <result column="CRT_NAME" property="crtName" jdbcType="VARCHAR" />
     <result column="CRT_HOST" property="crtHost" jdbcType="VARCHAR" />

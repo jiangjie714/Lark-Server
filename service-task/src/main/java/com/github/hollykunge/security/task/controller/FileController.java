@@ -6,12 +6,15 @@ import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.common.util.Query;
 import com.github.hollykunge.security.task.biz.LarkTaskFileBiz;
+import com.github.hollykunge.security.task.constant.TaskCommon;
 import com.github.hollykunge.security.task.entity.LarkFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -31,7 +34,7 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      * 上传task任务关联文件
      * @return
      */
-    @RequestMapping(value = "/taskFileUpload",method = RequestMethod.POST)
+    @RequestMapping(value = "/upload",method = RequestMethod.POST)
     @ResponseBody
     public ObjectRestResponse<LarkFile> taskFileUpload(
             @RequestParam("file") MultipartFile file,
@@ -45,9 +48,9 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      * 下载task关联文件
      * @return
      */
-    @RequestMapping(value = "taskFileDownload",method = RequestMethod.GET)
-    public void taskFileDownload(@RequestBody LarkFile larkFile){
-        larkTaskFilebiz.taskFileDownload(larkFile);
+    @RequestMapping(value = "download",method = RequestMethod.GET)
+    public void taskFileDownload(@RequestParam("fileId") String fileId, HttpServletResponse response) throws IOException{
+        larkTaskFilebiz.taskFileDownload(fileId,response);
     }
 
     /**
@@ -97,14 +100,15 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.get('project/file/recycle', {fileCode: fileCode});
      *   }
      */
-    @RequestMapping(value = "/recycel",method = RequestMethod.GET)
+    @RequestMapping(value = "/recycle",method = RequestMethod.PUT)
     public ObjectRestResponse<Object> recycle(@RequestParam("fileCode") String fileCode){
         LarkFile larkFile = new LarkFile();
         larkFile.setId(fileCode);
-        larkFile.setDeleted("1");
-        baseBiz.updateById(larkFile);
+        larkFile.setDeleted(TaskCommon.NUMBER_ONE_STRING);
+        larkFile.setDeletedTime(new Date());
+        baseBiz.updateSelectiveById(larkFile);
         LarkFile larkFile1 = baseBiz.selectById(fileCode);
-        larkFile1.setDeleted("1");
+        larkFile1.setDeleted(TaskCommon.NUMBER_ONE_STRING);
         return new ObjectRestResponse<>().data(larkFile1).rel(true);
     }
 
@@ -115,12 +119,12 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
      *       return $http.get('project/file/recovery', {fileCode: fileCode});
      *   }
      */
-    @RequestMapping(value = "/recovery",method = RequestMethod.GET)
+    @RequestMapping(value = "/recovery",method = RequestMethod.PUT)
     public ObjectRestResponse<Object> recovery(@RequestParam("fileCode") String fileCode){
         LarkFile larkFile = new LarkFile();
         larkFile.setId(fileCode);
         larkFile.setDeleted("0");
-        baseBiz.updateById(larkFile);
+        baseBiz.updateSelectiveById(larkFile);
         LarkFile larkFile1 = baseBiz.selectById(fileCode);
         larkFile1.setDeleted("0");
         return new ObjectRestResponse<>().data(larkFile1).rel(true);
@@ -139,4 +143,5 @@ public class FileController extends BaseController<LarkTaskFileBiz, LarkFile> {
         baseBiz.deleteById(fileCode);
         return new ObjectRestResponse<>().msg("删除成功！").data(larkFile).rel(true);
     }
+
 }

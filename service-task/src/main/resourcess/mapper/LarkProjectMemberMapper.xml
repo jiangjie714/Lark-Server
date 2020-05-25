@@ -57,7 +57,17 @@
     on
     lpm.member_code = au.id
     where
-    lpm.id=#{projectCode};
+    lpm.project_code=#{projectCode}
   </select>
 
+  <update id="updateAssignRoles">
+     update
+        lark_project_member
+        set
+        authorize=#{roleCode}
+        where
+        project_code=#{projectCode}
+        and
+        member_code=#{memberCode}
+  </update>
 </mapper>

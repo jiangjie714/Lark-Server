@@ -3,7 +3,6 @@ package com.github.hollykunge.security.task.controller;
 
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
-import com.github.hollykunge.security.common.msg.TableResultResponse;
 import com.github.hollykunge.security.common.rest.BaseController;
 import com.github.hollykunge.security.task.biz.LarkTaskStagesBiz;
 import com.github.hollykunge.security.task.dto.LarkTaskStagesDto;
@@ -24,31 +23,7 @@ public class TaskStagesController extends BaseController<LarkTaskStagesBiz, Lark
 
     @Autowired
     private LarkTaskStagesBiz larkTaskStagesbiz;
-    /**
-     * 任务阶段列表
-     * @param {*} data
-     *   export function list(data) {
-     *       return $http.get('project/task_stages', data);
-     *   }
-     */
-    @RequestMapping(value = "/",method = RequestMethod.GET)
-    public TableResultResponse list(@RequestBody Object data){
-        // todo 任务阶段列表  getTasksByProjectId
-        return new TableResultResponse();
-    }
 
-    /**
-     * 获取当前阶段下的所有任务
-     * @param {*} data
-     *   export function tasks(data) {
-     *       return $http.get('project/task_stages/tasks', data);
-     *   }
-     */
-    @RequestMapping(value = "/tasks",method = RequestMethod.GET)
-    public TableResultResponse tasks(@RequestBody Object data){
-        // todo 暂时返回空 任务列表
-        return new TableResultResponse();
-    }
 
     /**
      * 排序
@@ -75,7 +50,7 @@ public class TaskStagesController extends BaseController<LarkTaskStagesBiz, Lark
      *       return $http.post('project/task_stages/save', data);
      *   }
      */
-    @RequestMapping(value = "/save",method = RequestMethod.POST)
+    @RequestMapping(value = "/operation",method = RequestMethod.POST)
     public ObjectRestResponse<LarkTaskStages> save(@RequestBody LarkTaskStages larkTaskStages){
         baseBiz.insertSelective(larkTaskStages);
         return new ObjectRestResponse<>().data(larkTaskStages).rel(true).msg("新增成功任务列表");
@@ -89,7 +64,7 @@ public class TaskStagesController extends BaseController<LarkTaskStagesBiz, Lark
      *       return $http.post('project/task_stages/edit', data);
      *   }
      */
-    @RequestMapping(value = "/edit",method = RequestMethod.POST)
+    @RequestMapping(value = "/operation",method = RequestMethod.PUT)
     public BaseResponse edit(@RequestBody LarkTaskStages larkTaskStages){
         baseBiz.updateSelectiveById(larkTaskStages);
         return new BaseResponse(200,"修改成功！");
@@ -133,7 +108,7 @@ public class TaskStagesController extends BaseController<LarkTaskStagesBiz, Lark
      * 根据项目id 获取任务列 列表
      * @return
      */
-    @RequestMapping(value = "/getStagesList",method = RequestMethod.GET)
+    @RequestMapping(value = "/operation",method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse<List<LarkTaskStages>> getStagesList(@RequestParam("projectCode") String projectCode){
         return larkTaskStagesbiz.getStagesList(projectCode);

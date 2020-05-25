@@ -1,6 +1,5 @@
 package com.github.hollykunge.security.task.controller;
 
-import com.github.hollykunge.security.common.exception.BaseException;
 import com.github.hollykunge.security.common.exception.service.ClientParameterInvalid;
 import com.github.hollykunge.security.common.msg.BaseResponse;
 import com.github.hollykunge.security.common.msg.ObjectRestResponse;
@@ -96,7 +95,23 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
         larkProjectMember.setProjectCode(code);
         larkProjectMember.setAuthorize(roleCode);
         larkProjectMember.setMemberCode(memberCode);
-        larkProjectMemberbiz.updateSelectiveById(larkProjectMember);
+        larkProjectMemberbiz.insertSelective(larkProjectMember);
+        return new BaseResponse(200,"成员角色已分配!");
+    }
+    @RequestMapping(value = "/updateAssignRoles",method = RequestMethod.PUT)
+    public BaseResponse UpdateAssignRoles(@RequestParam("memberCode") String memberCode,
+                                    @RequestParam("roleCode") String roleCode,
+                                    @RequestParam("projectCode") String projectCode){
+        if(StringUtils.isEmpty(memberCode)){
+            throw new ClientParameterInvalid("成员不可为空！");
+        }
+        if(StringUtils.isEmpty(projectCode)){
+            throw new ClientParameterInvalid("项目不可为空！");
+        }
+        if(StringUtils.isEmpty(roleCode)){
+            throw new ClientParameterInvalid("成员角色不可为空！");
+        }
+        larkProjectMemberbiz.updateAssignRoles(memberCode,roleCode,projectCode);
         return new BaseResponse(200,"成员角色已分配!");
     }
 
@@ -108,7 +123,7 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
      *       return $http.post('project/project_member/removeMember', {memberCode: memberCode, projectCode: code});
      *   }
      */
-    @RequestMapping(value = "/removeMember",method = RequestMethod.POST)
+    @RequestMapping(value = "/removeMember",method = RequestMethod.DELETE)
     public ObjectRestResponse<LarkProjectMember> removeMember(@RequestParam("memberCode") String memberCode, @RequestParam("projectCode") String code){
         if(StringUtils.isEmpty(memberCode)){
             throw  new ClientParameterInvalid("成员id不可为空！");
@@ -126,7 +141,7 @@ public class ProjectMemberController extends BaseController<LarkProjectMemberBiz
      *       return $http.get('project/project_member/index', data);
      *   }
      */
-    @RequestMapping(value = "/index",method = RequestMethod.GET)
+    @RequestMapping(value = "/memberList",method = RequestMethod.GET)
     public TableResultResponse index(@RequestParam Map<String, Object> params){
         Query query = new Query(params);
         return  larkProjectMemberbiz.selectByQueryUserInfo(query);

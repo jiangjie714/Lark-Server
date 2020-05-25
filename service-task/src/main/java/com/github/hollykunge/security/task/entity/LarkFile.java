@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @author  fansq
@@ -64,5 +65,5 @@ public class LarkFile extends BaseEntity {
     private String fileType;
 
     @Column(name = "DELETED_TIME")
-    private String deletedTime;
+    private Date deletedTime;
 }

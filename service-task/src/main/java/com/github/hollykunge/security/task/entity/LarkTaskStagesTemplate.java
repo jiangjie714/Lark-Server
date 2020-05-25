@@ -27,4 +27,10 @@ public class LarkTaskStagesTemplate extends BaseEntity {
     @Column(name = "CODE")
     private String code;
 
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "DELETED")
+    private String deleted;
+
 }

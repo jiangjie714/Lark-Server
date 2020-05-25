@@ -23,5 +23,7 @@ public interface LarkTaskMemberMapper extends Mapper<LarkTaskMember> {
      */
     List<LarkTaskMemberDto> getChildTaskUser(@Param("taskCode")String taskCode);
 
+    List<String> getTaskUser(@Param("projectCode")String project,@Param("taskCode")String taskCode);
+
     void updateTaskMember(String modifyMemberId, String modifiedMemberId);
 }
